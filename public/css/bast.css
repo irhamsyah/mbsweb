@@ -1,0 +1,43 @@
+/****** Bastian Add Style ******/
+.popUpFailBast{
+  color: white;
+  font-size: 30px;
+  list-style: none;
+  text-align: center;
+}
+
+.popUpBgBast{
+  position: absolute;
+  left: 0;
+  top: 3%;
+  z-index: 1;
+  background: rgba(250,50,50,0.9);
+  width: 100%;
+}
+
+.hideMeBast {
+    -moz-animation: cssAnimation 0s ease-in 5s forwards;
+    /* Firefox */
+    -webkit-animation: cssAnimation 0s ease-in 5s forwards;
+    /* Safari and Chrome */
+    -o-animation: cssAnimation 0s ease-in 5s forwards;
+    /* Opera */
+    animation: cssAnimation 0s ease-in 5s forwards;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+@keyframes cssAnimation {
+    to {
+        width:0;
+        height:0;
+        overflow:hidden;
+    }
+}
+@-webkit-keyframes cssAnimation {
+    to {
+        width:0;
+        height:0;
+        visibility:hidden;
+    }
+}
+/******************************/

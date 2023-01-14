@@ -1,6 +1,4 @@
 
-<<<<<<< HEAD
-=======
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -151,4 +149,3 @@ Route::post('/adm_contentimage', 'HomeController@admin_contentimage_add');
 Route::put('/adm_contentimage', 'HomeController@admin_contentimage_edit');
 Route::delete('/adm_contentimage', 'HomeController@admin_contentimage_destroy');
 
->>>>>>> 3754bd8fd3ea95efd5f03e677a380a48c8499208

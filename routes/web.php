@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 //Frontend Page
-Auth::routes();
+// PERUBAHA
+// Auth::routes();
 // Route::get('tes',function(){
 //     return view('auth.register');
 // });

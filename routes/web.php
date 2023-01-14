@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 //Frontend Page
-//PERUBAHAN KEDU2
+//PERUBAHAN KEDUA
 Auth::routes();
 // Route::get('tes',function(){
 //     return view('auth.register');

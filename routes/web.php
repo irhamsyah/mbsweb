@@ -1,5 +1,6 @@
-<?php
 
+<<<<<<< HEAD
+=======
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -14,8 +15,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 //Frontend Page
-// PERUBAHA
-// Auth::routes();
+//PERUBAHAN KEDU2
+Auth::routes();
 // Route::get('tes',function(){
 //     return view('auth.register');
 // });
@@ -149,3 +150,5 @@ Route::get('/adm_contentimage', 'HomeController@admin_contentimage');
 Route::post('/adm_contentimage', 'HomeController@admin_contentimage_add');
 Route::put('/adm_contentimage', 'HomeController@admin_contentimage_edit');
 Route::delete('/adm_contentimage', 'HomeController@admin_contentimage_destroy');
+
+>>>>>>> 3754bd8fd3ea95efd5f03e677a380a48c8499208

@@ -1,11 +1,29 @@
 <html>
 <head>
+  @php $actualLinktag = str_replace('/', '', "$_SERVER[REQUEST_URI]"); @endphp
+  @if ($actualLinktag!='home') 
+    @php 
+      $pecahLink = explode('_', $actualLinktag);
+      $mainmenu=$pecahLink[0];
+      $menu=$pecahLink[1];
+      $submenu=$pecahLink[2];
+      $page=$pecahLink[3];
+    @endphp
+  @else 
+    @php 
+      $mainmenu='home';
+      $menu='home';
+      $submenu='home';
+      $page='home';
+    @endphp
+  @endif
+
   @foreach($logos as $logo)
     @php ($logo=$logo->logo_name)
   @endforeach
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>BAHTERA SETIA</title>
+  <title>MBS Web</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Font Awesome -->
@@ -47,7 +65,7 @@
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Bahtera Setia Group</a>
+        <a href="#" class="nav-link"></a>
       </li>
     </ul>
 
@@ -90,210 +108,154 @@
     <a href="/" class="brand-link">
       <img src="{{ asset('img/logo/'.$logo) }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
            style="opacity: .8">
-      <span class="brand-text font-weight-light">Bahtera Setia</span>
+      <span class="brand-text font-weight-light">MBS Web</span>
     </a>
 
 
     <!-- Sidebar -->
     <div class="sidebar">
       <!-- Sidebar Menu -->
-      <nav class="mt-2" style="font-size:13px;">
+      <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-          <li class="nav-item has-treeview menu-close">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fa fa-share"></i>
-              <p>Transaction</p>
-              <i class="right fas fa-angle-left"></i>
-            </a>
-            <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="/adm_transaction" class="nav-link">
-                <i class="fa fa-bars nav-icon"></i>
-                <p>List Transaction</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="/adm_tracking" class="nav-link">
-                <i class="fa fa-ship nav-icon"></i>
-                <p>Tracking</p>
-              </a>
-            </li>
-            </ul>
-          </li>
-          <li class="nav-item has-treeview menu-close">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fa fa-database"></i>
-              <p>
-                Master Data
+          <li class="nav-header">MAIN MENU BPR</li>
+            <li class="nav-item has-treeview <?php if($mainmenu=='bo'){echo 'menu-open';}?>">
+              <a href="#" class="nav-link <?php if($mainmenu=='bo'){echo 'active';}?>">
                 <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-            <li class="nav-item" style="border-bottom:1px solid">
-              <a href="/adm_customer" class="nav-link">
-                <i class="fa fa-user nav-icon"></i>
-                <p>Customer</p>
+                <p style="padding-left:0px;">MENU BACK OFFICE</p>
               </a>
-            </li>
-            <!--
-              <li class="nav-item">
-                <a href="/adm_agent" class="nav-link">
-                  <i class="fa fa-male nav-icon"></i>
-                  <p>Agent Daerah</p>
+              <ul class="nav nav-treeview">
+              <li class="nav-item has-treeview <?php if($menu=='cs'){echo 'menu-open';}?>">
+                <a href="#" class="nav-link <?php if($menu=='cs'){echo 'active';}?>">
+                  <i class="right fas fa-angle-left"></i>
+                  <p style="padding-left:10px;">CUSTOMER SERVICE</p>
+                </a>
+                <ul class="nav nav-treeview">
+                <li class="nav-item has-treeview <?php if($submenu=='de'){echo 'menu-open';}?>">
+                  <a href="#" class="nav-link <?php if($submenu=='de'){echo 'active';}?>">
+                    <i class="right fas fa-angle-left"></i>
+                    <p style="padding-left:20px;">DATA ENTRY</p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="/bo_cs_de_nasabah" class="nav-link <?php if($page=='nasabah'){echo 'active';}?>">
+                      <p style="padding-left:30px;">Data Nasabah</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p style="padding-left:30px;">Profil Data Nasabah</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p style="padding-left:30px;">Simulasi Pembiayaan</p>
+                    </a>
+                  </li>
+                  </ul>
+                </li>
+                <li class="nav-item has-treeview menu-close">
+                  <a href="/adm_transaction" class="nav-link">
+                    <i class="right fas fa-angle-left"></i>
+                    <p style="padding-left:20px;">ADMINISTRATOR</p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p style="padding-left:30px;">Konfigurasi Nasabah</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p style="padding-left:30px;">Data Agama</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p style="padding-left:30px;">Data Golongan</p>
+                    </a>
+                  </li>
+                  </ul>
+                </li>
+                <li class="nav-item has-treeview menu-close">
+                  <a href="/adm_transaction" class="nav-link">
+                    <i class="right fas fa-angle-left"></i>
+                    <p style="padding-left:20px;">PENCETAKAN LAPORAN</p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p style="padding-left:30px;">Dokumen Nasabah</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p style="padding-left:30px;">Dokumen Tabungan</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p style="padding-left:30px;">Dokumen Deposito</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p style="padding-left:30px;">Dokumen Kredit</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p style="padding-left:30px;">Dokumen Umum & Inv</p>
+                    </a>
+                  </li>
+                  </ul>
+                </li>
+                </ul>
+              </li>
+              <li class="nav-item has-treeview menu-close">
+                <a href="/adm_transaction" class="nav-link">
+                  <i class="right fas fa-angle-left"></i>
+                  <p style="padding-left:10px;">TELLER</p>
                 </a>
               </li>
-              <li class="nav-item" style="border-bottom:1px solid">
-                <a href="/adm_bank_account" class="nav-link">
-                  <i class="fa fa-university nav-icon"></i>
-                  <p>Bank Account</p>
+              <li class="nav-item has-treeview menu-close">
+                <a href="/adm_transaction" class="nav-link">
+                  <i class="right fas fa-angle-left"></i>
+                  <p style="padding-left:10px;">TABUNGAN</p>
                 </a>
               </li>
-            -->
-              <li class="nav-item">
-                <a href="/adm_pelayaran" class="nav-link">
-                  <i class="fa fa-paper-plane nav-icon"></i>
-                  <p>Pelayaran</p>
+              <li class="nav-item has-treeview menu-close">
+                <a href="/adm_transaction" class="nav-link">
+                  <i class="right fas fa-angle-left"></i>
+                  <p style="padding-left:10px;">DEPOSITO</p>
                 </a>
               </li>
-              <li class="nav-item" style="border-bottom:1px solid">
-                <a href="/adm_tarif" class="nav-link">
-                  <i class="fa fa-credit-card nav-icon"></i>
-                  <p>Tarif</p>
+              <li class="nav-item has-treeview menu-close">
+                <a href="/adm_transaction" class="nav-link">
+                  <i class="right fas fa-angle-left"></i>
+                  <p style="padding-left:10px;">KREDIT</p>
                 </a>
               </li>
-              <!--
-              <li class="nav-item" style="border-bottom:1px solid">
-                <a href="/adm_consignee" class="nav-link">
-                  <i class="fa fa-female nav-icon"></i>
-                  <p>Consignee</p>
+              <li class="nav-item has-treeview menu-close">
+                <a href="/adm_transaction" class="nav-link">
+                  <i class="right fas fa-angle-left"></i>
+                  <p style="padding-left:10px;">AKUNTANSI</p>
                 </a>
               </li>
-              <li class="nav-item">
-                <a href="/adm_vendor_truck" class="nav-link">
-                  <i class="fa fa-users nav-icon"></i>
-                  <p>Vendor</p>
+              <li class="nav-item has-treeview menu-close">
+                <a href="/adm_transaction" class="nav-link">
+                  <i class="right fas fa-angle-left"></i>
+                  <p style="padding-left:10px;">INVENTARIS</p>
                 </a>
               </li>
-              <li class="nav-item" style="border-bottom:1px solid">
-                <a href="/adm_trucking" class="nav-link">
-                  <i class="fa fa-truck nav-icon"></i>
-                  <p>Trucking Type</p>
-                </a>
-              </li><li class="nav-item" style="border-bottom:1px solid">
-                <a href="/adm_location" class="nav-link">
-                  <i class="fa fa-location-arrow nav-icon"></i>
-                  <p>Location</p>
-                </a>
-              </li>
-            -->
-            </ul>
-          </li>
-          <li class="nav-item has-treeview menu-close">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fa fa-newspaper"></i>
-              <p>
-                News
-                <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="/adm_news" class="nav-link">
-                <i class="fa fa-bars nav-icon"></i>
-                <p>List News</p>
-              </a>
-            </li>
-              <li class="nav-item">
-                <a href="/adm_news_category" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>News Category</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="/adm_news_img" class="nav-link">
-                  <i class="fa fa-file nav-icon"></i>
-                  <p>News Images</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-item has-treeview menu-close">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fa fa-cog"></i>
-              <p>
-                Frontend Customize
-                <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="/adm_slider" class="nav-link">
-                  <i class="fa fa-square nav-icon"></i>
-                  <p>Slider Home</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="/adm_testimoni" class="nav-link">
-                  <i class="far fa-comment nav-icon"></i>
-                  <p>Testimoni</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="/adm_service" class="nav-link">
-                  <i class="fa fa-cog nav-icon"></i>
-                  <p>Service</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="/adm_content" class="nav-link">
-                  <i class="fa fa-bars nav-icon"></i>
-                  <p>Content</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="/adm_contentimage" class="nav-link">
-                  <i class="fa fa-images nav-icon"></i>
-                  <p>Client Image</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="/adm_contentfooter" class="nav-link">
-                  <i class="fa fa-info nav-icon"></i>
-                  <p>Footer Info</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-          <!-- <li class="nav-item has-treeview menu-open">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fa fa-shopping-bag"></i>
-              <p>
-                Packages
-                <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="/adm_packages" class="nav-link">
-                  <i class="far fa-bars nav-icon"></i>
-                  <p>List Packages</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="/adm_packages_category" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Packages Category</p>
+              <li class="nav-item has-treeview menu-close">
+                <a href="/adm_transaction" class="nav-link">
+                  <i class="right fas fa-angle-left"></i>
+                  <p style="padding-left:10px;">STANDING INSTRUCTION</p>
                 </a>
               </li>
             </ul>
-          </li> -->
-          <li class="nav-item has-treeview menu-close">
-            <a href="/adm_logo" class="nav-link">
-              <i class="nav-icon fa fa-file-image"></i>
-              <p>Logo</p>
-            </a>
           </li>
           <li class="nav-item has-treeview menu-open">
             <a href="{{ route('logout') }}" class="nav-link" onclick="event.preventDefault();

@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 //Frontend Page
-// PERUBAHA
-// Auth::routes();
+// PERUBAHAN PADA ROUTE 
+Auth::routes();
 // Route::get('tes',function(){
 //     return view('auth.register');
 // });

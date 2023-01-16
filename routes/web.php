@@ -22,7 +22,10 @@ Auth::routes();
 
 // Route::get('/verify','Auth\RegisterController@verifyUser')->name('verify.user');
 
-Route::get('/', 'FrontendController@index');
+Route::get('/', function () {
+    return redirect(route('login'));
+});
+// Route::get('/', 'FrontendController@index');
 Route::get('/tracking', 'FrontendController@tracking');
 Route::post('/tracking', 'FrontendController@trackingpost');
 Route::get('/service', 'FrontendController@service')->name('service.get');

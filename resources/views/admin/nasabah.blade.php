@@ -7,17 +7,56 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-12">
+        <div class="card card-warning card-outline">
+          <!-- form start -->
+          <form>
+            <div class="card-body">
+              <div class="row form-group">
+                <div class="col-3">
+                  <label for="idnasabah1">Id Nasabah</label> 
+                </div>             
+                <div class="col-9">
+                  <input type="text" class="form-control" id="idnasabah1" placeholder="Masukkan ID Nasabah">
+                </div>
+              </div>
+              <div class="row form-group">
+                <div class="col-3">
+                  <label for="namanasabah1">Nama Nasabah</label>
+                </div>             
+                <div class="col-9">
+                  <input type="text" class="form-control" id="namanasabah1" placeholder="Masukkan Nama Nasabah">
+                </div>
+              </div>
+              <div class="row form-group">
+                <div class="col-3">
+                  <label for="jenisnasabah1">Jenis Nasabah</label>
+                </div>             
+                <div class="col-9">
+                  <input type="text" class="form-control" id="jenisnasabah1" placeholder="Masukkan Jenis Nasabah">
+                </div>
+              </div>
+              <div class="row form-group">
+                <div class="col-3"></div>
+                <div class="col-3">
+                  <button type="submit" class="btn btn-warning">Cari</button>
+                </div>
+              </div>
+            </div>
+            <!-- /.card-body -->
+          </form>
+        </div>
+        <!-- /.card -->
         <div class="card">
           <div class="card-header">
+            <div class="col-lg-3 col-sm-3" style="float:right;">
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-add-nasabah" style="float: right;">
+                <i class="fa fa-plus"></i>
+              </button>
+            </div>
             <h3 class="card-title">Data Nasabah</h3>
           </div>
           <!-- /.card-header -->
           <div class="card-body">
-            <div class="row" style="margin-bottom:10px;">
-              <div class="col-lg-3 col-sm-6">
-                <button type="button" class="btn btn-block btn-outline-primary" data-toggle="modal" data-target="#modal-add-nasabah">Tambah Nasabah Baru</button>
-              </div>
-            </div>
             <table id="example1" class="table table-bordered table-hover">
               <thead>
               <tr>
@@ -62,33 +101,28 @@
                        <i class="right fas fa-angle-down"></i>
                        </button>
                     </form> -->
-                    <div class="row">
-                      <div class="col-6">
-                        <form action="/adm_nasabah_detail" method="post">
-                           <button type="submit" class="btn btn-block bg-gradient-primary btn-sm">
-                              <i class="fa fa-eye" aria-hidden="true" style="color:#000;"></i>
-                           </button>
-                           <input type="hidden" name="inputIdTransaction" value="{{ $nasabah->nasabah_id }}" class="form-control">
-                           @csrf
-                        </form>
-                      </div>
-                      <div class="col-6">
-                        <a href="#" class="btn btn-block bg-gradient-warning btn-sm"
-                            data-toggle="modal" data-target="#modal-edit-transaction"
-                            >
-                          <i class="fas fa-pencil-alt" aria-hidden="true"></i>
-                        </a>
-                      </div>
-                      <div class="col-6">
-                        <form action="/adm_transaction" method="post" onclick="return confirm('Apakah anda yakin akan menghapus data ini?')">
-                           <button type="submit" class="btn btn-block bg-gradient-danger btn-sm">
-                              <i class="fas fa-trash" aria-hidden="true" style="color:#000;"></i>
-                           </button>
-                           <input type="hidden" name="inputIdTransaction" value="{{ $nasabah->nasabah_id }}" class="form-control">
-                           <input type="hidden" name="_method" value="DELETE"/>
-                           @csrf
-                        </form>
-                      </div>
+                    <a class="dropdown-toggle btn btn-block bg-gradient-primary btn-sm" data-toggle="dropdown" href="#">
+                      Action <span class="caret"></span>
+                    </a>
+                    <div class="dropdown-menu">
+                      <form action="/adm_nasabah_detail" method="post" style="margin-bottom: 0;">
+                          <button type="submit" tabindex="-1" class="dropdown-item">
+                            Detail
+                          </button>
+                          <input type="hidden" name="inputIdTransaction" value="{{ $nasabah->nasabah_id }}" class="form-control">
+                          @csrf
+                      </form>
+                      <a href="#" tabindex="-1" class="dropdown-item" data-toggle="modal" data-target="#modal-edit-transaction">
+                          Edit
+                      </a>
+                      <form action="/adm_transaction" method="post"  style="margin-bottom: 0;" onclick="return confirm('Apakah anda yakin akan menghapus data ini?')">
+                          <button type="submit" tabindex="-1" class="dropdown-item">
+                            Delete
+                          </button>
+                          <input type="hidden" name="inputIdTransaction" value="{{ $nasabah->nasabah_id }}" class="form-control">
+                          <input type="hidden" name="_method" value="DELETE"/>
+                          @csrf
+                      </form>
                     </div>
                   </td>
                 </tr>

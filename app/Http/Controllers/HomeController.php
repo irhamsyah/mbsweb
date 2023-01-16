@@ -5,21 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\Nasabah;
-use App\Testimoni;
-use App\Slider;
-use App\Service;
-use App\Agent;
-use App\Customer;
-use App\Location;
-use App\Pelayaran;
-use App\Transaction;
-use App\TransactionDetail;
-use App\TruckingType;
-use App\VendorTruck;
 use App\Logo;
-use App\Content;
-use App\ContentImage;
-use App\ContentFooter;
 
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
@@ -57,11 +43,9 @@ class HomeController extends Controller
     public function admin_index()
     {
       $logos = Logo::all();
-      $nasabahs = Nasabah::select('*')->limit(100)->orderby('nasabah.nasabah_id','ASC')->get();
-
       $users = User::all();
 
-      return view('admin/nasabah', ['logos'=> $logos,'nasabahs'=> $nasabahs]);
+      return view('admin/home', ['logos'=> $logos,'users'=> $users]);
     }
     //Direct to Slider page
     public function admin_slider()

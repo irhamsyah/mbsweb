@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 //Frontend Page
 // PERUBAHAN PADA ROUTE 
+//PENAMABAHAN KOMNENTAR KE 2
 Auth::routes();
 // Route::get('tes',function(){
 //     return view('auth.register');

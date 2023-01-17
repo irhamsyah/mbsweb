@@ -3,42 +3,43 @@
 @section('content')
 
 <!-- Main content -->
-<div class="content-wrapper" style="margin-top:10px;">
+<div class="content-wrapper" style="margin-top:10px; max-height:800px !important;">
   <div class="container-fluid">
     <div class="row">
       <div class="col-12">
         <div class="card card-warning card-outline">
           <!-- form start -->
-          <form>
+          <form method="POST" action="/bo_cs_de_nasabah/cari" role="search">
+          @csrf
             <div class="card-body">
               <div class="row form-group">
-                <div class="col-3">
+                <div class="col-lg-3 col-sm-12">
                   <label for="idnasabah1">Id Nasabah</label> 
                 </div>             
-                <div class="col-9">
-                  <input type="text" class="form-control" id="idnasabah1" placeholder="Masukkan ID Nasabah">
+                <div class="col-lg-5 col-sm-12">
+                  <input type="text" class="form-control" id="idnasabah1" name="idnasabah1" placeholder="Masukkan ID Nasabah">
                 </div>
               </div>
               <div class="row form-group">
-                <div class="col-3">
+                <div class="col-lg-3 col-sm-12">
                   <label for="namanasabah1">Nama Nasabah</label>
                 </div>             
-                <div class="col-9">
-                  <input type="text" class="form-control" id="namanasabah1" placeholder="Masukkan Nama Nasabah">
+                <div class="col-lg-5 col-sm-12">
+                  <input type="text" class="form-control" id="namanasabah1" name="namanasabah1" placeholder="Masukkan Nama Nasabah">
                 </div>
               </div>
               <div class="row form-group">
-                <div class="col-3">
+                <div class="col-lg-3 col-sm-12">
                   <label for="jenisnasabah1">Jenis Nasabah</label>
                 </div>             
-                <div class="col-9">
-                  <input type="text" class="form-control" id="jenisnasabah1" placeholder="Masukkan Jenis Nasabah">
+                <div class="col-lg-5 col-sm-12">
+                  <input type="text" class="form-control" id="jenisnasabah1" name="jenisnasabah1" placeholder="Masukkan Jenis Nasabah">
                 </div>
               </div>
               <div class="row form-group">
                 <div class="col-3"></div>
                 <div class="col-3">
-                  <button type="submit" class="btn btn-warning">Cari</button>
+                  <button type="submit" class="btn btn-warning"><i class="fa fa-search" style="color:white"></i></button>
                 </div>
               </div>
             </div>

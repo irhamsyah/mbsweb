@@ -277,7 +277,7 @@
   @yield('content')
 
   <footer class="main-footer">
-    <strong>Copyright &copy; 2020 <a href="#">Bahtera Setia Group</a>.</strong>
+    <strong>Copyright &copy; 2023 <a href="#">MBS Web</a>.</strong>
     All rights reserved.
     <div class="float-right d-none d-sm-inline-block">
       <b>Version</b> 1.0.0
@@ -331,10 +331,6 @@
 <script src="{{ asset('plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
 <!-- AdminLTE App -->
 <script src="{{ asset('dist/js/adminlte.js') }}"></script>
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="{{ asset('dist/js/pages/dashboard.js') }}"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="{{ asset('dist/js/demo.js') }}"></script>
 <script>
 
   $(function () {

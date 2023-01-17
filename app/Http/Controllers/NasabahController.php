@@ -49,6 +49,24 @@ class NasabahController extends Controller
 
       return view('admin/nasabah', ['logos'=> $logos,'nasabahs'=> $nasabahs]);
     }
+    public function bo_cs_de_nasabah_cari(Request $request)
+    {
+      $logos = Logo::all();
+
+      $nasabahs = Nasabah::where('nasabah_id', 'LIKE', '%' . request()->idnasabah1 . '%')
+      ->when(request()->namanasabah1, function($query) {
+        $query->where('nama_nasabah', 'LIKE', '%' . request()->namanasabah1 . '%');
+      })
+      ->when(request()->jenisnasabah1, function($query) {
+        $query->where('jenis_nasabah', request()->jenisnasabah1);
+      })
+      ->limit(100)->orderby('nasabah.nasabah_id','ASC')->get();
+
+      $users = User::all();
+
+      return view('admin/nasabah', ['logos'=> $logos,'nasabahs'=> $nasabahs]);
+    }
+
     public function admin_transaction_add(Request $request)
     {
       $logos = Logo::all();

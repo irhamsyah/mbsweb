@@ -54,6 +54,7 @@ Route::get('/verifyuser','RegistercustomerController@verifyUser')->name('verify.
 
 //Route to admin pages
 Route::get('/bo_cs_de_nasabah', 'NasabahController@bo_cs_de_nasabah');
+Route::post('/bo_cs_de_nasabah/cari','NasabahController@bo_cs_de_nasabah_cari');
 
 Route::get('/adm_logo', 'HomeController@admin_logo');
 Route::put('/adm_logo', 'HomeController@admin_logo_edit');

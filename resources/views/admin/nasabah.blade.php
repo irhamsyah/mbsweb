@@ -578,7 +578,38 @@
                   </div>
                   <!-- /.tab-pane -->
                   <div class="tab-pane" id="specimen">
-                    ------ Masih dalam Pengerjaan -------
+                    <div class="form-group">
+                      <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSh8kwBqclxTYXO2_5U7-LzGCL42efVyWRUKg3hWMSo&s" style="height:200px;"/>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                          <img src="https://t4.ftcdn.net/jpg/00/00/42/95/360_F_429547_YJTlwk2Ld5kYDAbtCUwFgzmatgUHEg.jpg" style="height:200px;"/>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                          <label for="inputFoto">Ambil Foto</label>
+                          <div class="input-group">
+                            <div class="custom-file">
+                              <input type="file" class="custom-file-input" id="inputFoto">
+                              <label class="custom-file-label" for="inputisiFoto"></label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                          <label for="inputtandatangan">Ambil Tanda Tangan</label>
+                          <div class="input-group">
+                            <div class="custom-file">
+                              <input type="file" class="custom-file-input" id="inputtandatangan">
+                              <label class="custom-file-label" for="inputisitandatangan"></label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   <!-- /.tab-pane -->
                 </div>

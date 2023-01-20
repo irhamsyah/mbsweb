@@ -3,22 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Users;
-use App\Testimoni;
-use App\Slider;
-use App\Service;
-use App\Agent;
-use App\Customer;
-use App\Location;
-use App\Pelayaran;
-use App\Transaction;
-use App\TransactionDetail;
-use App\TruckingType;
-use App\VendorTruck;
+use App\User;
+use App\Nasabah;
 use App\Logo;
-use App\Content;
-use App\ContentImage;
-use App\ContentFooter;
 
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
@@ -56,24 +43,9 @@ class HomeController extends Controller
     public function admin_index()
     {
       $logos = Logo::all();
-      $transactions = Transaction::select('transaction.*','customer.code_customer','customer.name_customer','agent.code_agent','agent.name_agent','vendor_truck.code_vendor','vendor_truck.name_vendor',
-      'location.code_city','location.name_city','location.province_city','pelayaran.code_pelayaran','pelayaran.name_pelayaran','pelayaran.alias')
-      ->leftjoin('location','location.id','=','transaction.location_id')
-      ->leftjoin('customer','customer.id','=','transaction.customer_id')
-      ->leftjoin('agent','agent.id','=','transaction.agent_id')
-      ->leftjoin('vendor_truck','vendor_truck.id','=','transaction.vendor_truck_id')
-      ->leftjoin('pelayaran','pelayaran.id','=','transaction.pelayaran_id')
-      ->orderby('transaction.id','DESC')
-      ->get();
+      $users = User::all();
 
-      $vendors = VendorTruck::select('vendor_truck.*','name_trucking')
-      ->leftjoin('trucking_type','trucking_type.id','=','vendor_truck.trucking_type_id')->get();
-
-      $pelayarans = Pelayaran::all();
-      $agents = Agent::all();
-      $locations = Location::all();
-
-      return view('admin/transaction', ['logos'=> $logos,'transactions'=> $transactions, 'vendors'=> $vendors, 'pelayarans'=> $pelayarans, 'agents'=> $agents, 'locations'=> $locations]);
+      return view('admin/home', ['logos'=> $logos,'users'=> $users]);
     }
     //Direct to Slider page
     public function admin_slider()

@@ -137,7 +137,7 @@
 
             <div class="media-content align-right">
                 <h1 class="mbr-section-title mbr-white pb-3 mbr-fonts-style display-1">
-                    MMS WEB</h1>
+                    {{ $about->$title_about }}</h1>
                 <div class="mbr-section-text mbr-white pb-3">
                     <p class="mbr-text mbr-fonts-style display-5">
                       {!! strip_tags($about->$description_about) !!}</p>

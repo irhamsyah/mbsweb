@@ -123,34 +123,34 @@
             <li class="nav-item has-treeview <?php if($mainmenu=='bo'){echo 'menu-open';}?>">
               <a href="#" class="nav-link <?php if($mainmenu=='bo'){echo 'active';}?>">
                 <i class="right fas fa-angle-left"></i>
-                <p style="padding-left:0px;">MENU BACK OFFICE</p>
+                <p class="pl-0">MENU BACK OFFICE</p>
               </a>
               <ul class="nav nav-treeview">
               <li class="nav-item has-treeview <?php if($menu=='cs'){echo 'menu-open';}?>">
                 <a href="#" class="nav-link <?php if($menu=='cs'){echo 'active';}?>">
                   <i class="right fas fa-angle-left"></i>
-                  <p style="padding-left:10px;">CUSTOMER SERVICE</p>
+                  <p class="pl-1">CUSTOMER SERVICE</p>
                 </a>
                 <ul class="nav nav-treeview">
                 <li class="nav-item has-treeview <?php if($submenu=='de'){echo 'menu-open';}?>">
                   <a href="#" class="nav-link <?php if($submenu=='de'){echo 'active';}?>">
                     <i class="right fas fa-angle-left"></i>
-                    <p style="padding-left:20px;">DATA ENTRY</p>
+                    <p class="pl-2">DATA ENTRY</p>
                   </a>
                   <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="/bo_cs_de_nasabah" class="nav-link <?php if($page=='nasabah'){echo 'active';}?>">
-                      <p style="padding-left:30px;">Data Nasabah</p>
+                    <a href="/bo_cs_de_nasabah" class="nav-link <?php if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
+                      <p class="pl-3">Data Nasabah</p>
                     </a>
                   </li>
                   <li class="nav-item">
                     <a href="/adm_transaction" class="nav-link">
-                      <p style="padding-left:30px;">Profil Data Nasabah</p>
+                      <p class="pl-3">Profil Data Nasabah</p>
                     </a>
                   </li>
                   <li class="nav-item">
                     <a href="/adm_transaction" class="nav-link">
-                      <p style="padding-left:30px;">Simulasi Pembiayaan</p>
+                      <p class="pl-3">Simulasi Pembiayaan</p>
                     </a>
                   </li>
                   </ul>
@@ -158,22 +158,22 @@
                 <li class="nav-item has-treeview menu-close">
                   <a href="/adm_transaction" class="nav-link">
                     <i class="right fas fa-angle-left"></i>
-                    <p style="padding-left:20px;">ADMINISTRATOR</p>
+                    <p class="pl-2">ADMINISTRATOR</p>
                   </a>
                   <ul class="nav nav-treeview">
                   <li class="nav-item">
                     <a href="/adm_transaction" class="nav-link">
-                      <p style="padding-left:30px;">Konfigurasi Nasabah</p>
+                      <p class="pl-3">Konfigurasi Nasabah</p>
                     </a>
                   </li>
                   <li class="nav-item">
                     <a href="/adm_transaction" class="nav-link">
-                      <p style="padding-left:30px;">Data Agama</p>
+                      <p class="pl-3">Data Agama</p>
                     </a>
                   </li>
                   <li class="nav-item">
                     <a href="/adm_transaction" class="nav-link">
-                      <p style="padding-left:30px;">Data Golongan</p>
+                      <p class="pl-3">Data Golongan</p>
                     </a>
                   </li>
                   </ul>
@@ -181,32 +181,32 @@
                 <li class="nav-item has-treeview menu-close">
                   <a href="/adm_transaction" class="nav-link">
                     <i class="right fas fa-angle-left"></i>
-                    <p style="padding-left:20px;">PENCETAKAN LAPORAN</p>
+                    <p class="pl-2">PENCETAKAN LAPORAN</p>
                   </a>
                   <ul class="nav nav-treeview">
                   <li class="nav-item">
                     <a href="/adm_transaction" class="nav-link">
-                      <p style="padding-left:30px;">Dokumen Nasabah</p>
+                      <p class="pl-3">Dokumen Nasabah</p>
                     </a>
                   </li>
                   <li class="nav-item">
                     <a href="/adm_transaction" class="nav-link">
-                      <p style="padding-left:30px;">Dokumen Tabungan</p>
+                      <p class="pl-3">Dokumen Tabungan</p>
                     </a>
                   </li>
                   <li class="nav-item">
                     <a href="/adm_transaction" class="nav-link">
-                      <p style="padding-left:30px;">Dokumen Deposito</p>
+                      <p class="pl-3">Dokumen Deposito</p>
                     </a>
                   </li>
                   <li class="nav-item">
                     <a href="/adm_transaction" class="nav-link">
-                      <p style="padding-left:30px;">Dokumen Kredit</p>
+                      <p class="pl-3">Dokumen Kredit</p>
                     </a>
                   </li>
                   <li class="nav-item">
                     <a href="/adm_transaction" class="nav-link">
-                      <p style="padding-left:30px;">Dokumen Umum & Inv</p>
+                      <p class="pl-3">Dokumen Umum & Inv</p>
                     </a>
                   </li>
                   </ul>
@@ -216,43 +216,43 @@
               <li class="nav-item has-treeview menu-close">
                 <a href="/adm_transaction" class="nav-link">
                   <i class="right fas fa-angle-left"></i>
-                  <p style="padding-left:10px;">TELLER</p>
+                  <p class="pl-1">TELLER</p>
                 </a>
               </li>
               <li class="nav-item has-treeview menu-close">
                 <a href="/adm_transaction" class="nav-link">
                   <i class="right fas fa-angle-left"></i>
-                  <p style="padding-left:10px;">TABUNGAN</p>
+                  <p class="pl-1">TABUNGAN</p>
                 </a>
               </li>
               <li class="nav-item has-treeview menu-close">
                 <a href="/adm_transaction" class="nav-link">
                   <i class="right fas fa-angle-left"></i>
-                  <p style="padding-left:10px;">DEPOSITO</p>
+                  <p class="pl-1">DEPOSITO</p>
                 </a>
               </li>
               <li class="nav-item has-treeview menu-close">
                 <a href="/adm_transaction" class="nav-link">
                   <i class="right fas fa-angle-left"></i>
-                  <p style="padding-left:10px;">KREDIT</p>
+                  <p class="pl-1">KREDIT</p>
                 </a>
               </li>
               <li class="nav-item has-treeview menu-close">
                 <a href="/adm_transaction" class="nav-link">
                   <i class="right fas fa-angle-left"></i>
-                  <p style="padding-left:10px;">AKUNTANSI</p>
+                  <p class="pl-1">AKUNTANSI</p>
                 </a>
               </li>
               <li class="nav-item has-treeview menu-close">
                 <a href="/adm_transaction" class="nav-link">
                   <i class="right fas fa-angle-left"></i>
-                  <p style="padding-left:10px;">INVENTARIS</p>
+                  <p class="pl-1">INVENTARIS</p>
                 </a>
               </li>
               <li class="nav-item has-treeview menu-close">
                 <a href="/adm_transaction" class="nav-link">
                   <i class="right fas fa-angle-left"></i>
-                  <p style="padding-left:10px;">STANDING INSTRUCTION</p>
+                  <p class="pl-1">STANDING INSTRUCTION</p>
                 </a>
               </li>
             </ul>

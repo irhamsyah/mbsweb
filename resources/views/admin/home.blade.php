@@ -24,7 +24,7 @@
             </div>
             <div class="alert alert-danger alert-dismissible">
                 <i class="fa fa-key" aria-hidden="true" style="padding-right:10px"></i>
-                Mohon Jaga Kerahasiaan Password Anda, selalu Ubah Password Anda Secara Berkala <a href="#">di sini</a>. 
+                Mohon Jaga Kerahasiaan Password Anda, selalu Ubah Password Anda Secara Berkala <a href="/password/reset">di sini</a>. 
             </div>
             <div class="alert alert-success alert-dismissible">
                 <i class="fa fa-book" aria-hidden="true" style="padding-right:10px"></i>

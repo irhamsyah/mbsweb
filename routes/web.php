@@ -15,13 +15,14 @@ use Illuminate\Support\Facades\Route;
 */
 //Frontend Page
 Auth::routes();
+// tes lagi
 // Route::get('tes',function(){
 //     return view('auth.register');
 // });
 
 // Route::get('/verify','Auth\RegisterController@verifyUser')->name('verify.user');
 
-Route::get('/', 'FrontendController@index');
+Route::get('/', 'HomeController@index');
 Route::get('/tracking', 'FrontendController@tracking');
 Route::post('/tracking', 'FrontendController@trackingpost');
 Route::get('/service', 'FrontendController@service')->name('service.get');

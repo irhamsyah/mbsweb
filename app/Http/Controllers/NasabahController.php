@@ -5,6 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\Nasabah;
+use App\Identitas;
+use App\KodeGroup1Nasabah;
+use App\Perkawinan;
+use App\Negara;
+use App\Kota;
+use App\Gelar;
+use App\Pekerjaan;
+use App\HubunganDebitur;
+use App\GolonganDebitur;
+use App\BidangUsaha;
 use App\Logo;
 
 use Illuminate\Http\Request;
@@ -46,8 +56,20 @@ class NasabahController extends Controller
       $logos = Logo::all();
       $nasabahs = Nasabah::select('*')->limit(100)->orderby('nasabah.nasabah_id','ASC')->get();
       $users = User::all();
+      $identitass = Identitas::all();
+      $kodegroup1nasabahs = KodeGroup1Nasabah::all();
+      $perkawinans = Perkawinan::all();
+      $negaras = Negara::all();
+      $kotas = Kota::all();
+      $gelars = Gelar::all();
+      $pekerjaans = Pekerjaan::all();
+      $bidangusahas = BidangUsaha::all();
+      $hubungandebiturs = HubunganDebitur::all();
+      $golongandebiturs = GolonganDebitur::all();
 
-      return view('admin/nasabah', ['logos'=> $logos,'nasabahs'=> $nasabahs]);
+      return view('admin/nasabah', ['logos'=> $logos,'nasabahs'=> $nasabahs,'identitass'=> $identitass,'kodegroup1nasabahs'=> $kodegroup1nasabahs,
+      'perkawinans'=> $perkawinans,'negaras'=> $negaras,'kotas'=> $kotas,'pekerjaans'=> $pekerjaans,'gelars'=> $gelars,
+      'bidangusahas'=> $bidangusahas,'hubungandebiturs'=> $hubungandebiturs,'golongandebiturs'=> $golongandebiturs]);
     }
     public function bo_cs_de_nasabah_cari(Request $request)
     {
@@ -63,8 +85,20 @@ class NasabahController extends Controller
       ->limit(100)->orderby('nasabah.nasabah_id','ASC')->get();
 
       $users = User::all();
+      $identitass = Identitas::all();
+      $kodegroup1nasabahs = KodeGroup1Nasabah::all();
+      $perkawinans = Perkawinan::all();
+      $negaras = Negara::all();
+      $kotas = Kota::all();
+      $gelars = Gelar::all();
+      $pekerjaans = Pekerjaan::all();
+      $bidangusahas = BidangUsaha::all();
+      $hubungandebiturs = HubunganDebitur::all();
+      $goldebiturs = GolonganDebitur::all();
 
-      return view('admin/nasabah', ['logos'=> $logos,'nasabahs'=> $nasabahs]);
+      return view('admin/nasabah', ['logos'=> $logos,'nasabahs'=> $nasabahs,'identitass'=> $identitass,'kodegroup1nasabahs'=> $kodegroup1nasabahs,
+      'perkawinans'=> $perkawinans,'negaras'=> $negaras,'kotas'=> $kotas,'pekerjaans'=> $pekerjaans,'gelars'=> $gelars,
+      'bidangusahas'=> $bidangusahas,'hubungandebiturs'=> $hubungandebiturs,'goldebiturs'=> $goldebiturs]);
     }
 
     public function admin_transaction_add(Request $request)

@@ -94,11 +94,11 @@ class NasabahController extends Controller
       $pekerjaans = Pekerjaan::all();
       $bidangusahas = BidangUsaha::all();
       $hubungandebiturs = HubunganDebitur::all();
-      $goldebiturs = GolonganDebitur::all();
+      $golongandebiturs = GolonganDebitur::all();
 
       return view('admin/nasabah', ['logos'=> $logos,'nasabahs'=> $nasabahs,'identitass'=> $identitass,'kodegroup1nasabahs'=> $kodegroup1nasabahs,
       'perkawinans'=> $perkawinans,'negaras'=> $negaras,'kotas'=> $kotas,'pekerjaans'=> $pekerjaans,'gelars'=> $gelars,
-      'bidangusahas'=> $bidangusahas,'hubungandebiturs'=> $hubungandebiturs,'goldebiturs'=> $goldebiturs]);
+      'bidangusahas'=> $bidangusahas,'hubungandebiturs'=> $hubungandebiturs,'golongandebiturs'=> $golongandebiturs]);
     }
 
     public function admin_transaction_add(Request $request)

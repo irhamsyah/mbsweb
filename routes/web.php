@@ -24,9 +24,9 @@ Auth::routes();
 
 // Route::get('/verify','Auth\RegisterController@verifyUser')->name('verify.user');
 
-// Route::get('/', function () {
-//     return redirect(route('login'));
-// });
+Route::get('/', function () {
+    return redirect(route('login'));
+});
 //Admin Page
 Auth::routes([
     'register'=>false

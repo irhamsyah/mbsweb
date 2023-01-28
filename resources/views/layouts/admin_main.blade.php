@@ -32,6 +32,8 @@
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
   <!-- Tempusdominus Bbootstrap 4 -->
   <link rel="stylesheet" href="{{ asset('plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="{{ asset('plugins/sweetalert2/sweetalert2.min.css') }}">
   <!-- Select2 -->
   <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
   <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
@@ -302,6 +304,8 @@
 </script>
 <!-- Bootstrap 4 -->
 <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<!-- SweetAlert2 -->
+<script src="{{ asset('plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 <!-- Select2 -->
 <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
 <!-- ChartJS -->
@@ -371,6 +375,15 @@
     $('#inputDate4').datetimepicker({
         format: 'Y-MM-DD hh:mm:ss'
     });
+
+    // $("#inputnamanasabah").on('change', function(){
+    //   var namanasabahinput = this.value;
+    //   Swal.fire(
+    //       'Attentiton!',
+    //       'name of nasabah : '+namanasabahinput,
+    //       'warning'
+    //     )
+    // });
 
     //set ckeditor
     CKEDITOR.replace( 'inputText1' );

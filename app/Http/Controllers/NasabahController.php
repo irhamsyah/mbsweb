@@ -101,7 +101,7 @@ class NasabahController extends Controller
       'bidangusahas'=> $bidangusahas,'hubungandebiturs'=> $hubungandebiturs,'golongandebiturs'=> $golongandebiturs]);
     }
 
-    public function admin_transaction_add(Request $request)
+    public function bo_cs_de_nasabah_add(Request $request)
     {
       $logos = Logo::all();
       $transactions = new Transaction;

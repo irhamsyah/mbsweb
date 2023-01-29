@@ -170,15 +170,15 @@
                                       </div>
                                       <div class="col-lg-2 col-sm-8">
                                         <label for="inputnasabahidedit">Nasabah ID</label>
-                                        <input type="text" id="inputnasabahidedit" name="inputnasabahidedit" readonly value="{{ $nasabah->nasabah_id }}" class="form-control">
+                                        <input type="text" name="inputnasabahidedit" value="{{ $nasabah->nasabah_id }}" readonly class="inputnasabahidedit form-control">
                                       </div>
                                       <div class="col-lg-1 col-sm-4">
                                         <label for="inputcabedit">Cab</label>
-                                        <input type="text" id="inputcabedit" name="inputcabedit" readonly value="001" class="form-control">
+                                        <input type="text" name="inputcabedit" readonly value="{{ $nasabah->CAB }}" class="inputcabedit form-control">
                                       </div>
                                       <div class="col-lg-2 col-sm-8">
                                         <label for="inputnocifedit">No CIF</label>
-                                        <input type="text" id="inputnocifedit" name="inputnocifedit" value="{{ $nasabah->cif }}" readonly class="form-control">
+                                        <input type="text" name="inputnocifedit" value="{{ $nasabah->cif }}" readonly class="inputnocifedit form-control">
                                       </div>
                                       <div class="col-lg-1 col-sm-4">
                                         <input type="checkbox" name="inputblacklistedit" value="{{ $nasabah->Black_List }}"  <?php if($nasabah->Black_List === 1) {echo "checked";} ?> class="form-checkbox">

@@ -397,10 +397,10 @@
       var idcabanginput = $("#inputcab").val();
       $("#inputnocif").val(idcabanginput+nasabahidinput);
     });
-    $("#inputnasabahidedit").on('change', function(){
+    $(".inputnasabahidedit").on('change', function(){
       var nasabahidinput = this.value;
-      var idcabanginput = $("#inputcabedit").val();
-      $("#inputnocifedit").val(idcabanginput+nasabahidinput);
+      var idcabanginput = $(".inputcabedit").val();
+      $(".inputnocifedit").val(idcabanginput+nasabahidinput);
     });
     // $("#inputnamanasabah").on('change', function(){
     //   var namanasabahinput = this.value;

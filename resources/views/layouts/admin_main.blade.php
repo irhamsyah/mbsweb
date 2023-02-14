@@ -220,10 +220,124 @@
                 </a>
               </li>
               <li class="nav-item has-treeview menu-close">
-                <a href="/adm_transaction" class="nav-link">
+                <a href="#" class="nav-link">
                   <i class="right fas fa-angle-left"></i>
                   <p class="pl-1">TABUNGAN</p>
                 </a>
+                {{-- Menu Tree Tabungan --}}
+                <ul class="nav nav-treeview"> 
+
+                <li class="nav-item has-treeview <?php if($submenu=='de'){echo 'menu-open';}?>">
+                  <a href="#" class="nav-link <?php if($submenu=='de'){echo 'active';}?>">
+                    <i class="right fas fa-angle-left"></i>
+                    <p class="pl-2">DATA ENTRY</p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="/bo_cs_de_tabungan" class="nav-link <?php if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
+                      <p class="pl-3">Rekening Tabungan</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p class="pl-3">Hapus Transaksi</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p class="pl-3">Validasi Transaksi</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#" class="nav-link">
+                      <p class="pl-3">Saldo Awal</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#" class="nav-link">
+                      <p class="pl-3">Perhitungan Bunga</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#" class="nav-link">
+                      <p class="pl-3">Browse Bunga & Pajak</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#" class="nav-link">
+                      <p class="pl-3">Overbook Bunga</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#" class="nav-link">
+                      <p class="pl-3">Blokir/UnBlokir Tabungan</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#" class="nav-link">
+                      <p class="pl-3">Konsolidasi Saldo</p>
+                    </a>
+                  </li>
+                  </ul>
+                </li>
+                <li class="nav-item has-treeview menu-close">
+                  <a href="/adm_transaction" class="nav-link">
+                    <i class="right fas fa-angle-left"></i>
+                    <p class="pl-2">ADMINISTRATOR</p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p class="pl-3">Konfigurasi Nasabah</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p class="pl-3">Data Agama</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p class="pl-3">Data Golongan</p>
+                    </a>
+                  </li>
+                  </ul>
+                </li>
+                <li class="nav-item has-treeview menu-close">
+                  <a href="/adm_transaction" class="nav-link">
+                    <i class="right fas fa-angle-left"></i>
+                    <p class="pl-2">PENCETAKAN LAPORAN</p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p class="pl-3">Dokumen Nasabah</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p class="pl-3">Dokumen Tabungan</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p class="pl-3">Dokumen Deposito</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p class="pl-3">Dokumen Kredit</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p class="pl-3">Dokumen Umum & Inv</p>
+                    </a>
+                  </li>
+                  </ul>
+                </li>
+                </ul>
+                {{-- batas menu tree tabungan --}}
               </li>
               <li class="nav-item has-treeview menu-close">
                 <a href="/adm_transaction" class="nav-link">

@@ -118,7 +118,7 @@
                       Action <span class="caret"></span>
                     </a>
                     <div class="dropdown-menu">
-                      <a href="#" tabindex="-1" class="dropdown-item" data-toggle="modal" data-target="#modal-edit-nasabah_{{ md5($nasabah->nasabah_id.'Bast90') }}">
+                      <a href="#" tabindex="-1" class="dropdown-item" data-toggle="modal" data-target="#modal-edit-transaction_{{ md5($nasabah->nasabah_id.'Bast90') }}">
                           Detail & Edit
                       </a>
                       <form action="/bo_cs_de_nasabah" method="post"  style="margin-bottom: 0;" onclick="return confirm('Apakah anda yakin akan menghapus data ini?')">
@@ -133,7 +133,7 @@
                     </div>
                   </td>
                 </tr>
-                <div class="modal fade" id="modal-edit-nasabah_{{ md5($nasabah->nasabah_id.'Bast90') }}">
+                <div class="modal fade" id="modal-edit-transaction_{{ md5($nasabah->nasabah_id.'Bast90') }}">
                   <div class="modal-dialog modal-xl">
                     <form action="/bo_cs_de_nasabah" method="post" enctype="multipart/form-data">
                       <div class="modal-content">

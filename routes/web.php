@@ -15,13 +15,15 @@ use Illuminate\Support\Facades\Route;
 */
 //Frontend Page
 // PERUBAHAN PADA ROUTE 
+//PENAMABAHAN KOMNENTAR KE 2
 Auth::routes();
+// tes lagi
 // Route::get('tes',function(){
 //     return view('auth.register');
 // });
 
 // Route::get('/verify','Auth\RegisterController@verifyUser')->name('verify.user');
-
+//Route To login
 Route::get('/', function () {
     return redirect(route('login'));
 });
@@ -43,7 +45,19 @@ Route::post('/bo_cs_de_nasabah', 'NasabahController@bo_cs_de_nasabah_add');
 Route::put('/bo_cs_de_nasabah', 'NasabahController@bo_cs_de_nasabah_edit');
 Route::delete('/bo_cs_de_nasabah', 'NasabahController@bo_cs_de_nasabah_destroy');
 Route::post('/bo_cs_de_nasabah/cari','NasabahController@bo_cs_de_nasabah_cari');//search filter
+//Route Tabungan
+Route::get('/bo_cs_de_tabungan','TabunganController@bo_cs_de_tabungan');
 
+Route::get('tes',function()
+{
+    
+
+    $nama=App\Tabungan::where('NASABAH_ID','02000020')->nasabah()->get();
+    foreach($nama as $names)
+    {
+        echo $names->no_rekening;
+    }
+});
 Route::get('/bo_cs_de_profil', 'NasabahController@bo_cs_de_profil');
 Route::post('/bo_cs_de_profil', 'NasabahController@bo_cs_de_profil_add');
 Route::put('/bo_cs_de_profil', 'NasabahController@bo_cs_de_profil_edit');

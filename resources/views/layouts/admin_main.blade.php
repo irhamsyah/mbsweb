@@ -224,8 +224,8 @@
                   <p class="pl-1">TELLER</p>
                 </a>
               </li>
-              <li class="nav-item has-treeview menu-close">
-                <a href="#" class="nav-link">
+              <li class="nav-item has-treeview menu-close <?php if($menu=='tb'){echo 'menu-open';}?>">
+                <a href="#" class="nav-link <?php if($menu=='tb'){echo 'active';}?>">
                   <i class="right fas fa-angle-left"></i>
                   <p class="pl-1">TABUNGAN</p>
                 </a>
@@ -239,7 +239,7 @@
                   </a>
                   <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="/bo_cs_de_tabungan" class="nav-link <?php if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
+                    <a href="/bo_tb_de_tabungan" class="nav-link <?php if($page=='tabungan' or $page=='tabungancari'){echo 'active';}?>">
                       <p class="pl-3">Rekening Tabungan</p>
                     </a>
                   </li>
@@ -478,23 +478,26 @@
     //Initialize Select2 Elements
     $('.select2').select2()
 
-    //Date picker
-    $('#inputDate1').datetimepicker({
-        format: 'Y-MM-DD'
-    });
-    $('#inputDate2').datetimepicker({
-        format: 'Y-MM-DD'
-    });
-    $('#inputDate3').datetimepicker({
-        format: 'Y-MM-DD'
-    });
-    $('#inputDate4').datetimepicker({
-        format: 'Y-MM-DD'
-    });
-    $('#inputDate5').datetimepicker({
-        format: 'Y-MM-DD'
-    });
-    $('#inputDate6').datetimepicker({
+    // //Date picker
+    // $('#inputDate1').datetimepicker({
+    //     format: 'Y-MM-DD'
+    // });
+    // $('#inputDate2').datetimepicker({
+    //     format: 'Y-MM-DD'
+    // });
+    // $('#inputDate3').datetimepicker({
+    //     format: 'Y-MM-DD'
+    // }); 
+    // $('#inputDate4').datetimepicker({
+    //     format: 'Y-MM-DD'
+    // });
+    // $('#inputDate5').datetimepicker({
+    //     format: 'Y-MM-DD'
+    // });
+    // $('#inputDate6').datetimepicker({
+    //     format: 'Y-MM-DD'
+    // });
+    $('.dateYMD').datetimepicker({
         format: 'Y-MM-DD'
     });
     //Date picker tgl-jam

@@ -85,7 +85,7 @@ Route::delete('/bo_cs_rp_nasabah', 'ReportController@bo_cs_rp_nasabah_destroy');
 Route::post('/bo_cs_rp_nasabah/cari','ReportController@bo_cs_rp_nasabah_cari');//search filter
 
 //Route Tabungan
-Route::get('/bo_cs_de_tabungan','TabunganController@bo_cs_de_tabungan');
+Route::get('/bo_tb_de_tabungan','TabunganController@bo_tb_de_tabungan');
 
 Route::get('tes',function()
 {

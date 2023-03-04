@@ -54,8 +54,15 @@
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
   <!-- Logo Icon -->
   <link rel="shortcut icon" href="{{ asset('img/logo/'.$logo) }}" type="image/x-icon">
+  {{-- Data Table --}}
+  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
+  {{-- --------- --}}
+
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
+  {{-- @php($nilaites) --}}
 <div class="wrapper">
   <!-- Navbar -->
   <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -84,7 +91,9 @@
               <img src="{{ asset('dist/img/user2-160x160.jpg') }}" alt="User Avatar" class="img-size-50 mr-3 img-circle">
               <div class="media-body">
                 <h3 class="dropdown-item-title">
+                  @if(isset(Auth::user()['name']))
                   {{ Auth::user()->name }}
+                  @endif
                 </h3>
                 <p class="text-sm">{{ 'Call me whenever you can...' }}</p>
                 <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> {{ '4 Hours Ago' }}</p>
@@ -446,7 +455,40 @@
 <!-- AdminLTE App -->
 <script src="{{ asset('dist/js/adminlte.js') }}"></script>
 <script>
+  // fungsi ambil value text No_rekening disamakan ke No_alternatif
+$(document).ready(function(){
+		$("#norekadd").change(
+    		function(){
+        	document.getElementById("noaltadd").value =document.getElementById("norekadd").value;
+        }
+    );
+});
+// Fungsi untuk menampilkan Data Nasabah dari Modal yg akan diinput ke Tabungan
+$(document).ready(function(){
+// code to read selected table row cell data (values).
+$("#nasabahdata").on('click','#tes1',function(){
+     // get the current row
+     var currentRow=$(this).closest("tr"); 
+     
+     var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+     var col2=currentRow.find("td:eq(1)").text(); // get current row 2nd TD
+     var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
+    //  var data=col1+"\n"+col2+"\n"+col3;
+     document.getElementById("inputNasabahIdadd").value=col1;
+     document.getElementById("inputNamaNasabahadd").value=col2;
+     document.getElementById("inputalamatadd").value=col3;
+    //  alert(data);
+    document.getElementById("editidnasabah").value=col1;
+     document.getElementById("editnamanasabah").value=col2;
+     document.getElementById("editalamatnasabah").value=col3;
 
+});
+});
+// Menampilkan data nasabah di input text nasabah_id dengan DATATABEL
+$(document).ready(function () {
+    $('#nasabahdata').DataTable();
+});
+// ------------------------------------
   $(function () {
     $("#example1").DataTable({
       "paging": true,
@@ -485,6 +527,11 @@
     $('#inputDate4').datetimepicker({
         format: 'Y-MM-DD hh:mm:ss'
     });
+    $('#inputDate5').datetimepicker({
+        format: 'Y-MM-DD'
+    });
+
+
 
     //set ckeditor
     CKEDITOR.replace( 'inputText1' );
@@ -526,288 +573,6 @@
       $(e.currentTarget).find('input[name="inputIdCategory"]').val(id);
     });
 
-    $('#modal-edit-news').on('show.bs.modal', function(e) {
-      var NewsId = $(e.relatedTarget).data('id');
-      var img_title = $(e.relatedTarget).data('img_title');
-      var text = $(e.relatedTarget).data('text');
-      var title = $(e.relatedTarget).data('title');
-      var id_category = $(e.relatedTarget).data('id_category');
-      var location = $(e.relatedTarget).data('location');
-
-      CKEDITOR.instances['inputTitle1'].setData(title);
-      CKEDITOR.instances['inputText1'].setData(text);
-      $(e.currentTarget).find('select[name="inputIdCategory"]').val(id_category);
-      $(e.currentTarget).find('select[name="inputLanguage"]').val(location);
-      $(e.currentTarget).find('input[name="inputImgOld"]').val(img_title);
-      $(e.currentTarget).find('input[name="inputIdNews"]').val(NewsId);
-    });
-
-    $('#modal-edit-newsimage').on('show.bs.modal', function(e) {
-      var imageId = $(e.relatedTarget).data('id');
-      var img = $(e.relatedTarget).data('img');
-      var id_news = $(e.relatedTarget).data('id_news');
-
-      $(e.currentTarget).find('select[name="inputTitleNews"]').val(id_news);
-      $(e.currentTarget).find('input[name="inputImgOld"]').val(img);
-      $(e.currentTarget).find('input[name="inputIdNewsImg"]').val(imageId);
-    });
-
-    $('#modal-edit-customer').on('show.bs.modal', function(e) {
-      var id = $(e.relatedTarget).data('id');
-      var codecust = $(e.relatedTarget).data('codecust');
-      var namecust = $(e.relatedTarget).data('namecust');
-      var addressinv = $(e.relatedTarget).data('addressinv');
-      var address = $(e.relatedTarget).data('address');
-      var namecust = $(e.relatedTarget).data('namecust');
-      var city = $(e.relatedTarget).data('city');
-      var province = $(e.relatedTarget).data('province');
-      var postal = $(e.relatedTarget).data('postal');
-      var telp = $(e.relatedTarget).data('telp');
-      var fax = $(e.relatedTarget).data('fax');
-      var npwp = $(e.relatedTarget).data('npwp');
-      var pkpno = $(e.relatedTarget).data('pkpno');
-      var desccustomer = $(e.relatedTarget).data('desccustomer');
-      var payment = $(e.relatedTarget).data('payment');
-      var nameperson = $(e.relatedTarget).data('nameperson');
-      var phoneperson = $(e.relatedTarget).data('phoneperson');
-      var emailperson = $(e.relatedTarget).data('emailperson');
-      var faxperson = $(e.relatedTarget).data('faxperson');
-      var username = $(e.relatedTarget).data('username');
-      var password = $(e.relatedTarget).data('password');
-      var entity = $(e.relatedTarget).data('entity');
-      var entityname = $(e.relatedTarget).data('entityname');
-      var status = $(e.relatedTarget).data('status');
-
-      $(e.currentTarget).find('input[name="inputIdCustomer"]').val(id);
-      $(e.currentTarget).find('input[name="inputCostumerCode"]').val(codecust);
-      $(e.currentTarget).find('input[name="inputCostumerName"]').val(namecust);
-      $(e.currentTarget).find('textarea[name="inputAddressInvoice"]').val(addressinv);
-      $(e.currentTarget).find('textarea[name="inputAddress"]').val(address);
-      $(e.currentTarget).find('input[name="inputCity"]').val(city);
-      $(e.currentTarget).find('input[name="inputProvince"]').val(province);
-      $(e.currentTarget).find('input[name="inputPostal"]').val(postal);
-      $(e.currentTarget).find('input[name="inputTelp"]').val(telp);
-      $(e.currentTarget).find('input[name="inputFax"]').val(fax);
-      $(e.currentTarget).find('input[name="inputNPWP"]').val(npwp);
-      $(e.currentTarget).find('input[name="inputPkp"]').val(pkpno);
-      $(e.currentTarget).find('textarea[name="inputCustomerDesc"]').val(desccustomer);
-      $(e.currentTarget).find('input[name="inputTOP"]').val(payment);
-      $(e.currentTarget).find('input[name="inputPersonName"]').val(nameperson);
-      $(e.currentTarget).find('input[name="inputPersonEmail"]').val(phoneperson);
-      $(e.currentTarget).find('input[name="inputPersonPhone"]').val(phoneperson);
-      $(e.currentTarget).find('input[name="inputPersonFax"]').val(faxperson);
-      $(e.currentTarget).find('input[name="inputUsername"]').val(username);
-      $(e.currentTarget).find('input[name="inputPasswordOld"]').val(password);
-      $(e.currentTarget).find('select[name="inputEntity"]').val(entity);
-      $(e.currentTarget).find('input[name="inputAccountName"]').val(namecust+','+entityname);
-      $(e.currentTarget).find('select[name="inputStatus"]').val(status);
-    });
-
-    $('#modal-edit-agent').on('show.bs.modal', function(e) {
-      var id = $(e.relatedTarget).data('id');
-      var codeagent = $(e.relatedTarget).data('codeagent');
-      var nameagent = $(e.relatedTarget).data('nameagent');
-      var addressinv = $(e.relatedTarget).data('addressinv');
-      var address = $(e.relatedTarget).data('address');
-      var namecust = $(e.relatedTarget).data('namecust');
-      var idcity = $(e.relatedTarget).data('idcity');
-      var postal = $(e.relatedTarget).data('postal');
-      var telp = $(e.relatedTarget).data('telp');
-      var fax = $(e.relatedTarget).data('fax');
-      var npwp = $(e.relatedTarget).data('npwp');
-      var pkpno = $(e.relatedTarget).data('pkpno');
-      var descagent = $(e.relatedTarget).data('descagent');
-      var payment = $(e.relatedTarget).data('payment');
-      var nameperson = $(e.relatedTarget).data('nameperson');
-      var phoneperson = $(e.relatedTarget).data('phoneperson');
-      var emailperson = $(e.relatedTarget).data('emailperson');
-      var faxperson = $(e.relatedTarget).data('faxperson');
-
-      $(e.currentTarget).find('input[name="inputIdAgent"]').val(id);
-      $(e.currentTarget).find('input[name="inputAgentCode"]').val(codeagent);
-      $(e.currentTarget).find('input[name="inputAgentName"]').val(nameagent);
-      $(e.currentTarget).find('textarea[name="inputAddressInvoice"]').val(addressinv);
-      $(e.currentTarget).find('textarea[name="inputAddress"]').val(address);
-      $(e.currentTarget).find('select[name="inputIdCity"]').val(idcity);
-      $(e.currentTarget).find('input[name="inputPostal"]').val(postal);
-      $(e.currentTarget).find('input[name="inputTelp"]').val(telp);
-      $(e.currentTarget).find('input[name="inputFax"]').val(fax);
-      $(e.currentTarget).find('input[name="inputNPWP"]').val(npwp);
-      $(e.currentTarget).find('input[name="inputPkp"]').val(pkpno);
-      $(e.currentTarget).find('textarea[name="inputAgentDesc"]').val(descagent);
-      $(e.currentTarget).find('input[name="inputTOP"]').val(payment);
-      $(e.currentTarget).find('input[name="inputPersonName"]').val(nameperson);
-      $(e.currentTarget).find('input[name="inputPersonEmail"]').val(phoneperson);
-      $(e.currentTarget).find('input[name="inputPersonPhone"]').val(phoneperson);
-      $(e.currentTarget).find('input[name="inputPersonFax"]').val(faxperson);
-    });
-
-    $('#modal-edit-bankaccount').on('show.bs.modal', function(e) {
-      var id = $(e.relatedTarget).data('id');
-      var bankname = $(e.relatedTarget).data('bankname');
-      var bankaccount = $(e.relatedTarget).data('bankaccount');
-      var branch = $(e.relatedTarget).data('branch');
-      var accountname = $(e.relatedTarget).data('accountname');
-      var bankaddress = $(e.relatedTarget).data('bankaddress');
-      var agentid = $(e.relatedTarget).data('agentid');
-
-      $(e.currentTarget).find('input[name="inputIdBankAccount"]').val(id);
-      $(e.currentTarget).find('input[name="inputBankName"]').val(bankname);
-      $(e.currentTarget).find('input[name="inputBankAccount"]').val(bankaccount);
-      $(e.currentTarget).find('input[name="inputBranch"]').val(branch);
-      $(e.currentTarget).find('input[name="inputAccountName"]').val(accountname);
-      $(e.currentTarget).find('textarea[name="inputBankAddress"]').val(bankaddress);
-      $(e.currentTarget).find('select[name="inputIdAgent"]').val(agentid);
-    });
-
-    $('#modal-edit-pelayaran').on('show.bs.modal', function(e) {
-      var id = $(e.relatedTarget).data('id');
-      var codepelayaran = $(e.relatedTarget).data('codepelayaran');
-      var namepelayaran = $(e.relatedTarget).data('namepelayaran');
-      var alias = $(e.relatedTarget).data('alias');
-      var address = $(e.relatedTarget).data('address');
-      var city = $(e.relatedTarget).data('city');
-      var province = $(e.relatedTarget).data('province');
-      var namecust = $(e.relatedTarget).data('namecust');
-      var postal = $(e.relatedTarget).data('postal');
-      var telp = $(e.relatedTarget).data('telp');
-      var fax = $(e.relatedTarget).data('fax');
-      var npwp = $(e.relatedTarget).data('npwp');
-      var pkpno = $(e.relatedTarget).data('pkpno');
-      var descpelayaran = $(e.relatedTarget).data('descpelayaran');
-      var payment = $(e.relatedTarget).data('payment');
-      var nameperson = $(e.relatedTarget).data('nameperson');
-      var phoneperson = $(e.relatedTarget).data('phoneperson');
-      var emailperson = $(e.relatedTarget).data('emailperson');
-      var faxperson = $(e.relatedTarget).data('faxperson');
-
-      $(e.currentTarget).find('input[name="inputIdPelayaran"]').val(id);
-      $(e.currentTarget).find('input[name="inputPelayaranCode"]').val(codepelayaran);
-      $(e.currentTarget).find('input[name="inputPelayaranName"]').val(namepelayaran);
-      $(e.currentTarget).find('input[name="inputAlias"]').val(alias);
-      $(e.currentTarget).find('textarea[name="inputAddress"]').val(address);
-      $(e.currentTarget).find('input[name="inputCity"]').val(city);
-      $(e.currentTarget).find('input[name="inputProvince"]').val(province);
-      $(e.currentTarget).find('input[name="inputPostal"]').val(postal);
-      $(e.currentTarget).find('input[name="inputTelp"]').val(telp);
-      $(e.currentTarget).find('input[name="inputFax"]').val(fax);
-      $(e.currentTarget).find('input[name="inputNPWP"]').val(npwp);
-      $(e.currentTarget).find('input[name="inputPkp"]').val(pkpno);
-      $(e.currentTarget).find('textarea[name="inputPelayaranDesc"]').val(descpelayaran);
-      $(e.currentTarget).find('input[name="inputTOP"]').val(payment);
-      $(e.currentTarget).find('input[name="inputPersonName"]').val(nameperson);
-      $(e.currentTarget).find('input[name="inputPersonEmail"]').val(phoneperson);
-      $(e.currentTarget).find('input[name="inputPersonPhone"]').val(phoneperson);
-      $(e.currentTarget).find('input[name="inputPersonFax"]').val(faxperson);
-    });
-
-    $('#modal-edit-tarif').on('show.bs.modal', function(e) {
-      var id = $(e.relatedTarget).data('id');
-      var pelayaranid = $(e.relatedTarget).data('pelayaranid');
-      var city = $(e.relatedTarget).data('city');
-      var province = $(e.relatedTarget).data('province');
-      var price = $(e.relatedTarget).data('price');
-      var date = $(e.relatedTarget).data('date');
-      var picpelayaran = $(e.relatedTarget).data('picpelayaran');
-      var lastprice1 = $(e.relatedTarget).data('lastprice1');
-      var lastprice2 = $(e.relatedTarget).data('lastprice2');
-      var lastprice3 = $(e.relatedTarget).data('lastprice3');
-
-      $(e.currentTarget).find('input[name="inputIdTarif"]').val(id);
-      $(e.currentTarget).find('select[name="inputIdPelayaran"]').val(pelayaranid);
-      $(e.currentTarget).find('input[name="inputCity"]').val(city);
-      $(e.currentTarget).find('input[name="inputProvince"]').val(province);
-      $(e.currentTarget).find('input[name="inputPrice"]').val(price);
-      $(e.currentTarget).find('input[name="inputDate2"]').val(date);
-      $(e.currentTarget).find('input[name="inputPIC"]').val(picpelayaran);
-      $(e.currentTarget).find('input[name="inputLastPrice1"]').val(lastprice1);
-      $(e.currentTarget).find('input[name="inputLastPrice2"]').val(lastprice2);
-      $(e.currentTarget).find('input[name="inputLastPrice3"]').val(lastprice3);
-      $(e.currentTarget).find('input[name="inputLastPrice1_old"]').val(lastprice1);
-      $(e.currentTarget).find('input[name="inputLastPrice2_old"]').val(lastprice2);
-      $(e.currentTarget).find('input[name="inputPrice_old"]').val(price);
-    });
-
-    $('#modal-edit-consignee').on('show.bs.modal', function(e) {
-      var id = $(e.relatedTarget).data('id');
-      var codecons = $(e.relatedTarget).data('codecons');
-      var namecons = $(e.relatedTarget).data('namecons');
-      var addressinv = $(e.relatedTarget).data('addressinv');
-      var address = $(e.relatedTarget).data('address');
-      var namecust = $(e.relatedTarget).data('namecust');
-      var idcity = $(e.relatedTarget).data('idcity');
-      var postal = $(e.relatedTarget).data('postal');
-      var telp = $(e.relatedTarget).data('telp');
-      var fax = $(e.relatedTarget).data('fax');
-      var npwp = $(e.relatedTarget).data('npwp');
-      var pkpno = $(e.relatedTarget).data('pkpno');
-      var desccons = $(e.relatedTarget).data('desccons');
-      var payment = $(e.relatedTarget).data('payment');
-      var nameperson = $(e.relatedTarget).data('nameperson');
-      var phoneperson = $(e.relatedTarget).data('phoneperson');
-      var emailperson = $(e.relatedTarget).data('emailperson');
-      var faxperson = $(e.relatedTarget).data('faxperson');
-
-      $(e.currentTarget).find('input[name="inputIdConsignee"]').val(id);
-      $(e.currentTarget).find('input[name="inputConsigneeCode"]').val(codecons);
-      $(e.currentTarget).find('input[name="inputConsigneeName"]').val(namecons);
-      $(e.currentTarget).find('textarea[name="inputAddressInvoice"]').val(addressinv);
-      $(e.currentTarget).find('textarea[name="inputAddress"]').val(address);
-      $(e.currentTarget).find('select[name="inputIdCity"]').val(idcity);
-      $(e.currentTarget).find('input[name="inputPostal"]').val(postal);
-      $(e.currentTarget).find('input[name="inputTelp"]').val(telp);
-      $(e.currentTarget).find('input[name="inputFax"]').val(fax);
-      $(e.currentTarget).find('input[name="inputNPWP"]').val(npwp);
-      $(e.currentTarget).find('input[name="inputPkp"]').val(pkpno);
-      $(e.currentTarget).find('textarea[name="inputConsigneeDesc"]').val(desccons);
-      $(e.currentTarget).find('input[name="inputTOP"]').val(payment);
-      $(e.currentTarget).find('input[name="inputPersonName"]').val(nameperson);
-      $(e.currentTarget).find('input[name="inputPersonEmail"]').val(phoneperson);
-      $(e.currentTarget).find('input[name="inputPersonPhone"]').val(phoneperson);
-      $(e.currentTarget).find('input[name="inputPersonFax"]').val(faxperson);
-    });
-
-    $('#modal-edit-trucking').on('show.bs.modal', function(e) {
-      var id = $(e.relatedTarget).data('id');
-      var nametrucking = $(e.relatedTarget).data('nametrucking');
-
-      $(e.currentTarget).find('input[name="inputIdTrucking"]').val(id);
-      $(e.currentTarget).find('input[name="inputTruckingName"]').val(nametrucking);
-    });
-
-    $('#modal-edit-vendor').on('show.bs.modal', function(e) {
-      var id = $(e.relatedTarget).data('id');
-      var codevendor = $(e.relatedTarget).data('codevendor');
-      var namevendor = $(e.relatedTarget).data('namevendor');
-      var address = $(e.relatedTarget).data('address');
-      var telp = $(e.relatedTarget).data('telp');
-      var payment = $(e.relatedTarget).data('payment');
-      var truckingtypeid = $(e.relatedTarget).data('truckingtypeid');
-
-      $(e.currentTarget).find('input[name="inputIdVendorTruck"]').val(id);
-      $(e.currentTarget).find('input[name="inputVendorCode"]').val(codevendor);
-      $(e.currentTarget).find('input[name="inputVendorName"]').val(namevendor);
-      $(e.currentTarget).find('textarea[name="inputAddress"]').val(address);
-      $(e.currentTarget).find('input[name="inputTelp"]').val(telp);
-      $(e.currentTarget).find('input[name="inputTOP"]').val(payment);
-      $(e.currentTarget).find('select[name="inputIdTruckingType"]').val(truckingtypeid);
-    });
-
-    $('#modal-edit-location').on('show.bs.modal', function(e) {
-      var id = $(e.relatedTarget).data('id');
-      var codecity = $(e.relatedTarget).data('codecity');
-      var namecity = $(e.relatedTarget).data('namecity');
-      var provincecity = $(e.relatedTarget).data('provincecity');
-      var statusloading = $(e.relatedTarget).data('statusloading');
-      var statuspelayaran = $(e.relatedTarget).data('statuspelayaran');
-
-      $(e.currentTarget).find('input[name="inputIdLocation"]').val(id);
-      $(e.currentTarget).find('input[name="inputCityCode"]').val(codecity);
-      $(e.currentTarget).find('input[name="inputCityName"]').val(namecity);
-      $(e.currentTarget).find('input[name="inputProvince"]').val(provincecity);
-      $(e.currentTarget).find('select[name="inputStatusLoading"]').val(statusloading);
-      $(e.currentTarget).find('select[name="inputStatusPelayaran"]').val(statuspelayaran);
-    });
 
     $('#modal-edit-slider').on('show.bs.modal', function(e) {
       var SliderId = $(e.relatedTarget).data('id');
@@ -815,20 +580,6 @@
 
       $(e.currentTarget).find('input[name="inputImgOld"]').val(img_title);
       $(e.currentTarget).find('input[name="inputIdSlider"]').val(SliderId);
-    });
-
-    $('#modal-edit-testimoni').on('show.bs.modal', function(e) {
-      var TestimoniId = $(e.relatedTarget).data('id');
-      var img_testimoni = $(e.relatedTarget).data('img_testimoni');
-      var name = $(e.relatedTarget).data('name');
-      var position = $(e.relatedTarget).data('position');
-      var testimoni = $(e.relatedTarget).data('testimoni');
-
-      CKEDITOR.instances['inputText1'].setData(testimoni);
-      $(e.currentTarget).find('input[name="inputName"]').val(name);
-      $(e.currentTarget).find('input[name="inputPosition"]').val(position);
-      $(e.currentTarget).find('input[name="inputImgOld"]').val(img_testimoni);
-      $(e.currentTarget).find('input[name="inputIdTestimoni"]').val(TestimoniId);
     });
 
     $('#modal-edit-service').on('show.bs.modal', function(e) {
@@ -843,49 +594,6 @@
       $(e.currentTarget).find('input[name="inputTitle"]').val(title);
       $(e.currentTarget).find('input[name="inputImgOld"]').val(img_title);
       $(e.currentTarget).find('input[name="inputIdService"]').val(ServiceId);
-    });
-
-    $('#modal-edit-tracking').on('show.bs.modal', function(e) {
-      var Id = $(e.relatedTarget).data('id');
-      var longitude = $(e.relatedTarget).data('longitude');
-      var latitude = $(e.relatedTarget).data('latitude');
-      var description = $(e.relatedTarget).data('description');
-      var date = $(e.relatedTarget).data('date');
-      var customer_id = $(e.relatedTarget).data('customer_id');
-      var name_customer = $(e.relatedTarget).data('name_customer');
-      var trans_no = $(e.relatedTarget).data('trans_no');
-      var transaction_id = $(e.relatedTarget).data('transaction_id');
-
-      $(e.currentTarget).find('input[name="inputTransactionNo"]').val(trans_no);
-      $(e.currentTarget).find('input[name="inputCustomerName"]').val(name_customer);
-      $(e.currentTarget).find('input[name="inputDate3"]').val(date);
-      $(e.currentTarget).find('input[name="inputLatitude"]').val(latitude);
-      $(e.currentTarget).find('input[name="inputLongitude"]').val(longitude);
-      $(e.currentTarget).find('textarea[name="inputDesc"]').text(description);
-      $(e.currentTarget).find('input[name="inputIdTracking"]').val(Id);
-      $(e.currentTarget).find('input[name="inputIdTransaction"]').val(transaction_id);
-    });
-
-    $('#modal-edit-transaction').on('show.bs.modal', function(e) {
-      var Id = $(e.relatedTarget).data('id');
-      var trans_no = $(e.relatedTarget).data('trans_no');
-      var name_customer = $(e.relatedTarget).data('name_customer');
-      var loading_date = $(e.relatedTarget).data('loading_date');
-      var pelayaran_id = $(e.relatedTarget).data('pelayaran_id');
-      var location_from = $(e.relatedTarget).data('location_from');
-      var location_to = $(e.relatedTarget).data('location_to');
-      var resi_no = $(e.relatedTarget).data('resi_no');
-      var status = $(e.relatedTarget).data('status');
-
-      $(e.currentTarget).find('input[name="inputTransactionNo"]').val(trans_no);
-      $(e.currentTarget).find('input[name="inputCustomerName"]').val(name_customer);
-      $(e.currentTarget).find('input[name="inputDate3"]').val(loading_date);
-      $(e.currentTarget).find('input[name="inputResi"]').val(resi_no);
-      $(e.currentTarget).find('select[name="inputPelayaran"]').val(pelayaran_id);
-      $(e.currentTarget).find('select[name="inputStatus"]').val(status);
-      $(e.currentTarget).find('input[name="inputFromCity"]').val(location_from);
-      $(e.currentTarget).find('input[name="inputToCity"]').val(location_to);
-      $(e.currentTarget).find('input[name="inputIdTransaction"]').val(Id);
     });
 
     $('#modal-edit-logonew').on('show.bs.modal', function(e) {
@@ -916,7 +624,7 @@
       $(e.currentTarget).find('input[name="inputIdContent"]').val(ContentId);
     });
 
-    $('#modal-edit-contentfooter').on('show.bs.modal', function(e) {
+    $('#modal-edit-contentfooter').on('change', function(e) {
       var ContentFooterId = $(e.relatedTarget).data('id');
       var Title = $(e.relatedTarget).data('title');
       var Description = $(e.relatedTarget).data('description');
@@ -926,14 +634,136 @@
       $(e.currentTarget).find('input[name="inputIdContentFooter"]').val(ContentFooterId);
     });
 
-    $('#modal-edit-contentimage').on('show.bs.modal', function(e) {
-      var ContentFooterId = $(e.relatedTarget).data('id');
-      var Image = $(e.relatedTarget).data('image');
+    // Fungsi untuk menampilkan Data Tabungan yang akan d EDIT
+    $('#modal-edit-tabungan').on('show.bs.modal', function(e) {
+      var No_rekening = $(e.relatedTarget).data('no_rekening');
+      var Jenis_tabungan = $(e.relatedTarget).data('jenis_tabungan');
+      var Hidden_jenis_tabungan = $(e.relatedTarget).data('hidden_jenis_tabungan');
+      var No_alternatif = $(e.relatedTarget).data('no_alternatif');
+      var Cab = $(e.relatedTarget).data('cab');
+      var Nasabah_id = $(e.relatedTarget).data('nasabah_id');
+      var Nama_nasabah = $(e.relatedTarget).data('nama_nasabah');
+      var Alamat = $(e.relatedTarget).data('alamat');
+      var Type_tabungan = $(e.relatedTarget).data('type_tabungan');
+      var Suku_bunga = $(e.relatedTarget).data('suku_bunga');
+      var Persen_pph = $(e.relatedTarget).data('persen_pph');
+      var Tgl_bunga = $(e.relatedTarget).data('tgl_bunga');
+      var Blokir = $(e.relatedTarget).data('blokir');
+      var Saldo_blokir = $(e.relatedTarget).data('saldo_blokir');
+      var Kode_group1 = $(e.relatedTarget).data('kode_group1');
+      var Desc_group1 = $(e.relatedTarget).data('desc_group1');
+      var Kode_group2 = $(e.relatedTarget).data('kode_group2');
+      var Desc_group2 = $(e.relatedTarget).data('desc_group2');
+      var Kode_group3 = $(e.relatedTarget).data('kode_group3');
+      var Desc_group3 = $(e.relatedTarget).data('desc_group3');
+      var Status_aktif = $(e.relatedTarget).data('status_aktif');
+      var Kode_bi_pemilik = $(e.relatedTarget).data('kode_bi_pemilik');
+      var Deskripsi_golongan = $(e.relatedTarget).data('deskripsi_golongan');
+      var Kode_bi_metoda = $(e.relatedTarget).data('kode_bi_metoda');
+      var Deskripsi_metoda = $(e.relatedTarget).data('deskripsi_metoda');
+      var Kode_bi_hubungan = $(e.relatedTarget).data('kode_bi_hubungan');
+      var Deskripsi_sandi = $(e.relatedTarget).data('deskripsi_sandi');
+      var Flag_restricted = $(e.relatedTarget).data('flag_restricted');
+      var Minimum = $(e.relatedTarget).data('minimum');
+      var Setoran_minimum = $(e.relatedTarget).data('setoran_minimum');
+      var Setoran_per_bln = $(e.relatedTarget).data('setoran_per_bln');
+      var Abp = $(e.relatedTarget).data('abp');
+      var Adm_per_bln = $(e.relatedTarget).data('adm_per_bln');
 
-      $(e.currentTarget).find('input[name="inputImgOld"]').val(Image);
-      $(e.currentTarget).find('input[name="inputIdContentImage"]').val(ContentFooterId);
-    });
+      // BAGIAN MENAMPILKAN DI FORM MODAL----------------------
+      $(e.currentTarget).find('input[name="no_rekening"]').val(No_rekening);
+      // Cara Menampilkan Selected option dari DATABASE pada DROPDOWN LIST
+      $('#idSelect').text(Jenis_tabungan);
+      $('#idSelect').val(Hidden_jenis_tabungan);
+      // -------------------------------------------
+      // Cara Menampilkan Selected option dari DATABASE pada DROPDOWN LIST dengan kondisi tertentu
+      // demgan cara id pada OPTION
+      switch(Type_tabungan)
+      {
+        case 1:
+        $('#idSelect2').text("Normal");
+        $('#idSelect2').val(1);
+        break;
+        case 2:
+        $('#idSelect2').text("Kepala Instansi");
+        $('#idSelect2').val(2);
+        break;
+        case 3:
+        $('#idSelect2').text("Juru Bayar");
+        $('#idSelect2').val(3);
+      }
+        //Selected Kode Group 1
+        $('#idkodegroup1').val(Kode_group1)
+        $('#idkodegroup1').text(Desc_group1)
+        //Selected Kode Group 2
+        $('#idkodegroup2').val(Kode_group2)
+        $('#idkodegroup2').text(Desc_group2)
+        //Selected Kode Group 3
+        $('#idkodegroup3').val(Kode_group3)
+        $('#idkodegroup3').text(Desc_group3)
+        // ------------------
+        $('#idkodebi').val(Kode_bi_pemilik)
+        $('#idkodebi').text(Kode_bi_pemilik +'-'+Deskripsi_golongan)
+        $('#idmetoda').val(Kode_bi_metoda);
+        $('#idmetoda').text(Deskripsi_metoda);
+        $('#idbihubungan').val(Kode_bi_hubungan);
+        $('#idbihubungan').text(Deskripsi_sandi);
+        $('#idrestricted').val(Flag_restricted);
+        $('#idrestricted').text(Flag_restricted);
+        //Selected Type Tabugan dengan id pada Select element
+        switch(Abp)
+        {
+          case 1:
+            $("select#idabp option:checked").val(Abp);
+            $("select#idabp option:checked").text("TABUNGAN");
+            break;
+          case 2:
+            $("select#idabp option:checked").val(Abp);
+            $("select#idabp option:checked").text("AB-PASIVA");
+            break;
+          case 3:
+            $("select#idabp option:checked").val(Abp);
+            $("select#idabp option:checked").text("AB-AKTIVA");
+            break;
+          case 4:
+            $("select#idabp option:checked").val(Abp);
+            $("select#idabp option:checked").text("MODAL");
+            break;
+          case 5:
+            $("select#idabp option:checked").val(Abp);
+            $("select#idabp option:checked").text("KEWAJIBAN");
 
+        }
+      // ----------------------------------
+      // Menampilkan nilai pada input TEXT dari DATABASE
+$(e.currentTarget).find('input[name="hidden_jenis_tabungan"]').val(Hidden_jenis_tabungan);                 $(e.currentTarget).find('input[name="no_alternatif"]').val(No_alternatif);
+        $(e.currentTarget).find('input[name="cab"]').val(Cab);
+        $(e.currentTarget).find('input[name="nasabah_id"]').val(Nasabah_id);
+        $(e.currentTarget).find('input[name="nama_nasabah"]').val(Nama_nasabah);
+        $(e.currentTarget).find('input[name="alamat"]').val(Alamat);
+        $(e.currentTarget).find('input[name="suku_bunga"]').val(Suku_bunga);
+        $(e.currentTarget).find('input[name="persen_pph"]').val(Persen_pph);
+        $(e.currentTarget).find('input[name="tgl_bunga"]').val(Tgl_bunga);
+        $(e.currentTarget).find('input[name="minimum"]').val(Minimum);
+        $(e.currentTarget).find('input[name="setoran_minimum"]').val(Setoran_minimum);
+        $(e.currentTarget).find('input[name="setoran_per_bln"]').val(Setoran_per_bln);
+        $(e.currentTarget).find('input[name="adm_per_bln"]').val(Adm_per_bln);
+        $(e.currentTarget).find('input[name="saldo_blokir"]').val(Saldo_blokir);
+
+      // Menampilkan CheckBox Tercentang option dari DATABASE dengan kondisi tertentu
+      if(Blokir=='1')
+      {
+          $("input[name='blokir']").prop('checked',true);
+      }
+      if(Status_aktif==1){
+        $("input[name='baru']").prop('checked', true);
+      }else if(Status_aktif==2){
+        $("input[name='aktif']").prop('checked', true);
+      }else{
+        $("input[name='tutup']").prop('checked', true);
+      }
+
+    } );
 </script>
 </body>
 </html>

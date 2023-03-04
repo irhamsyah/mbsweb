@@ -54,7 +54,7 @@ class NasabahController extends Controller
     public function bo_cs_de_nasabah()
     {
       $logos = Logo::all();
-      $nasabahs = Nasabah::select('*')->limit(100)->orderby('nasabah.nasabah_id','ASC')->get();
+      $nasabahs = Nasabah::select('*')->limit(20)->orderby('nasabah.nasabah_id','ASC')->get();
       $users = User::all();
       $identitass = Identitas::all();
       $kodegroup1nasabahs = KodeGroup1Nasabah::all();
@@ -184,7 +184,7 @@ class NasabahController extends Controller
       }
 
       $users = User::all();
-      $nasabahs = Nasabah::select('*')->limit(100)->orderby('nasabah.nasabah_id','ASC')->get();
+      $nasabahs = Nasabah::select('*')->limit(20)->orderby('nasabah.nasabah_id','ASC')->get();
       $identitass = Identitas::all();
       $kodegroup1nasabahs = KodeGroup1Nasabah::all();
       $perkawinans = Perkawinan::all();
@@ -201,6 +201,7 @@ class NasabahController extends Controller
       'perkawinans'=> $perkawinans,'negaras'=> $negaras,'kotas'=> $kotas,'pekerjaans'=> $pekerjaans,'gelars'=> $gelars,
       'bidangusahas'=> $bidangusahas,'hubungandebiturs'=> $hubungandebiturs,'golongandebiturs'=> $golongandebiturs,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> $msg]);
     }
+
     public function bo_cs_de_nasabah_edit(Request $request)
     {
       $logos = Logo::all();
@@ -304,7 +305,7 @@ class NasabahController extends Controller
       }
 
       $users = User::all();
-      $nasabahs = Nasabah::select('*')->limit(100)->orderby('nasabah.nasabah_id','ASC')->get();
+      $nasabahs = Nasabah::select('*')->limit(20)->orderby('nasabah.nasabah_id','ASC')->get();
       $identitass = Identitas::all();
       $kodegroup1nasabahs = KodeGroup1Nasabah::all();
       $perkawinans = Perkawinan::all();
@@ -321,6 +322,7 @@ class NasabahController extends Controller
       'perkawinans'=> $perkawinans,'negaras'=> $negaras,'kotas'=> $kotas,'pekerjaans'=> $pekerjaans,'gelars'=> $gelars,
       'bidangusahas'=> $bidangusahas,'hubungandebiturs'=> $hubungandebiturs,'golongandebiturs'=> $golongandebiturs,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> $msg]);
     }
+    
     //Direct to Proses Delete Nasabah
     public function bo_cs_de_nasabah_destroy(Request $request)
     {
@@ -335,7 +337,7 @@ class NasabahController extends Controller
         $msg='0';
       }
       $logos = Logo::all();
-      $nasabahs = Nasabah::select('*')->limit(100)->orderby('nasabah.nasabah_id','ASC')->get();
+      $nasabahs = Nasabah::select('*')->limit(20)->orderby('nasabah.nasabah_id','ASC')->get();
       $users = User::all();
       $identitass = Identitas::all();
       $kodegroup1nasabahs = KodeGroup1Nasabah::all();
@@ -352,5 +354,51 @@ class NasabahController extends Controller
       return view('admin/nasabah', ['logos'=> $logos,'nasabahs'=> $nasabahs,'identitass'=> $identitass,'kodegroup1nasabahs'=> $kodegroup1nasabahs,
       'perkawinans'=> $perkawinans,'negaras'=> $negaras,'kotas'=> $kotas,'pekerjaans'=> $pekerjaans,'gelars'=> $gelars,
       'bidangusahas'=> $bidangusahas,'hubungandebiturs'=> $hubungandebiturs,'golongandebiturs'=> $golongandebiturs,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> $msg]);
+    }
+
+
+    public function bo_cs_de_profil()
+    {
+      $logos = Logo::all();
+      $nasabahs = Nasabah::select('*')->limit(20)->orderby('nasabah.nasabah_id','ASC')->get();
+      $users = User::all();
+      $identitass = Identitas::all();
+      $kodegroup1nasabahs = KodeGroup1Nasabah::all();
+      $perkawinans = Perkawinan::all();
+      $negaras = Negara::all();
+      $kotas = Kota::all();
+      $gelars = Gelar::all();
+      $pekerjaans = Pekerjaan::all();
+      $bidangusahas = BidangUsaha::all();
+      $hubungandebiturs = HubunganDebitur::all();
+      $golongandebiturs = GolonganDebitur::all();
+      $lastnasabahid = Nasabah::max('nasabah_id');
+
+      return view('admin/profil', ['logos'=> $logos,'nasabahs'=> $nasabahs,'identitass'=> $identitass,'kodegroup1nasabahs'=> $kodegroup1nasabahs,
+      'perkawinans'=> $perkawinans,'negaras'=> $negaras,'kotas'=> $kotas,'pekerjaans'=> $pekerjaans,'gelars'=> $gelars,
+      'bidangusahas'=> $bidangusahas,'hubungandebiturs'=> $hubungandebiturs,'golongandebiturs'=> $golongandebiturs,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> '']);
+    }
+
+
+    public function bo_cs_de_simulasi()
+    {
+      $logos = Logo::all();
+      $nasabahs = Nasabah::select('*')->limit(20)->orderby('nasabah.nasabah_id','ASC')->get();
+      $users = User::all();
+      $identitass = Identitas::all();
+      $kodegroup1nasabahs = KodeGroup1Nasabah::all();
+      $perkawinans = Perkawinan::all();
+      $negaras = Negara::all();
+      $kotas = Kota::all();
+      $gelars = Gelar::all();
+      $pekerjaans = Pekerjaan::all();
+      $bidangusahas = BidangUsaha::all();
+      $hubungandebiturs = HubunganDebitur::all();
+      $golongandebiturs = GolonganDebitur::all();
+      $lastnasabahid = Nasabah::max('nasabah_id');
+
+      return view('admin/simulasi', ['logos'=> $logos,'nasabahs'=> $nasabahs,'identitass'=> $identitass,'kodegroup1nasabahs'=> $kodegroup1nasabahs,
+      'perkawinans'=> $perkawinans,'negaras'=> $negaras,'kotas'=> $kotas,'pekerjaans'=> $pekerjaans,'gelars'=> $gelars,
+      'bidangusahas'=> $bidangusahas,'hubungandebiturs'=> $hubungandebiturs,'golongandebiturs'=> $golongandebiturs,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> '']);
     }
 }

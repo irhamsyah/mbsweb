@@ -57,10 +57,17 @@
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
   <!-- Logo Icon -->
   <link rel="shortcut icon" href="{{ asset('img/logo/'.$logo) }}" type="image/x-icon">
+  {{-- Data Table --}}
+  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
+  {{-- --------- --}}
+
   <!-- SweetAlert2 -->
   <script src="{{ asset('plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
+  {{-- @php($nilaites) --}}
 <div class="wrapper">
   <!-- Navbar -->
   <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -89,7 +96,9 @@
               <img src="{{ asset('dist/img/user2-160x160.jpg') }}" alt="User Avatar" class="img-size-50 mr-3 img-circle">
               <div class="media-body">
                 <h3 class="dropdown-item-title">
+                  @if(isset(Auth::user()['name']))
                   {{ Auth::user()->name }}
+                  @endif
                 </h3>
                 <p class="text-sm">{{ 'Call me whenever you can...' }}</p>
                 <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> {{ '4 Hours Ago' }}</p>
@@ -453,7 +462,40 @@
 <!-- AdminLTE App -->
 <script src="{{ asset('dist/js/adminlte.js') }}"></script>
 <script>
+  // fungsi ambil value text No_rekening disamakan ke No_alternatif
+$(document).ready(function(){
+		$("#norekadd").change(
+    		function(){
+        	document.getElementById("noaltadd").value =document.getElementById("norekadd").value;
+        }
+    );
+});
+// Fungsi untuk menampilkan Data Nasabah dari Modal yg akan diinput ke Tabungan
+$(document).ready(function(){
+// code to read selected table row cell data (values).
+$("#nasabahdata").on('click','#tes1',function(){
+     // get the current row
+     var currentRow=$(this).closest("tr"); 
+     
+     var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+     var col2=currentRow.find("td:eq(1)").text(); // get current row 2nd TD
+     var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
+    //  var data=col1+"\n"+col2+"\n"+col3;
+     document.getElementById("inputNasabahIdadd").value=col1;
+     document.getElementById("inputNamaNasabahadd").value=col2;
+     document.getElementById("inputalamatadd").value=col3;
+    //  alert(data);
+    document.getElementById("editidnasabah").value=col1;
+     document.getElementById("editnamanasabah").value=col2;
+     document.getElementById("editalamatnasabah").value=col3;
 
+});
+});
+// Menampilkan data nasabah di input text nasabah_id dengan DATATABEL
+$(document).ready(function () {
+    $('#nasabahdata').DataTable();
+});
+// ------------------------------------
   $(function () {
     $("#example1").DataTable({
       "paging": true,
@@ -507,6 +549,11 @@
     $('#inputDate12').datetimepicker({
         format: 'Y-MM-DD hh:mm:ss'
     });
+    $('#inputDate5').datetimepicker({
+        format: 'Y-MM-DD'
+    });
+
+
 
     //set value otomatis
     $("#inputnasabahid").on('change', function(){
@@ -560,7 +607,205 @@
       $("#inputAccountName_add").val(valueCompany+valueEntity);
     });
 
+    //Set data to Modals
+    $('#modal-edit-newscategory').on('show.bs.modal', function(e) {
+      var id = $(e.relatedTarget).data('id');
+      var category = $(e.relatedTarget).data('category');
+      $(e.currentTarget).find('input[name="inputNewsCategory"]').val(category);
+      $(e.currentTarget).find('input[name="inputIdCategory"]').val(id);
+    });
 
+
+    $('#modal-edit-slider').on('show.bs.modal', function(e) {
+      var SliderId = $(e.relatedTarget).data('id');
+      var img_title = $(e.relatedTarget).data('img_title');
+
+      $(e.currentTarget).find('input[name="inputImgOld"]').val(img_title);
+      $(e.currentTarget).find('input[name="inputIdSlider"]').val(SliderId);
+    });
+
+    $('#modal-edit-service').on('show.bs.modal', function(e) {
+      var ServiceId = $(e.relatedTarget).data('id');
+      var img_title = $(e.relatedTarget).data('img_title');
+      var title = $(e.relatedTarget).data('title');
+      var detailid = $(e.relatedTarget).data('detailid');
+      var detailen = $(e.relatedTarget).data('detailen');
+
+      CKEDITOR.instances['inputText1'].setData(detailid);
+      CKEDITOR.instances['inputTitle1'].setData(detailen);
+      $(e.currentTarget).find('input[name="inputTitle"]').val(title);
+      $(e.currentTarget).find('input[name="inputImgOld"]').val(img_title);
+      $(e.currentTarget).find('input[name="inputIdService"]').val(ServiceId);
+    });
+
+    $('#modal-edit-logonew').on('show.bs.modal', function(e) {
+      var LogoId = $(e.relatedTarget).data('id');
+      var logoName = $(e.relatedTarget).data('name');
+
+      $(e.currentTarget).find('input[name="inputLogoOld"]').val(logoName);
+      $(e.currentTarget).find('input[name="inputIdLogo"]').val(LogoId);
+    });
+
+    $('#modal-edit-content').on('show.bs.modal', function(e) {
+      var ContentId = $(e.relatedTarget).data('id');
+      var TitleID = $(e.relatedTarget).data('titleid');
+      var TitleEN = $(e.relatedTarget).data('titleen');
+      var DescriptionID = $(e.relatedTarget).data('descriptionid');
+      var DescriptionEN = $(e.relatedTarget).data('descriptionen');
+      var Image = $(e.relatedTarget).data('image');
+
+      CKEDITOR.instances['inputText1'].setData(DescriptionID);
+      CKEDITOR.instances['inputTitle1'].setData(DescriptionEN);
+      $(e.currentTarget).find('input[name="inputTitleID"]').val(TitleID);
+      $(e.currentTarget).find('input[name="inputTitleEN"]').val(TitleEN);
+      if(ContentId=='8'){
+        $(e.currentTarget).find('input[name="inputImage"]').val(Image);
+      }else{
+        $(e.currentTarget).find('input[name="inputImage"]').val('');
+      }
+      $(e.currentTarget).find('input[name="inputIdContent"]').val(ContentId);
+    });
+
+    $('#modal-edit-contentfooter').on('change', function(e) {
+      var ContentFooterId = $(e.relatedTarget).data('id');
+      var Title = $(e.relatedTarget).data('title');
+      var Description = $(e.relatedTarget).data('description');
+
+      CKEDITOR.instances['inputText1'].setData(Description);
+      $(e.currentTarget).find('input[name="inputTitle"]').val(Title);
+      $(e.currentTarget).find('input[name="inputIdContentFooter"]').val(ContentFooterId);
+    });
+
+    // Fungsi untuk menampilkan Data Tabungan yang akan d EDIT
+    $('#modal-edit-tabungan').on('show.bs.modal', function(e) {
+      var No_rekening = $(e.relatedTarget).data('no_rekening');
+      var Jenis_tabungan = $(e.relatedTarget).data('jenis_tabungan');
+      var Hidden_jenis_tabungan = $(e.relatedTarget).data('hidden_jenis_tabungan');
+      var No_alternatif = $(e.relatedTarget).data('no_alternatif');
+      var Cab = $(e.relatedTarget).data('cab');
+      var Nasabah_id = $(e.relatedTarget).data('nasabah_id');
+      var Nama_nasabah = $(e.relatedTarget).data('nama_nasabah');
+      var Alamat = $(e.relatedTarget).data('alamat');
+      var Type_tabungan = $(e.relatedTarget).data('type_tabungan');
+      var Suku_bunga = $(e.relatedTarget).data('suku_bunga');
+      var Persen_pph = $(e.relatedTarget).data('persen_pph');
+      var Tgl_bunga = $(e.relatedTarget).data('tgl_bunga');
+      var Blokir = $(e.relatedTarget).data('blokir');
+      var Saldo_blokir = $(e.relatedTarget).data('saldo_blokir');
+      var Kode_group1 = $(e.relatedTarget).data('kode_group1');
+      var Desc_group1 = $(e.relatedTarget).data('desc_group1');
+      var Kode_group2 = $(e.relatedTarget).data('kode_group2');
+      var Desc_group2 = $(e.relatedTarget).data('desc_group2');
+      var Kode_group3 = $(e.relatedTarget).data('kode_group3');
+      var Desc_group3 = $(e.relatedTarget).data('desc_group3');
+      var Status_aktif = $(e.relatedTarget).data('status_aktif');
+      var Kode_bi_pemilik = $(e.relatedTarget).data('kode_bi_pemilik');
+      var Deskripsi_golongan = $(e.relatedTarget).data('deskripsi_golongan');
+      var Kode_bi_metoda = $(e.relatedTarget).data('kode_bi_metoda');
+      var Deskripsi_metoda = $(e.relatedTarget).data('deskripsi_metoda');
+      var Kode_bi_hubungan = $(e.relatedTarget).data('kode_bi_hubungan');
+      var Deskripsi_sandi = $(e.relatedTarget).data('deskripsi_sandi');
+      var Flag_restricted = $(e.relatedTarget).data('flag_restricted');
+      var Minimum = $(e.relatedTarget).data('minimum');
+      var Setoran_minimum = $(e.relatedTarget).data('setoran_minimum');
+      var Setoran_per_bln = $(e.relatedTarget).data('setoran_per_bln');
+      var Abp = $(e.relatedTarget).data('abp');
+      var Adm_per_bln = $(e.relatedTarget).data('adm_per_bln');
+
+      // BAGIAN MENAMPILKAN DI FORM MODAL----------------------
+      $(e.currentTarget).find('input[name="no_rekening"]').val(No_rekening);
+      // Cara Menampilkan Selected option dari DATABASE pada DROPDOWN LIST
+      $('#idSelect').text(Jenis_tabungan);
+      $('#idSelect').val(Hidden_jenis_tabungan);
+      // -------------------------------------------
+      // Cara Menampilkan Selected option dari DATABASE pada DROPDOWN LIST dengan kondisi tertentu
+      // demgan cara id pada OPTION
+      switch(Type_tabungan)
+      {
+        case 1:
+        $('#idSelect2').text("Normal");
+        $('#idSelect2').val(1);
+        break;
+        case 2:
+        $('#idSelect2').text("Kepala Instansi");
+        $('#idSelect2').val(2);
+        break;
+        case 3:
+        $('#idSelect2').text("Juru Bayar");
+        $('#idSelect2').val(3);
+      }
+        //Selected Kode Group 1
+        $('#idkodegroup1').val(Kode_group1)
+        $('#idkodegroup1').text(Desc_group1)
+        //Selected Kode Group 2
+        $('#idkodegroup2').val(Kode_group2)
+        $('#idkodegroup2').text(Desc_group2)
+        //Selected Kode Group 3
+        $('#idkodegroup3').val(Kode_group3)
+        $('#idkodegroup3').text(Desc_group3)
+        // ------------------
+        $('#idkodebi').val(Kode_bi_pemilik)
+        $('#idkodebi').text(Kode_bi_pemilik +'-'+Deskripsi_golongan)
+        $('#idmetoda').val(Kode_bi_metoda);
+        $('#idmetoda').text(Deskripsi_metoda);
+        $('#idbihubungan').val(Kode_bi_hubungan);
+        $('#idbihubungan').text(Deskripsi_sandi);
+        $('#idrestricted').val(Flag_restricted);
+        $('#idrestricted').text(Flag_restricted);
+        //Selected Type Tabugan dengan id pada Select element
+        switch(Abp)
+        {
+          case 1:
+            $("select#idabp option:checked").val(Abp);
+            $("select#idabp option:checked").text("TABUNGAN");
+            break;
+          case 2:
+            $("select#idabp option:checked").val(Abp);
+            $("select#idabp option:checked").text("AB-PASIVA");
+            break;
+          case 3:
+            $("select#idabp option:checked").val(Abp);
+            $("select#idabp option:checked").text("AB-AKTIVA");
+            break;
+          case 4:
+            $("select#idabp option:checked").val(Abp);
+            $("select#idabp option:checked").text("MODAL");
+            break;
+          case 5:
+            $("select#idabp option:checked").val(Abp);
+            $("select#idabp option:checked").text("KEWAJIBAN");
+
+        }
+      // ----------------------------------
+      // Menampilkan nilai pada input TEXT dari DATABASE
+$(e.currentTarget).find('input[name="hidden_jenis_tabungan"]').val(Hidden_jenis_tabungan);                 $(e.currentTarget).find('input[name="no_alternatif"]').val(No_alternatif);
+        $(e.currentTarget).find('input[name="cab"]').val(Cab);
+        $(e.currentTarget).find('input[name="nasabah_id"]').val(Nasabah_id);
+        $(e.currentTarget).find('input[name="nama_nasabah"]').val(Nama_nasabah);
+        $(e.currentTarget).find('input[name="alamat"]').val(Alamat);
+        $(e.currentTarget).find('input[name="suku_bunga"]').val(Suku_bunga);
+        $(e.currentTarget).find('input[name="persen_pph"]').val(Persen_pph);
+        $(e.currentTarget).find('input[name="tgl_bunga"]').val(Tgl_bunga);
+        $(e.currentTarget).find('input[name="minimum"]').val(Minimum);
+        $(e.currentTarget).find('input[name="setoran_minimum"]').val(Setoran_minimum);
+        $(e.currentTarget).find('input[name="setoran_per_bln"]').val(Setoran_per_bln);
+        $(e.currentTarget).find('input[name="adm_per_bln"]').val(Adm_per_bln);
+        $(e.currentTarget).find('input[name="saldo_blokir"]').val(Saldo_blokir);
+
+      // Menampilkan CheckBox Tercentang option dari DATABASE dengan kondisi tertentu
+      if(Blokir=='1')
+      {
+          $("input[name='blokir']").prop('checked',true);
+      }
+      if(Status_aktif==1){
+        $("input[name='baru']").prop('checked', true);
+      }else if(Status_aktif==2){
+        $("input[name='aktif']").prop('checked', true);
+      }else{
+        $("input[name='tutup']").prop('checked', true);
+      }
+
+    } );
 </script>
 </body>
 </html>

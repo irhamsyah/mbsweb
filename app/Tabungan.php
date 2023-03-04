@@ -5,7 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 class Tabungan extends Model
-{
+{   
+    // relasi Many to One , NamaTabel,LokalKey(Tabung),ForeignKey(Nasabah)
     public function nasabahs()
     {
         return $this->belongsTo('App\Nasabah','NASABAH_ID','nasabah_id');

@@ -21,6 +21,7 @@
   @foreach($logos as $logo)
     @php ($logo=$logo->logo_name)
   @endforeach
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>MBS Web</title>
@@ -32,6 +33,8 @@
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
   <!-- Tempusdominus Bbootstrap 4 -->
   <link rel="stylesheet" href="{{ asset('plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="{{ asset('plugins/sweetalert2/sweetalert2.min.css') }}">
   <!-- Select2 -->
   <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
   <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
@@ -60,6 +63,8 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
   {{-- --------- --}}
 
+  <!-- SweetAlert2 -->
+  <script src="{{ asset('plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
   {{-- @php($nilaites) --}}
@@ -149,73 +154,73 @@
                   <ul class="nav nav-treeview">
                   <li class="nav-item">
                     <a href="/bo_cs_de_nasabah" class="nav-link <?php if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
-                      <p class="pl-3">Data Nasabah</p>
+                      <p class="pl-4">Data Nasabah</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Profil Data Nasabah</p>
+                    <a href="/bo_cs_de_profil" class="nav-link <?php if($page=='profil' or $page=='profilcari'){echo 'active';}?>">
+                      <p class="pl-4">Profil Data Nasabah</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Simulasi Pembiayaan</p>
+                    <a href="/bo_cs_de_simulasi" class="nav-link <?php if($page=='simulasi' or $page=='simulasicari'){echo 'active';}?>">
+                      <p class="pl-4">Simulasi Pembiayaan</p>
                     </a>
                   </li>
                   </ul>
                 </li>
-                <li class="nav-item has-treeview menu-close">
-                  <a href="/adm_transaction" class="nav-link">
+                <li class="nav-item has-treeview  <?php if($submenu=='ad'){echo 'menu-open';}?>">
+                  <a href="#" class="nav-link <?php if($submenu=='ad'){echo 'active';}?>">
                     <i class="right fas fa-angle-left"></i>
                     <p class="pl-2">ADMINISTRATOR</p>
                   </a>
                   <ul class="nav nav-treeview">
+                  <!-- <li class="nav-item">
+                    <a href="/bo_cs_ad_konfnasabah" class="nav-link <?php if($page=='konfnasabah'){echo 'active';}?>">
+                      <p class="pl-4">Konfigurasi Nasabah</p>
+                    </a>
+                  </li> -->
                   <li class="nav-item">
-                    <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Konfigurasi Nasabah</p>
+                    <a href="/bo_cs_ad_agama" class="nav-link <?php if($page=='agama'){echo 'active';}?>">
+                      <p class="pl-4">Data Agama</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Data Agama</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Data Golongan</p>
+                    <a href="/bo_cs_ad_golongan" class="nav-link <?php if($page=='golongan'){echo 'active';}?>">
+                      <p class="pl-4">Data Golongan</p>
                     </a>
                   </li>
                   </ul>
                 </li>
                 <li class="nav-item has-treeview menu-close">
-                  <a href="/adm_transaction" class="nav-link">
+                  <a href="#" class="nav-link">
                     <i class="right fas fa-angle-left"></i>
                     <p class="pl-2">PENCETAKAN LAPORAN</p>
                   </a>
                   <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Dokumen Nasabah</p>
+                    <a href="/bo_cs_rp_nasabah" class="nav-link">
+                      <p class="pl-4">Dokumen Nasabah</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Dokumen Tabungan</p>
+                    <a href="/bo_cs_rp_tabungan" class="nav-link">
+                      <p class="pl-4">Dokumen Tabungan</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Dokumen Deposito</p>
+                    <a href="/bo_cs_rp_deposito" class="nav-link">
+                      <p class="pl-4">Dokumen Deposito</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Dokumen Kredit</p>
+                    <a href="/bo_cs_rp_kredit" class="nav-link">
+                      <p class="pl-4">Dokumen Kredit</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Dokumen Umum & Inv</p>
+                    <a href="/bo_cs_rp_umum" class="nav-link">
+                      <p class="pl-4">Dokumen Umum & Inv</p>
                     </a>
                   </li>
                   </ul>
@@ -228,8 +233,8 @@
                   <p class="pl-1">TELLER</p>
                 </a>
               </li>
-              <li class="nav-item has-treeview menu-close">
-                <a href="#" class="nav-link">
+              <li class="nav-item has-treeview menu-close <?php if($menu=='tb'){echo 'menu-open';}?>">
+                <a href="#" class="nav-link <?php if($menu=='tb'){echo 'active';}?>">
                   <i class="right fas fa-angle-left"></i>
                   <p class="pl-1">TABUNGAN</p>
                 </a>
@@ -243,7 +248,7 @@
                   </a>
                   <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="/bo_cs_de_tabungan" class="nav-link <?php if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
+                    <a href="/bo_tb_de_tabungan" class="nav-link <?php if($page=='tabungan' or $page=='tabungancari'){echo 'active';}?>">
                       <p class="pl-3">Rekening Tabungan</p>
                     </a>
                   </li>
@@ -425,6 +430,8 @@
 </script>
 <!-- Bootstrap 4 -->
 <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<!-- SweetAlert2 -->
+<script src="{{ asset('plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 <!-- Select2 -->
 <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
 <!-- ChartJS -->
@@ -513,18 +520,33 @@ $(document).ready(function () {
     //Initialize Select2 Elements
     $('.select2').select2()
 
-    //Date picker
-    $('#inputDate1').datetimepicker({
-        format: 'Y-MM-DD'
-    });
-    $('#inputDate2').datetimepicker({
+    // //Date picker
+    // $('#inputDate1').datetimepicker({
+    //     format: 'Y-MM-DD'
+    // });
+    // $('#inputDate2').datetimepicker({
+    //     format: 'Y-MM-DD'
+    // });
+    // $('#inputDate3').datetimepicker({
+    //     format: 'Y-MM-DD'
+    // }); 
+    // $('#inputDate4').datetimepicker({
+    //     format: 'Y-MM-DD'
+    // });
+    // $('#inputDate5').datetimepicker({
+    //     format: 'Y-MM-DD'
+    // });
+    // $('#inputDate6').datetimepicker({
+    //     format: 'Y-MM-DD'
+    // });
+    $('.dateYMD').datetimepicker({
         format: 'Y-MM-DD'
     });
     //Date picker tgl-jam
-    $('#inputDate3').datetimepicker({
+    $('#inputDate11').datetimepicker({
         format: 'Y-MM-DD hh:mm:ss'
     });
-    $('#inputDate4').datetimepicker({
+    $('#inputDate12').datetimepicker({
         format: 'Y-MM-DD hh:mm:ss'
     });
     $('#inputDate5').datetimepicker({
@@ -532,6 +554,26 @@ $(document).ready(function () {
     });
 
 
+
+    //set value otomatis
+    $("#inputnasabahid").on('change', function(){
+      var nasabahidinput = this.value;
+      var idcabanginput = $("#inputcab").val();
+      $("#inputnocif").val(idcabanginput+nasabahidinput);
+    });
+    $(".inputnasabahidedit").on('change', function(){
+      var nasabahidinput = this.value;
+      var idcabanginput = $(".inputcabedit").val();
+      $(".inputnocifedit").val(idcabanginput+nasabahidinput);
+    });
+    // $("#inputnamanasabah").on('change', function(){
+    //   var namanasabahinput = this.value;
+    //   Swal.fire(
+    //       'Attentiton!',
+    //       'name of nasabah : '+namanasabahinput,
+    //       'warning'
+    //     )
+    // });
 
     //set ckeditor
     CKEDITOR.replace( 'inputText1' );

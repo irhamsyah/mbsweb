@@ -118,7 +118,7 @@
                       Action <span class="caret"></span>
                     </a>
                     <div class="dropdown-menu">
-                      <a href="#" tabindex="-1" class="dropdown-item" data-toggle="modal" data-target="#modal-edit-nasabah_{{ md5($nasabah->nasabah_id.'Bast90') }}">
+                      <a href="#" tabindex="-1" class="dropdown-item" data-toggle="modal" data-target="#modal-edit-transaction_{{ md5($nasabah->nasabah_id.'Bast90') }}">
                           Detail & Edit
                       </a>
                       <form action="/bo_cs_de_nasabah" method="post"  style="margin-bottom: 0;" onclick="return confirm('Apakah anda yakin akan menghapus data ini?')">
@@ -133,7 +133,7 @@
                     </div>
                   </td>
                 </tr>
-                <div class="modal fade" id="modal-edit-nasabah_{{ md5($nasabah->nasabah_id.'Bast90') }}">
+                <div class="modal fade" id="modal-edit-transaction_{{ md5($nasabah->nasabah_id.'Bast90') }}">
                   <div class="modal-dialog modal-xl">
                     <form action="/bo_cs_de_nasabah" method="post" enctype="multipart/form-data">
                       <div class="modal-content">
@@ -201,10 +201,10 @@
                                         <input type="text" name="inputtempatlahiredit" value="{{ $nasabah->tempatlahir }}" class="form-control">
                                       </div>
                                       <div class="col-lg-2 col-sm-6">
-                                        <label for="inputDate4_{{ md5($nasabah->nasabah_id.'Bast90') }}">Tanggal Lahir</label>
-                                        <div class="input-group dateYMD" id="inputDate4_{{ md5($nasabah->nasabah_id.'Bast90') }}" data-target-input="nearest">
-                                            <input type="text" name="inputtgllahiredit" value="{{ $nasabah->tgllahir }}" class="form-control datetimepicker-input" data-target="#inputDate4_{{ md5($nasabah->nasabah_id.'Bast90') }}"/>
-                                            <div class="input-group-append" data-target="#inputDate4_{{ md5($nasabah->nasabah_id.'Bast90') }}" data-toggle="datetimepicker">
+                                        <label for="inputDate4">Tanggal Lahir</label>
+                                        <div class="input-group date" id="inputDate4" data-target-input="nearest">
+                                            <input type="text" name="inputtgllahiredit" value="{{ $nasabah->tgllahir }}" class="form-control datetimepicker-input" data-target="#inputDate4"/>
+                                            <div class="input-group-append" data-target="#inputDate4" data-toggle="datetimepicker">
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                             </div>
                                         </div>
@@ -243,10 +243,10 @@
                                         <input type="text" name="inputnoidentitasedit" value="{{ $nasabah->no_id }}" class="form-control">
                                       </div>
                                       <div class="col-lg-2 col-sm-6">
-                                        <label for="inputDate5_{{ md5($nasabah->nasabah_id.'Bast90') }}">Masa Berlaku</label>
-                                        <div class="input-group dateYMD" id="inputDate5_{{ md5($nasabah->nasabah_id.'Bast90') }}" data-target-input="nearest">
-                                            <input type="text" name="inputmasaberlakuedit" value="{{ $nasabah->tglid }}" class="form-control datetimepicker-input" data-target="#inputDate5_{{ md5($nasabah->nasabah_id.'Bast90') }}"/>
-                                            <div class="input-group-append" data-target="#inputDate5_{{ md5($nasabah->nasabah_id.'Bast90') }}" data-toggle="datetimepicker">
+                                        <label for="inputDate5">Masa Berlaku</label>
+                                        <div class="input-group date" id="inputDate5" data-target-input="nearest">
+                                            <input type="text" name="inputmasaberlakuedit" value="{{ $nasabah->tglid }}" class="form-control datetimepicker-input" data-target="#inputDate5"/>
+                                            <div class="input-group-append" data-target="#inputDate5" data-toggle="datetimepicker">
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                             </div>
                                         </div>
@@ -447,10 +447,10 @@
                                         <input type="text" name="inputidpendampingedit" value="{{ $nasabah->id_pasangan }}" class="form-control">
                                       </div>
                                       <div class="col-lg-3 col-sm-6">
-                                        <label for="inputDate6_{{ md5($nasabah->nasabah_id.'Bast90') }}">Tanggal Lahir Pendamping</label>
-                                        <div class="input-group dateYMD" id="inputDate6_{{ md5($nasabah->nasabah_id.'Bast90') }}" data-target-input="nearest">
-                                            <input type="text" name="inputtgllahirpendampingedit" value="{{ $nasabah->tgllhr_pasangan }}" class="form-control datetimepicker-input" data-target="#inputDate6_{{ md5($nasabah->nasabah_id.'Bast90') }}"/>
-                                            <div class="input-group-append" data-target="#inputDate6_{{ md5($nasabah->nasabah_id.'Bast90') }}" data-toggle="datetimepicker">
+                                        <label for="inputDate6">Tanggal Lahir Pendamping</label>
+                                        <div class="input-group date" id="inputDate6" data-target-input="nearest">
+                                            <input type="text" name="inputtgllahirpendampingedit" value="{{ $nasabah->tgllhr_pasangan }}" class="form-control datetimepicker-input" data-target="#inputDate6"/>
+                                            <div class="input-group-append" data-target="#inputDate6" data-toggle="datetimepicker">
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                             </div>
                                         </div>
@@ -635,11 +635,7 @@
                         </div>
                         <div class="col-lg-2 col-sm-6">
                           <label for="inputDate1">Tanggal Lahir</label>
-<<<<<<< HEAD
                           <div class="input-group date" id="inputDate1" data-target-input="nearest">
-=======
-                          <div class="input-group dateYMD" id="inputDate1" data-target-input="nearest">
->>>>>>> 89630d1fcf831b53315f93c898b53c965390a266
                               <input type="text" name="inputtgllahir" class="form-control datetimepicker-input" data-target="#inputDate1"/>
                               <div class="input-group-append" data-target="#inputDate1" data-toggle="datetimepicker">
                                   <div class="input-group-text"><i class="fa fa-calendar"></i></div>
@@ -681,7 +677,7 @@
                         </div>
                         <div class="col-lg-2 col-sm-6">
                           <label for="inputDate2">Masa Berlaku</label>
-                          <div class="input-group dateYMD" id="inputDate2" data-target-input="nearest">
+                          <div class="input-group date" id="inputDate2" data-target-input="nearest">
                               <input type="text" name="inputmasaberlaku" class="form-control datetimepicker-input" data-target="#inputDate2"/>
                               <div class="input-group-append" data-target="#inputDate2" data-toggle="datetimepicker">
                                   <div class="input-group-text"><i class="fa fa-calendar"></i></div>
@@ -885,7 +881,7 @@
                         </div>
                         <div class="col-lg-3 col-sm-6">
                           <label for="inputDate3">Tanggal Lahir Pendamping</label>
-                          <div class="input-group dateYMD" id="inputDate3" data-target-input="nearest">
+                          <div class="input-group date" id="inputDate3" data-target-input="nearest">
                               <input type="text" name="inputtgllahirpendamping" class="form-control datetimepicker-input" data-target="#inputDate3"/>
                               <div class="input-group-append" data-target="#inputDate3" data-toggle="datetimepicker">
                                   <div class="input-group-text"><i class="fa fa-calendar"></i></div>

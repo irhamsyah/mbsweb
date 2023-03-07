@@ -30,7 +30,7 @@ class TabunganController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function bo_cs_de_tabungan()
+    public function bo_tb_de_tabungan()
     {
         $logos = Logo::all();
         $nasabah=Nasabah::select('nasabah_id','nama_nasabah','alamat')->get();

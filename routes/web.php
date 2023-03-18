@@ -110,4 +110,16 @@ Route::get('bo_tabungan_edit_cari',
     'as'=>'getcariprofiletab',
     'uses'=>'TabunganController@bo_cs_de_tabungan'
 ]);
-
+// Routing Report Nominatif
+Route::get('bo_tb_rpt_nominatif','TabunganController@bo_tb_rpt_nominatif')->name('bo_tb_rpt_nominatif');
+Route::post('bo_tb_rpt_nominatifview','TabunganController@bo_tb_rpt_nominatifview')->name('bo_tb_rpt_nominatifview');
+Route::post('nominatifeksport/{id}',
+[
+    'as'=>'nominatifeksport',
+    'uses'=>'TabunganController@exportnominatiftabungan'
+]
+);
+Route::get('nominatifeksport/{id}',function($id){
+    return $id;
+}
+);

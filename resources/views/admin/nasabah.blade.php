@@ -635,11 +635,7 @@
                         </div>
                         <div class="col-lg-2 col-sm-6">
                           <label for="inputDate1">Tanggal Lahir</label>
-<<<<<<< HEAD
-                          <div class="input-group date" id="inputDate1" data-target-input="nearest">
-=======
                           <div class="input-group dateYMD" id="inputDate1" data-target-input="nearest">
->>>>>>> 89630d1fcf831b53315f93c898b53c965390a266
                               <input type="text" name="inputtgllahir" class="form-control datetimepicker-input" data-target="#inputDate1"/>
                               <div class="input-group-append" data-target="#inputDate1" data-toggle="datetimepicker">
                                   <div class="input-group-text"><i class="fa fa-calendar"></i></div>

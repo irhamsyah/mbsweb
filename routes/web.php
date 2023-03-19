@@ -85,7 +85,7 @@ Route::delete('/bo_cs_rp_nasabah', 'ReportController@bo_cs_rp_nasabah_destroy');
 Route::post('/bo_cs_rp_nasabah/cari','ReportController@bo_cs_rp_nasabah_cari');//search filter
 
 //Route Tabungan
-Route::get('/bo_cs_de_tabungan','TabunganController@bo_cs_de_tabungan')->name('showtabungan');
+Route::get('/bo_tb_de_tabungan','TabunganController@bo_tb_de_tabungan')->name('showtabungan');
 //Route Edit Tabungan 
 Route::post('bo_tab_edit_tabungan',
     [
@@ -110,15 +110,16 @@ Route::get('bo_tabungan_edit_cari',
     'as'=>'getcariprofiletab',
     'uses'=>'TabunganController@bo_cs_de_tabungan'
 ]);
-Route::get('/bo_tb_de_tabungan','TabunganController@bo_tb_de_tabungan');
-
-Route::get('tes',function()
-{
-    
-
-    $nama=App\Tabungan::where('NASABAH_ID','02000020')->nasabah()->get();
-    foreach($nama as $names)
-    {
-        echo $names->no_rekening;
-    }
-});
+// Routing Report Nominatif
+Route::get('bo_tb_rpt_nominatif','TabunganController@bo_tb_rpt_nominatif')->name('bo_tb_rpt_nominatif');
+Route::post('bo_tb_rpt_nominatifview','TabunganController@bo_tb_rpt_nominatifview')->name('bo_tb_rpt_nominatifview');
+Route::post('nominatifeksport/{id}',
+[
+    'as'=>'nominatifeksport',
+    'uses'=>'TabunganController@exportnominatiftabungan'
+]
+);
+Route::get('nominatifeksport/{id}',function($id){
+    return $id;
+}
+);

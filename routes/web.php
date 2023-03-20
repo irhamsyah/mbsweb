@@ -110,7 +110,7 @@ Route::get('bo_tabungan_edit_cari',
     'as'=>'getcariprofiletab',
     'uses'=>'TabunganController@bo_cs_de_tabungan'
 ]);
-Route::get('/bo_tb_de_tabungan','TabunganController@bo_tb_de_tabungan');
+// Route::get('/bo_tb_de_tabungan','TabunganController@bo_tb_de_tabungan');
 
 Route::get('tes',function()
 {

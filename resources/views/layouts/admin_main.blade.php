@@ -335,31 +335,30 @@
                     <p class="pl-2">PENCETAKAN LAPORAN</p>
                   </a>
                   <ul class="nav nav-treeview">
-                  <li class="nav-item">
+                    <li class="nav-item has-treeview menu-close">
+
                     <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Dokumen Nasabah</p>
+                      <i class="right fas fa-angle-left"></i>
+                      <p class="pl-2">Nominatif</p>
                     </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Dokumen Tabungan</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Dokumen Deposito</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Dokumen Kredit</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Dokumen Umum & Inv</p>
-                    </a>
-                  </li>
+                    <ul class="nav nav-treeview">
+                      <li class="nav-item">
+                        <a href="/bo_tb_rpt_nominatif" class="nav-link">
+                          <p class="pl-3">Nominatif Rinci</p>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a href="/adm_transaction" class="nav-link">
+                          <p class="pl-3">Nominatif Rekap</p>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a href="/adm_transaction" class="nav-link">
+                          <p class="pl-3">Nominatif Rinci</p>
+                        </a>
+                      </li>
+                    </ul>
+                    </li>
                   </ul>
                 </li>
                 </ul>
@@ -564,8 +563,9 @@ $(document).ready(function () {
     $('#inputDate5').datetimepicker({
         format: 'Y-MM-DD'
     });
-
-
+    $('#idtglnominatif').datetimepicker({
+        format: 'Y-MM-DD'
+    });
 
     //set value otomatis
     $("#inputnasabahid").on('change', function(){

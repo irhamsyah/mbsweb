@@ -105,48 +105,17 @@
                       Action <span class="caret"></span>
                     </a>
                     <div class="dropdown-menu">
-                      <a href="#" tabindex="-1" class="dropdown-item" data-toggle="modal" data-target="#modal-profil-nasabah_{{ trim($nasabah->nasabah_id) }}">
-                          Detail Profil
-                      </a>
+                      <form method="post" action="/bo_cs_de_profil/detail">
+                      @csrf
+                        <input type="hidden" name="idnasabah" value="{{ trim($nasabah->nasabah_id) }}" class="form-control">
+                        <input type="hidden" name="idnasabahhash" value="{{ md5(trim($nasabah->nasabah_id).'Bast90') }}" class="form-control">
+                        <button type="submit" tabindex="-1" class="dropdown-item">
+                            Detail Profil
+                        </button>
+                      </form>
                     </div>
                   </td>
                 </tr>
-                <div class="modal fade" id="modal-profil-nasabah_{{ trim($nasabah->nasabah_id) }}">
-                  <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h4 class="modal-title">Detail Profil Nasabah <span class="titleProfilModal"></span></h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                      </div>
-                      <div class="modal-body">
-                        <div class="tableProfil">
-                            <div class="rowProfil">
-                                <div class="cellProfil"><b>Produk</b></div>
-                                <div class="cellProfil"><b>No Rekening</b></div>
-                                <div class="cellProfil"><b>Saldo Awal</b></div>
-                                <div class="cellProfil"><b>Saldo Saat Ini</b></div>
-                                <div class="cellProfil"><b>Action</b></div>
-                            </div>
-                            @foreach($kredits as $index => $kredit)
-                            <div class="rowProfil">
-                                <div class="cellProfil">{{ $kredit->DESKRIPSI_JENIS_KREDIT }}</div>
-                                <div class="cellProfil">{{ $kredit->NO_REKENING }}</div>
-                                <div class="cellProfil">{{ $kredit->POKOK_SALDO_REALISASI }}</div>
-                                <div class="cellProfil">{{ $kredit->POKOK_SALDO_AKHIR }}</div>
-                                <div class="cellProfil">Action</div>
-                            </div>
-                            @endforeach
-                      </div>
-                      <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                      </div>
-                    </div>
-                    <!-- /.modal-content -->
-                  </div>
-                  <!-- /.modal-dialog -->
-                </div>
                 @endforeach
               </tbody>
               <tfoot>

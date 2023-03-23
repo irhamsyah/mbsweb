@@ -16,6 +16,7 @@ use App\HubunganDebitur;
 use App\GolonganDebitur;
 use App\BidangUsaha;
 use App\Kredit;
+use App\Tabungan;
 use App\Logo;
 
 use Illuminate\Http\Request;
@@ -361,7 +362,7 @@ class NasabahController extends Controller
     public function bo_cs_de_profil()
     {
       $logos = Logo::all();
-      $nasabahs = Nasabah::select('*')->limit(20)->orderby('nasabah.nasabah_id','DESC')->get();
+      $nasabahs = Nasabah::select('*')->limit(20)->orderby('nasabah.nasabah_id','ASC')->get();
       $lastnasabahid = Nasabah::max('nasabah_id');
 
       return view('admin/profil', ['logos'=> $logos,'nasabahs'=> $nasabahs,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> '']);
@@ -376,18 +377,64 @@ class NasabahController extends Controller
         $query->where('nama_nasabah', 'LIKE', '%' . request()->namanasabah1 . '%');
       })
       ->limit(20)->orderby('nasabah.nasabah_id','ASC')->get();
-      
-      $kredits = Kredit::select('NO_REKENING','JENIS_PINJAMAN','POKOK_SALDO_REALISASI','POKOK_SALDO_AKHIR','DESKRIPSI_JENIS_KREDIT')
-      ->leftJoin('kodejeniskredit', function($join) {
-        $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
-      })
-      ->where('kredit.NASABAH_ID', 'LIKE', request()->idnasabah1 . '%')
-      ->orderby('kredit.NO_REKENING','ASC')->get();
-
       $users = User::all();
       $lastnasabahid = Nasabah::max('nasabah_id');
 
-      return view('admin/profil_cari', ['logos'=> $logos,'nasabahs'=> $nasabahs,'kredits'=> $kredits,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> '']);
+      return view('admin/profil_cari', ['logos'=> $logos,'nasabahs'=> $nasabahs,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> '']);
+    }
+
+    public function bo_cs_de_profil_detail(Request $request)
+    {
+      $logos = Logo::all();
+      $users = User::all();
+      $lastnasabahid = Nasabah::max('nasabah_id');
+      $nasabahs = Nasabah::where('nasabah_id', 'LIKE', '%' . request()->idnasabah . '%');
+      $kredits = Kredit::select('NO_REKENING','JENIS_PINJAMAN','POKOK_SALDO_REALISASI','POKOK_SALDO_AKHIR','DESKRIPSI_JENIS_KREDIT','NASABAH_ID')
+      ->leftJoin('kodejeniskredit', function($join) {
+        $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
+      })
+      ->where('kredit.NASABAH_ID', 'LIKE', request()->idnasabah . '%')
+      ->orderby('kredit.NO_REKENING','ASC')->get();
+      if(!$kredits)
+        abort('404');
+
+      $tabungans = Tabungan::select('NO_REKENING','JENIS_TABUNGAN','SALDO_AKHIR','DESKRIPSI_JENIS_TABUNGAN','NASABAH_ID')
+      ->leftJoin('kodejenistabungan', function($join) {
+        $join->on('tabung.JENIS_TABUNGAN', '=', 'kodejenistabungan.KODE_JENIS_TABUNGAN');
+      })
+      ->where('tabung.NASABAH_ID', 'LIKE', request()->idnasabah . '%')
+      ->orderby('tabung.NO_REKENING','ASC')->get();
+      if(!$tabungans)
+      abort('404');
+
+      return view('admin/profil_detail', ['logos'=> $logos,'nasabahs'=> $nasabahs,'kredits'=> $kredits,'tabungans'=> $tabungans,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> '']);
+    }
+
+    public function bo_cs_de_profil_kredit(Request $request)
+    {
+      $logos = Logo::all();
+      $users = User::all();
+      if(request()->jenisprofil=='kredit'){
+        $kredits = Kredit::select('kredit.*','kodejeniskredit.DESKRIPSI_JENIS_KREDIT')
+        ->leftJoin('kodejeniskredit', function($join) {
+          $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
+        })
+        ->where('kredit.NO_REKENING', 'LIKE', request()->idkredit . '%')
+        ->orderby('kredit.NO_REKENING','ASC')->get();
+        if(!$kredits)
+          abort('404');
+      }else if(request()->jenisprofil=='tabung'){
+        $kredits = Tabungan::select('NO_REKENING','JENIS_TABUNGAN','SALDO_AKHIR','DESKRIPSI_JENIS_TABUNGAN','NASABAH_ID')
+        ->leftJoin('kodejenistabungan', function($join) {
+          $join->on('tabung.JENIS_TABUNGAN', '=', 'kodejenistabungan.KODE_JENIS_TABUNGAN');
+        })
+        ->where('tabung.NO_REKENING', 'LIKE', request()->idkredit . '%')
+        ->orderby('tabung.NO_REKENING','ASC')->get();
+        if(!$kredits)
+        abort('404');
+      }
+      $jenisprofil=request()->jenisprofil;
+      return view('admin/profil_kredit', ['logos'=> $logos,'kredits'=> $kredits,'jenisprofil'=> $jenisprofil,'msgstatus'=> '']);
     }
 
 

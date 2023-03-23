@@ -15,6 +15,7 @@ use App\Pekerjaan;
 use App\HubunganDebitur;
 use App\GolonganDebitur;
 use App\BidangUsaha;
+use App\Kredit;
 use App\Logo;
 
 use Illuminate\Http\Request;
@@ -356,27 +357,37 @@ class NasabahController extends Controller
       'bidangusahas'=> $bidangusahas,'hubungandebiturs'=> $hubungandebiturs,'golongandebiturs'=> $golongandebiturs,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> $msg]);
     }
 
-
+    //Profil Nasabah Page
     public function bo_cs_de_profil()
     {
       $logos = Logo::all();
-      $nasabahs = Nasabah::select('*')->limit(20)->orderby('nasabah.nasabah_id','ASC')->get();
-      $users = User::all();
-      $identitass = Identitas::all();
-      $kodegroup1nasabahs = KodeGroup1Nasabah::all();
-      $perkawinans = Perkawinan::all();
-      $negaras = Negara::all();
-      $kotas = Kota::all();
-      $gelars = Gelar::all();
-      $pekerjaans = Pekerjaan::all();
-      $bidangusahas = BidangUsaha::all();
-      $hubungandebiturs = HubunganDebitur::all();
-      $golongandebiturs = GolonganDebitur::all();
+      $nasabahs = Nasabah::select('*')->limit(20)->orderby('nasabah.nasabah_id','DESC')->get();
       $lastnasabahid = Nasabah::max('nasabah_id');
 
-      return view('admin/profil', ['logos'=> $logos,'nasabahs'=> $nasabahs,'identitass'=> $identitass,'kodegroup1nasabahs'=> $kodegroup1nasabahs,
-      'perkawinans'=> $perkawinans,'negaras'=> $negaras,'kotas'=> $kotas,'pekerjaans'=> $pekerjaans,'gelars'=> $gelars,
-      'bidangusahas'=> $bidangusahas,'hubungandebiturs'=> $hubungandebiturs,'golongandebiturs'=> $golongandebiturs,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> '']);
+      return view('admin/profil', ['logos'=> $logos,'nasabahs'=> $nasabahs,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> '']);
+    }
+    
+    public function bo_cs_de_profil_cari(Request $request)
+    {
+      $logos = Logo::all();
+
+      $nasabahs = Nasabah::where('nasabah_id', 'LIKE', '%' . request()->idnasabah1 . '%')
+      ->when(request()->namanasabah1, function($query) {
+        $query->where('nama_nasabah', 'LIKE', '%' . request()->namanasabah1 . '%');
+      })
+      ->limit(20)->orderby('nasabah.nasabah_id','ASC')->get();
+      
+      $kredits = Kredit::select('NO_REKENING','JENIS_PINJAMAN','POKOK_SALDO_REALISASI','POKOK_SALDO_AKHIR','DESKRIPSI_JENIS_KREDIT')
+      ->leftJoin('kodejeniskredit', function($join) {
+        $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
+      })
+      ->where('kredit.NASABAH_ID', 'LIKE', request()->idnasabah1 . '%')
+      ->orderby('kredit.NO_REKENING','ASC')->get();
+
+      $users = User::all();
+      $lastnasabahid = Nasabah::max('nasabah_id');
+
+      return view('admin/profil_cari', ['logos'=> $logos,'nasabahs'=> $nasabahs,'kredits'=> $kredits,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> '']);
     }
 
 

@@ -57,6 +57,18 @@
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
   <!-- Logo Icon -->
   <link rel="shortcut icon" href="{{ asset('img/logo/'.$logo) }}" type="image/x-icon">
+  <style>
+    .tableProfil {
+        display: table;
+    }
+    .rowProfil {
+        display: table-row;
+    }
+    .cellProfil {
+        display: table-cell;
+    }
+  </style>
+
   {{-- Data Table --}}
   <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
   <script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
@@ -248,7 +260,7 @@
                   </a>
                   <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="/bo_tb_de_tabungan" class="nav-link <?php if($page=='tabungan' or $page=='tabungancari'){echo 'active';}?>">
+                    <a href="/bo_cs_de_tabungan" class="nav-link <?php if($page=='tabungan' or $page=='tabungancari'){echo 'active';}?>">
                       <p class="pl-3">Rekening Tabungan</p>
                     </a>
                   </li>
@@ -606,6 +618,7 @@ $(document).ready(function () {
       if(valueEntity=='PERORANGAN'){valueEntity='';}else{valueEntity=', '+valueEntity;}
       $("#inputAccountName_add").val(valueCompany+valueEntity);
     });
+
 
     //Set data to Modals
     $('#modal-edit-newscategory').on('show.bs.modal', function(e) {

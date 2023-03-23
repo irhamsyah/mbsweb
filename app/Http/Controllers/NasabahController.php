@@ -420,16 +420,16 @@ class NasabahController extends Controller
           $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
         })
         ->where('kredit.NO_REKENING', 'LIKE', request()->idkredit . '%')
-        ->orderby('kredit.NO_REKENING','ASC')->get();
+        ->get();
         if(!$kredits)
           abort('404');
       }else if(request()->jenisprofil=='tabung'){
-        $kredits = Tabungan::select('NO_REKENING','JENIS_TABUNGAN','SALDO_AKHIR','DESKRIPSI_JENIS_TABUNGAN','NASABAH_ID')
+        $kredits = Tabungan::select('tabung.*','kodejenistabungan.DESKRIPSI_JENIS_TABUNGAN')
         ->leftJoin('kodejenistabungan', function($join) {
           $join->on('tabung.JENIS_TABUNGAN', '=', 'kodejenistabungan.KODE_JENIS_TABUNGAN');
         })
         ->where('tabung.NO_REKENING', 'LIKE', request()->idkredit . '%')
-        ->orderby('tabung.NO_REKENING','ASC')->get();
+        ->get();
         if(!$kredits)
         abort('404');
       }

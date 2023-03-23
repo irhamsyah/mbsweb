@@ -170,7 +170,7 @@
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_cs_de_profil" class="nav-link <?php if($page=='profil' or $page=='profilcari'){echo 'active';}?>">
+                    <a href="/bo_cs_de_profil" class="nav-link <?php if($page == 'profil' or $page=='profilcari' or $page=='profildetail' or $page=='profilkredit'){echo 'active';}?>">
                       <p class="pl-4">Profil Data Nasabah</p>
                     </a>
                   </li>

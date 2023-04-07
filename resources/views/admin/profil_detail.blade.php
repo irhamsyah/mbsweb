@@ -31,10 +31,9 @@
           </div>
           <!-- /.card-header -->
           <div class="card-body">
-            <table id="example1" class="table table-bordered table-hover">
+            <table id="example3" class="table table-bordered table-hover">
               <thead>
               <tr>
-                <th>No</th>
                 <th>Produk</th>
                 <th>No Rekening</th>
                 <th>Saldo Awal</th>
@@ -45,7 +44,6 @@
               <tbody>
                 @foreach($tabungans as $index => $tabungan)
                 <tr>
-                  <td>{{ $index+1 }}</td>
                   <td>{{ strtoupper($tabungan->DESKRIPSI_JENIS_TABUNGAN) }}</td>
                   <td>{{ $tabungan->NO_REKENING }}</td>
                   <td>0</td>
@@ -70,7 +68,6 @@
                 @endforeach
                 @foreach($kredits as $index => $kredit)
                 <tr>
-                  <td>{{ $index+1 }}</td>
                   <td>{{ strtoupper($kredit->DESKRIPSI_JENIS_KREDIT) }}</td>
                   <td>{{ $kredit->NO_REKENING }}</td>
                   <td>{{ $kredit->POKOK_SALDO_REALISASI }}</td>

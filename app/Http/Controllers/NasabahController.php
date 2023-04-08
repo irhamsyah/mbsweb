@@ -415,18 +415,41 @@ class NasabahController extends Controller
       $logos = Logo::all();
       $users = User::all();
       if($request->jenisprofil=='kredit'){
-        $kredits = Kredit::select('kredit.*','kodejeniskredit.DESKRIPSI_JENIS_KREDIT')
+        $kredits = Kredit::select('kredit.*','kodejeniskredit.DESKRIPSI_JENIS_KREDIT','nasabah.*','kodegroup1kredit.DESKRIPSI_GROUP1',
+        'kodegroup2kredit.DESKRIPSI_GROUP2','kodegroup3kredit.DESKRIPSI_GROUP3','kodegroup4kredit.DESKRIPSI_GROUP4','kodesumberdanakredit.DESKRIPSI_SUMBER_DANA',
+        'kodetypekredit.DESKRIPSI_TYPE_KREDIT','kodesatuanwaktukredit.DESKRIPSI_SATUAN_WAKTU')
         ->leftJoin('kodejeniskredit', function($join) {
           $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
         })
         ->leftJoin('nasabah', function($join) {
           $join->on('kredit.NASABAH_ID', '=', 'nasabah.nasabah_id');
         })
+        ->leftJoin('kodegroup1kredit', function($join) {
+          $join->on('kredit.KODE_GROUP1', '=', 'kodegroup1kredit.KODE_GROUP1');
+        })
+        ->leftJoin('kodegroup2kredit', function($join) {
+          $join->on('kredit.KODE_GROUP2', '=', 'kodegroup2kredit.KODE_GROUP2');
+        })
+        ->leftJoin('kodegroup3kredit', function($join) {
+          $join->on('kredit.KODE_GROUP3', '=', 'kodegroup3kredit.KODE_GROUP3');
+        })
+        ->leftJoin('kodegroup4kredit', function($join) {
+          $join->on('kredit.KODE_GROUP4', '=', 'kodegroup4kredit.KODE_GROUP4');
+        })
+        ->leftJoin('kodesumberdanakredit', function($join) {
+          $join->on('kredit.KODE_SUMBER_DANA', '=', 'kodesumberdanakredit.KODE_SUMBER_DANA');
+        })
+        ->leftJoin('kodesatuanwaktukredit', function($join) {
+          $join->on('kredit.SATUAN_WAKTU_ANGSURAN', '=', 'kodesatuanwaktukredit.KODE_SATUAN_WAKTU');
+        })
+        ->leftJoin('kodetypekredit', function($join) {
+          $join->on('kredit.TYPE_PINJAMAN', '=', 'kodetypekredit.KODE_TYPE_KREDIT');
+        })
         ->where('kredit.NO_REKENING', '=', $request->idkredit)
         ->get();
         if(!$kredits)
           abort('404');
-      }else if($request->jenisprofil=='tabung'){
+      }else if($request->jenisprofil=='tabungan'){
         $kredits = Tabungan::select('tabung.*','kodejenistabungan.DESKRIPSI_JENIS_TABUNGAN','nasabah.*','kodegroup1tabung.DESKRIPSI_GROUP1',
         'kodegroup2tabung.DESKRIPSI_GROUP2','kodegroup3tabung.DESKRIPSI_GROUP3','kodemetoda.DESKRIPSI_METODA','golongan_pihaklawan.deskripsi_golongan')
         ->leftJoin('kodejenistabungan', function($join) {

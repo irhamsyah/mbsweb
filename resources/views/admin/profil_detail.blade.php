@@ -55,7 +55,7 @@
                     <div class="dropdown-menu">
                     <form method="post" action="/bo_cs_de_profil/kredit">
                       @csrf
-                        <input type="hidden" name="jenisprofil" value="tabung" class="form-control">
+                        <input type="hidden" name="jenisprofil" value="tabungan" class="form-control">
                         <input type="hidden" name="idkredit" value="{{ trim($tabungan->NO_REKENING) }}" class="form-control">
                         <input type="hidden" name="idnasabah" value="{{ trim($tabungan->NASABAH_ID) }}" class="form-control">
                         <button type="submit" tabindex="-1" class="dropdown-item">

@@ -417,7 +417,8 @@ class NasabahController extends Controller
       if($request->jenisprofil=='kredit'){
         $kredits = Kredit::select('kredit.*','kodejeniskredit.DESKRIPSI_JENIS_KREDIT','nasabah.*','kodegroup1kredit.DESKRIPSI_GROUP1',
         'kodegroup2kredit.DESKRIPSI_GROUP2','kodegroup3kredit.DESKRIPSI_GROUP3','kodegroup4kredit.DESKRIPSI_GROUP4','kodesumberdanakredit.DESKRIPSI_SUMBER_DANA',
-        'kodetypekredit.DESKRIPSI_TYPE_KREDIT','kodesatuanwaktukredit.DESKRIPSI_SATUAN_WAKTU')
+        'kodetypekredit.DESKRIPSI_TYPE_KREDIT','kodesatuanwaktukredit.DESKRIPSI_SATUAN_WAKTU','kodejenispenggunaankredit.DESKRIPSI_JENIS_PENGGUNAAN','kodegoldebitur.DESKRIPSI_GOL_DEBITUR',
+        'kodesektorekonomikredit.DESKRIPSI_SEKTOR_EKONOMI','kodegolpenjaminkredit.DESKRIPSI_GOL_PENJAMIN')
         ->leftJoin('kodejeniskredit', function($join) {
           $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
         })
@@ -444,6 +445,18 @@ class NasabahController extends Controller
         })
         ->leftJoin('kodetypekredit', function($join) {
           $join->on('kredit.TYPE_PINJAMAN', '=', 'kodetypekredit.KODE_TYPE_KREDIT');
+        })
+        ->leftJoin('kodejenispenggunaankredit', function($join) {
+          $join->on('kredit.BI_JENIS_PENGGUNAAN', '=', 'kodejenispenggunaankredit.KODE_JENIS_PENGGUNAAN');
+        })
+        ->leftJoin('kodegoldebitur', function($join) {
+          $join->on('kredit.BI_GOL_DEBITUR', '=', 'kodegoldebitur.KODE_GOL_DEBITUR');
+        })
+        ->leftJoin('kodesektorekonomikredit', function($join) {
+          $join->on('kredit.BI_SEKTOR_EKONOMI', '=', 'kodesektorekonomikredit.KODE_SEKTOR_EKONOMI');
+        })
+        ->leftJoin('kodegolpenjaminkredit', function($join) {
+          $join->on('kredit.BI_GOL_PENJAMIN', '=', 'kodegolpenjaminkredit.KODE_GOL_PENJAMIN');
         })
         ->where('kredit.NO_REKENING', '=', $request->idkredit)
         ->get();

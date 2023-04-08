@@ -37,476 +37,716 @@
               @php ($saldoawal='POKOK_SALDO_REALISASI')
               @php ($saldoakhir='POKOK_SALDO_AKHIR')
               @php ($deskripsi='DESKRIPSI_JENIS_KREDIT')
-              <div class="form-group row">
-                <div class="col-lg-4">
-                  <div class="row">
-                    <div class="col-lg-12 col-sm-12">
-                      <label for="inputjenis">Jenis {{ ucwords($jenisprofil) }}</label>
-                      <select class="form-control" name="inputjenis" readonly>
-                        <option value="{{ $kredit->JENIS_PINJAMAN }}">{{ $kredit->JENIS_PINJAMAN.' - '.$kredit->DESKRIPSI_JENIS_KREDIT }}</option>
-                      </select>
-                    </div>
-                    <div class="col-lg-8 col-sm-12">
-                        <label for="inputtipe">Tipe</label>
-                        <input type="text" name="inputtipe" value="KREDIT" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-4 col-sm-12">
-                        <label for="inputcabang">Cabang</label>
-                        <input type="text" name="inputcabang" value="{{ $kredit->CAB }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-12 col-sm-12">
-                        <label for="inputnorekening">No Rekening</label>
-                        <input type="text" name="inputnorekening" value="{{ $kredit->NO_REKENING }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-12 col-sm-12">
-                        <label for="inputnopklama">No PK Lama</label>
-                        <input type="text" name="inputnopklama" value="{{ $kredit->NO_PK_LAMA }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-6 col-sm-12">
-                        <label for="inputtglpklama">Tgl PK Lama</label>
-                        <input type="text" name="inputtglpklama" value="{{ $kredit->TGL_PK_LAMA }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-4 col-sm-8">
-                        <label for="inputreviewbunga">Review Bunga</label>
-                        <input type="text" name="inputreviewbunga" value="{{ $kredit->REVIEW_BUNGA }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-4">
-                        <label for="inputblnreviewbunga">.</label>
-                        <input type="text" name="inputblnreviewbunga" value="bln" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-12 col-sm-12">
-                      <label for="inputstatus">Status</label>
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="inputstatus" <?php if($kredit->STATUS_AKTIF=="1"){echo 'checked';}?>>
-                        <label class="form-check-label" style="margin-right:30px;">Baru</label>
-                        <input class="form-check-input" type="radio" name="inputstatus" <?php if($kredit->STATUS_AKTIF=="2"){echo 'checked';}?>>
-                        <label class="form-check-label" style="margin-right:30px;">Aktif</label>
-                        <input class="form-check-input" type="radio" name="inputstatus" <?php if($kredit->STATUS_AKTIF=="3"){echo 'checked';}?>>
-                        <label class="form-check-label">Lunas</label>
+              <div class="card">
+                <div class="card-header d-flex p-0">
+                  <ul class="nav nav-pills p-2">
+                    <li class="nav-item"><a class="nav-link active" href="#informasi_kredit" data-toggle="tab">Informasi Kredit</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#informasi_tunggakanangsuran" data-toggle="tab">Tunggakan & Angsuran</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#informasi_agunan" data-toggle="tab">Agunan</a></li>
+                   </ul>
+                </div><!-- /.card-header -->
+                <div class="card-body">
+                  <div class="tab-content">
+                    <div class="tab-pane active" id="informasi_kredit">
+                      <div class="form-group row">
+                        <div class="col-lg-4">
+                          <div class="row">
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputjenis">Jenis {{ ucwords($jenisprofil) }}</label>
+                              <select class="form-control" name="inputjenis" readonly>
+                                <option value="{{ $kredit->JENIS_PINJAMAN }}">{{ $kredit->JENIS_PINJAMAN.' - '.$kredit->DESKRIPSI_JENIS_KREDIT }}</option>
+                              </select>
+                            </div>
+                            <div class="col-lg-8 col-sm-12">
+                                <label for="inputtipe">Tipe</label>
+                                <input type="text" name="inputtipe" value="KREDIT" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-4 col-sm-12">
+                                <label for="inputcabang">Cabang</label>
+                                <input type="text" name="inputcabang" value="{{ $kredit->CAB }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                                <label for="inputnorekening">No Rekening</label>
+                                <input type="text" name="inputnorekening" value="{{ $kredit->NO_REKENING }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                                <label for="inputnopklama">No PK Lama</label>
+                                <input type="text" name="inputnopklama" value="{{ $kredit->NO_PK_LAMA }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                                <label for="inputtglpklama">Tgl PK Lama</label>
+                                <input type="text" name="inputtglpklama" value="{{ $kredit->TGL_PK_LAMA }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-4 col-sm-8">
+                                <label for="inputreviewbunga">Review Bunga</label>
+                                <input type="text" name="inputreviewbunga" value="{{ $kredit->REVIEW_BUNGA }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-4">
+                                <label for="inputblnreviewbunga">.</label>
+                                <input type="text" name="inputblnreviewbunga" value="bln" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputstatus">Status</label>
+                              <div class="form-check">
+                                <input class="form-check-input" type="radio" name="inputstatus" <?php if($kredit->STATUS_AKTIF=="1"){echo 'checked';}?>>
+                                <label class="form-check-label" style="margin-right:30px;">Baru</label>
+                                <input class="form-check-input" type="radio" name="inputstatus" <?php if($kredit->STATUS_AKTIF=="2"){echo 'checked';}?>>
+                                <label class="form-check-label" style="margin-right:30px;">Aktif</label>
+                                <input class="form-check-input" type="radio" name="inputstatus" <?php if($kredit->STATUS_AKTIF=="3"){echo 'checked';}?>>
+                                <label class="form-check-label">Lunas</label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-4">
+                          <div class="row">
+                            <div class="col-lg-12 col-sm-12">
+                                <label for="inputnasabahid">Nasabah ID</label>
+                                <input type="text" name="inputnasabahid" value="{{ $kredit->NASABAH_ID }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                                <label for="inputnasabahnama">Nama Nasabah</label>
+                                <input type="text" name="inputnasabahnama" value="{{ $kredit->nama_nasabah }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                                <label for="inputnasabahalamat">Alamat</label>
+                                <input type="text" name="inputnasabahalamat" value="{{ $kredit->alamat }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                                <label for="inputnopkbaru">No PK Baru</label>
+                                <input type="text" name="inputnopkbaru" value="{{ $kredit->NO_PK_BARU }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                              <label for="inputreschedule">.</label>
+                              <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="inputreschedule" <?php if($kredit->STATUS_AKTIF=="1"){echo 'checked';}?>>
+                                <label class="form-check-label" style="margin-right:30px;">Re-Schedule</label>
+                              </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                              <label for="inputwo">.</label>
+                              <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="inputwo" <?php if($kredit->STATUS_AKTIF=="1"){echo 'checked';}?>>
+                                <label class="form-check-label" style="margin-right:30px;">Write-off</label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-4">
+                          <div class="row">
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputkodegorup1">Kode Group 1</label>
+                              <select class="form-control" name="inputkodegorup1" readonly>
+                                <option value="{{ $kredit->KODE_GROUP1 }}">{{ $kredit->KODE_GROUP1.' - '.$kredit->DESKRIPSI_GROUP1 }}</option>
+                              </select>
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputkodegorup2">Kode Group 2</label>
+                              <select class="form-control" name="inputkodegorup2" readonly>
+                                <option value="{{ $kredit->KODE_GROUP2 }}">{{ $kredit->KODE_GROUP2.' - '.$kredit->DESKRIPSI_GROUP2 }}</option>
+                              </select>
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputkodegorup3">Kode Group 3</label>
+                              <select class="form-control" name="inputkodegorup3" readonly>
+                                <option value="{{ $kredit->KODE_GROUP3 }}">{{ $kredit->KODE_GROUP3.' - '.$kredit->DESKRIPSI_GROUP3 }}</option>
+                              </select>
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputkodegorup4">Kode Group 4</label>
+                              <select class="form-control" name="inputkodegorup4" readonly>
+                                <option value="{{ $kredit->KODE_GROUP4 }}">{{ $kredit->KODE_GROUP4.' - '.$kredit->DESKRIPSI_GROUP4 }}</option>
+                              </select>
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputsumberdana">Sumber Dana</label>
+                              <select class="form-control" name="inputsumberdana" readonly>
+                                <option value="{{ $kredit->KODE_SUMBER_DANA }}">{{ $kredit->KODE_SUMBER_DANA.' - '.$kredit->DESKRIPSI_SUMBER_DANA }}</option>
+                              </select>
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputdana">Dana</label>
+                              <select class="form-control" name="inputdana" readonly>
+                                <option value="">SUMBER DANA</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="bottomlinesolid">
+                        <span class="judulOrange">Angsuran</span>
+                      </div>
+                      <div class="form-group row">
+                        <div class="col-lg-3">
+                          <div class="row">
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputtipepinjaman">Tipe Pinjaman</label>
+                              <select class="form-control" name="inputtipepinjaman" readonly>
+                                <option value="{{ $kredit->TYPE_PINJAMAN }}">{{ $kredit->TYPE_PINJAMAN.' - '.$kredit->DESKRIPSI_TYPE_KREDIT }}</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-9">
+                          <div class="row">
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputtanggal">Tanggal</label>
+                              <input type="text" name="inputtanggal" value="{{ $kredit->TGL_PENGAJUAN }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputtanggalrealisasi">Tgl Realisasi</label>
+                              <input type="text" name="inputtanggalrealisasi" value="{{ $kredit->TGL_REALISASI }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-4 col-sm-12">
+                              <label for="inputjumlahpinjaman">Jumlah</label>
+                              <input type="text" name="inputjumlahpinjaman" value="{{ $kredit->JML_PINJAMAN }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-4 col-sm-12">
+                              <label for="inputjumlahbungapinjaman">Margin</label>
+                              <input type="text" name="inputjumlahbungapinjaman" value="{{ $kredit->JML_BUNGA_PINJAMAN }}" readonly class="form-control">
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputjmlangsuran">Jml. Angsuran</label>
+                              <input type="text" name="inputjmlangsuran" value="{{ $kredit->JML_ANGSURAN }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputsatuanwaktuangsuran">.</label>
+                              <select class="form-control" name="inputsatuanwaktuangsuran" readonly>
+                                <option value="{{ $kredit->SATUAN_WAKTU_ANGSURAN }}">{{ $kredit->SATUAN_WAKTU_ANGSURAN.' - '. $kredit->DESKRIPSI_SATUAN_WAKTU }}</option>
+                              </select>
+                            </div>
+                            <div class="col-lg-1 col-sm-12">
+                              <label for="inputjw">Jk Wktu</label>
+                              <input type="text" name="inputjw" value="{{ $kredit->BI_JANGKA_WAKTU }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-1 col-sm-12">
+                              <label for="inputjwbln">.</label>
+                              <input type="text" name="inputjwbln" value="bln" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputtanggaljttempo">Tanggal Jt Tempo</label>
+                              <input type="text" name="inputtanggaljttempo" value="{{ $kredit->TGL_JATUH_TEMPO }}" readonly class="form-control">
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputbungaperthn">Bunga</label>
+                              <input type="text" name="inputbungaperthn" value="{{ $kredit->SUKU_BUNGA_PER_TAHUN }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputbungaeffperthn">Bunga Eff.</label>
+                              <input type="text" name="inputbungaeffperthn" value="{{ $kredit->suku_bunga_eff_per_tahun }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputsukubunga">Suku Bunga</label>
+                              <input type="text" name="inputsukubunga" value="{{ $kredit->SUKU_BUNGA_PER_ANGSURAN }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputbyadmin">Admin</label>
+                              <input type="text" name="inputbyadmin" value="{{ $kredit->ADM_PER_BLN }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputbybonus">Bonus</label>
+                              <input type="text" name="inputbybonus" value="{{ $kredit->BUNGA_EFEKTIF_THN_INI }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputfaktoanuitas">Faktor Anuitas</label>
+                              <input type="text" name="inputfaktoanuitas" value="{{ $kredit->FAKTOR_ANUITAS }}" readonly class="form-control">
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputterminpokok">Termin Pokok</label>
+                              <input type="text" name="inputterminpokok" value="{{ $kredit->PERIODE_ANGSURAN_POKOK }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputterminbunga">Termin Bunga</label>
+                              <input type="text" name="inputterminbunga" value="{{ $kredit->PERIODE_ANGSURAN_BUNGA }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputgppokok">Grace Period Pokok</label>
+                              <input type="text" name="inputgppokok" value="{{ $kredit->GRACE_PERIOD_POKOK }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputgpbunga">Grace Period Bunga</label>
+                              <input type="text" name="inputgpbunga" value="{{ $kredit->GRACE_PERIOD_BUNGA }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputangsuranblnpersen">Angsuran per Bulan</label>
+                              <input type="text" name="inputangsuranblnpersen" value="{{ $kredit->JML_ANGSURAN_PER_BULAN }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputangsuranbln">Angsuran</label>
+                              <input type="text" name="inputangsuranbln" value="{{ $kredit->angsuran_total }}" readonly class="form-control">
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputbungaekiv">Bunga Ekiv.</label>
+                              <input type="text" name="inputbungaekiv" value="{{ $kredit->SUKU_BUNGA_EKIVALEN }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputbungaekivbln">.</label>
+                              <input type="text" name="inputbungaekivbln" value="{{ ($kredit->SUKU_BUNGA_EKIVALEN)/12 }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputangsuranfee1">Angs. Fee I</label>
+                              <input type="text" name="inputangsuranfee1" value="{{ $kredit->FEE_BUNGA_1_PER_TAHUN }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputangsuranfee1rp">Rp.</label>
+                              <input type="text" name="inputangsuranfee1rp" value="{{ $kredit->FEE_BUNGA_1_PER_TAHUN }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputangsuranfee2">Angs. Fee II</label>
+                              <input type="text" name="inputangsuranfee2" value="{{ $kredit->FEE_BUNGA_2_PER_TAHUN }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputangsuranfee2rp">Rp.</label>
+                              <input type="text" name="inputangsuranfee2rp" value="{{ ($kredit->FEE_BUNGA_2_PER_TAHUN)*(($kredit->SUKU_BUNGA_EKIVALEN)/12) }}" readonly class="form-control">
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputdendaharian">Denda</label>
+                              <input type="text" name="inputdendaharian" value="{{ $kredit->denda_per_hari }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputdendajtharian">Denda JT</label>
+                              <input type="text" name="inputdendajtharian" value="{{ $kredit->TAGIHAN_JT }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputgphari">Grace Period</label>
+                              <input type="text" name="inputgphari" value="{{ $kredit->GRACE_PERIOD }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputbyadminpersen">Adm</label>
+                              <input type="text" name="inputbyadminpersen" value="{{ $kredit->ADM_PER_BLN }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputtotaldenda">.</label>
+                              <input type="text" name="inputtotaldenda" value="0.00" readonly class="form-control">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="bottomlinesolid">
+                        <span class="judulOrange">Biaya & Potongan Pinjaman</span>
+                      </div>
+                      <div class="form-group row">
+                        <div class="col-lg-4">
+                          <div class="row">
+                            <div class="col-lg-4 col-sm-12">
+                              <label for="inputprovisi">Provisi</label>
+                              <input type="text" name="inputprovisi" value="{{ $kredit->PERSEN_PROVISI }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-5 col-sm-12">
+                              <label for="inputprovisirp">.</label>
+                              <input type="text" name="inputprovisirp" value="{{ $kredit->PROVISI }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputamortisasiprovisi">.</label>
+                              <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="inputamortisasiprovisi" <?php if($kredit->AMORTISASI_PROVISI=="1"){echo 'checked';}?>>
+                                <label class="form-check-label" style="margin-right:30px;">Amortisasi</label>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-lg-4 col-sm-12">
+                              <label for="inputadmfinal">Adm</label>
+                              <input type="text" name="inputadmfinal" value="{{ $kredit->PERSEN_ADM }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-5 col-sm-12">
+                              <label for="inputadmfinalrp">.</label>
+                              <input type="text" name="inputadmfinalrp" value="{{ $kredit->ADM }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputamortisasiadm">.</label>
+                              <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="inputamortisasiadm" <?php if($kredit->amortisasi_adm=="1"){echo 'checked';}?>>
+                                <label class="form-check-label" style="margin-right:30px;">Amortisasi</label>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-lg-4 col-sm-12">
+                              <label for="inputbytrans">By. Trans</label>
+                              <input type="text" name="inputbytrans" value="{{ $kredit->PERSEN_BIAYA_TRANSAKSI }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-5 col-sm-12">
+                              <label for="inputbytransrp">.</label>
+                              <input type="text" name="inputbytransrp" value="{{ $kredit->biaya_transaksi }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputamortisasibytrans">.</label>
+                              <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="inputamortisasibytrans" <?php if($kredit->amortisasi_biaya_transaksi=="1"){echo 'checked';}?>>
+                                <label class="form-check-label" style="margin-right:30px;">Amortisasi</label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-8">
+                          <div class="row">
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputpremi">Premi</label>
+                              <input type="text" name="inputpremi" value="{{ $kredit->PREMI }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputnotariel">Notariel</label>
+                              <input type="text" name="inputnotariel" value="{{ $kredit->NOTARIEL }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputmaterai">Materai</label>
+                              <input type="text" name="inputmaterai" value="{{ $kredit->MATERAI }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputpkmaterai">Pokok Materai</label>
+                              <input type="text" name="inputpkmaterai" value="{{ $kredit->POKOK_MATERAI }}" readonly class="form-control">
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputlainlain">Lain-lain</label>
+                              <input type="text" name="inputlainlain" value="{{ $kredit->ANGSURAN_ADMIN }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-1 col-sm-12">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputangsuranpremi">Angs. Premi</label>
+                              <input type="text" name="inputangsuranpremi" value="{{ $kredit->JKW_PREMI }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputangsuranpremirp">.</label>
+                              <input type="text" name="inputangsuranpremirp" value="{{ $kredit->ANGSURAN_PREMI }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputtotalpremi">Total Premi</label>
+                              <input type="text" name="inputtotalpremi" value="{{ $kredit->TOTAL_PREMI }}" readonly class="form-control">
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputditanggungcheck">.</label>
+                              <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="inputditanggungcheck" <?php if($kredit->amortisasi_biaya_transaksi=="1"){echo 'checked';}?>>
+                                <label class="form-check-label" style="margin-right:30px;">Ditanggung</label>
+                              </div>
+                            </div>
+                            <div class="col-lg-4 col-sm-12">
+                              <label for="inputditanggung">Ditanggung</label>
+                              <input type="text" name="inputditanggung" value="{{ $kredit->PERSEKOT }}" readonly class="form-control">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="bottomlinesolid">
+                        <span class="judulOrange">Saldo & Kolektibilitas</span>
+                      </div>
+                      <div class="form-group row">
+                        <div class="col-lg-9">
+                          <div class="row">
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputpokoksaw">Saldo Awal Pokok</label>
+                              <input type="text" name="inputpokoksaw" value="{{ $kredit->POKOK_SALDO_AWAL }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputpokokdb">Debet Pokok</label>
+                              <input type="text" name="inputpokokdb" value="{{ $kredit->POKOK_SALDO_REALISASI }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputpokokkr">Kredit Pokok</label>
+                              <input type="text" name="inputpokokkr" value="{{ $kredit->POKOK_SALDO_SETORAN }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputpokokdc">Discount Pokok</label>
+                              <input type="text" name="inputpokokdc" value="{{ $kredit->POKOK_SALDO_DISC }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputpokoksak">Saldo Akhir Pokok</label>
+                              <input type="text" name="inputpokoksak" value="{{ $kredit->POKOK_SALDO_AKHIR }}" readonly class="form-control">
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputbungasaw">Saldo Awal Bunga</label>
+                              <input type="text" name="inputbungasaw" value="{{ $kredit->BUNGA_SALDO_AWAL }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputbungadb">Debet Bunga</label>
+                              <input type="text" name="inputbungadb" value="{{ $kredit->BUNGA_SALDO_REALISASI }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputbungakr">Kredit Bunga</label>
+                              <input type="text" name="inputbungakr" value="{{ $kredit->BUNGA_SALDO_SETORAN }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-2 col-sm-12">
+                              <label for="inputbungadc">Discount Bunga</label>
+                              <input type="text" name="inputbungadc" value="{{ $kredit->BUNGA_SALDO_DISC }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputbungasak">Saldo Akhir Bunga</label>
+                              <input type="text" name="inputbungasak" value="{{ $kredit->BUNGA_SALDO_AKHIR }}" readonly class="form-control">
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-lg-8 col-sm-12">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputsaldohapusbuku">Saldo Hapus Buku</label>
+                              <input type="text" name="inputsaldohapusbuku" value="{{ $kredit->SALDO_AKHIR_ACCRUAL }}" readonly class="form-control">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-3">
+                          <div class="row">
+                            <div class="col-lg-6 col-sm-12">
+                              <label for="inputkol">Kolektibilitas</label>
+                              <input type="text" name="inputkol" value="{{ $kredit->KOLEK }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                              <label for="inputreschedule">Rescheduling</label>
+                              <input type="text" name="inputreschedule" value="{{ $kredit->KOLEKTIBILITAS_RSC }}" readonly class="form-control">
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputkonfig">Konfigurasi</label>
+                              <select class="form-control" name="inputkonfig" readonly>
+                                <option value="">OTOMATIS</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-                <div class="col-lg-4">
-                  <div class="row">
-                    <div class="col-lg-12 col-sm-12">
-                        <label for="inputnasabahid">Nasabah ID</label>
-                        <input type="text" name="inputnasabahid" value="{{ $kredit->NASABAH_ID }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-12 col-sm-12">
-                        <label for="inputnasabahnama">Nama Nasabah</label>
-                        <input type="text" name="inputnasabahnama" value="{{ $kredit->nama_nasabah }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-12 col-sm-12">
-                        <label for="inputnasabahalamat">Alamat</label>
-                        <input type="text" name="inputnasabahalamat" value="{{ $kredit->alamat }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-12 col-sm-12">
-                        <label for="inputnopkbaru">No PK Baru</label>
-                        <input type="text" name="inputnopkbaru" value="{{ $kredit->NO_PK_BARU }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-6 col-sm-12">
-                      <label for="inputreschedule">.</label>
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="inputreschedule" <?php if($kredit->STATUS_AKTIF=="1"){echo 'checked';}?>>
-                        <label class="form-check-label" style="margin-right:30px;">Re-Schedule</label>
+                    <div class="tab-pane" id="informasi_tunggakanangsuran">
+                      <div class="form-group row">
+                        <div class="col-lg-6">
+                          <div class="row">
+                            <div class="col-lg-9 col-sm-12">
+                              <label for="inputnorektung">No Rekening</label>
+                              <input type="text" name="inputnorektung" value="{{ $kredit->NO_REKENING }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputspkawaltung">SPK Awal</label>
+                              <input type="text" name="inputspkawaltung" value="{{ $kredit->NO_PK_LAMA }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputspkawaltgltung">Tgl SPK Awal</label>
+                              <input type="text" name="inputspkawaltgltung" value="{{ $kredit->TGL_PK_LAMA }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputjenistung">Jenis</label>
+                              <select class="form-control" name="inputjenistung" readonly>
+                                <option value="{{ $kredit->JENIS_PINJAMAN }}">{{ $kredit->JENIS_PINJAMAN.' - '.$kredit->DESKRIPSI_JENIS_KREDIT }}</option>
+                              </select>
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputtipetung">Type</label>
+                              <select class="form-control" name="inputtipetung" readonly>
+                              <option value="{{ $kredit->TYPE_PINJAMAN }}">{{ $kredit->TYPE_PINJAMAN.' - '.$kredit->DESKRIPSI_TYPE_KREDIT }}</option>
+                              </select>
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputtglrealisasitung">Tgl Realisasi</label>
+                              <input type="text" name="inputtglrealisasitung" value="{{ $kredit->TGL_REALISASI }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-4 col-sm-12">
+                              <label for="inputjwtung">Jangka Waktu</label>
+                              <input type="text" name="inputjwtung" value="{{ $kredit->BI_JANGKA_WAKTU }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-8 col-sm-12">
+                              <label for="inputjwtipetung">.</label>
+                              <select class="form-control" name="inputjwtipetung" readonly>
+                              <option value="{{ $kredit->SATUAN_WAKTU_ANGSURAN }}">{{ $kredit->SATUAN_WAKTU_ANGSURAN.' - '. $kredit->DESKRIPSI_SATUAN_WAKTU }}</option>
+                              </select>
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputtglrealisasitung">Tgl Jt Tempo</label>
+                              <input type="text" name="inputtglrealisasitung" value="{{ $kredit->TGL_JATUH_TEMPO }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputtglrealisasitung">Plafond</label>
+                              <input type="text" name="inputtglrealisasitung" value="{{ $kredit->JML_PINJAMAN }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputtglrealisasitung">Bunga</label>
+                              <input type="text" name="inputtglrealisasitung" value="{{ $kredit->SUKU_BUNGA_PER_TAHUN }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputtglrealisasitung">Baki Debet</label>
+                              <input type="text" name="inputtglrealisasitung" value="{{ $kredit->POKOK_SALDO_AKHIR }}" readonly class="form-control">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-6">
+                          <div class="row">
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputnmnsbhtung">Nama Nasabah</label>
+                              <input type="text" name="inputnmnsbhtung" value="{{ $kredit->nama_nasabah }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputalmtnsbhtung">Alamat Nasabah</label>
+                              <input type="text" name="inputalmtnsbhtung" value="{{ $kredit->alamat }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputkotatung">Kota / Kab Nasabah</label>
+                              <input type="text" name="inputkotatung" value="{{ $kredit->KOTA }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputsandipenjamin">Sandi Penjamin</label>
+                              <select class="form-control" name="inputsandipenjamin" readonly>
+                                <option value="{{ $kredit->BI_GOL_PENJAMIN }}">{{ $kredit->BI_GOL_PENJAMIN.' - '.$kredit->DESKRIPSI_GOL_PENJAMIN }}</option>
+                              </select>
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputjenispenggunaan">Jenis Penggunaan</label>
+                              <select class="form-control" name="inputjenispenggunaan" readonly>
+                                <option value="{{ $kredit->BI_JENIS_PENGGUNAAN }}">{{ $kredit->BI_JENIS_PENGGUNAAN.' - '.$kredit->DESKRIPSI_JENIS_PENGGUNAAN }}</option>
+                              </select>
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputsektoreko">Sektor Ekonomi</label>
+                              <select class="form-control" name="inputsektoreko" readonly>
+                                <option value="{{ $kredit->BI_SEKTOR_EKONOMI }}">{{ $kredit->BI_SEKTOR_EKONOMI.' - '.$kredit->DESKRIPSI_SEKTOR_EKONOMI }}</option>
+                              </select>
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputgoldebitur">Golongan Debitur</label>
+                              <select class="form-control" name="inputgoldebitur" readonly>
+                                <option value="{{ $kredit->BI_GOL_DEBITUR }}">{{ $kredit->BI_GOL_DEBITUR.' - '.$kredit->DESKRIPSI_GOL_DEBITUR }}</option>
+                              </select>
+                            </div>
+                            <div class="col-lg-4 col-sm-12">
+                              <label for="inputtggpokok">FT Tunggakan Pokok</label>
+                              <input type="text" name="inputtggpokok" value="{{ $kredit->PERIODE_ANGSURAN_POKOK }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-4 col-sm-12">
+                              <label for="inputtggbunga">FT Tunggakan Bunga</label>
+                              <input type="text" name="inputtggbunga" value="{{ $kredit->PERIODE_ANGSURAN_BUNGA }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-4 col-sm-12">
+                              <label for="inputkolektung">Kolektibilitas</label>
+                              <input type="text" name="inputkolektung" value="{{ $kredit->KOLEK }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputangsuranbulan">Angsuran per Bulan</label>
+                              <input type="text" name="inputangsuranbulan" value="{{ $kredit->angsuran_total }}" readonly class="form-control">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="bottomlinesolid">
+                        <span class="judulOrange">Detail Tunggakan</span>
+                      </div>
+                      <div class="form-group row">
+                        <div class="col-lg-12">
+                          <div class="row">
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputtggpokokb1">Tunggakan Pokok B-1</label>
+                              <input type="text" name="inputtggpokokb1" value="{{ $kredit->POKOK_TUNGGAKAN_AKHIR }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputangspokokblnini">Angsuran Pokok Bulan ini</label>
+                              <input type="text" name="inputangspokokblnini" value="{{ $kredit->angsuran_pokok }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputtotalkewajibanpokok">Total Kewajiban Pokok</label>
+                              <input type="text" name="inputtotalkewajibanpokok" value="{{ ($kredit->POKOK_TUNGGAKAN_AKHIR)+($kredit->angsuran_pokok) }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputbylainlaintung">Biaya Lain-lain</label>
+                              <input type="text" name="inputbylainlaintung" value="{{ $kredit->biaya_transaksi }}" readonly class="form-control">
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputtggbungab1">Tunggakan Bunga B-1</label>
+                              <input type="text" name="inputtggbungab1" value="{{ $kredit->BUNGA_TUNGGAKAN_AKHIR }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputangsbungablnini">Angsuran Bunga Bulan ini</label>
+                              <input type="text" name="inputangsbungablnini" value="{{ $kredit->angsuran_bunga }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputtotalkewajibanbunga">Total Kewajiban Bunga</label>
+                              <input type="text" name="inputtotalkewajibanbunga" value="{{ ($kredit->BUNGA_TUNGGAKAN_AKHIR)+($kredit->angsuran_bunga) }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputtggdendab1">Tunggakan Denda B-1</label>
+                              <input type="text" name="inputtggdendab1" value="{{ $kredit->DENDA_SALDO_TAGIHAN }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputangsdendablnini">Angsuran Denda Bulan ini</label>
+                              <input type="text" name="inputangsdendablnini" value="{{ $kredit->DENDA_SALDO_SETORAN }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputtotalkewajibandenda">Total Kewajiban Denda</label>
+                              <input type="text" name="inputtotalkewajibandenda" value="{{ $kredit->DENDA_TUNGGAKAN_AKHIR }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputtggadmb1">Tunggakan Administrasi B-1</label>
+                              <input type="text" name="inputtggadmb1" value="{{ $kredit->ADMIN_TUNGGAKAN_AWAL }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputangsadmblnini">Angsuran Administrasi Bulan ini</label>
+                              <input type="text" name="inputangsadmblnini" value="{{ $kredit->ADM_PER_BLN }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputtotalkewajibanadm">Total Kewajiban Administrasi</label>
+                              <input type="text" name="inputtotalkewajibanadm" value="{{ ($kredit->ADMIN_TUNGGAKAN_AWAL)+($kredit->ADM_PER_BLN) }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputtggtotalb1">Total Tunggakan B-1</label>
+                              <input type="text" name="inputtggtotalb1" value="{{ ($kredit->POKOK_TUNGGAKAN_AKHIR)+($kredit->BUNGA_TUNGGAKAN_AKHIR)+($kredit->DENDA_SALDO_TAGIHAN)+($kredit->ADMIN_TUNGGAKAN_AWAL) }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputtggtotalblnini">Total Tunggakan Bulan ini</label>
+                              <input type="text" name="inputtggtotalblnini" value="{{ ($kredit->angsuran_pokok)+($kredit->angsuran_bunga)+($kredit->DENDA_SALDO_SETORAN)+($kredit->ADM_PER_BLN) }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              <label for="inputtotaltungg">Total Tunggakan</label>
+                              <input type="text" name="inputtotaltungg" value="{{ ($kredit->POKOK_TUNGGAKAN_AKHIR)+($kredit->BUNGA_TUNGGAKAN_AKHIR)+($kredit->DENDA_SALDO_TAGIHAN)+($kredit->ADMIN_TUNGGAKAN_AWAL)+($kredit->angsuran_pokok)+($kredit->angsuran_bunga)+($kredit->DENDA_SALDO_SETORAN)+($kredit->ADM_PER_BLN) }}" readonly class="form-control">
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                              
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div class="col-lg-6 col-sm-12">
-                      <label for="inputwo">.</label>
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="inputwo" <?php if($kredit->STATUS_AKTIF=="1"){echo 'checked';}?>>
-                        <label class="form-check-label" style="margin-right:30px;">Write-off</label>
+                    <div class="tab-pane" id="informasi_agunan">
+                      <div class="form-group row">
+                        <div class="col-lg-4">
+                          <div class="row">
+                            <div class="col-lg-12 col-sm-12">
+                              <label for="inputjenis">Jenis {{ ucwords($jenisprofil) }}</label>
+                              <select class="form-control" name="inputjenis" readonly>
+                                <option value="{{ $kredit->JENIS_PINJAMAN }}">{{ $kredit->JENIS_PINJAMAN.' - '.$kredit->DESKRIPSI_JENIS_KREDIT }}</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-4">
-                  <div class="row">
-                    <div class="col-lg-12 col-sm-12">
-                      <label for="inputkodegorup1">Kode Group 1</label>
-                      <select class="form-control" name="inputkodegorup1" readonly>
-                        <option value="{{ $kredit->KODE_GROUP1 }}">{{ $kredit->KODE_GROUP1.' - '.$kredit->DESKRIPSI_GROUP1 }}</option>
-                      </select>
-                    </div>
-                    <div class="col-lg-12 col-sm-12">
-                      <label for="inputkodegorup2">Kode Group 2</label>
-                      <select class="form-control" name="inputkodegorup2" readonly>
-                        <option value="{{ $kredit->KODE_GROUP2 }}">{{ $kredit->KODE_GROUP2.' - '.$kredit->DESKRIPSI_GROUP2 }}</option>
-                      </select>
-                    </div>
-                    <div class="col-lg-12 col-sm-12">
-                      <label for="inputkodegorup3">Kode Group 3</label>
-                      <select class="form-control" name="inputkodegorup3" readonly>
-                        <option value="{{ $kredit->KODE_GROUP3 }}">{{ $kredit->KODE_GROUP3.' - '.$kredit->DESKRIPSI_GROUP3 }}</option>
-                      </select>
-                    </div>
-                    <div class="col-lg-12 col-sm-12">
-                      <label for="inputkodegorup4">Kode Group 4</label>
-                      <select class="form-control" name="inputkodegorup4" readonly>
-                        <option value="{{ $kredit->KODE_GROUP4 }}">{{ $kredit->KODE_GROUP4.' - '.$kredit->DESKRIPSI_GROUP4 }}</option>
-                      </select>
-                    </div>
-                    <div class="col-lg-12 col-sm-12">
-                      <label for="inputsumberdana">Sumber Dana</label>
-                      <select class="form-control" name="inputsumberdana" readonly>
-                        <option value="{{ $kredit->KODE_SUMBER_DANA }}">{{ $kredit->KODE_SUMBER_DANA.' - '.$kredit->DESKRIPSI_SUMBER_DANA }}</option>
-                      </select>
-                    </div>
-                    <div class="col-lg-12 col-sm-12">
-                      <label for="inputdana">Dana</label>
-                      <select class="form-control" name="inputdana" readonly>
-                        <option value="">SUMBER DANA</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="bottomlinesolid">
-                <span class="judulOrange">Angsuran</span>
-              </div>
-              <div class="form-group row">
-                <div class="col-lg-3">
-                  <div class="row">
-                    <div class="col-lg-12 col-sm-12">
-                      <label for="inputtipepinjaman">Tipe Pinjaman</label>
-                      <select class="form-control" name="inputtipepinjaman" readonly>
-                        <option value="{{ $kredit->TYPE_PINJAMAN }}">{{ $kredit->TYPE_PINJAMAN.' - '.$kredit->DESKRIPSI_TYPE_KREDIT }}</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-9">
-                  <div class="row">
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputtanggal">Tanggal</label>
-                      <input type="text" name="inputtanggal" value="{{ $kredit->TGL_PENGAJUAN }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputtanggalrealisasi">Tgl Realisasi</label>
-                      <input type="text" name="inputtanggalrealisasi" value="{{ $kredit->TGL_REALISASI }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-4 col-sm-12">
-                      <label for="inputjumlahpinjaman">Jumlah</label>
-                      <input type="text" name="inputjumlahpinjaman" value="{{ $kredit->JML_PINJAMAN }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-4 col-sm-12">
-                      <label for="inputjumlahbungapinjaman">Margin</label>
-                      <input type="text" name="inputjumlahbungapinjaman" value="{{ $kredit->JML_BUNGA_PINJAMAN }}" readonly class="form-control">
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputjmlangsuran">Jml. Angsuran</label>
-                      <input type="text" name="inputjmlangsuran" value="{{ $kredit->JML_ANGSURAN }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputsatuanwaktuangsuran">.</label>
-                      <select class="form-control" name="inputsatuanwaktuangsuran" readonly>
-                        <option value="{{ $kredit->SATUAN_WAKTU_ANGSURAN }}">{{ $kredit->SATUAN_WAKTU_ANGSURAN.' - '. $kredit->DESKRIPSI_SATUAN_WAKTU }}</option>
-                      </select>
-                    </div>
-                    <div class="col-lg-1 col-sm-12">
-                      <label for="inputjw">Jk Wktu</label>
-                      <input type="text" name="inputjw" value="{{ $kredit->BI_JANGKA_WAKTU }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-1 col-sm-12">
-                      <label for="inputjwbln">.</label>
-                      <input type="text" name="inputjwbln" value="bln" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputtanggaljttempo">Tanggal Jt Tempo</label>
-                      <input type="text" name="inputtanggaljttempo" value="{{ $kredit->TGL_JATUH_TEMPO }}" readonly class="form-control">
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputbungaperthn">Bunga</label>
-                      <input type="text" name="inputbungaperthn" value="{{ $kredit->SUKU_BUNGA_PER_TAHUN }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputbungaeffperthn">Bunga Eff.</label>
-                      <input type="text" name="inputbungaeffperthn" value="{{ $kredit->suku_bunga_eff_per_tahun }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputsukubunga">Suku Bunga</label>
-                      <input type="text" name="inputsukubunga" value="{{ $kredit->SUKU_BUNGA_PER_ANGSURAN }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputbyadmin">Admin</label>
-                      <input type="text" name="inputbyadmin" value="{{ $kredit->ADM_PER_BLN }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputbybonus">Bonus</label>
-                      <input type="text" name="inputbybonus" value="{{ $kredit->BUNGA_EFEKTIF_THN_INI }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputfaktoanuitas">Faktor Anuitas</label>
-                      <input type="text" name="inputfaktoanuitas" value="{{ $kredit->FAKTOR_ANUITAS }}" readonly class="form-control">
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputterminpokok">Termin Pokok</label>
-                      <input type="text" name="inputterminpokok" value="{{ $kredit->PERIODE_ANGSURAN_POKOK }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputterminbunga">Termin Bunga</label>
-                      <input type="text" name="inputterminbunga" value="{{ $kredit->PERIODE_ANGSURAN_BUNGA }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputgppokok">Grace Period Pokok</label>
-                      <input type="text" name="inputgppokok" value="{{ $kredit->GRACE_PERIOD_POKOK }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputgpbunga">Grace Period Bunga</label>
-                      <input type="text" name="inputgpbunga" value="{{ $kredit->GRACE_PERIOD_BUNGA }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputangsuranblnpersen">Angsuran per Bulan</label>
-                      <input type="text" name="inputangsuranblnpersen" value="{{ $kredit->JML_ANGSURAN_PER_BULAN }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputangsuranbln">Angsuran</label>
-                      <input type="text" name="inputangsuranbln" value="{{ $kredit->angsuran_total }}" readonly class="form-control">
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputbungaekiv">Bunga Ekiv.</label>
-                      <input type="text" name="inputbungaekiv" value="{{ $kredit->SUKU_BUNGA_EKIVALEN }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputbungaekivbln">.</label>
-                      <input type="text" name="inputbungaekivbln" value="{{ ($kredit->SUKU_BUNGA_EKIVALEN)/12 }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputangsuranfee1">Angs. Fee I</label>
-                      <input type="text" name="inputangsuranfee1" value="{{ $kredit->FEE_BUNGA_1_PER_TAHUN }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputangsuranfee1rp">Rp.</label>
-                      <input type="text" name="inputangsuranfee1rp" value="{{ $kredit->FEE_BUNGA_1_PER_TAHUN }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputangsuranfee2">Angs. Fee II</label>
-                      <input type="text" name="inputangsuranfee2" value="{{ $kredit->FEE_BUNGA_2_PER_TAHUN }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputangsuranfee2rp">Rp.</label>
-                      <input type="text" name="inputangsuranfee2rp" value="{{ ($kredit->FEE_BUNGA_2_PER_TAHUN)*(($kredit->SUKU_BUNGA_EKIVALEN)/12) }}" readonly class="form-control">
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputdendaharian">Denda</label>
-                      <input type="text" name="inputdendaharian" value="{{ $kredit->denda_per_hari }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputdendajtharian">Denda JT</label>
-                      <input type="text" name="inputdendajtharian" value="{{ $kredit->TAGIHAN_JT }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputgphari">Grace Period</label>
-                      <input type="text" name="inputgphari" value="{{ $kredit->GRACE_PERIOD }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputbyadminpersen">Adm</label>
-                      <input type="text" name="inputbyadminpersen" value="{{ $kredit->ADM_PER_BLN }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputtotaldenda">.</label>
-                      <input type="text" name="inputtotaldenda" value="0.00" readonly class="form-control">
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="bottomlinesolid">
-                <span class="judulOrange">Biaya & Potongan Pinjaman</span>
-              </div>
-              <div class="form-group row">
-                <div class="col-lg-4">
-                  <div class="row">
-                    <div class="col-lg-4 col-sm-12">
-                      <label for="inputprovisi">Provisi</label>
-                      <input type="text" name="inputprovisi" value="{{ $kredit->PERSEN_PROVISI }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-5 col-sm-12">
-                      <label for="inputprovisirp">.</label>
-                      <input type="text" name="inputprovisirp" value="{{ $kredit->PROVISI }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-3 col-sm-12">
-                      <label for="inputamortisasiprovisi">.</label>
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="inputamortisasiprovisi" <?php if($kredit->AMORTISASI_PROVISI=="1"){echo 'checked';}?>>
-                        <label class="form-check-label" style="margin-right:30px;">Amortisasi</label>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-4 col-sm-12">
-                      <label for="inputadmfinal">Adm</label>
-                      <input type="text" name="inputadmfinal" value="{{ $kredit->PERSEN_ADM }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-5 col-sm-12">
-                      <label for="inputadmfinalrp">.</label>
-                      <input type="text" name="inputadmfinalrp" value="{{ $kredit->ADM }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-3 col-sm-12">
-                      <label for="inputamortisasiadm">.</label>
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="inputamortisasiadm" <?php if($kredit->amortisasi_adm=="1"){echo 'checked';}?>>
-                        <label class="form-check-label" style="margin-right:30px;">Amortisasi</label>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-4 col-sm-12">
-                      <label for="inputbytrans">By. Trans</label>
-                      <input type="text" name="inputbytrans" value="{{ $kredit->PERSEN_BIAYA_TRANSAKSI }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-5 col-sm-12">
-                      <label for="inputbytransrp">.</label>
-                      <input type="text" name="inputbytransrp" value="{{ $kredit->biaya_transaksi }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-3 col-sm-12">
-                      <label for="inputamortisasibytrans">.</label>
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="inputamortisasibytrans" <?php if($kredit->amortisasi_biaya_transaksi=="1"){echo 'checked';}?>>
-                        <label class="form-check-label" style="margin-right:30px;">Amortisasi</label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-8">
-                  <div class="row">
-                    <div class="col-lg-3 col-sm-12">
-                      <label for="inputpremi">Premi</label>
-                      <input type="text" name="inputpremi" value="{{ $kredit->PREMI }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-3 col-sm-12">
-                      <label for="inputnotariel">Notariel</label>
-                      <input type="text" name="inputnotariel" value="{{ $kredit->NOTARIEL }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-3 col-sm-12">
-                      <label for="inputmaterai">Materai</label>
-                      <input type="text" name="inputmaterai" value="{{ $kredit->MATERAI }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-3 col-sm-12">
-                      <label for="inputpkmaterai">Pokok Materai</label>
-                      <input type="text" name="inputpkmaterai" value="{{ $kredit->POKOK_MATERAI }}" readonly class="form-control">
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-3 col-sm-12">
-                      <label for="inputlainlain">Lain-lain</label>
-                      <input type="text" name="inputlainlain" value="{{ $kredit->ANGSURAN_ADMIN }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-1 col-sm-12">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputangsuranpremi">Angs. Premi</label>
-                      <input type="text" name="inputangsuranpremi" value="{{ $kredit->JKW_PREMI }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-3 col-sm-12">
-                      <label for="inputangsuranpremirp">.</label>
-                      <input type="text" name="inputangsuranpremirp" value="{{ $kredit->ANGSURAN_PREMI }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-3 col-sm-12">
-                      <label for="inputtotalpremi">Total Premi</label>
-                      <input type="text" name="inputtotalpremi" value="{{ $kredit->TOTAL_PREMI }}" readonly class="form-control">
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputditanggungcheck">.</label>
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="inputditanggungcheck" <?php if($kredit->amortisasi_biaya_transaksi=="1"){echo 'checked';}?>>
-                        <label class="form-check-label" style="margin-right:30px;">Ditanggung</label>
-                      </div>
-                    </div>
-                    <div class="col-lg-4 col-sm-12">
-                      <label for="inputditanggung">Ditanggung</label>
-                      <input type="text" name="inputditanggung" value="{{ $kredit->PERSEKOT }}" readonly class="form-control">
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="bottomlinesolid">
-                <span class="judulOrange">Saldo & Kolektibilitas</span>
-              </div>
-              <div class="form-group row">
-                <div class="col-lg-9">
-                  <div class="row">
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputpokoksaw">Saldo Awal Pokok</label>
-                      <input type="text" name="inputpokoksaw" value="{{ $kredit->POKOK_SALDO_AWAL }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputpokokdb">Debet Pokok</label>
-                      <input type="text" name="inputpokokdb" value="{{ $kredit->POKOK_SALDO_REALISASI }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputpokokkr">Kredit Pokok</label>
-                      <input type="text" name="inputpokokkr" value="{{ $kredit->POKOK_SALDO_SETORAN }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputpokokdc">Discount Pokok</label>
-                      <input type="text" name="inputpokokdc" value="{{ $kredit->POKOK_SALDO_DISC }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-3 col-sm-12">
-                      <label for="inputpokoksak">Saldo Akhir Pokok</label>
-                      <input type="text" name="inputpokoksak" value="{{ $kredit->POKOK_SALDO_AKHIR }}" readonly class="form-control">
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputbungasaw">Saldo Awal Bunga</label>
-                      <input type="text" name="inputbungasaw" value="{{ $kredit->BUNGA_SALDO_AWAL }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputbungadb">Debet Bunga</label>
-                      <input type="text" name="inputbungadb" value="{{ $kredit->BUNGA_SALDO_REALISASI }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputbungakr">Kredit Bunga</label>
-                      <input type="text" name="inputbungakr" value="{{ $kredit->BUNGA_SALDO_SETORAN }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-sm-12">
-                      <label for="inputbungadc">Discount Bunga</label>
-                      <input type="text" name="inputbungadc" value="{{ $kredit->BUNGA_SALDO_DISC }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-3 col-sm-12">
-                      <label for="inputbungasak">Saldo Akhir Bunga</label>
-                      <input type="text" name="inputbungasak" value="{{ $kredit->BUNGA_SALDO_AKHIR }}" readonly class="form-control">
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-8 col-sm-12">
-                    </div>
-                    <div class="col-lg-3 col-sm-12">
-                      <label for="inputsaldohapusbuku">Saldo Hapus Buku</label>
-                      <input type="text" name="inputsaldohapusbuku" value="{{ $kredit->SALDO_AKHIR_ACCRUAL }}" readonly class="form-control">
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-3">
-                  <div class="row">
-                    <div class="col-lg-6 col-sm-12">
-                      <label for="inputkol">Kolektibilitas</label>
-                      <input type="text" name="inputkol" value="{{ $kredit->KOLEK }}" readonly class="form-control">
-                    </div>
-                    <div class="col-lg-6 col-sm-12">
-                      <label for="inputreschedule">Rescheduling</label>
-                      <input type="text" name="inputreschedule" value="{{ $kredit->KOLEKTIBILITAS_RSC }}" readonly class="form-control">
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-12 col-sm-12">
-                      <label for="inputkonfig">Konfigurasi</label>
-                      <select class="form-control" name="inputkonfig" readonly>
-                        <option value="">OTOMATIS</option>
-                      </select>
                     </div>
                   </div>
                 </div>

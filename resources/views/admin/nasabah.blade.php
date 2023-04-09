@@ -106,7 +106,7 @@
                   @endif
                 <tr>
                   <td>{{ $index+1 }}</td>
-                  <td>{{ strtoupper($nasabah->nasabah_id) }}</td>
+                  <td>{{ $nasabah->nasabah_id }}</td>
                   <td>{{ $nasabah->nama_nasabah }}</td>
                   <td>{{ strtoupper($nasabah->alamat.' '.$nasabah->kelurahan.' '.$nasabah->kecamatan) }}</td>
                   <td>{{ $nasabah->tempatlahir.', '.$tgllahir }}</td>
@@ -227,7 +227,7 @@
                                       </div>
                                       <div class="col-lg-3 col-sm-6">
                                         <label for="inputnpwpedit">NPWP</label>
-                                        <input type="text" name="inputnpwpedit" value="{{ $nasabah->npwp }}" class="form-control">
+                                        <input type="text" name="inputnpwpedit" value="{{ $nasabah->npwp }}" class="form-control" maxlength="16">
                                       </div>
                                       <div class="col-lg-2 col-sm-6">
                                         <label for="inputidentitasedit">Jenis Identitas</label>
@@ -519,7 +519,7 @@
                                     </div>
                                   </div>
                                   <div class="form-group">
-                                    <input type="hidden" name="inputIdNasabahHashedit" value="{{ md5(trim($nasabah->nasabah_id).'Bast90') }}" class="form-control">
+                                    <input type="hidden" name="inputIdNasabahHashedit" value="{{ md5($nasabah->nasabah_id.'Bast90') }}" class="form-control">
                                     <input type="hidden" name="_method" value="PUT"/>
                                   </div>
                                 </div>

@@ -212,34 +212,34 @@
                   </li>
                   </ul>
                 </li>
-                <li class="nav-item has-treeview menu-close">
-                  <a href="#" class="nav-link">
+                <li class="nav-item has-treeview <?php if($submenu=='rp'){echo 'menu-open';}?>">
+                  <a href="#" class="nav-link <?php if($submenu=='rp'){echo 'active';}?>">
                     <i class="right fas fa-angle-left"></i>
                     <p class="pl-2">PENCETAKAN LAPORAN</p>
                   </a>
                   <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="/bo_cs_rp_nasabah" class="nav-link">
+                    <a href="/bo_cs_rp_nasabah" class="nav-link <?php if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
                       <p class="pl-4">Dokumen Nasabah</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_cs_rp_tabungan" class="nav-link">
+                    <a href="/bo_cs_rp_tabungan" class="nav-link <?php if($page=='tabungan' or $page=='tabungancari'){echo 'active';}?>">
                       <p class="pl-4">Dokumen Tabungan</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_cs_rp_deposito" class="nav-link">
+                    <a href="/bo_cs_rp_deposito" class="nav-link <?php if($page=='deposito' or $page=='depositocari'){echo 'active';}?>">
                       <p class="pl-4">Dokumen Deposito</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_cs_rp_kredit" class="nav-link">
+                    <a href="/bo_cs_rp_kredit" class="nav-link <?php if($page=='kredit' or $page=='kreditcari'){echo 'active';}?>">
                       <p class="pl-4">Dokumen Kredit</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_cs_rp_umum" class="nav-link">
+                    <a href="/bo_cs_rp_umum" class="nav-link <?php if($page=='umum' or $page=='umumcari'){echo 'active';}?>">
                       <p class="pl-4">Dokumen Umum & Inv</p>
                     </a>
                   </li>

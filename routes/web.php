@@ -112,15 +112,37 @@ Route::get('bo_tabungan_edit_cari',
     'as'=>'getcariprofiletab',
     'uses'=>'TabunganController@bo_cs_de_tabungan'
 ]);
-Route::get('/bo_tb_de_tabungan','TabunganController@bo_tb_de_tabungan');
 
-Route::get('tes',function()
-{
-    
-
-    $nama=App\Tabungan::where('NASABAH_ID','02000020')->nasabah()->get();
-    foreach($nama as $names)
-    {
-        echo $names->no_rekening;
-    }
-});
+// Routing Report Nominatif
+Route::get('bo_tb_rpt_nominatif','TabunganController@bo_tb_rpt_nominatif')->name('bo_tb_rpt_nominatif');
+Route::post('bo_tb_rpt_nominatifview','TabunganController@bo_tb_rpt_nominatifview')->name('bo_tb_rpt_nominatifview');
+Route::post('nominatifeksport/{id}',
+[
+    'as'=>'nominatifeksport',
+    'uses'=>'TabunganController@exportnominatiftabungan'
+]
+);
+Route::get('nominatifeksport/{id}','TabunganController@bo_tb_rpt_nominatif');
+Route::get('bo_tb_rpt_pdfnominatif','TabunganController@bo_tb_rpt_pdfnominatif')->name('cetaknomtabungan');
+// Report Nominatif Rekap
+Route::get('bo_tb_rpt_nominatifrekap','TabunganController@bo_tb_rpt_nominatifrekap')->name('bo_tb_rpt_nominatifrekap');
+Route::post('bo_tb_rpt_nominatifrekapview','TabunganController@bo_tb_rpt_nominatifrekapview');
+Route::get('bo_tb_rpt_nominatifrekapview','TabunganController@bo_tb_rpt_nominatifrekap');
+Route::post('nominatifrekapeksport/{id}',
+[
+    'as'=>'nominatifrekapeksport',
+    'uses'=>'TabunganController@exportnominatiftabunganrekap'
+]);
+Route::get('nominatifrekapeksport/{id}','TabunganController@bo_tb_rpt_nominatifrekap');
+Route::get('bo_tb_rpt_pdfnominatifrekap','TabunganController@bo_tb_rpt_pdfnominatifrekap')->name('cetaknomtabunganrekap');
+// Report Nominatif Express
+Route::get('bo_tb_rpt_nominatifexpress','TabunganController@bo_tb_rpt_nominatifexpress')->name('bo_tb_rpt_nominatifexpress');
+Route::post('bo_tb_rpt_nominatifexpressview','TabunganController@bo_tb_rpt_nominatifexpressview');
+Route::post('nominatifexpresseksport/{id}','TabunganController@nominatifexpresseksport')->name('nominatifexpresseksport');
+Route::get('bo_tb_rpt_pdfnominatifexpress','TabunganController@bo_tb_rpt_pdfnominatifexpress')->name('cetaknomtabunganexpress');
+// Form Hapus Transaksi
+Route::get('bo_tb_de_frmhapustransaksi','TabunganController@bo_tb_de_frmhapustransaksi')->name('bo_tb_de_frmhapustransaksi');
+// del transaksi
+Route::post('bo_tab_del_trs','TabunganController@bo_tab_del_trs');
+// cari transaksi per tgl
+Route::get('bo_tabungan_transaksi_cari','TabunganController@bo_tabungan_transaksi_cari');

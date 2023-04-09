@@ -273,7 +273,7 @@
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/adm_transaction" class="nav-link">
+                    <a href="/bo_tb_de_frmhapustransaksi" class="nav-link">
                       <p class="pl-3">Hapus Transaksi</p>
                     </a>
                   </li>
@@ -322,17 +322,22 @@
                   <ul class="nav nav-treeview">
                   <li class="nav-item">
                     <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Konfigurasi Nasabah</p>
+                      <p class="pl-3">Produk Tabungan</p>
                     </a>
                   </li>
                   <li class="nav-item">
                     <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Data Agama</p>
+                      <p class="pl-3">Konfigurasi Tabungan</p>
                     </a>
                   </li>
                   <li class="nav-item">
                     <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Data Golongan</p>
+                      <p class="pl-3">Update Prosentase Bunga</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/adm_transaction" class="nav-link">
+                      <p class="pl-3">Tabel Pendukung</p>
                     </a>
                   </li>
                   </ul>
@@ -356,13 +361,13 @@
                         </a>
                       </li>
                       <li class="nav-item">
-                        <a href="/adm_transaction" class="nav-link">
+                        <a href="/bo_tb_rpt_nominatifrekap" class="nav-link">
                           <p class="pl-3">Nominatif Rekap</p>
                         </a>
                       </li>
                       <li class="nav-item">
-                        <a href="/adm_transaction" class="nav-link">
-                          <p class="pl-3">Nominatif Rinci</p>
+                        <a href="/bo_tb_rpt_nominatifexpress" class="nav-link">
+                          <p class="pl-3">Nominatif Express</p>
                         </a>
                       </li>
                     </ul>

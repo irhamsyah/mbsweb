@@ -38,7 +38,9 @@
 
             <div class="col-3"></div>
             <div class="mx-auto col-md-5 col-sm-12">
-              <button type="submit" class="btn btn-warning">EXPORT &nbsp;&nbsp;&nbsp;<i class="fa fa-search" style="color:white"></i></button>
+              <button type="submit" class="btn btn-warning">Export &nbsp;&nbsp;&nbsp;<i class="fa fa-search" style="color:white"></i></button>
+              <a href="{{ route('cetaknomtabungan',['tgl_nominatif'=>$inputantgl])}}" class="btn btn-md btn-danger"> Cetak PDF</a>
+
             </div>
           </div>
         </form>
@@ -64,7 +66,7 @@
                       <td>{{$index}}</td>
                       <td>{{$nominatifs->NO_REKENING}}</td>
                       <td>{{$nominatifs->nama_nasabah}}</td>
-                      <td>{{$nominatifs->saldo_eff_bln_ini}}</td>
+                      <td>{{$nominatifs->SALDO_EFEKTIF_BLN_INI}}</td>
                       <td>{{$nominatifs->saldo_nominatif}}</td>
                     </tr>
                     @endforeach

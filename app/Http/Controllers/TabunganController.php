@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 use App\Golonganpihaklawan;
-use App\KodeGroup1Nasabah;
 use App\KodeGroup1Tabung;
 use App\KodeGroup2Tabung;
 use App\KodeGroup3Tabung;
@@ -16,9 +15,12 @@ use App\Logo;
 use App\Mysysid;
 use App\Nasabah;
 use App\User;
+use App\Tabtran;
+use App\Tellertran;
 use Illuminate\Support\Facades\DB;
-use SebastianBergmann\CodeCoverage\Report\Xml\Tests;
 use App\Exports\ReporttabunganExport;
+use App\Exports\ReporttabunganrekapExport;
+use App\Exports\ReporttabunganexpressExport;
 class TabunganController extends Controller
 {
     /**
@@ -108,6 +110,7 @@ class TabunganController extends Controller
 
         $simpantabung->jenis_tabungan = $request->jenis_tabungan;
         $simpantabung->no_rekening = $request->no_rekening;
+        $simpantabung->no_alternatif = $request->no_alternatif;
         $simpantabung->status_aktif = 1;
         $simpantabung->cab = $request->cab;
         $simpantabung->nasabah_id = $request->nasabah_id;
@@ -201,6 +204,7 @@ class TabunganController extends Controller
         a.alamat,
         a.tempatlahir,
         a.tgllahir,
+        a.no_id AS no_id1,
         a.npwp,
         a.suku_bunga,(
         IF
@@ -209,18 +213,8 @@ class TabunganController extends Controller
             ( ISNULL( a.saldokreditblnlalu ), 0, a.saldokreditblnlalu ) -
         IF
             ( ISNULL( a.saldodebetblnlalu ), 0, a.saldodebetblnlalu ) 
-            ) AS saldo_bln_lalu,(
-        IF
-            ( ISNULL( a.SALDO_AWAL ), 0, a.SALDO_AWAL ) +
-        IF
-            ( ISNULL( a.saldokreditblnlalu ), 0, a.saldokreditblnlalu ) -
-        IF
-            ( ISNULL( a.saldodebetblnlalu ), 0, a.saldodebetblnlalu ) -
-        IF
-            ( ISNULL( a.bungabln ), 0, a.bungabln ) +
-        IF
-            ( ISNULL( a.adminbln ), 0, a.adminbln ) 
-        ) AS saldo_eff_bln_ini,
+        ) AS saldo_bln_lalu,
+        a.SALDO_EFEKTIF_BLN_INI,
     IF
         ( ISNULL( a.mutasi_debet ), 0, a.mutasi_debet ) AS mutasi_debet,
     IF
@@ -232,11 +226,14 @@ class TabunganController extends Controller
         IF
             ( ISNULL( a.bungabln ), 0, a.bungabln ) +
         IF
-            ( ISNULL( a.adminbln ), 0, a.adminbln ) 
+            ( ISNULL( a.adminbln ), 0, a.adminbln ) +
+        IF
+            ( ISNULL( a.pajakblnini ), 0, a.pajakblnini ) 
         ) AS saldo_sbl_bunga,
     IF
         ( ISNULL( a.bungabln ), 0, a.bungabln ) AS bunga_bln_ini,
-        0 AS pajak_bln_ini,
+    IF
+        ( ISNULL( a.pajakblnini ), 0, a.pajakblnini ) AS pajak_bln_ini,
     IF
         ( ISNULL( a.adminbln ), 0, a.adminbln ) AS admin_bln_ini,(
         IF
@@ -250,6 +247,7 @@ class TabunganController extends Controller
         IF
             ( ISNULL( a.saldodebet ), 0, a.saldodebet ) 
         ) AS saldo_nominatif,
+        a.BLOKIR,
         a.SALDO_BLOKIR,
         a.KODE_BI_PEMILIK,
         a.KODE_GROUP1,
@@ -278,7 +276,9 @@ class TabunganController extends Controller
             nasabah.npwp,
             tabung.suku_bunga,
             tabung.SALDO_AWAL,
+            tabung.BLOKIR,
             tabung.SALDO_BLOKIR,
+            tabung.SALDO_EFEKTIF_BLN_INI,
             tabung.KODE_BI_PEMILIK,
             tabung.KODE_GROUP1,
             tabung.KODE_GROUP2,
@@ -295,48 +295,110 @@ class TabunganController extends Controller
             tabung.KODE_BI_HUBUNGAN,
             x.saldokredit,
             y.saldodebet,
-            z.adminbln,
+            tabung.BUNGA_BLN_INI AS bungabln,
+            tabung.PAJAK_BLN_INI AS pajakblnini,
+            tabung.ADM_BLN_INI AS adminbln,
             mutasikredit.mutasi_kredit,
             mutasidebet.mutasi_debet,
             sldkrdblnlalu.saldokreditblnlalu,
-            slddbtblnlalu.saldodebetblnlalu,
-            u.bungabln 
-        FROM ((((((((( tabung INNER JOIN nasabah ON tabung.NASABAH_ID = 
-        nasabah.nasabah_id ) INNER JOIN kodejenistabungan ON tabung.JENIS_TABUNGAN = 
-        kodejenistabungan.KODE_JENIS_TABUNGAN) INNER JOIN (SELECT NO_REKENING,sum( 
-        saldo_trans ) AS saldokredit FROM tabtrans WHERE MY_KODE_TRANS LIKE '1%' AND 
-        tabtrans.tgl_trans <= '$inputantgl' GROUP BY tabtrans.NO_REKENING) x 
-        ON tabung.NO_REKENING = x.NO_REKENING) LEFT JOIN (SELECT NO_REKENING,sum( 
-        saldo_trans ) AS saldodebet FROM tabtrans WHERE MY_KODE_TRANS LIKE '2%' AND 
-        tabtrans.tgl_trans <= '$inputantgl' GROUP BY tabtrans.NO_REKENING) 
-        y ON tabung.NO_REKENING = y.NO_REKENING) LEFT JOIN (SELECT 
-        tabtrans.tabtrans_id,tabtrans.no_rekening,tabtrans.saldo_trans AS adminbln 
-        FROM tabtrans INNER JOIN ( SELECT MAX( TABTRANS_ID ) AS tabid, NO_REKENING 
-        FROM tabtrans WHERE KUITANSI LIKE '%sys-a%' AND TGL_TRANS <='$inputantgl' GROUP BY NO_REKENING ) yy ON tabtrans.TABTRANS_ID = 
-        yy.tabid) z ON tabung.NO_REKENING = z.NO_REKENING) LEFT JOIN (SELECT 
-        tabtrans.tabtrans_id,tabtrans.no_rekening, tabtrans.saldo_trans AS bungabln 
-        FROM tabtrans INNER JOIN ( SELECT MAX( TABTRANS_ID ) AS tabid, NO_REKENING 
-        FROM tabtrans WHERE KUITANSI LIKE '%sys-b%' AND TGL_TRANS <='$inputantgl' GROUP BY NO_REKENING ) xx ON tabtrans.TABTRANS_ID = 
-        xx.tabid) u ON tabung.NO_REKENING = u.NO_REKENING) LEFT JOIN (SELECT 
-        NO_REKENING,sum( saldo_trans ) AS saldokreditblnlalu FROM tabtrans WHERE 
-        MY_KODE_TRANS LIKE '1%' AND tabtrans.tgl_trans <= DATE_ADD('$inputantgl', 
-        INTERVAL - DAY ( DATE('$inputantgl')) DAY ) GROUP BY 
-        tabtrans.NO_REKENING) sldkrdblnlalu ON tabung.NO_REKENING = 
-        sldkrdblnlalu.NO_REKENING) LEFT JOIN (SELECT NO_REKENING,sum( saldo_trans ) 
-        AS saldodebetblnlalu FROM tabtrans WHERE MY_KODE_TRANS LIKE '2%' AND 
-        tabtrans.tgl_trans <= DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( 
-        '$inputantgl' )) DAY ) GROUP BY tabtrans.NO_REKENING) slddbtblnlalu ON 
-        tabung.NO_REKENING = slddbtblnlalu.NO_REKENING) LEFT JOIN (SELECT 
-        NO_REKENING,sum( saldo_trans ) AS mutasi_kredit FROM tabtrans WHERE 
-        MY_KODE_TRANS LIKE '1%' AND (tabtrans.tgl_trans > DATE_ADD('$inputantgl', 
-        INTERVAL - DAY ( date('$inputantgl')) DAY ) AND tabtrans.tgl_trans <= 
-        date('$inputantgl')) GROUP BY tabtrans.NO_REKENING) mutasikredit ON 
-        tabung.NO_REKENING = mutasikredit.NO_REKENING) LEFT JOIN (SELECT NO_REKENING, 
-        sum( saldo_trans ) AS mutasi_debet FROM tabtrans WHERE MY_KODE_TRANS LIKE 
-        '2%' AND (tabtrans.tgl_trans > DATE_ADD('$inputantgl', INTERVAL - DAY ( 
-        date('$inputantgl')) DAY) AND tabtrans.tgl_trans <= date('$inputantgl' 
-        )) GROUP BY tabtrans.NO_REKENING) mutasidebet ON tabung.NO_REKENING = 
-        mutasidebet.NO_REKENING WHERE tabung.STATUS_AKTIF = 2 
+            slddbtblnlalu.saldodebetblnlalu 
+        FROM
+            (((((((
+                                        tabung
+                                        INNER JOIN nasabah ON tabung.NASABAH_ID = nasabah.nasabah_id 
+                                        )
+                                    INNER JOIN kodejenistabungan ON tabung.JENIS_TABUNGAN = kodejenistabungan.KODE_JENIS_TABUNGAN 
+                                    )
+                                INNER JOIN (
+                                SELECT
+                                    NO_REKENING,
+                                    sum( saldo_trans ) AS saldokredit 
+                                FROM
+                                    tabtrans 
+                                WHERE
+                                    MY_KODE_TRANS LIKE '1%' 
+                                    AND tabtrans.tgl_trans <= date( '$inputantgl' ) 
+                                GROUP BY
+                                    tabtrans.NO_REKENING 
+                                ) x ON tabung.NO_REKENING = x.NO_REKENING 
+                                )
+                            LEFT JOIN (
+                            SELECT
+                                NO_REKENING,
+                                sum( saldo_trans ) AS saldodebet 
+                            FROM
+                                tabtrans 
+                            WHERE
+                                MY_KODE_TRANS LIKE '2%' 
+                                AND tabtrans.tgl_trans <= date( '$inputantgl' ) 
+                            GROUP BY
+                                tabtrans.NO_REKENING 
+                            ) y ON tabung.NO_REKENING = y.NO_REKENING 
+                            )
+                        LEFT JOIN (
+                        SELECT
+                            NO_REKENING,
+                            sum( saldo_trans ) AS saldokreditblnlalu 
+                        FROM
+                            tabtrans 
+                        WHERE
+                            MY_KODE_TRANS LIKE '1%' 
+                            AND tabtrans.tgl_trans <= DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+                        GROUP BY
+                            tabtrans.NO_REKENING 
+                        ) sldkrdblnlalu ON tabung.NO_REKENING = sldkrdblnlalu.NO_REKENING 
+                        )
+                    LEFT JOIN (
+                    SELECT
+                        NO_REKENING,
+                        sum( saldo_trans ) AS saldodebetblnlalu 
+                    FROM
+                        tabtrans 
+                    WHERE
+                        MY_KODE_TRANS LIKE '2%' 
+                        AND tabtrans.tgl_trans <= DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+                    GROUP BY
+                        tabtrans.NO_REKENING 
+                    ) slddbtblnlalu ON tabung.NO_REKENING = slddbtblnlalu.NO_REKENING 
+                    )
+                LEFT JOIN (
+                SELECT
+                    NO_REKENING,
+                    sum( saldo_trans ) AS mutasi_kredit 
+                FROM
+                    tabtrans 
+                WHERE
+                    MY_KODE_TRANS LIKE '1%' 
+                    AND (
+                        tabtrans.tgl_trans > DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+                    AND tabtrans.tgl_trans <= date( '$inputantgl' )) 
+                GROUP BY
+                    tabtrans.NO_REKENING 
+                ) mutasikredit ON tabung.NO_REKENING = mutasikredit.NO_REKENING 
+            )
+            LEFT JOIN (
+            SELECT
+                NO_REKENING,
+                sum( saldo_trans ) AS mutasi_debet 
+            FROM
+                tabtrans 
+            WHERE
+                MY_KODE_TRANS LIKE '2%' 
+                AND (
+                    tabtrans.tgl_trans > DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+                AND tabtrans.tgl_trans <= date( '$inputantgl' )) 
+            GROUP BY
+                tabtrans.NO_REKENING 
+            ) mutasidebet ON tabung.NO_REKENING = mutasidebet.NO_REKENING 
+        
+        WHERE
+            tabung.STATUS_AKTIF <> 1 
+            AND (
+            IF
+            ( ISNULL( tabung.SALDO_AWAL ), 0, tabung.SALDO_AWAL ) + x.saldokredit -
+        IF
+            ( ISNULL( y.saldodebet ), 0, y.saldodebet ) 
+        )>0
         ) a";
         $nominatif=DB::select($sql);
         return view ('reports.rptnominatiftab', 
@@ -356,6 +418,7 @@ class TabunganController extends Controller
         a.alamat,
         a.tempatlahir,
         a.tgllahir,
+        a.no_id AS no_id1,
         a.npwp,
         a.suku_bunga,(
         IF
@@ -364,18 +427,8 @@ class TabunganController extends Controller
             ( ISNULL( a.saldokreditblnlalu ), 0, a.saldokreditblnlalu ) -
         IF
             ( ISNULL( a.saldodebetblnlalu ), 0, a.saldodebetblnlalu ) 
-            ) AS saldo_bln_lalu,(
-        IF
-            ( ISNULL( a.SALDO_AWAL ), 0, a.SALDO_AWAL ) +
-        IF
-            ( ISNULL( a.saldokreditblnlalu ), 0, a.saldokreditblnlalu ) -
-        IF
-            ( ISNULL( a.saldodebetblnlalu ), 0, a.saldodebetblnlalu ) -
-        IF
-            ( ISNULL( a.bungabln ), 0, a.bungabln ) +
-        IF
-            ( ISNULL( a.adminbln ), 0, a.adminbln ) 
-        ) AS saldo_eff_bln_ini,
+        ) AS saldo_bln_lalu,
+        a.SALDO_EFEKTIF_BLN_INI,
     IF
         ( ISNULL( a.mutasi_debet ), 0, a.mutasi_debet ) AS mutasi_debet,
     IF
@@ -387,11 +440,14 @@ class TabunganController extends Controller
         IF
             ( ISNULL( a.bungabln ), 0, a.bungabln ) +
         IF
-            ( ISNULL( a.adminbln ), 0, a.adminbln ) 
+            ( ISNULL( a.adminbln ), 0, a.adminbln ) +
+        IF
+            ( ISNULL( a.pajakblnini ), 0, a.pajakblnini ) 
         ) AS saldo_sbl_bunga,
     IF
         ( ISNULL( a.bungabln ), 0, a.bungabln ) AS bunga_bln_ini,
-        0 AS pajak_bln_ini,
+    IF
+        ( ISNULL( a.pajakblnini ), 0, a.pajakblnini ) AS pajak_bln_ini,
     IF
         ( ISNULL( a.adminbln ), 0, a.adminbln ) AS admin_bln_ini,(
         IF
@@ -405,6 +461,7 @@ class TabunganController extends Controller
         IF
             ( ISNULL( a.saldodebet ), 0, a.saldodebet ) 
         ) AS saldo_nominatif,
+        a.BLOKIR,
         a.SALDO_BLOKIR,
         a.KODE_BI_PEMILIK,
         a.KODE_GROUP1,
@@ -433,7 +490,9 @@ class TabunganController extends Controller
             nasabah.npwp,
             tabung.suku_bunga,
             tabung.SALDO_AWAL,
+            tabung.BLOKIR,
             tabung.SALDO_BLOKIR,
+            tabung.SALDO_EFEKTIF_BLN_INI,
             tabung.KODE_BI_PEMILIK,
             tabung.KODE_GROUP1,
             tabung.KODE_GROUP2,
@@ -450,51 +509,1404 @@ class TabunganController extends Controller
             tabung.KODE_BI_HUBUNGAN,
             x.saldokredit,
             y.saldodebet,
+            tabung.BUNGA_BLN_INI AS bungabln,
+            tabung.PAJAK_BLN_INI AS pajakblnini,
+            tabung.ADM_BLN_INI AS adminbln,
+            mutasikredit.mutasi_kredit,
+            mutasidebet.mutasi_debet,
+            sldkrdblnlalu.saldokreditblnlalu,
+            slddbtblnlalu.saldodebetblnlalu 
+        FROM
+            (((((((
+                                        tabung
+                                        INNER JOIN nasabah ON tabung.NASABAH_ID = nasabah.nasabah_id 
+                                        )
+                                    INNER JOIN kodejenistabungan ON tabung.JENIS_TABUNGAN = kodejenistabungan.KODE_JENIS_TABUNGAN 
+                                    )
+                                INNER JOIN (
+                                SELECT
+                                    NO_REKENING,
+                                    sum( saldo_trans ) AS saldokredit 
+                                FROM
+                                    tabtrans 
+                                WHERE
+                                    MY_KODE_TRANS LIKE '1%' 
+                                    AND tabtrans.tgl_trans <= date( '$inputantgl' ) 
+                                GROUP BY
+                                    tabtrans.NO_REKENING 
+                                ) x ON tabung.NO_REKENING = x.NO_REKENING 
+                                )
+                            LEFT JOIN (
+                            SELECT
+                                NO_REKENING,
+                                sum( saldo_trans ) AS saldodebet 
+                            FROM
+                                tabtrans 
+                            WHERE
+                                MY_KODE_TRANS LIKE '2%' 
+                                AND tabtrans.tgl_trans <= date( '$inputantgl' ) 
+                            GROUP BY
+                                tabtrans.NO_REKENING 
+                            ) y ON tabung.NO_REKENING = y.NO_REKENING 
+                            )
+                        LEFT JOIN (
+                        SELECT
+                            NO_REKENING,
+                            sum( saldo_trans ) AS saldokreditblnlalu 
+                        FROM
+                            tabtrans 
+                        WHERE
+                            MY_KODE_TRANS LIKE '1%' 
+                            AND tabtrans.tgl_trans <= DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+                        GROUP BY
+                            tabtrans.NO_REKENING 
+                        ) sldkrdblnlalu ON tabung.NO_REKENING = sldkrdblnlalu.NO_REKENING 
+                        )
+                    LEFT JOIN (
+                    SELECT
+                        NO_REKENING,
+                        sum( saldo_trans ) AS saldodebetblnlalu 
+                    FROM
+                        tabtrans 
+                    WHERE
+                        MY_KODE_TRANS LIKE '2%' 
+                        AND tabtrans.tgl_trans <= DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+                    GROUP BY
+                        tabtrans.NO_REKENING 
+                    ) slddbtblnlalu ON tabung.NO_REKENING = slddbtblnlalu.NO_REKENING 
+                    )
+                LEFT JOIN (
+                SELECT
+                    NO_REKENING,
+                    sum( saldo_trans ) AS mutasi_kredit 
+                FROM
+                    tabtrans 
+                WHERE
+                    MY_KODE_TRANS LIKE '1%' 
+                    AND (
+                        tabtrans.tgl_trans > DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+                    AND tabtrans.tgl_trans <= date( '$inputantgl' )) 
+                GROUP BY
+                    tabtrans.NO_REKENING 
+                ) mutasikredit ON tabung.NO_REKENING = mutasikredit.NO_REKENING 
+            )
+            LEFT JOIN (
+            SELECT
+                NO_REKENING,
+                sum( saldo_trans ) AS mutasi_debet 
+            FROM
+                tabtrans 
+            WHERE
+                MY_KODE_TRANS LIKE '2%' 
+                AND (
+                    tabtrans.tgl_trans > DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+                AND tabtrans.tgl_trans <= date( '$inputantgl' )) 
+            GROUP BY
+                tabtrans.NO_REKENING 
+            ) mutasidebet ON tabung.NO_REKENING = mutasidebet.NO_REKENING 
+        
+        WHERE
+            tabung.STATUS_AKTIF <> 1 
+            AND (
+            IF
+            ( ISNULL( tabung.SALDO_AWAL ), 0, tabung.SALDO_AWAL ) + x.saldokredit -
+        IF
+            ( ISNULL( y.saldodebet ), 0, y.saldodebet ) 
+        )>0
+        ) a";
+        $nominatif=DB::select($sql);        
+        return (new ReporttabunganExport($nominatif))->download('nominatif.xlsx');
+    }
+    public function bo_tb_rpt_pdfnominatif(Request $request)
+    {
+        $inputantgl=date('Y-m-d',strtotime($request->tgl_nominatif));
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_TAB'.'%'.'NAMA')->get();
+        $sql="SELECT
+        a.NO_REKENING,
+        a.nama_nasabah,
+        a.alamat,
+        (
+        IF
+        ( ISNULL( a.SALDO_AWAL ), 0, a.SALDO_AWAL ) +
+        IF
+        ( ISNULL( a.saldokreditblnlalu ), 0, a.saldokreditblnlalu ) -
+        IF
+        ( ISNULL( a.saldodebetblnlalu ), 0, a.saldodebetblnlalu ) 
+        ) AS saldo_bln_lalu,
+        IF
+        ( ISNULL( a.mutasi_debet ), 0, a.mutasi_debet ) AS mutasi_debet,
+        IF
+        ( ISNULL( a.mutasi_kredit ), 0, a.mutasi_kredit ) AS mutasi_kredit,(
+        IF
+        ( ISNULL( a.SALDO_AWAL ), 0, a.SALDO_AWAL ) + a.saldokredit -
+        IF
+        ( ISNULL( a.saldodebet ), 0, a.saldodebet ) -
+        IF
+        ( ISNULL( a.bungabln ), 0, a.bungabln ) +
+        IF
+        ( ISNULL( a.adminbln ), 0, a.adminbln ) +
+        IF
+        ( ISNULL( a.pajakblnini ), 0, a.pajakblnini ) 
+        ) AS saldo_sbl_bunga,
+        IF
+        ( ISNULL( a.bungabln ), 0, a.bungabln ) AS bunga_bln_ini,
+        IF
+        ( ISNULL( a.pajakblnini ), 0, a.pajakblnini ) AS pajak_bln_ini,
+        IF
+        ( ISNULL( a.adminbln ), 0, a.adminbln ) AS admin_bln_ini,
+        (
+        IF
+        ( ISNULL( a.SALDO_AWAL ), 0, a.SALDO_AWAL ) + a.saldokredit -
+        IF
+        ( ISNULL( a.saldodebet ), 0, a.saldodebet ) 
+        ) AS saldo_nominatif
+        FROM
+        (
+        SELECT
+        tabung.NO_REKENING,
+        nasabah.nama_nasabah,
+        nasabah.alamat,
+        tabung.SALDO_AWAL,
+        tabung.BLOKIR,
+        tabung.SALDO_BLOKIR,
+        tabung.SALDO_EFEKTIF_BLN_INI,
+        tabung.KODE_BI_PEMILIK,
+        tabung.KODE_GROUP1,
+        tabung.KODE_GROUP2,
+        tabung.KODE_GROUP3,
+        tabung.CAB,
+        tabung.TGL_REGISTRASI,
+        tabung.JENIS_TABUNGAN,
+        kodejenistabungan.DESKRIPSI_JENIS_TABUNGAN,
+        tabung.SETORAN_PER_BLN,
+        tabung.TGL_MULAI,
+        tabung.JKW,
+        tabung.TGL_JT,
+        tabung.NISBAH,
+        tabung.KODE_BI_HUBUNGAN,
+        x.saldokredit,
+        y.saldodebet,
+        tabung.BUNGA_BLN_INI AS bungabln,
+        tabung.PAJAK_BLN_INI AS pajakblnini,
+        tabung.ADM_BLN_INI AS adminbln,
+        mutasikredit.mutasi_kredit,
+        mutasidebet.mutasi_debet,
+        sldkrdblnlalu.saldokreditblnlalu,
+        slddbtblnlalu.saldodebetblnlalu 
+        FROM
+        (((((((
+        tabung
+        INNER JOIN nasabah ON tabung.NASABAH_ID = nasabah.nasabah_id 
+        )
+        INNER JOIN kodejenistabungan ON tabung.JENIS_TABUNGAN = kodejenistabungan.KODE_JENIS_TABUNGAN 
+        )
+        INNER JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS saldokredit 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '1%' 
+        AND tabtrans.tgl_trans <= date( '$inputantgl' ) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) x ON tabung.NO_REKENING = x.NO_REKENING 
+        )
+        LEFT JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS saldodebet 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '2%' 
+        AND tabtrans.tgl_trans <= date( '$inputantgl' ) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) y ON tabung.NO_REKENING = y.NO_REKENING 
+        )
+        LEFT JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS saldokreditblnlalu 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '1%' 
+        AND tabtrans.tgl_trans <= DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) sldkrdblnlalu ON tabung.NO_REKENING = sldkrdblnlalu.NO_REKENING 
+        )
+        LEFT JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS saldodebetblnlalu 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '2%' 
+        AND tabtrans.tgl_trans <= DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) slddbtblnlalu ON tabung.NO_REKENING = slddbtblnlalu.NO_REKENING 
+        )
+        LEFT JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS mutasi_kredit 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '1%' 
+        AND (
+        tabtrans.tgl_trans > DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+        AND tabtrans.tgl_trans <= date( '$inputantgl' )) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) mutasikredit ON tabung.NO_REKENING = mutasikredit.NO_REKENING 
+        )
+        LEFT JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS mutasi_debet 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '2%' 
+        AND (
+        tabtrans.tgl_trans > DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+        AND tabtrans.tgl_trans <= date( '$inputantgl' )) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) mutasidebet ON tabung.NO_REKENING = mutasidebet.NO_REKENING 
+        WHERE
+        tabung.STATUS_AKTIF <> 1 
+        AND (
+        IF
+        ( ISNULL( tabung.SALDO_AWAL ), 0, tabung.SALDO_AWAL ) + x.saldokredit -
+        IF
+        ( ISNULL( y.saldodebet ), 0, y.saldodebet ) 
+        )>0
+        ) a";
+        $count=DB::select('select count(*) as aggregate from('.$sql.') aa');
+        $count=$count[0]->aggregate;
+        // dd($count);
+        $nominatif=DB::select($sql);
+        return view('pdf.cetaknominatif',['nominatif'=>$nominatif,'lembaga'=>$lembaga,'ttd'=>$ttd]);         
+    }
+
+    public function bo_tb_rpt_nominatifrekap()
+    {
+        $logos = Logo::all();
+        $users = User::all();
+        $tgllogin=Mysysid::where('KeyName','=','TANGGALHARIINI')->get();
+        return view('reports.frmsearchnomrekap',['users'=>$users,'logos'=>$logos]);
+    }
+    public function bo_tb_rpt_nominatifrekapview(Request $request)
+    {
+        $this->validate($request,
+        ['rekap'=>'required','tgl_nominatif'=>'required']);
+        $inputantgl=date('Y-m-d',strtotime($request->tgl_nominatif));
+        $logos = Logo::all();
+        $users = User::all();
+        // $tgllogin=Mysysid::where('KeyName','=','TANGGALHARIINI')->get();
+        $rekap=$request->rekap;
+        $query="";
+        if($rekap=='JENIS_TABUNGAN')
+        {
+            $query="a.JENIS_TABUNGAN as kode,a.DESKRIPSI_JENIS_TABUNGAN as deskripsi,";
+        }elseif($rekap=='KODE_GROUP1')
+        {
+            $query="a.KODE_GROUP1 as kode,a.DESKRIPSI_GROUP1 as deskripsi,";
+        }elseif($rekap=='KODE_GROUP2')
+        {
+            $query="a.KODE_GROUP2 as kode,a.DESKRIPSI_GROUP2 as deskripsi,";
+        }else{
+            $query="a.KODE_GROUP3 as kode,a.DESKRIPSI_GROUP3 as deskripsi,";
+        }
+        $sql="SELECT ".$query.
+        "a.NO_REKENING,
+        a.nama_nasabah,
+        (
+        IF
+        ( ISNULL( a.SALDO_AWAL ), 0, a.SALDO_AWAL ) + a.saldokredit -
+        IF
+        ( ISNULL( a.saldodebet ), 0, a.saldodebet ) 
+        ) AS saldo_nominatif,
+        a.KODE_BI_PEMILIK as kode_bi_pemilik,
+        a.KODE_GROUP1,
+        a.KODE_GROUP2,
+        a.KODE_GROUP3,
+        a.TGL_REGISTRASI as tgl_registrasi,
+        a.DESKRIPSI_JENIS_TABUNGAN as jenis_tabungan,
+        a.SUKU_BUNGA as suku_bunga
+        FROM
+        (
+        SELECT
+        tabung.NO_REKENING,
+        nasabah.nama_nasabah,
+        tabung.suku_bunga,
+        tabung.SALDO_AWAL,
+        tabung.KODE_BI_PEMILIK,
+        tabung.KODE_GROUP1,
+        kodegroup1tabung.DESKRIPSI_GROUP1,
+        tabung.KODE_GROUP2,
+        kodegroup2tabung.DESKRIPSI_GROUP2,
+        tabung.KODE_GROUP3,
+        kodegroup3tabung.DESKRIPSI_GROUP3,
+        tabung.TGL_REGISTRASI,
+        tabung.JENIS_TABUNGAN,
+        kodejenistabungan.DESKRIPSI_JENIS_TABUNGAN,
+        x.saldokredit,
+        y.saldodebet,
+        tabung.BUNGA_BLN_INI AS bungabln,
+        tabung.PAJAK_BLN_INI AS pajakblnini,
+        tabung.ADM_BLN_INI AS adminbln,
+        mutasikredit.mutasi_kredit,
+        mutasidebet.mutasi_debet,
+        sldkrdblnlalu.saldokreditblnlalu,
+        slddbtblnlalu.saldodebetblnlalu 
+        FROM
+        ((((((((((
+        tabung
+        INNER JOIN nasabah ON tabung.NASABAH_ID = nasabah.nasabah_id 
+        )
+        INNER JOIN kodejenistabungan ON tabung.JENIS_TABUNGAN = kodejenistabungan.KODE_JENIS_TABUNGAN 
+        )
+        INNER JOIN kodegroup1tabung ON tabung.KODE_GROUP1=kodegroup1tabung.KODE_GROUP1
+        )
+        INNER JOIN kodegroup2tabung ON tabung.KODE_GROUP2=kodegroup2tabung.KODE_GROUP2
+        )
+        INNER JOIN kodegroup3tabung ON tabung.KODE_GROUP3=kodegroup3tabung.KODE_GROUP3
+        )
+        INNER JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS saldokredit 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '1%' 
+        AND tabtrans.tgl_trans <= date( '$inputantgl' ) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) x ON tabung.NO_REKENING = x.NO_REKENING 
+        )
+        LEFT JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS saldodebet 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '2%' 
+        AND tabtrans.tgl_trans <= date( '$inputantgl' ) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) y ON tabung.NO_REKENING = y.NO_REKENING 
+        )
+        LEFT JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS saldokreditblnlalu 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '1%' 
+        AND tabtrans.tgl_trans <= DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) sldkrdblnlalu ON tabung.NO_REKENING = sldkrdblnlalu.NO_REKENING 
+        )
+        LEFT JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS saldodebetblnlalu 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '2%' 
+        AND tabtrans.tgl_trans <= DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) slddbtblnlalu ON tabung.NO_REKENING = slddbtblnlalu.NO_REKENING 
+        )
+        LEFT JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS mutasi_kredit 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '1%' 
+        AND (
+        tabtrans.tgl_trans > DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+        AND tabtrans.tgl_trans <= date( '$inputantgl' )) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) mutasikredit ON tabung.NO_REKENING = mutasikredit.NO_REKENING 
+        )
+        LEFT JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS mutasi_debet 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '2%' 
+        AND (
+        tabtrans.tgl_trans > DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+        AND tabtrans.tgl_trans <= date( '$inputantgl' )) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) mutasidebet ON tabung.NO_REKENING = mutasidebet.NO_REKENING 
+        WHERE
+        tabung.STATUS_AKTIF <> 1 
+        AND (
+        IF
+        ( ISNULL( tabung.SALDO_AWAL ), 0, tabung.SALDO_AWAL ) + x.saldokredit -
+        IF
+        ( ISNULL( y.saldodebet ), 0, y.saldodebet ) 
+        )>0
+        ) a";
+        $nominatif=DB::select($sql);
+        return view('reports.rptnominatifrekaptab',['nominatif'=>$nominatif,'inputantgl'=>$inputantgl,'logos'=>$logos,'users'=>$users,'rekap'=>$rekap]);
+    }
+    public function exportnominatiftabunganrekap(Request $request) 
+    {
+        $inputantgl=date('Y-m-d',strtotime($request->tgl_nominatif));
+        $rekap=$request->rekap;
+        $query="";
+        if($rekap=='JENIS_TABUNGAN')
+        {
+            $query="a.JENIS_TABUNGAN as kode,a.DESKRIPSI_JENIS_TABUNGAN as deskripsi,";
+        }elseif($rekap=='KODE_GROUP1')
+        {
+            $query="a.KODE_GROUP1 as kode,a.DESKRIPSI_GROUP1 as deskripsi,";
+        }elseif($rekap=='KODE_GROUP2')
+        {
+            $query="a.KODE_GROUP2 as kode,a.DESKRIPSI_GROUP2 as deskripsi,";
+        }else{
+            $query="a.KODE_GROUP3 as kode,a.DESKRIPSI_GROUP3 as deskripsi,";
+        }
+        $sql="SELECT ".$query.
+        "a.NO_REKENING,
+        a.nama_nasabah,
+        (
+        IF
+        ( ISNULL( a.SALDO_AWAL ), 0, a.SALDO_AWAL ) + a.saldokredit -
+        IF
+        ( ISNULL( a.saldodebet ), 0, a.saldodebet ) 
+        ) AS saldo_nominatif,
+        a.KODE_BI_PEMILIK as kode_bi_pemilik,
+        a.KODE_GROUP1,
+        a.KODE_GROUP2,
+        a.KODE_GROUP3,
+        a.TGL_REGISTRASI as tgl_registrasi,
+        a.DESKRIPSI_JENIS_TABUNGAN as jenis_tabungan,
+        a.SUKU_BUNGA as suku_bunga
+        FROM
+        (
+        SELECT
+        tabung.NO_REKENING,
+        nasabah.nama_nasabah,
+        tabung.suku_bunga,
+        tabung.SALDO_AWAL,
+        tabung.KODE_BI_PEMILIK,
+        tabung.KODE_GROUP1,
+        kodegroup1tabung.DESKRIPSI_GROUP1,
+        tabung.KODE_GROUP2,
+        kodegroup2tabung.DESKRIPSI_GROUP2,
+        tabung.KODE_GROUP3,
+        kodegroup3tabung.DESKRIPSI_GROUP3,
+        tabung.TGL_REGISTRASI,
+        tabung.JENIS_TABUNGAN,
+        kodejenistabungan.DESKRIPSI_JENIS_TABUNGAN,
+        x.saldokredit,
+        y.saldodebet,
+        tabung.BUNGA_BLN_INI AS bungabln,
+        tabung.PAJAK_BLN_INI AS pajakblnini,
+        tabung.ADM_BLN_INI AS adminbln,
+        mutasikredit.mutasi_kredit,
+        mutasidebet.mutasi_debet,
+        sldkrdblnlalu.saldokreditblnlalu,
+        slddbtblnlalu.saldodebetblnlalu 
+        FROM
+        ((((((((((
+        tabung
+        INNER JOIN nasabah ON tabung.NASABAH_ID = nasabah.nasabah_id 
+        )
+        INNER JOIN kodejenistabungan ON tabung.JENIS_TABUNGAN = kodejenistabungan.KODE_JENIS_TABUNGAN 
+        )
+        INNER JOIN kodegroup1tabung ON tabung.KODE_GROUP1=kodegroup1tabung.KODE_GROUP1
+        )
+        INNER JOIN kodegroup2tabung ON tabung.KODE_GROUP2=kodegroup2tabung.KODE_GROUP2
+        )
+        INNER JOIN kodegroup3tabung ON tabung.KODE_GROUP3=kodegroup3tabung.KODE_GROUP3
+        )
+        INNER JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS saldokredit 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '1%' 
+        AND tabtrans.tgl_trans <= date( '$inputantgl' ) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) x ON tabung.NO_REKENING = x.NO_REKENING 
+        )
+        LEFT JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS saldodebet 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '2%' 
+        AND tabtrans.tgl_trans <= date( '$inputantgl' ) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) y ON tabung.NO_REKENING = y.NO_REKENING 
+        )
+        LEFT JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS saldokreditblnlalu 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '1%' 
+        AND tabtrans.tgl_trans <= DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) sldkrdblnlalu ON tabung.NO_REKENING = sldkrdblnlalu.NO_REKENING 
+        )
+        LEFT JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS saldodebetblnlalu 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '2%' 
+        AND tabtrans.tgl_trans <= DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) slddbtblnlalu ON tabung.NO_REKENING = slddbtblnlalu.NO_REKENING 
+        )
+        LEFT JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS mutasi_kredit 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '1%' 
+        AND (
+        tabtrans.tgl_trans > DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+        AND tabtrans.tgl_trans <= date( '$inputantgl' )) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) mutasikredit ON tabung.NO_REKENING = mutasikredit.NO_REKENING 
+        )
+        LEFT JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS mutasi_debet 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '2%' 
+        AND (
+        tabtrans.tgl_trans > DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+        AND tabtrans.tgl_trans <= date( '$inputantgl' )) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) mutasidebet ON tabung.NO_REKENING = mutasidebet.NO_REKENING 
+        WHERE
+        tabung.STATUS_AKTIF <> 1 
+        AND (
+        IF
+        ( ISNULL( tabung.SALDO_AWAL ), 0, tabung.SALDO_AWAL ) + x.saldokredit -
+        IF
+        ( ISNULL( y.saldodebet ), 0, y.saldodebet ) 
+        )>0
+        ) a";
+        $nominatif=DB::select($sql);
+        return (new ReporttabunganrekapExport($nominatif))->download('nominatifrekap.xlsx');
+    }
+
+    public function bo_tb_rpt_pdfnominatifrekap(Request $request)
+    {   
+        $inputantgl=date('Y-m-d',strtotime($request->tgl_nominatif));
+        $rekap=$request->rekap;
+        $query="";
+        $groupby="";
+        if($rekap=='JENIS_TABUNGAN')
+        {
+            $query="a.JENIS_TABUNGAN as kode,a.DESKRIPSI_JENIS_TABUNGAN as deskripsi,count(*) as aggregate,";
+            $groupby="a.JENIS_TABUNGAN,a.DESKRIPSI_JENIS_TABUNGAN";
+        }elseif($rekap=='KODE_GROUP1')
+        {
+            $query="a.KODE_GROUP1 as kode,a.DESKRIPSI_GROUP1 as deskripsi,count(*) as aggregate,";
+            $groupby="a.KODE_GROUP1,a.DESKRIPSI_GROUP1";
+        }elseif($rekap=='KODE_GROUP2')
+        {
+            $query="a.KODE_GROUP2 as kode,a.DESKRIPSI_GROUP2 as deskripsi,count(*) as aggregate,";
+            $groupby="a.KODE_GROUP2,a.DESKRIPSI_GROUP2";
+        }else{
+            $query="a.KODE_GROUP3 as kode,a.DESKRIPSI_GROUP3 as deskripsi,count(*) as aggregate,";
+            $groupby="a.KODE_GROUP3,a.DESKRIPSI_GROUP3";
+        }
+        $sql="SELECT ".$query.
+        " SUM(
+        IF
+        ( ISNULL( a.SALDO_AWAL ), 0, a.SALDO_AWAL ) + a.saldokredit -
+        IF
+        ( ISNULL( a.saldodebet ), 0, a.saldodebet ) 
+        ) AS saldo_nominatif,
+        '100%' as persennisbah,
+        '100%' as persensaldo
+        FROM
+        (
+        SELECT
+        tabung.NO_REKENING,
+        nasabah.nama_nasabah,
+        tabung.suku_bunga,
+        tabung.SALDO_AWAL,
+        tabung.KODE_BI_PEMILIK,
+        tabung.KODE_GROUP1,
+        kodegroup1tabung.DESKRIPSI_GROUP1,
+        tabung.KODE_GROUP2,
+        kodegroup2tabung.DESKRIPSI_GROUP2,
+        tabung.KODE_GROUP3,
+        kodegroup3tabung.DESKRIPSI_GROUP3,
+        tabung.TGL_REGISTRASI,
+        tabung.JENIS_TABUNGAN,
+        kodejenistabungan.DESKRIPSI_JENIS_TABUNGAN,
+        x.saldokredit,
+        y.saldodebet,
+        tabung.BUNGA_BLN_INI AS bungabln,
+        tabung.PAJAK_BLN_INI AS pajakblnini,
+        tabung.ADM_BLN_INI AS adminbln,
+        mutasikredit.mutasi_kredit,
+        mutasidebet.mutasi_debet,
+        sldkrdblnlalu.saldokreditblnlalu,
+        slddbtblnlalu.saldodebetblnlalu 
+        FROM
+        ((((((((((
+        tabung
+        INNER JOIN nasabah ON tabung.NASABAH_ID = nasabah.nasabah_id 
+        )
+        INNER JOIN kodejenistabungan ON tabung.JENIS_TABUNGAN = kodejenistabungan.KODE_JENIS_TABUNGAN 
+        )
+        INNER JOIN kodegroup1tabung ON tabung.KODE_GROUP1=kodegroup1tabung.KODE_GROUP1
+        )
+        INNER JOIN kodegroup2tabung ON tabung.KODE_GROUP2=kodegroup2tabung.KODE_GROUP2
+        )
+        INNER JOIN kodegroup3tabung ON tabung.KODE_GROUP3=kodegroup3tabung.KODE_GROUP3
+        )
+        INNER JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS saldokredit 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '1%' 
+        AND tabtrans.tgl_trans <= date( '$inputantgl' ) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) x ON tabung.NO_REKENING = x.NO_REKENING 
+        )
+        LEFT JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS saldodebet 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '2%' 
+        AND tabtrans.tgl_trans <= date( '$inputantgl' ) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) y ON tabung.NO_REKENING = y.NO_REKENING 
+        )
+        LEFT JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS saldokreditblnlalu 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '1%' 
+        AND tabtrans.tgl_trans <= DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) sldkrdblnlalu ON tabung.NO_REKENING = sldkrdblnlalu.NO_REKENING 
+        )
+        LEFT JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS saldodebetblnlalu 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '2%' 
+        AND tabtrans.tgl_trans <= DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) slddbtblnlalu ON tabung.NO_REKENING = slddbtblnlalu.NO_REKENING 
+        )
+        LEFT JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS mutasi_kredit 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '1%' 
+        AND (
+        tabtrans.tgl_trans > DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+        AND tabtrans.tgl_trans <= date( '$inputantgl' )) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) mutasikredit ON tabung.NO_REKENING = mutasikredit.NO_REKENING 
+        )
+        LEFT JOIN (
+        SELECT
+        NO_REKENING,
+        sum( saldo_trans ) AS mutasi_debet 
+        FROM
+        tabtrans 
+        WHERE
+        MY_KODE_TRANS LIKE '2%' 
+        AND (
+        tabtrans.tgl_trans > DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+        AND tabtrans.tgl_trans <= date( '$inputantgl' )) 
+        GROUP BY
+        tabtrans.NO_REKENING 
+        ) mutasidebet ON tabung.NO_REKENING = mutasidebet.NO_REKENING 
+        WHERE
+        tabung.STATUS_AKTIF <> 1 
+        AND (
+        IF
+        ( ISNULL( tabung.SALDO_AWAL ), 0, tabung.SALDO_AWAL ) + x.saldokredit -
+        IF
+        ( ISNULL( y.saldodebet ), 0, y.saldodebet ) 
+        )>0
+        ) a GROUP BY ".$groupby;
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $kota=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_KOTA'.'%')->get();
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_TAB'.'%'.'NAMA')->get();
+        $nominatif=DB::select($sql);
+        return view('pdf.cetaknominatifrekap',['nominatif'=>$nominatif,'lembaga'=>$lembaga,'kota'=>$kota,'ttd'=>$ttd,'inputantgl'=>$inputantgl]);
+    }
+
+    public function bo_tb_rpt_nominatifexpress()
+    {
+        $logos = Logo::all();
+        $users = User::all();
+        // $tgllogin=Mysysid::where('KeyName','=','TANGGALHARIINI')->get();
+        return view('reports.frmsearchnomexpress',['users'=>$users,'logos'=>$logos]);
+    }
+
+    public function bo_tb_rpt_nominatifexpressview(Request $request)
+    {
+        $this->validate($request,[
+            'tgl_nominatif'=>'required'
+        ]);
+
+        $logos = Logo::all();
+        $users = User::all();
+        $tgllogin=Mysysid::where('KeyName','=','TANGGALHARIINI')->get();
+        $inputantgl=date('Y-m-d',strtotime($request->tgl_nominatif));
+        $sql="SELECT
+        a.nasabah_id,
+        a.NO_REKENING,
+        a.nama_nasabah,
+        a.alamat,
+        a.AKAD as akad,
+        a.NISBAH as nisbah,
+        (
+        IF
+            ( ISNULL( a.SALDO_AWAL ), 0, a.SALDO_AWAL ) + a.saldokredit -
+        IF
+            ( ISNULL( a.saldodebet ), 0, a.saldodebet ) 
+        ) AS saldo_nominatif,
+        a.TGL_MULAI,
+        a.JKW,
+        a.TGL_JT,
+        a.tgl_akhir_trans,
+        a.suku_bunga,
+        a.KODE_BI_PEMILIK,
+        a.KODE_GROUP1,
+        a.KODE_GROUP2,
+        a.KODE_GROUP3,
+        a.TGL_REGISTRASI,
+        a.JENIS_TABUNGAN,
+        a.KODE_BI_HUBUNGAN
+    FROM
+        (
+        SELECT
+            tabung.NO_REKENING,
+            nasabah.nasabah_id,
+            nasabah.nama_nasabah,
+            nasabah.alamat,
+            tabung.suku_bunga,
+            tabung.SALDO_AWAL,
+            tabung.KODE_BI_PEMILIK,
+            tabung.KODE_GROUP1,
+            tabung.KODE_GROUP2,
+            tabung.KODE_GROUP3,
+            tabung.TGL_REGISTRASI,
+            tabung.JENIS_TABUNGAN,
+            kodejenistabungan.DESKRIPSI_JENIS_TABUNGAN,
+            tabung.TGL_MULAI,
+            tabung.JKW,
+            tabung.TGL_JT,
+            tabung.AKAD,
+            tabung.NISBAH,
+            tabung.KODE_BI_HUBUNGAN,
+            x.saldokredit,
+            y.saldodebet,
             z.adminbln,
             mutasikredit.mutasi_kredit,
             mutasidebet.mutasi_debet,
             sldkrdblnlalu.saldokreditblnlalu,
             slddbtblnlalu.saldodebetblnlalu,
-            u.bungabln 
-        FROM ((((((((( tabung INNER JOIN nasabah ON tabung.NASABAH_ID = 
-        nasabah.nasabah_id ) INNER JOIN kodejenistabungan ON tabung.JENIS_TABUNGAN = 
-        kodejenistabungan.KODE_JENIS_TABUNGAN) INNER JOIN (SELECT NO_REKENING,sum( 
-        saldo_trans ) AS saldokredit FROM tabtrans WHERE MY_KODE_TRANS LIKE '1%' AND 
-        tabtrans.tgl_trans <= '$inputantgl' GROUP BY tabtrans.NO_REKENING) x 
-        ON tabung.NO_REKENING = x.NO_REKENING) LEFT JOIN (SELECT NO_REKENING,sum( 
-        saldo_trans ) AS saldodebet FROM tabtrans WHERE MY_KODE_TRANS LIKE '2%' AND 
-        tabtrans.tgl_trans <= '$inputantgl' GROUP BY tabtrans.NO_REKENING) 
-        y ON tabung.NO_REKENING = y.NO_REKENING) LEFT JOIN (SELECT 
-        tabtrans.tabtrans_id,tabtrans.no_rekening,tabtrans.saldo_trans AS adminbln 
-        FROM tabtrans INNER JOIN ( SELECT MAX( TABTRANS_ID ) AS tabid, NO_REKENING 
-        FROM tabtrans WHERE KUITANSI LIKE '%sys-a%' AND TGL_TRANS <='$inputantgl' GROUP BY NO_REKENING ) yy ON tabtrans.TABTRANS_ID = 
-        yy.tabid) z ON tabung.NO_REKENING = z.NO_REKENING) LEFT JOIN (SELECT 
-        tabtrans.tabtrans_id,tabtrans.no_rekening, tabtrans.saldo_trans AS bungabln 
-        FROM tabtrans INNER JOIN ( SELECT MAX( TABTRANS_ID ) AS tabid, NO_REKENING 
-        FROM tabtrans WHERE KUITANSI LIKE '%sys-b%' AND TGL_TRANS <='$inputantgl' GROUP BY NO_REKENING ) xx ON tabtrans.TABTRANS_ID = 
-        xx.tabid) u ON tabung.NO_REKENING = u.NO_REKENING) LEFT JOIN (SELECT 
-        NO_REKENING,sum( saldo_trans ) AS saldokreditblnlalu FROM tabtrans WHERE 
-        MY_KODE_TRANS LIKE '1%' AND tabtrans.tgl_trans <= DATE_ADD('$inputantgl', 
-        INTERVAL - DAY ( DATE('$inputantgl')) DAY ) GROUP BY 
-        tabtrans.NO_REKENING) sldkrdblnlalu ON tabung.NO_REKENING = 
-        sldkrdblnlalu.NO_REKENING) LEFT JOIN (SELECT NO_REKENING,sum( saldo_trans ) 
-        AS saldodebetblnlalu FROM tabtrans WHERE MY_KODE_TRANS LIKE '2%' AND 
-        tabtrans.tgl_trans <= DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( 
-        '$inputantgl' )) DAY ) GROUP BY tabtrans.NO_REKENING) slddbtblnlalu ON 
-        tabung.NO_REKENING = slddbtblnlalu.NO_REKENING) LEFT JOIN (SELECT 
-        NO_REKENING,sum( saldo_trans ) AS mutasi_kredit FROM tabtrans WHERE 
-        MY_KODE_TRANS LIKE '1%' AND (tabtrans.tgl_trans > DATE_ADD('$inputantgl', 
-        INTERVAL - DAY ( date('$inputantgl')) DAY ) AND tabtrans.tgl_trans <= 
-        date('$inputantgl')) GROUP BY tabtrans.NO_REKENING) mutasikredit ON 
-        tabung.NO_REKENING = mutasikredit.NO_REKENING) LEFT JOIN (SELECT NO_REKENING, 
-        sum( saldo_trans ) AS mutasi_debet FROM tabtrans WHERE MY_KODE_TRANS LIKE 
-        '2%' AND (tabtrans.tgl_trans > DATE_ADD('$inputantgl', INTERVAL - DAY ( 
-        date('$inputantgl')) DAY) AND tabtrans.tgl_trans <= date('$inputantgl' 
-        )) GROUP BY tabtrans.NO_REKENING) mutasidebet ON tabung.NO_REKENING = 
-        mutasidebet.NO_REKENING WHERE tabung.STATUS_AKTIF = 2 
+            u.bungabln,
+            tglakhirtrans.tgl_akhir_trans
+        FROM
+            ((((((((((
+                                                tabung
+                                                INNER JOIN nasabah ON tabung.NASABAH_ID = nasabah.nasabah_id 
+                                                )
+                                            INNER JOIN kodejenistabungan ON tabung.JENIS_TABUNGAN = kodejenistabungan.KODE_JENIS_TABUNGAN 
+                                            )
+                                        INNER JOIN (
+                                        SELECT
+                                            NO_REKENING,
+                                            sum( saldo_trans ) AS saldokredit 
+                                        FROM
+                                            tabtrans 
+                                        WHERE
+                                            MY_KODE_TRANS LIKE '1%' 
+                                            AND tabtrans.tgl_trans <= date( '$inputantgl' ) 
+                                        GROUP BY
+                                            tabtrans.NO_REKENING 
+                                        ) x ON tabung.NO_REKENING = x.NO_REKENING 
+                                        )
+                                    LEFT JOIN (
+                                    SELECT
+                                        NO_REKENING,
+                                        sum( saldo_trans ) AS saldodebet 
+                                    FROM
+                                        tabtrans 
+                                    WHERE
+                                        MY_KODE_TRANS LIKE '2%' 
+                                        AND tabtrans.tgl_trans <= date( '$inputantgl' ) 
+                                    GROUP BY
+                                        tabtrans.NO_REKENING 
+                                    ) y ON tabung.NO_REKENING = y.NO_REKENING 
+                                    )
+                                LEFT JOIN (
+                                SELECT
+                                    tabtrans.tabtrans_id,
+                                    tabtrans.no_rekening,
+                                    tabtrans.saldo_trans AS adminbln 
+                                FROM
+                                    tabtrans
+                                    INNER JOIN ( SELECT MAX( TABTRANS_ID ) AS tabid, NO_REKENING FROM tabtrans WHERE KUITANSI LIKE '%sys-a%' AND TGL_TRANS <= date( '$inputantgl' ) GROUP BY NO_REKENING ) yy ON tabtrans.TABTRANS_ID = yy.tabid 
+                                ) z ON tabung.NO_REKENING = z.NO_REKENING 
+                                )
+                            LEFT JOIN (
+                            SELECT
+                                tabtrans.tabtrans_id,
+                                tabtrans.no_rekening,
+                                tabtrans.saldo_trans AS bungabln 
+                            FROM
+                                tabtrans
+                                INNER JOIN ( SELECT MAX( TABTRANS_ID ) AS tabid, NO_REKENING FROM tabtrans WHERE KUITANSI LIKE '%sys-b%' AND TGL_TRANS <= date( '$inputantgl' ) GROUP BY NO_REKENING ) xx ON tabtrans.TABTRANS_ID = xx.tabid 
+                            ) u ON tabung.NO_REKENING = u.NO_REKENING 
+                            )
+                        LEFT JOIN (
+                        SELECT
+                                tabtrans.tabtrans_id,
+                                tabtrans.no_rekening,
+                                tabtrans.TGL_TRANS AS tgl_akhir_trans 
+                            FROM
+                                tabtrans
+                                INNER JOIN ( SELECT MAX( TABTRANS_ID ) AS tabid, NO_REKENING FROM tabtrans WHERE TGL_TRANS <= date( '$inputantgl' ) GROUP BY NO_REKENING ) vv ON tabtrans.TABTRANS_ID = vv.tabid
+                        ) tglakhirtrans ON tabung.NO_REKENING = tglakhirtrans.NO_REKENING
+                        )
+                        LEFT JOIN
+                         (
+                        SELECT
+                            NO_REKENING,
+                            sum( saldo_trans ) AS saldokreditblnlalu 
+                        FROM
+                            tabtrans 
+                        WHERE
+                            MY_KODE_TRANS LIKE '1%' 
+                            AND tabtrans.tgl_trans <= DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+                        GROUP BY
+                            tabtrans.NO_REKENING 
+                        ) sldkrdblnlalu ON tabung.NO_REKENING = sldkrdblnlalu.NO_REKENING 
+                        )
+                    LEFT JOIN (
+                    SELECT
+                        NO_REKENING,
+                        sum( saldo_trans ) AS saldodebetblnlalu 
+                    FROM
+                        tabtrans 
+                    WHERE
+                        MY_KODE_TRANS LIKE '2%' 
+                        AND tabtrans.tgl_trans <= DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+                    GROUP BY
+                        tabtrans.NO_REKENING 
+                    ) slddbtblnlalu ON tabung.NO_REKENING = slddbtblnlalu.NO_REKENING 
+                    )
+                LEFT JOIN (
+                SELECT
+                    NO_REKENING,
+                    sum( saldo_trans ) AS mutasi_kredit 
+                FROM
+                    tabtrans 
+                WHERE
+                    MY_KODE_TRANS LIKE '1%' 
+                    AND (
+                        tabtrans.tgl_trans > DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+                    AND tabtrans.tgl_trans <= date( '$inputantgl' )) 
+                GROUP BY
+                    tabtrans.NO_REKENING 
+                ) mutasikredit ON tabung.NO_REKENING = mutasikredit.NO_REKENING 
+            )
+            LEFT JOIN (
+            SELECT
+                NO_REKENING,
+                sum( saldo_trans ) AS mutasi_debet 
+            FROM
+                tabtrans 
+            WHERE
+                MY_KODE_TRANS LIKE '2%' 
+                AND (
+                    tabtrans.tgl_trans > DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+                AND tabtrans.tgl_trans <= date( '$inputantgl' )) 
+            GROUP BY
+                tabtrans.NO_REKENING 
+            ) mutasidebet ON tabung.NO_REKENING = mutasidebet.NO_REKENING 
+        WHERE
+        tabung.STATUS_AKTIF = 2 
         ) a";
-        $nominatif=DB::select($sql);        
-        // dd($nominatif);
-        return (new ReporttabunganExport($nominatif))->download('nominatif.xlsx');
+        $nominatif=DB::select($sql);
+        return view('reports.rptnominatifexpresstab',['nominatif'=>$nominatif,'logos'=>$logos,'users'=>$users,'inputantgl'=>$inputantgl]);
+    }
+    public function nominatifexpresseksport($id)
+    {
+        $inputantgl=$id;
+        $sql="SELECT
+        a.nasabah_id,
+        a.NO_REKENING,
+        a.nama_nasabah,
+        a.alamat,
+        a.AKAD as akad,
+        a.NISBAH as nisbah,
+        (
+        IF
+            ( ISNULL( a.SALDO_AWAL ), 0, a.SALDO_AWAL ) + a.saldokredit -
+        IF
+            ( ISNULL( a.saldodebet ), 0, a.saldodebet ) 
+        ) AS saldo_nominatif,
+        a.TGL_MULAI,
+        a.JKW,
+        a.TGL_JT,
+        a.tgl_akhir_trans,
+        a.suku_bunga,
+        a.KODE_BI_PEMILIK,
+        a.KODE_GROUP1,
+        a.KODE_GROUP2,
+        a.KODE_GROUP3,
+        a.TGL_REGISTRASI,
+        a.JENIS_TABUNGAN,
+        a.KODE_BI_HUBUNGAN
+    FROM
+        (
+        SELECT
+            tabung.NO_REKENING,
+            nasabah.nasabah_id,
+            nasabah.nama_nasabah,
+            nasabah.alamat,
+            tabung.suku_bunga,
+            tabung.SALDO_AWAL,
+            tabung.KODE_BI_PEMILIK,
+            tabung.KODE_GROUP1,
+            tabung.KODE_GROUP2,
+            tabung.KODE_GROUP3,
+            tabung.TGL_REGISTRASI,
+            tabung.JENIS_TABUNGAN,
+            kodejenistabungan.DESKRIPSI_JENIS_TABUNGAN,
+            tabung.TGL_MULAI,
+            tabung.JKW,
+            tabung.TGL_JT,
+            tabung.AKAD,
+            tabung.NISBAH,
+            tabung.KODE_BI_HUBUNGAN,
+            x.saldokredit,
+            y.saldodebet,
+            z.adminbln,
+            mutasikredit.mutasi_kredit,
+            mutasidebet.mutasi_debet,
+            sldkrdblnlalu.saldokreditblnlalu,
+            slddbtblnlalu.saldodebetblnlalu,
+            u.bungabln,
+            tglakhirtrans.tgl_akhir_trans
+        FROM
+            ((((((((((
+                                                tabung
+                                                INNER JOIN nasabah ON tabung.NASABAH_ID = nasabah.nasabah_id 
+                                                )
+                                            INNER JOIN kodejenistabungan ON tabung.JENIS_TABUNGAN = kodejenistabungan.KODE_JENIS_TABUNGAN 
+                                            )
+                                        INNER JOIN (
+                                        SELECT
+                                            NO_REKENING,
+                                            sum( saldo_trans ) AS saldokredit 
+                                        FROM
+                                            tabtrans 
+                                        WHERE
+                                            MY_KODE_TRANS LIKE '1%' 
+                                            AND tabtrans.tgl_trans <= date( '$inputantgl' ) 
+                                        GROUP BY
+                                            tabtrans.NO_REKENING 
+                                        ) x ON tabung.NO_REKENING = x.NO_REKENING 
+                                        )
+                                    LEFT JOIN (
+                                    SELECT
+                                        NO_REKENING,
+                                        sum( saldo_trans ) AS saldodebet 
+                                    FROM
+                                        tabtrans 
+                                    WHERE
+                                        MY_KODE_TRANS LIKE '2%' 
+                                        AND tabtrans.tgl_trans <= date( '$inputantgl' ) 
+                                    GROUP BY
+                                        tabtrans.NO_REKENING 
+                                    ) y ON tabung.NO_REKENING = y.NO_REKENING 
+                                    )
+                                LEFT JOIN (
+                                SELECT
+                                    tabtrans.tabtrans_id,
+                                    tabtrans.no_rekening,
+                                    tabtrans.saldo_trans AS adminbln 
+                                FROM
+                                    tabtrans
+                                    INNER JOIN ( SELECT MAX( TABTRANS_ID ) AS tabid, NO_REKENING FROM tabtrans WHERE KUITANSI LIKE '%sys-a%' AND TGL_TRANS <= date( '$inputantgl' ) GROUP BY NO_REKENING ) yy ON tabtrans.TABTRANS_ID = yy.tabid 
+                                ) z ON tabung.NO_REKENING = z.NO_REKENING 
+                                )
+                            LEFT JOIN (
+                            SELECT
+                                tabtrans.tabtrans_id,
+                                tabtrans.no_rekening,
+                                tabtrans.saldo_trans AS bungabln 
+                            FROM
+                                tabtrans
+                                INNER JOIN ( SELECT MAX( TABTRANS_ID ) AS tabid, NO_REKENING FROM tabtrans WHERE KUITANSI LIKE '%sys-b%' AND TGL_TRANS <= date( '$inputantgl' ) GROUP BY NO_REKENING ) xx ON tabtrans.TABTRANS_ID = xx.tabid 
+                            ) u ON tabung.NO_REKENING = u.NO_REKENING 
+                            )
+                        LEFT JOIN (
+                        SELECT
+                                tabtrans.tabtrans_id,
+                                tabtrans.no_rekening,
+                                tabtrans.TGL_TRANS AS tgl_akhir_trans 
+                            FROM
+                                tabtrans
+                                INNER JOIN ( SELECT MAX( TABTRANS_ID ) AS tabid, NO_REKENING FROM tabtrans WHERE TGL_TRANS <= date( '$inputantgl' ) GROUP BY NO_REKENING ) vv ON tabtrans.TABTRANS_ID = vv.tabid
+                        ) tglakhirtrans ON tabung.NO_REKENING = tglakhirtrans.NO_REKENING
+                        )
+                        LEFT JOIN
+                         (
+                        SELECT
+                            NO_REKENING,
+                            sum( saldo_trans ) AS saldokreditblnlalu 
+                        FROM
+                            tabtrans 
+                        WHERE
+                            MY_KODE_TRANS LIKE '1%' 
+                            AND tabtrans.tgl_trans <= DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+                        GROUP BY
+                            tabtrans.NO_REKENING 
+                        ) sldkrdblnlalu ON tabung.NO_REKENING = sldkrdblnlalu.NO_REKENING 
+                        )
+                    LEFT JOIN (
+                    SELECT
+                        NO_REKENING,
+                        sum( saldo_trans ) AS saldodebetblnlalu 
+                    FROM
+                        tabtrans 
+                    WHERE
+                        MY_KODE_TRANS LIKE '2%' 
+                        AND tabtrans.tgl_trans <= DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+                    GROUP BY
+                        tabtrans.NO_REKENING 
+                    ) slddbtblnlalu ON tabung.NO_REKENING = slddbtblnlalu.NO_REKENING 
+                    )
+                LEFT JOIN (
+                SELECT
+                    NO_REKENING,
+                    sum( saldo_trans ) AS mutasi_kredit 
+                FROM
+                    tabtrans 
+                WHERE
+                    MY_KODE_TRANS LIKE '1%' 
+                    AND (
+                        tabtrans.tgl_trans > DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+                    AND tabtrans.tgl_trans <= date( '$inputantgl' )) 
+                GROUP BY
+                    tabtrans.NO_REKENING 
+                ) mutasikredit ON tabung.NO_REKENING = mutasikredit.NO_REKENING 
+            )
+            LEFT JOIN (
+            SELECT
+                NO_REKENING,
+                sum( saldo_trans ) AS mutasi_debet 
+            FROM
+                tabtrans 
+            WHERE
+                MY_KODE_TRANS LIKE '2%' 
+                AND (
+                    tabtrans.tgl_trans > DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+                AND tabtrans.tgl_trans <= date( '$inputantgl' )) 
+            GROUP BY
+                tabtrans.NO_REKENING 
+            ) mutasidebet ON tabung.NO_REKENING = mutasidebet.NO_REKENING 
+        WHERE
+        tabung.STATUS_AKTIF = 2 
+        ) a";
+            $nominatif=DB::select($sql);
+            return (new ReporttabunganexpressExport($nominatif))->download('nominatifexpress.xlsx');
+    }
+
+    public function bo_tb_rpt_pdfnominatifexpress(Request $request)
+    {   
+        $inputantgl=$request->tgl_nominatif;
+        $sql="SELECT
+        a.nasabah_id,
+        a.NO_REKENING,
+        a.nama_nasabah,
+        a.alamat,
+        a.AKAD as akad,
+        a.NISBAH as nisbah,
+        (
+        IF
+            ( ISNULL( a.SALDO_AWAL ), 0, a.SALDO_AWAL ) + a.saldokredit -
+        IF
+            ( ISNULL( a.saldodebet ), 0, a.saldodebet ) 
+        ) AS saldo_nominatif,
+        a.TGL_MULAI,
+        a.JKW,
+        a.TGL_JT,
+        a.tgl_akhir_trans,
+        a.suku_bunga,
+        a.KODE_BI_PEMILIK,
+        a.KODE_GROUP1,
+        a.KODE_GROUP2,
+        a.KODE_GROUP3,
+        a.TGL_REGISTRASI,
+        a.JENIS_TABUNGAN,
+        a.KODE_BI_HUBUNGAN
+    FROM
+        (
+        SELECT
+            tabung.NO_REKENING,
+            nasabah.nasabah_id,
+            nasabah.nama_nasabah,
+            nasabah.alamat,
+            tabung.suku_bunga,
+            tabung.SALDO_AWAL,
+            tabung.KODE_BI_PEMILIK,
+            tabung.KODE_GROUP1,
+            tabung.KODE_GROUP2,
+            tabung.KODE_GROUP3,
+            tabung.TGL_REGISTRASI,
+            tabung.JENIS_TABUNGAN,
+            kodejenistabungan.DESKRIPSI_JENIS_TABUNGAN,
+            tabung.TGL_MULAI,
+            tabung.JKW,
+            tabung.TGL_JT,
+            tabung.AKAD,
+            tabung.NISBAH,
+            tabung.KODE_BI_HUBUNGAN,
+            x.saldokredit,
+            y.saldodebet,
+            z.adminbln,
+            mutasikredit.mutasi_kredit,
+            mutasidebet.mutasi_debet,
+            sldkrdblnlalu.saldokreditblnlalu,
+            slddbtblnlalu.saldodebetblnlalu,
+            u.bungabln,
+            tglakhirtrans.tgl_akhir_trans
+        FROM
+            ((((((((((
+                                                tabung
+                                                INNER JOIN nasabah ON tabung.NASABAH_ID = nasabah.nasabah_id 
+                                                )
+                                            INNER JOIN kodejenistabungan ON tabung.JENIS_TABUNGAN = kodejenistabungan.KODE_JENIS_TABUNGAN 
+                                            )
+                                        INNER JOIN (
+                                        SELECT
+                                            NO_REKENING,
+                                            sum( saldo_trans ) AS saldokredit 
+                                        FROM
+                                            tabtrans 
+                                        WHERE
+                                            MY_KODE_TRANS LIKE '1%' 
+                                            AND tabtrans.tgl_trans <= date( '$inputantgl' ) 
+                                        GROUP BY
+                                            tabtrans.NO_REKENING 
+                                        ) x ON tabung.NO_REKENING = x.NO_REKENING 
+                                        )
+                                    LEFT JOIN (
+                                    SELECT
+                                        NO_REKENING,
+                                        sum( saldo_trans ) AS saldodebet 
+                                    FROM
+                                        tabtrans 
+                                    WHERE
+                                        MY_KODE_TRANS LIKE '2%' 
+                                        AND tabtrans.tgl_trans <= date( '$inputantgl' ) 
+                                    GROUP BY
+                                        tabtrans.NO_REKENING 
+                                    ) y ON tabung.NO_REKENING = y.NO_REKENING 
+                                    )
+                                LEFT JOIN (
+                                SELECT
+                                    tabtrans.tabtrans_id,
+                                    tabtrans.no_rekening,
+                                    tabtrans.saldo_trans AS adminbln 
+                                FROM
+                                    tabtrans
+                                    INNER JOIN ( SELECT MAX( TABTRANS_ID ) AS tabid, NO_REKENING FROM tabtrans WHERE KUITANSI LIKE '%sys-a%' AND TGL_TRANS <= date( '$inputantgl' ) GROUP BY NO_REKENING ) yy ON tabtrans.TABTRANS_ID = yy.tabid 
+                                ) z ON tabung.NO_REKENING = z.NO_REKENING 
+                                )
+                            LEFT JOIN (
+                            SELECT
+                                tabtrans.tabtrans_id,
+                                tabtrans.no_rekening,
+                                tabtrans.saldo_trans AS bungabln 
+                            FROM
+                                tabtrans
+                                INNER JOIN ( SELECT MAX( TABTRANS_ID ) AS tabid, NO_REKENING FROM tabtrans WHERE KUITANSI LIKE '%sys-b%' AND TGL_TRANS <= date( '$inputantgl' ) GROUP BY NO_REKENING ) xx ON tabtrans.TABTRANS_ID = xx.tabid 
+                            ) u ON tabung.NO_REKENING = u.NO_REKENING 
+                            )
+                        LEFT JOIN (
+                        SELECT
+                                tabtrans.tabtrans_id,
+                                tabtrans.no_rekening,
+                                tabtrans.TGL_TRANS AS tgl_akhir_trans 
+                            FROM
+                                tabtrans
+                                INNER JOIN ( SELECT MAX( TABTRANS_ID ) AS tabid, NO_REKENING FROM tabtrans WHERE TGL_TRANS <= date( '$inputantgl' ) GROUP BY NO_REKENING ) vv ON tabtrans.TABTRANS_ID = vv.tabid
+                        ) tglakhirtrans ON tabung.NO_REKENING = tglakhirtrans.NO_REKENING
+                        )
+                        LEFT JOIN
+                         (
+                        SELECT
+                            NO_REKENING,
+                            sum( saldo_trans ) AS saldokreditblnlalu 
+                        FROM
+                            tabtrans 
+                        WHERE
+                            MY_KODE_TRANS LIKE '1%' 
+                            AND tabtrans.tgl_trans <= DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+                        GROUP BY
+                            tabtrans.NO_REKENING 
+                        ) sldkrdblnlalu ON tabung.NO_REKENING = sldkrdblnlalu.NO_REKENING 
+                        )
+                    LEFT JOIN (
+                    SELECT
+                        NO_REKENING,
+                        sum( saldo_trans ) AS saldodebetblnlalu 
+                    FROM
+                        tabtrans 
+                    WHERE
+                        MY_KODE_TRANS LIKE '2%' 
+                        AND tabtrans.tgl_trans <= DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+                    GROUP BY
+                        tabtrans.NO_REKENING 
+                    ) slddbtblnlalu ON tabung.NO_REKENING = slddbtblnlalu.NO_REKENING 
+                    )
+                LEFT JOIN (
+                SELECT
+                    NO_REKENING,
+                    sum( saldo_trans ) AS mutasi_kredit 
+                FROM
+                    tabtrans 
+                WHERE
+                    MY_KODE_TRANS LIKE '1%' 
+                    AND (
+                        tabtrans.tgl_trans > DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+                    AND tabtrans.tgl_trans <= date( '$inputantgl' )) 
+                GROUP BY
+                    tabtrans.NO_REKENING 
+                ) mutasikredit ON tabung.NO_REKENING = mutasikredit.NO_REKENING 
+            )
+            LEFT JOIN (
+            SELECT
+                NO_REKENING,
+                sum( saldo_trans ) AS mutasi_debet 
+            FROM
+                tabtrans 
+            WHERE
+                MY_KODE_TRANS LIKE '2%' 
+                AND (
+                    tabtrans.tgl_trans > DATE_ADD( '$inputantgl', INTERVAL - DAY ( date( '$inputantgl' )) DAY ) 
+                AND tabtrans.tgl_trans <= date( '$inputantgl' )) 
+            GROUP BY
+                tabtrans.NO_REKENING 
+            ) mutasidebet ON tabung.NO_REKENING = mutasidebet.NO_REKENING 
+        WHERE
+        tabung.STATUS_AKTIF = 2 
+        ) a";
+            $nominatif=DB::select($sql);
+            $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+            $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_TAB'.'%'.'NAMA')->get();
+            $kota=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_KOTA'.'%')->get();
+            return view('pdf.cetaknominatifexpress',['nominatif'=>$nominatif,'lembaga'=>$lembaga,'kota'=>$kota,'ttd'=>$ttd,'inputantgl'=>$inputantgl]);
+    }
+    public function bo_tb_de_frmhapustransaksi()
+    {
+        $logos = Logo::all();
+        $tgllogin=Mysysid::where('KeyName','=','TANGGALHARIINI')->get();
+        $tabtran = Tabtran::with('nasabah')->where('TGL_TRANS','=',date('Y-m-d',strtotime($tgllogin[0]->Value)))->get();
+        // dd($tabtran);
+        return view('admin.frmhapustransaksitabungan',['logos'=>$logos,'tgllogin'=>$tgllogin,'tabtran'=>$tabtran]);
+    }
+
+    public function bo_tab_del_trs(Request $request)
+    {
+        $deltabtrans=Tabtran::where(
+            [
+                'KUITANSI'=>$request->no_bukti,
+                'NO_REKENING'=>$request->no_rekening
+            ])->delete();
+        $deltellertrans=Tellertran::where(
+            [
+                'NO_BUKTI'=>$request->no_bukti,
+            ])->delete();
+        return redirect()->route('bo_tb_de_frmhapustransaksi')->with('message','Transaksi dengan Kuitansi : '.$request->no_bukti.' berhasil di hapus');
+    }
+    public function bo_tabungan_transaksi_cari(Request $request)
+    {
+        $logos = Logo::all();
+        $tgl=date('Y-m-d',strtotime($request->tgl_trans));
+        $tabtran = Tabtran::with('nasabah')->where('TGL_TRANS','=',date('Y-m-d',strtotime($tgl)))->get();
+        // dd($tabtran);
+        return view('admin.frmhapustransaksitabungan',['logos'=>$logos,'tgllogin'=>$tgl,'tabtran'=>$tabtran]);
     }
 }

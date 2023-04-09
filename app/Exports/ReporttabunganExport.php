@@ -2,15 +2,9 @@
 
 namespace App\Exports;
 
-use App\Tabungan;
 use Illuminate\Contracts\View\View;
-// use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\Exportable;
-// use Maatwebsite\Excel\Concerns\WithHeadings;
-
-use Illuminate\Support\Facades\DB;
-
 class ReporttabunganExport implements FromView
 {
     public $array;
@@ -23,7 +17,7 @@ class ReporttabunganExport implements FromView
 
     public function view(): View
     {
-        return view('exports.nominatifexcel',[
+        return view('exports.nominatifrekapexcel',[
             'nomin'=>$this->array
         ]);
     }

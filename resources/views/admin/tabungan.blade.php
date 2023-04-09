@@ -14,7 +14,7 @@
     <div class="row">
       <div class="col-12">
         <div class="card card-warning card-outline">
-          <!-- form start -->
+          <!-- form for Search Exsisting Saving Customer -->
           <form method="POST" action="/bo_tabungan_edit_cari" role="search">
           @csrf
             <div class="card-body">
@@ -42,7 +42,7 @@
               </div>
             </div>
             <!-- /.card-body -->
-          </form>
+          </form> <!-- /Batas Form Search ---->
         </div>
         <!-- /.card -->
         <div class="card">
@@ -198,13 +198,13 @@
               <div class="row">
                 <div class="col-lg-2 col-sm-6">
                     <label for="inputidentitas">Jenis Tabungan</label>
-                    <select class="form-control" name="jenis_tabungan">
+                    <select class="form-control" name="jenis_tabungan" id="editlist">
                       <option id="idSelect" selected></option>
                       @foreach($kodejenistabungan as $value)
-                      <option value="{{ $value->kode_jenis_tabungan}}">{{ $value->DESKRIPSI_JENIS_TABUNGAN}}</option>
+                      <option value="{{ $value->kode_jenis_tabungan}}" data-ebunga="{{$value->SUKU_BUNGA_DEFAULT}}" data-eadm="{{$value->ADM_PER_BLN_DEFAULT}}" data-epph="{{$value->PPH_DEFAULT}}" data-esalmin="{{$value->MINIMUM_DEFAULT}}" data-esetmin="{{$value->SETORAN_MINIMUM_DEFAULT}}" data-esetwajib={{$value->SETORAN_PER_BLN_DEFAULT}} data-erestricted={{$value->FLAG_RESTRICTED}}>{{ $value->DESKRIPSI_JENIS_TABUNGAN}}</option>
                       @endforeach
                     </select>
-                  </div>
+                </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="norek">No.Rekening</label>
                   <input type="text" name="no_rekening" class="form-control">
@@ -250,11 +250,11 @@
                 </div>
                 <div class="col-lg-2 col-sm-8">
                   <label for="inputnocif">Bunga per Tahun(%)</label>
-                  <input type="text" name="suku_bunga" class="form-control">
+                  <input type="text" name="suku_bunga" class="form-control" id="ebungga">
                 </div>
                 <div class="col-lg-2 col-sm-8">
                   <label for="inputnocif">PPH (%)</label>
-                  <input type="text" name="persen_pph"  class="form-control">
+                  <input type="text" name="persen_pph" class="form-control" id="epph">
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputDate1">Tgl hitung Bunga</label>
@@ -265,14 +265,14 @@
                       </div>
                   </div>
                 </div>
-                <div class="form-check">
+                {{-- <div class="form-check">
                   <input id="inputblokir" disabled type="checkbox" name="blokir" class="form-check-input">
                   <label for="inputblokir">Blokir</label>
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputnamanasabah">Saldo Blokir</label>
                   <input type="text" name="saldo_blokir" value="0" class="form-control">
-                </div>
+                </div> --}}
               </div>            
             </div>
             <!--Baris ke 3 EDIT tabungan ----->
@@ -340,22 +340,22 @@
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputibukandung">Restricted</label>
                   <select class="form-control" name="flag_restricted">
-                    <option selected id="idrestricted"></option>
+                    <option selected id="erestricted"></option>
                     <option value="UNRESTRICTED">UNRESTRICTED</option>
                     <option value="RESTRICTED">RESTRICTED</option>
                   </select>
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputnpwp">Saldo Minimal</label>
-                  <input type="text" name="minimum" class="form-control" value=0.00>
+                  <input type="text" name="minimum" class="form-control" id="esalmin">
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputidentitas">Setoran Minimal</label>
-                  <input type="text" name="setoran_minimum" class="form-control" value=0.00>
+                  <input type="text" name="setoran_minimum" class="form-control" id="esetmin">
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputnoidentitas">Setoran Wajib</label>
-                  <input type="text" name="setoran_per_bln" class="form-control" value=0.00>
+                  <input type="text" name="setoran_per_bln" class="form-control" id="esetwajib">
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputDate2">Tipe Tab</label>
@@ -369,7 +369,7 @@
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label>Biaya Adm</label>
-                  <input type="text" name="adm_per_bln" class="form-control" value=0.00>
+                  <input type="text" name="adm_per_bln" class="form-control" id="eadm">
                   <input type="hidden" name="periode_adm" class="form-control" value=1>
                 </div>
               </div>            
@@ -422,10 +422,10 @@
               <div class="row">
                 <div class="col-lg-2 col-sm-6">
                     <label for="inputidentitas">Jenis Tabungan</label>
-                    <select class="form-control" name="jenis_tabungan">
+                    <select class="form-control" name="jenis_tabungan" id="listItem">
                       <option id="idSelect" selected></option>
                       @foreach($kodejenistabungan as $value)
-                      <option value="{{ $value->kode_jenis_tabungan}}">{{ $value->DESKRIPSI_JENIS_TABUNGAN}}</option>
+                      <option value="{{ $value->KODE_JENIS_TABUNGAN}}" data-bunga="{{$value->SUKU_BUNGA_DEFAULT}}" data-adm="{{$value->ADM_PER_BLN_DEFAULT}}" data-pph="{{$value->PPH_DEFAULT}}" data-salmin="{{$value->MINIMUM_DEFAULT}}" data-setmin="{{$value->SETORAN_MINIMUM_DEFAULT}}" data-setwajib={{$value->SETORAN_PER_BLN_DEFAULT}} data-restricted={{$value->FLAG_RESTRICTED}}>{{ $value->DESKRIPSI_JENIS_TABUNGAN}}</option>
                       @endforeach
                     </select>
                   </div>
@@ -474,11 +474,11 @@
                 </div>
                 <div class="col-lg-2 col-sm-8">
                   <label for="inputnocif">Bunga per Tahun(%)</label>
-                  <input type="text" name="suku_bunga" class="form-control">
+                  <input type="text" name="suku_bunga" class="form-control" id="bunga">
                 </div>
                 <div class="col-lg-2 col-sm-8">
                   <label for="inputnocif">PPH (%)</label>
-                  <input type="text" name="persen_pph"  class="form-control">
+                  <input type="text" name="persen_pph"  class="form-control" id="pph">
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputDate1">Tgl hitung Bunga</label>
@@ -564,22 +564,22 @@
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputibukandung">Restricted</label>
                   <select class="form-control" name="flag_restricted">
-                    <option selected id="idrestricted"></option>
+                    <option id="restricted" selected></option>
                     <option value="UNRESTRICTED">UNRESTRICTED</option>
                     <option value="RESTRICTED">RESTRICTED</option>
                   </select>
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputnpwp">Saldo Minimal</label>
-                  <input type="text" name="minimum" class="form-control" value=0.00>
+                  <input type="text" name="minimum" class="form-control" id="salmin">
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputidentitas">Setoran Minimal</label>
-                  <input type="text" name="setoran_minimum" class="form-control" value=0.00>
+                  <input type="text" name="setoran_minimum" class="form-control" id="setmin">
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputnoidentitas">Setoran Wajib</label>
-                  <input type="text" name="setoran_per_bln" class="form-control" value=0.00>
+                  <input type="text" name="setoran_per_bln" class="form-control" id="setwajib">
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputDate2">Tipe Tab</label>
@@ -593,7 +593,7 @@
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label>Biaya Adm</label>
-                  <input type="text" name="adm_per_bln" class="form-control" value=0.00>
+                  <input type="text" name="adm_per_bln" class="form-control" id="adm">
                   <input type="hidden" name="periode_adm" class="form-control" value=1>
                 </div>
               </div>            

@@ -57,6 +57,26 @@
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
   <!-- Logo Icon -->
   <link rel="shortcut icon" href="{{ asset('img/logo/'.$logo) }}" type="image/x-icon">
+  <style>
+    .tableProfil {
+        display: table;
+    }
+    .rowProfil {
+        display: table-row;
+    }
+    .cellProfil {
+        display: table-cell;
+    }
+    .judulOrange {
+      background: chocolate;
+      padding: 0 10px;
+      color: white;
+    }
+    .bottomlinesolid {
+      border-bottom:1px solid grey;
+    }
+  </style>
+
   {{-- Data Table --}}
   <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
   <script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
@@ -145,7 +165,7 @@
                   <i class="right fas fa-angle-left"></i>
                   <p class="pl-1">CUSTOMER SERVICE</p>
                 </a>
-                <ul class="nav nav-treeview">
+              <ul class="nav nav-treeview">
                 <li class="nav-item has-treeview <?php if($submenu=='de'){echo 'menu-open';}?>">
                   <a href="#" class="nav-link <?php if($submenu=='de'){echo 'active';}?>">
                     <i class="right fas fa-angle-left"></i>
@@ -158,7 +178,7 @@
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_cs_de_profil" class="nav-link <?php if($page=='profil' or $page=='profilcari'){echo 'active';}?>">
+                    <a href="/bo_cs_de_profil" class="nav-link <?php if($page == 'profil' or $page=='profilcari' or $page=='profildetail' or $page=='profilkredit'){echo 'active';}?>">
                       <p class="pl-4">Profil Data Nasabah</p>
                     </a>
                   </li>
@@ -239,7 +259,7 @@
                   <p class="pl-1">TABUNGAN</p>
                 </a>
                 {{-- Menu Tree Tabungan --}}
-                <ul class="nav nav-treeview"> 
+              <ul class="nav nav-treeview"> 
 
                 <li class="nav-item has-treeview <?php if($submenu=='de'){echo 'menu-open';}?>">
                   <a href="#" class="nav-link <?php if($submenu=='de'){echo 'active';}?>">
@@ -258,35 +278,39 @@
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Validasi Transaksi</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="#" class="nav-link">
-                      <p class="pl-3">Saldo Awal</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="bo_tb_de_frmhitungbungatab" class="nav-link">
                       <p class="pl-3">Perhitungan Bunga</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="bo_tb_de_frmbrowsebungapajak" class="nav-link">
                       <p class="pl-3">Browse Bunga & Pajak</p>
                     </a>
                   </li>
+                  
                   <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="bo_tb_de_frmoverbooktabungan" class="nav-link">
                       <p class="pl-3">Overbook Bunga</p>
                     </a>
                   </li>
-                  <li class="nav-item">
-                    <a href="#" class="nav-link">
-                      <p class="pl-3">Blokir/UnBlokir Tabungan</p>
+                  {{-- MENU TREE VIEW  --}}
+                  <li class="nav-item has-treeview menu-close">
+                    <a href="/adm_transaction" class="nav-link">
+                      <i class="right fas fa-angle-left"></i>
+                      <p class="pl-2">Pencatatan Blokir</p>
                     </a>
-                  </li>
+                    <ul class="nav nav-treeview">
+                      <li class="nav-item has-treeview menu-close">
+                        <li class="nav-item">
+                        <a href="/bo_tb_de_showfrmblokir" class="nav-link">
+                          <p class="pl-3">Pemblokiran</p>
+                        </a>
+                      </li>
+
+                      </li>
+                    </ul>
+                  </li> 
+                  {{-- Batas tree view --}}
                   <li class="nav-item">
                     <a href="#" class="nav-link">
                       <p class="pl-3">Konsolidasi Saldo</p>
@@ -350,13 +374,18 @@
                           <p class="pl-3">Nominatif Express</p>
                         </a>
                       </li>
+                      <li class="nav-item">
+                        <a href="/bo_tb_rpt_nominatifpasif" class="nav-link">
+                          <p class="pl-3">Nominatif Tab Pasif</p>
+                        </a>
+                      </li>
                     </ul>
                     </li>
                   </ul>
                 </li>
-                </ul>
+              </ul>
                 {{-- batas menu tree tabungan --}}
-              </li>
+                </li>
               <li class="nav-item has-treeview menu-close">
                 <a href="/adm_transaction" class="nav-link">
                   <i class="right fas fa-angle-left"></i>
@@ -520,29 +549,21 @@ $(document).ready(function () {
       "lengthMenu": [ 25, 50, 100 ],
       "pageLength":50
     });
+    $("#example3").DataTable({
+      "paging": true,
+      "lengthChange": true,
+      "searching": true,
+      "ordering": false,
+      "info": true,
+      "responsive": true,
+      "autoWidth": false,
+      "lengthMenu": [ 10, 25, 50],
+      "pageLength":10
+    });
 
     //Initialize Select2 Elements
     $('.select2').select2()
 
-    // //Date picker
-    // $('#inputDate1').datetimepicker({
-    //     format: 'Y-MM-DD'
-    // });
-    // $('#inputDate2').datetimepicker({
-    //     format: 'Y-MM-DD'
-    // });
-    // $('#inputDate3').datetimepicker({
-    //     format: 'Y-MM-DD'
-    // }); 
-    // $('#inputDate4').datetimepicker({
-    //     format: 'Y-MM-DD'
-    // });
-    // $('#inputDate5').datetimepicker({
-    //     format: 'Y-MM-DD'
-    // });
-    // $('#inputDate6').datetimepicker({
-    //     format: 'Y-MM-DD'
-    // });
     $('.dateYMD').datetimepicker({
         format: 'Y-MM-DD'
     });
@@ -571,14 +592,43 @@ $(document).ready(function () {
       var idcabanginput = $(".inputcabedit").val();
       $(".inputnocifedit").val(idcabanginput+nasabahidinput);
     });
-    // $("#inputnamanasabah").on('change', function(){
-    //   var namanasabahinput = this.value;
-    //   Swal.fire(
-    //       'Attentiton!',
-    //       'name of nasabah : '+namanasabahinput,
-    //       'warning'
-    //     )
-    // });
+    // Fungsi Untuk ambil Biaya Admin & Saldo Minimum saat pilih Jenis Tabungan
+    $('#listItem').change(function(e) {
+      var element = $(this).find('option:selected');
+      var bunga = element.data("bunga");
+      var adm = element.data("adm");
+      var pph = element.data("pph");
+      var salmin = element.data("salmin");
+      var setmin = element.data("setmin");
+      var setwajib = element.data("setwajib");
+      var restricted = element.data("restricted");
+      $('#bunga').val(bunga);
+      $('#adm').val(adm);
+      $('#pph').val(pph);
+      $('#salmin').val(salmin);
+      $('#setmin').val(setmin);
+      $('#setwajib').val(setwajib);
+      $('#restricted').val(restricted);
+      $('#restricted').text(restricted);
+    });
+    $('#editlist').change(function(e) {
+      var element = $(this).find('option:selected');
+      var ebunga = element.data("ebunga");
+      var eadm = element.data("eadm");
+      var epph = element.data("epph");
+      var esalmin = element.data("esalmin");
+      var esetmin = element.data("esetmin");
+      var esetwajib = element.data("esetwajib");
+      var erestricted = element.data("erestricted");
+      $('#ebunga').val(ebunga);
+      $('#eadm').val(eadm);
+      $('#epph').val(epph);
+      $('#esalmin').val(esalmin);
+      $('#esetmin').val(esetmin);
+      $('#esetwajib').val(esetwajib);
+      $('#erestricted').val(erestricted);
+      $('#erestricted').text(erestricted);
+    });
 
     //set ckeditor
     CKEDITOR.replace( 'inputText1' );
@@ -611,6 +661,7 @@ $(document).ready(function () {
       if(valueEntity=='PERORANGAN'){valueEntity='';}else{valueEntity=', '+valueEntity;}
       $("#inputAccountName_add").val(valueCompany+valueEntity);
     });
+
 
     //Set data to Modals
     $('#modal-edit-newscategory').on('show.bs.modal', function(e) {
@@ -811,6 +862,98 @@ $(e.currentTarget).find('input[name="hidden_jenis_tabungan"]').val(Hidden_jenis_
       }
 
     } );
+    // UPDATE BUNGA DAN PAJAK TABUNGAN
+    $('#modal-update-bungpajaktab').on('show.bs.modal', function(e) {
+      var No_rekening = $(e.relatedTarget).data('no_rekening');
+      var Nama_nasabah = $(e.relatedTarget).data('nama_nasabah');
+      var Bunga_bln_ini = $(e.relatedTarget).data('bunga_bln_ini');
+      var Pajak_bln_ini = $(e.relatedTarget).data('pajak_bln_ini');
+      var Adm_bln_ini = $(e.relatedTarget).data('adm_bln_ini');
+      $(e.currentTarget).find('input[name="no_rekening"]').val(No_rekening);
+      $(e.currentTarget).find('input[name="nama_nasabah"]').val(Nama_nasabah);
+      $(e.currentTarget).find('input[name="bunga_bln_ini"]').val(Bunga_bln_ini);
+      $(e.currentTarget).find('input[name="pajak_bln_ini"]').val(Pajak_bln_ini);
+      $(e.currentTarget).find('input[name="adm_bln_ini"]').val(Adm_bln_ini);
+
+    });
+// Fungsi untuk menampilkan Data Tabungan pada Modal yg akan diinput ke Form BlokirTabungan
+$(document).ready(function(){
+// code to read selected table row cell data (values).
+$("#datatabungan").on('click','#klik',function(){
+     // get the current row
+     var currentRow=$(this).closest("tr"); 
+     
+     var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+     var col2=currentRow.find("td:eq(1)").text(); // get current row 2nd TD
+     var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
+     var col4=currentRow.find("td:eq(3)").text(); // get current row 3rd TD
+     var col5=currentRow.find("td:eq(4)").text(); // get current row 3rd TD
+     var col6=currentRow.find("td:eq(5)").text(); // get current row 3rd TD
+
+    //  var data=col1+"\n"+col2+"\n"+col3;
+     document.getElementById("inputnorekening").value=col1;
+     document.getElementById("inputnamanasabah").value=col2;
+     document.getElementById("inputalamat").value=col3;
+     document.getElementById("inputjenistabungan").value=col4;
+     document.getElementById("inputsaldoakhir").value=col5;
+     document.getElementById("inputsaldoblokir").value=col6;
+
+    //  alert(data);
+});
+});
+
 </script>
+<script>
+  // Fungsi Membuat FORMAT RUPAIH pada INPUTAN BOX
+  var rupiah = document.getElementById("inputjmlsaldoblokir");
+  var rupiahplf = document.getElementById("plafondidlabel");
+  var rupiahouts = document.getElementById("outstandingidlabel");
+
+  rupiah.addEventListener("keyup", function(e) {
+    // tambahkan 'Rp.' pada saat form di ketik
+    // gunakan fungsi formatRupiah() untuk mengubah angka yang di ketik menjadi format angka
+    rupiah.value = formatRupiah(this.value, "Rp. ");
+  });
+  rupiahplf.addEventListener("keyup", function(e) {
+    // tambahkan 'Rp.' pada saat form di ketik
+    // gunakan fungsi formatRupiah() untuk mengubah angka yang di ketik menjadi format angka
+    rupiahplf.value = formatRupiah(this.value, "Rp. ");
+  });
+  rupiahouts.addEventListener("keyup", function(e) {
+    // tambahkan 'Rp.' pada saat form di ketik
+    // gunakan fungsi formatRupiah() untuk mengubah angka yang di ketik menjadi format angka
+    rupiahouts.value = formatRupiah(this.value, "Rp. ");
+  });
+
+  
+
+/* Fungsi formatRupiah */
+function formatRupiah(angka, prefix) {
+var number_string = angka.replace(/[^,\d]/g, "").toString(),
+  split = number_string.split(","),
+  sisa = split[0].length % 3,
+  rupiahh = split[0].substr(0, sisa),
+  ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+// tambahkan titik jika yang di input sudah menjadi angka ribuan
+if (ribuan) {
+  separator = sisa ? "." : "";
+  rupiahh += separator + ribuan.join(".");
+}
+
+rupiahh = split[1] != undefined ? rupiahh + "," + split[1] : rupiahh;
+return prefix == undefined ? rupiahh : rupiahh ? "Rp. " + rupiahh : "";
+}
+
+  function MyFunct(bEnable,txtId1,txtId2,txtId3){
+    document.getElementById(txtId1).readOnly=!bEnable;
+    document.getElementById(txtId2).readOnly=!bEnable;
+    document.getElementById(txtId3).readOnly=bEnable;
+  }
+  function MyUpper() {
+    document.getElementById('hrpbesar').value.toUpperCase();
+  }
+</script>
+
 </body>
 </html>

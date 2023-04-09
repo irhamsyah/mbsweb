@@ -67,6 +67,14 @@
     .cellProfil {
         display: table-cell;
     }
+    .judulOrange {
+      background: chocolate;
+      padding: 0 10px;
+      color: white;
+    }
+    .bottomlinesolid {
+      border-bottom:1px solid grey;
+    }
   </style>
 
   {{-- Data Table --}}
@@ -170,7 +178,7 @@
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_cs_de_profil" class="nav-link <?php if($page=='profil' or $page=='profilcari'){echo 'active';}?>">
+                    <a href="/bo_cs_de_profil" class="nav-link <?php if($page == 'profil' or $page=='profilcari' or $page=='profildetail' or $page=='profilkredit'){echo 'active';}?>">
                       <p class="pl-4">Profil Data Nasabah</p>
                     </a>
                   </li>
@@ -526,6 +534,17 @@ $(document).ready(function () {
       "autoWidth": false,
       "lengthMenu": [ 25, 50, 100 ],
       "pageLength":50
+    });
+    $("#example3").DataTable({
+      "paging": true,
+      "lengthChange": true,
+      "searching": true,
+      "ordering": false,
+      "info": true,
+      "responsive": true,
+      "autoWidth": false,
+      "lengthMenu": [ 10, 25, 50],
+      "pageLength":10
     });
 
     //Initialize Select2 Elements

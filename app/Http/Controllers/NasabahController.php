@@ -16,6 +16,7 @@ use App\HubunganDebitur;
 use App\GolonganDebitur;
 use App\BidangUsaha;
 use App\Kredit;
+use App\Tabungan;
 use App\Logo;
 
 use Illuminate\Http\Request;
@@ -361,7 +362,7 @@ class NasabahController extends Controller
     public function bo_cs_de_profil()
     {
       $logos = Logo::all();
-      $nasabahs = Nasabah::select('*')->limit(20)->orderby('nasabah.nasabah_id','DESC')->get();
+      $nasabahs = Nasabah::select('*')->limit(20)->orderby('nasabah.nasabah_id','ASC')->get();
       $lastnasabahid = Nasabah::max('nasabah_id');
 
       return view('admin/profil', ['logos'=> $logos,'nasabahs'=> $nasabahs,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> '']);
@@ -371,23 +372,127 @@ class NasabahController extends Controller
     {
       $logos = Logo::all();
 
-      $nasabahs = Nasabah::where('nasabah_id', 'LIKE', '%' . request()->idnasabah1 . '%')
-      ->when(request()->namanasabah1, function($query) {
-        $query->where('nama_nasabah', 'LIKE', '%' . request()->namanasabah1 . '%');
+      $nasabahs = Nasabah::where('nasabah_id', 'LIKE', '%' . $request->idnasabah1 . '%')
+      ->when($request->namanasabah1, function($query) {
+        $query->where('nama_nasabah', 'LIKE', '%' . $request->namanasabah1 . '%');
       })
       ->limit(20)->orderby('nasabah.nasabah_id','ASC')->get();
-      
-      $kredits = Kredit::select('NO_REKENING','JENIS_PINJAMAN','POKOK_SALDO_REALISASI','POKOK_SALDO_AKHIR','DESKRIPSI_JENIS_KREDIT')
-      ->leftJoin('kodejeniskredit', function($join) {
-        $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
-      })
-      ->where('kredit.NASABAH_ID', 'LIKE', request()->idnasabah1 . '%')
-      ->orderby('kredit.NO_REKENING','ASC')->get();
-
       $users = User::all();
       $lastnasabahid = Nasabah::max('nasabah_id');
 
-      return view('admin/profil_cari', ['logos'=> $logos,'nasabahs'=> $nasabahs,'kredits'=> $kredits,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> '']);
+      return view('admin/profil_cari', ['logos'=> $logos,'nasabahs'=> $nasabahs,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> '']);
+    }
+
+    public function bo_cs_de_profil_detail(Request $request)
+    {
+      $logos = Logo::all();
+      $users = User::all();
+      $lastnasabahid = Nasabah::max('nasabah_id');
+      $nasabahs = Nasabah::where('nasabah_id', '=',$request->idnasabah);
+      $kredits = Kredit::select('NO_REKENING','JENIS_PINJAMAN','POKOK_SALDO_REALISASI','POKOK_SALDO_AKHIR','DESKRIPSI_JENIS_KREDIT','NASABAH_ID')
+      ->leftJoin('kodejeniskredit', function($join) {
+        $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
+      })
+      ->where('kredit.NASABAH_ID', '=', $request->idnasabah)
+      ->orderby('kredit.NO_REKENING','ASC')->get();
+      if(!$kredits)
+        abort('404');
+
+      $tabungans = Tabungan::select('NO_REKENING','JENIS_TABUNGAN','SALDO_AKHIR','DESKRIPSI_JENIS_TABUNGAN','NASABAH_ID')
+      ->leftJoin('kodejenistabungan', function($join) {
+        $join->on('tabung.JENIS_TABUNGAN', '=', 'kodejenistabungan.KODE_JENIS_TABUNGAN');
+      })
+      ->where('tabung.NASABAH_ID', '=', $request->idnasabah)
+      ->orderby('tabung.NO_REKENING','DESC')->get();
+      if(!$tabungans)
+      abort('404');
+
+      return view('admin/profil_detail', ['logos'=> $logos,'nasabahs'=> $nasabahs,'kredits'=> $kredits,'tabungans'=> $tabungans,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> '']);
+    }
+
+    public function bo_cs_de_profil_kredit(Request $request)
+    {
+      $logos = Logo::all();
+      $users = User::all();
+      if($request->jenisprofil=='kredit'){
+        $kredits = Kredit::select('kredit.*','kodejeniskredit.DESKRIPSI_JENIS_KREDIT','nasabah.*','kodegroup1kredit.DESKRIPSI_GROUP1',
+        'kodegroup2kredit.DESKRIPSI_GROUP2','kodegroup3kredit.DESKRIPSI_GROUP3','kodegroup4kredit.DESKRIPSI_GROUP4','kodesumberdanakredit.DESKRIPSI_SUMBER_DANA',
+        'kodetypekredit.DESKRIPSI_TYPE_KREDIT','kodesatuanwaktukredit.DESKRIPSI_SATUAN_WAKTU','kodejenispenggunaankredit.DESKRIPSI_JENIS_PENGGUNAAN','kodegoldebitur.DESKRIPSI_GOL_DEBITUR',
+        'kodesektorekonomikredit.DESKRIPSI_SEKTOR_EKONOMI','kodegolpenjaminkredit.DESKRIPSI_GOL_PENJAMIN')
+        ->leftJoin('kodejeniskredit', function($join) {
+          $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
+        })
+        ->leftJoin('nasabah', function($join) {
+          $join->on('kredit.NASABAH_ID', '=', 'nasabah.nasabah_id');
+        })
+        ->leftJoin('kodegroup1kredit', function($join) {
+          $join->on('kredit.KODE_GROUP1', '=', 'kodegroup1kredit.KODE_GROUP1');
+        })
+        ->leftJoin('kodegroup2kredit', function($join) {
+          $join->on('kredit.KODE_GROUP2', '=', 'kodegroup2kredit.KODE_GROUP2');
+        })
+        ->leftJoin('kodegroup3kredit', function($join) {
+          $join->on('kredit.KODE_GROUP3', '=', 'kodegroup3kredit.KODE_GROUP3');
+        })
+        ->leftJoin('kodegroup4kredit', function($join) {
+          $join->on('kredit.KODE_GROUP4', '=', 'kodegroup4kredit.KODE_GROUP4');
+        })
+        ->leftJoin('kodesumberdanakredit', function($join) {
+          $join->on('kredit.KODE_SUMBER_DANA', '=', 'kodesumberdanakredit.KODE_SUMBER_DANA');
+        })
+        ->leftJoin('kodesatuanwaktukredit', function($join) {
+          $join->on('kredit.SATUAN_WAKTU_ANGSURAN', '=', 'kodesatuanwaktukredit.KODE_SATUAN_WAKTU');
+        })
+        ->leftJoin('kodetypekredit', function($join) {
+          $join->on('kredit.TYPE_PINJAMAN', '=', 'kodetypekredit.KODE_TYPE_KREDIT');
+        })
+        ->leftJoin('kodejenispenggunaankredit', function($join) {
+          $join->on('kredit.BI_JENIS_PENGGUNAAN', '=', 'kodejenispenggunaankredit.KODE_JENIS_PENGGUNAAN');
+        })
+        ->leftJoin('kodegoldebitur', function($join) {
+          $join->on('kredit.BI_GOL_DEBITUR', '=', 'kodegoldebitur.KODE_GOL_DEBITUR');
+        })
+        ->leftJoin('kodesektorekonomikredit', function($join) {
+          $join->on('kredit.BI_SEKTOR_EKONOMI', '=', 'kodesektorekonomikredit.KODE_SEKTOR_EKONOMI');
+        })
+        ->leftJoin('kodegolpenjaminkredit', function($join) {
+          $join->on('kredit.BI_GOL_PENJAMIN', '=', 'kodegolpenjaminkredit.KODE_GOL_PENJAMIN');
+        })
+        ->where('kredit.NO_REKENING', '=', $request->idkredit)
+        ->get();
+        if(!$kredits)
+          abort('404');
+      }else if($request->jenisprofil=='tabungan'){
+        $kredits = Tabungan::select('tabung.*','kodejenistabungan.DESKRIPSI_JENIS_TABUNGAN','nasabah.*','kodegroup1tabung.DESKRIPSI_GROUP1',
+        'kodegroup2tabung.DESKRIPSI_GROUP2','kodegroup3tabung.DESKRIPSI_GROUP3','kodemetoda.DESKRIPSI_METODA','golongan_pihaklawan.deskripsi_golongan')
+        ->leftJoin('kodejenistabungan', function($join) {
+          $join->on('tabung.JENIS_TABUNGAN', '=', 'kodejenistabungan.KODE_JENIS_TABUNGAN');
+        })
+        ->leftJoin('nasabah', function($join) {
+          $join->on('tabung.NASABAH_ID', '=', 'nasabah.nasabah_id');
+        })
+        ->leftJoin('kodegroup1tabung', function($join) {
+          $join->on('tabung.KODE_GROUP1', '=', 'kodegroup1tabung.KODE_GROUP1');
+        })
+        ->leftJoin('kodegroup2tabung', function($join) {
+          $join->on('tabung.KODE_GROUP2', '=', 'kodegroup2tabung.KODE_GROUP2');
+        })
+        ->leftJoin('kodegroup3tabung', function($join) {
+          $join->on('tabung.KODE_GROUP3', '=', 'kodegroup3tabung.KODE_GROUP3');
+        })
+        ->leftJoin('kodemetoda', function($join) {
+          $join->on('tabung.KODE_BI_METODA', '=', 'kodemetoda.KODE_METODA');
+        })
+        ->leftJoin('golongan_pihaklawan', function($join) {
+          $join->on('tabung.KODE_BI_PEMILIK', '=', 'golongan_pihaklawan.sandi');
+        })
+        ->where('tabung.NO_REKENING', '=', $request->idkredit)
+        ->get();
+        if(!$kredits)
+        abort('404');
+      }
+      $jenisprofil=$request->jenisprofil;
+      return view('admin/profil_kredit', ['logos'=> $logos,'kredits'=> $kredits,'jenisprofil'=> $jenisprofil,'msgstatus'=> '']);
     }
 
 

@@ -57,6 +57,85 @@
           </form>
         </div>
         <!-- /.card -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Data Nasabah yang sudah tercatat</h3>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+            <table id="example1" class="table table-bordered table-hover">
+              <thead>
+              <tr>
+                <th>No</th>
+                <th>Nasabah ID</th>
+                <th>Nama Nasabah</th>
+                <th>Alamat</th>
+                <th>TTL</th>
+                <th>Jenis Kelamin</th>
+                <th>Ibu Kandung</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+              </thead>
+              <tbody>
+                @foreach($nasabahs as $index => $nasabah)
+                  @if($nasabah->Black_List==0)
+                    @php ($status='Aktif')
+                  @elseif($nasabah->Black_List==1)
+                    @php ($status='Blokir')
+                  @else
+                    @php ($status='Tidak Aktif')
+                  @endif
+                  @if($nasabah->tgllahir==NULL)
+                    @php ($tgllahir='')
+                  @else
+                    @php ($tgllahir=$nasabah->tgllahir->format('d/m/Y'))
+                  @endif
+                <tr>
+                  <td>{{ $index+1 }}</td>
+                  <td>{{ strtoupper($nasabah->nasabah_id) }}</td>
+                  <td>{{ $nasabah->nama_nasabah }}</td>
+                  <td>{{ strtoupper($nasabah->alamat.' '.$nasabah->kelurahan.' '.$nasabah->kecamatan) }}</td>
+                  <td>{{ $nasabah->tempatlahir.', '.$tgllahir }}</td>
+                  <td>{{ $nasabah->jenis_kelamin }}</td>
+                  <td>{{ $nasabah->ibu_kandung }}</td>
+                  <td>{{ $status }}</td>
+                  <td>
+                    <a class="dropdown-toggle btn btn-block bg-gradient-primary btn-sm" data-toggle="dropdown" href="#">
+                      Action <span class="caret"></span>
+                    </a>
+                    <div class="dropdown-menu">
+                      <form method="post" action="/bo_cs_de_profil/detail">
+                      @csrf
+                        <input type="hidden" name="idnasabah" value="{{ trim($nasabah->nasabah_id) }}" class="form-control">
+                        <input type="hidden" name="idnasabahhash" value="{{ md5(trim($nasabah->nasabah_id).'Bast90') }}" class="form-control">
+                        <button type="submit" tabindex="-1" class="dropdown-item">
+                            Detail Profil
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+                @endforeach
+              </tbody>
+              <tfoot>
+              <tr>
+                <th>No</th>
+                <th>Nasabah ID</th>
+                <th>Nama Nasabah</th>
+                <th>Alamat</th>
+                <th>TTL</th>
+                <th>Jenis Kelamin</th>
+                <th>Ibu Kandung</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+              </tfoot>
+            </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
       </div>
       <!-- /.col -->
     </div>

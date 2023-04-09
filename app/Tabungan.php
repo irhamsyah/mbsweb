@@ -7,14 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 class Tabungan extends Model
 {   
     // relasi Many to One , NamaTabel,LokalKey(Tabung),ForeignKey(Nasabah)
-    public function nasabahs()
+    public function nasabah()
     {
         return $this->belongsTo('App\Nasabah','NASABAH_ID','nasabah_id');
     }
-
+    // return $this->hasMany('App\Comment', 'foreign_key', 'local_key');
+    public function tabtrans()
+    {
+        return $this->belongsToMany('App\Tabtran','NO_REKENING','NO_REKENING');
+    }
     public $timestamps=false;
     protected $table = 'tabung';
-    // protected $primaryKey = 'no_rekening';
+    protected $primaryKey = 'no_rekening';
     //Define primary key not integer is Important because laravel assume your primarykey is Integer
     protected $keyType = 'string';
 

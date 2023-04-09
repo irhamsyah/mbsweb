@@ -47,10 +47,12 @@ Route::delete('/bo_cs_de_nasabah', 'NasabahController@bo_cs_de_nasabah_destroy')
 Route::post('/bo_cs_de_nasabah/cari','NasabahController@bo_cs_de_nasabah_cari');//search filter
 
 Route::get('/bo_cs_de_profil', 'NasabahController@bo_cs_de_profil');
-Route::post('/bo_cs_de_profil', 'NasabahController@bo_cs_de_profil_add');
-Route::put('/bo_cs_de_profil', 'NasabahController@bo_cs_de_profil_edit');
+// Route::post('/bo_cs_de_profil', 'NasabahController@bo_cs_de_profil_add');
+// Route::put('/bo_cs_de_profil', 'NasabahController@bo_cs_de_profil_edit');
 Route::delete('/bo_cs_de_profil', 'NasabahController@bo_cs_de_profil_destroy');
 Route::post('/bo_cs_de_profil/cari','NasabahController@bo_cs_de_profil_cari');//search filter
+Route::post('/bo_cs_de_profil/detail','NasabahController@bo_cs_de_profil_detail');//detail profile
+Route::post('/bo_cs_de_profil/kredit','NasabahController@bo_cs_de_profil_kredit');//detail kredit
 
 Route::get('/bo_cs_de_simulasi', 'NasabahController@bo_cs_de_simulasi');
 Route::post('/bo_cs_de_simulasi', 'NasabahController@bo_cs_de_simulasi_add');
@@ -110,6 +112,7 @@ Route::get('bo_tabungan_edit_cari',
     'as'=>'getcariprofiletab',
     'uses'=>'TabunganController@bo_cs_de_tabungan'
 ]);
+
 // Routing Report Nominatif
 Route::get('bo_tb_rpt_nominatif','TabunganController@bo_tb_rpt_nominatif')->name('bo_tb_rpt_nominatif');
 Route::post('bo_tb_rpt_nominatifview','TabunganController@bo_tb_rpt_nominatifview')->name('bo_tb_rpt_nominatifview');

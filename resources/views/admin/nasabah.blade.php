@@ -48,10 +48,10 @@
               </div>
               <div class="row form-group">
                 <div class="col-lg-3 col-sm-12">
-                  <label for="jenisnasabah1">Jenis Nasabah</label>
+                  <label for="noktp1">No KTP</label>
                 </div>             
                 <div class="col-lg-5 col-sm-12">
-                  <input type="text" class="form-control" id="jenisnasabah1" name="jenisnasabah1" placeholder="Masukkan Jenis Nasabah">
+                  <input type="text" class="form-control" id="noktp1" name="noktp1" placeholder="Masukkan No KTP">
                 </div>
               </div>
               <div class="row form-group">
@@ -111,7 +111,7 @@
                   <td>{{ strtoupper($nasabah->alamat.' '.$nasabah->kelurahan.' '.$nasabah->kecamatan) }}</td>
                   <td>{{ $nasabah->tempatlahir.', '.$tgllahir }}</td>
                   <td>{{ $nasabah->jenis_kelamin }}</td>
-                  <td>{{ $nasabah->ibu_kandung }}</td>
+                  <td>{{ $nasabah->IBU_KANDUNG }}</td>
                   <td>{{ $status }}</td>
                   <td>
                     <a class="dropdown-toggle btn btn-block bg-gradient-primary btn-sm" data-toggle="dropdown" href="#">
@@ -144,7 +144,7 @@
                       data-kelurahan="{{ $nasabah->kelurahan }}"
                       data-kecamatan="{{ $nasabah->kecamatan }}"
                       data-kode_pos="{{ $nasabah->kode_pos }}"
-                      data-kota_id="{{ $nasabah->kota_id }}"
+                      data-kota_id="{{ $nasabah->kota_id.'|'.$nasabah->KOTA }}"
                       data-Kode_Negara="{{ trim($nasabah->Kode_Negara) }}"
                       data-Tempat_Kerja="{{ $nasabah->Tempat_Kerja }}"
                       data-alamat_kantor="{{ $nasabah->alamat_kantor }}"
@@ -442,7 +442,7 @@
                           <select class="form-control" name="inputkotaedit" required>
                             <option value="#" disabled="disabled">--- Pilih Kota ---</option>
                             @foreach($kotas as $kota)
-                            <option value="{{ $kota->Kota_id }}">{{ $kota->Kota_id.' - '.$kota->Deskripsi_Kota }}</option>
+                            <option value="{{ $kota->Kota_id.'|'.$kota->Deskripsi_Kota }}">{{ $kota->Kota_id.' - '.$kota->Deskripsi_Kota }}</option>
                             @endforeach
                           </select>
                         </div>
@@ -915,7 +915,7 @@
                           <select class="form-control select2" name="inputkota" required>
                             <option value="#" disabled="disabled">--- Pilih Kota ---</option>
                             @foreach($kotas as $kota)
-                            <option value="{{ $kota->Kota_id }}" <?php if($kota->Kota_id=='1202'){echo 'selected';} ?> >{{ $kota->Kota_id.' - '.$kota->Deskripsi_Kota }}</option>
+                            <option value="{{ $kota->Kota_id.'|'.$kota->Deskripsi_Kota }}" <?php if($kota->Kota_id=='1202'){echo 'selected';} ?> >{{ $kota->Kota_id.' - '.$kota->Deskripsi_Kota }}</option>
                             @endforeach
                           </select>
                         </div>

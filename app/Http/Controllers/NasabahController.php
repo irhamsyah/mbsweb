@@ -83,8 +83,8 @@ class NasabahController extends Controller
       ->when(request()->namanasabah1, function($query) {
         $query->where('nama_nasabah', 'LIKE', '%' . request()->namanasabah1 . '%');
       })
-      ->when(request()->jenisnasabah1, function($query) {
-        $query->where('jenis_nasabah', request()->jenisnasabah1);
+      ->when(request()->noktp1, function($query) {
+        $query->where('no_id', 'LIKE', '%' . request()->noktp1 . '%');
       })
       ->limit(100)->orderby('nasabah.nasabah_id','ASC')->get();
 
@@ -114,33 +114,41 @@ class NasabahController extends Controller
         'inputFoto' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         'inputtandatangan' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
       ]);
-      //upload image to directory
-      if ($request->hasFile('inputFoto')) {
-          $imagefoto = $request->file('inputFoto');
-          $namefoto = 'foto'.time().'.'.$imagefoto->getClientOriginalExtension();
-          $destinationPathfoto = $_SERVER['DOCUMENT_ROOT'].'/img/foto';
-          $imagefoto->move($destinationPathfoto, $namefoto);
-      }
-      if ($request->hasFile('inputtandatangan')) {
-        $imagettangan = $request->file('inputtandatangan');
-        $namettangan = 'ttangan'.time().'.'.$imagettangan->getClientOriginalExtension();
-        $destinationPathttangan = $_SERVER['DOCUMENT_ROOT'].'/img/ttangan';
-        $imagettangan->move($destinationPathttangan, $namettangan);
-      }
-      $isChecked = $request->has('inputblacklist');
-      $statuskawin = substr($request->inputkawin,1,1);
+      // dd($detkota);
+
       if ($request->inputnasabahid != '' && $request->inputnamanasabah !='' && $request->inputalias !='' && $request->inputalias !=''
       && $request->inputcab !='' && $request->inputnocif !='' && $request->inputtempatlahir !='' && $request->inputtgllahir !=''
       && $request->inputjk !='' && $request->inputibukandung !='' && $request->inputnpwp !='' && $request->inputidentitas !=''
-      && $request->inputnoidentitas !='' && $request->inputagama !='' && $request->statuskawin !='' && $request->inputdomisili !=''
+      && $request->inputnoidentitas !='' && $request->inputagama !='' && $request->inputkawin !='' && $request->inputdomisili !=''
       && $request->inputalamat !='' && $request->inputnohp !='' && $request->inputalamat !='' && $request->inputkelurahan !=''
       && $request->inputkecamatan !='' && $request->inputkodepos !='' && $request->inputkota !='' && $request->inputnegara !=''
       && $request->inputnamaperusahaan !='' && $request->inputalamatperusahaan !='' && $request->inputpekerjaan !='' && $request->inputdetpekerjaan !=''
       && $request->inputsumberdana !='' && $request->inputpenghasilansetahun !='' && $request->inputgelar !='' && $request->inputdetgelar !=''
       && $request->inputbidangusahasid !='' && $request->inputhubdebsid !='' && $request->inputgoldebsid !='' && $request->inputnamapendamping !=''
       && $request->inputidpendamping !='' && $request->inputtgllahirpendamping !='' && $request->inputjmltanggungan !='' && $request->inputtujuanbukarek !=''
-      && $request->inputpenggunaandana !='' && $request->inputnamaahliwaris !='' && $request->inputalamatahliwaris !='' && $request->namefoto !=''
-      && $request->namettangan !=''){
+      && $request->inputpenggunaandana !='' && $request->inputnamaahliwaris !='' && $request->inputalamatahliwaris !=''){
+
+        //upload image to directory
+        if ($request->hasFile('inputFoto')) {
+            $imagefoto = $request->file('inputFoto');
+            $namefoto = 'foto'.time().'.'.$imagefoto->getClientOriginalExtension();
+            $destinationPathfoto = $_SERVER['DOCUMENT_ROOT'].'/img/foto';
+            $imagefoto->move($destinationPathfoto, $namefoto);
+        }
+        if ($request->hasFile('inputtandatangan')) {
+          $imagettangan = $request->file('inputtandatangan');
+          $namettangan = 'ttangan'.time().'.'.$imagettangan->getClientOriginalExtension();
+          $destinationPathttangan = $_SERVER['DOCUMENT_ROOT'].'/img/ttangan';
+          $imagettangan->move($destinationPathttangan, $namettangan);
+        }
+        $isChecked = $request->has('inputblacklist');
+        $statuskawin = substr($request->inputkawin,1,1);
+      
+        //pecah id kota dan deskripsi kota
+        $pecahKota = explode('|', $request->inputkota);
+        $idkota = $pecahKota[0];
+        $detkota = $pecahKota[1];
+        
         $nasabahs = new Nasabah;
         $nasabahs->NO_DIN = $request->inputdin;
         $nasabahs->nasabah_id = trim($request->inputnasabahid);
@@ -167,12 +175,14 @@ class NasabahController extends Controller
         $nasabahs->kelurahan = $request->inputkelurahan;
         $nasabahs->kecamatan = $request->inputkecamatan;
         $nasabahs->kode_pos = $request->inputkodepos;
-        $nasabahs->kota_id = $request->inputkota;
+        $nasabahs->kota_id = $idkota;
+        $nasabahs->KOTA = $detkota;
         $nasabahs->Kode_Negara = $request->inputnegara;
         $nasabahs->Tempat_Kerja = $request->inputnamaperusahaan;
         $nasabahs->alamat_kantor = $request->inputalamatperusahaan;
         $nasabahs->pekerjaan_id = $request->inputpekerjaan;
         $nasabahs->pekerjaan = $request->inputdetpekerjaan;
+        $nasabahs->KET_PEKERJAAN = $request->inputdetpekerjaan;
         $nasabahs->kode_sumber_penghasilan = $request->inputsumberdana;
         $nasabahs->penghasilan_setahun = $request->inputpenghasilansetahun;
         $nasabahs->gelar_id = $request->inputgelar;
@@ -229,57 +239,16 @@ class NasabahController extends Controller
       $logos = Logo::all();
       // dd(md5($request->inputnasabahidedit.'Bast90').'--'.$request->inputIdNasabahHashedit.'---'.md5('000001Bast90'));
       if(md5($request->inputnasabahidedit.'Bast90') == $request->inputIdNasabahHashedit){
-        if ($request->inputFotoedit!="" OR $request->inputFotoedit!=NULL){
-          //cek validasi image
-          $this->validate($request, [
-            'inputFotoedit' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
-          ]);
-          //upload image to directory
-          if ($request->hasFile('inputFotoedit')) {
-              $imagefoto = $request->file('inputFotoedit');
-              $namefoto = 'foto'.time().'.'.$imagefoto->getClientOriginalExtension();
-              $destinationPathfoto = $_SERVER['DOCUMENT_ROOT'].'/img/foto';
-              $imagefoto->move($destinationPathfoto, $namefoto);
-              //delete file image from directory
-              if($request->inputFotoeditold!=NULL){
-                unlink($_SERVER['DOCUMENT_ROOT'].'/img/foto/'.$request->inputFotoeditold);
-              }
-          }
-        }else{
-          $namefoto = $request->inputFotoeditold;
-        }
-
-        if ($request->inputtandatanganedit!="" OR $request->inputtandatanganedit!=NULL){
-          //cek validasi image
-          $this->validate($request, [
-            'inputtandatanganedit' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
-          ]);
-          //upload image to directory
-          if ($request->hasFile('inputtandatanganedit')) {
-            $imagettangan = $request->file('inputtandatanganedit');
-            $namettangan = 'ttangan'.time().'.'.$imagettangan->getClientOriginalExtension();
-            $destinationPathttangan = $_SERVER['DOCUMENT_ROOT'].'/img/ttangan';
-            $imagettangan->move($destinationPathttangan, $namettangan);
-            //delete file image from directory
-            if($request->inputtandatanganeditold!=NULL){
-              unlink($_SERVER['DOCUMENT_ROOT'].'/img/ttangan/'.$request->inputtandatanganeditold);
-            }
-          }
-        }else{
-          $namettangan = $request->inputtandatanganeditold;
-        }
-
-        $isCheckededit = $request->has('inputblacklistedit');
-        $statuskawinedit = substr($request->inputkawinedit,1,1);
+        
         //update Nasabah
         // $nasabahs = Nasabah::find($request->inputnasabahidedit);
         $nasabahs = Nasabah::where('nasabah_id', $request->inputnasabahidedit)->first();
-        // dd($statuskawinedit);
+        // dd($request->inputkotaedit);
         if ($request->inputnamanasabahedit !='' && $request->inputaliasedit !='' && $request->inputpenggunaandanaedit !=''
         && $request->inputtempatlahiredit !='' && $request->inputtgllahiredit !='' && $request->inputjkedit !='' 
         && $request->inputibukandungedit !='' && $request->inputnamaahliwarisedit !='' && $request->inputkawinedit !=''
         && $request->inputnpwpedit !='' && $request->inputidentitasedit !='' && $request->inputnoidentitasedit !=''
-        && $request->inputmasaberlakuedit !='' && $request->inputagamaedit !=''
+        && $request->inputmasaberlakuedit !='' && $request->inputagamaedit !='' && $request->inputkotaedit !=''
         && $request->inputdomisiliedit !='' && $request->inputnohpedit !='' && $request->inputalamatedit !=''
         && $request->inputkelurahanedit !='' && $request->inputkecamatanedit !='' && $request->inputkodeposedit !=''
         && $request->inputnegaraedit !='' && $request->inputnamaperusahaanedit !='' && $request->inputalamatperusahaanedit !=''
@@ -289,6 +258,55 @@ class NasabahController extends Controller
         && $request->inputnamapendampingedit !='' && $request->inputidpendampingedit !='' && $request->inputtgllahirpendampingedit !=''
         && $request->inputjmltanggunganedit !='' && $request->inputtujuanbukarekedit !='' && $request->inputalamatahliwarisedit !='' 
         ){
+
+          if ($request->inputFotoedit!="" OR $request->inputFotoedit!=NULL){
+            //cek validasi image
+            $this->validate($request, [
+              'inputFotoedit' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            ]);
+            //upload image to directory
+            if ($request->hasFile('inputFotoedit')) {
+                $imagefoto = $request->file('inputFotoedit');
+                $namefoto = 'foto'.time().'.'.$imagefoto->getClientOriginalExtension();
+                $destinationPathfoto = $_SERVER['DOCUMENT_ROOT'].'/img/foto';
+                $imagefoto->move($destinationPathfoto, $namefoto);
+                //delete file image from directory
+                if($request->inputFotoeditold!=NULL){
+                  unlink($_SERVER['DOCUMENT_ROOT'].'/img/foto/'.$request->inputFotoeditold);
+                }
+            }
+          }else{
+            $namefoto = $request->inputFotoeditold;
+          }
+  
+          if ($request->inputtandatanganedit!="" OR $request->inputtandatanganedit!=NULL){
+            //cek validasi image
+            $this->validate($request, [
+              'inputtandatanganedit' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            ]);
+            //upload image to directory
+            if ($request->hasFile('inputtandatanganedit')) {
+              $imagettangan = $request->file('inputtandatanganedit');
+              $namettangan = 'ttangan'.time().'.'.$imagettangan->getClientOriginalExtension();
+              $destinationPathttangan = $_SERVER['DOCUMENT_ROOT'].'/img/ttangan';
+              $imagettangan->move($destinationPathttangan, $namettangan);
+              //delete file image from directory
+              if($request->inputtandatanganeditold!=NULL){
+                unlink($_SERVER['DOCUMENT_ROOT'].'/img/ttangan/'.$request->inputtandatanganeditold);
+              }
+            }
+          }else{
+            $namettangan = $request->inputtandatanganeditold;
+          }
+  
+          $isCheckededit = $request->has('inputblacklistedit');
+          $statuskawinedit = substr($request->inputkawinedit,1,1);
+  
+          //pecah id kota dan deskripsi kota
+          $pecahKotaedit = explode('|', $request->inputkotaedit);
+          $idkotaedit = $pecahKotaedit[0];
+          $detkotaedit = $pecahKotaedit[1];
+          
           Nasabah::where('nasabah_id', $request->inputnasabahidedit)
             ->update(['NO_DIN' => $request->inputdinedit,
             'CAB' => $request->inputcabedit,
@@ -314,6 +332,8 @@ class NasabahController extends Controller
             'kelurahan' => $request->inputkelurahanedit,
             'kecamatan' => $request->inputkecamatanedit,
             'kode_pos' => $request->inputkodeposedit,
+            'kota_id' => $idkotaedit,
+            'KOTA' => $detkotaedit,
             'Kode_Negara' => $request->inputnegaraedit,
             'Tempat_Kerja' => $request->inputnamaperusahaanedit,
             'alamat_kantor' => $request->inputalamatperusahaanedit,

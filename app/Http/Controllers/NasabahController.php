@@ -57,6 +57,7 @@ class NasabahController extends Controller
     {
       $logos = Logo::all();
       $nasabahs = Nasabah::select('*')->limit(20)->orderby('nasabah.nasabah_id','ASC')->get();
+      $nasabahsearchs = Nasabah::select('nama_nasabah')->orderby('nasabah.nasabah_id','ASC')->get();
       $users = User::all();
       $identitass = Identitas::all();
       $kodegroup1nasabahs = KodeGroup1Nasabah::all();
@@ -249,7 +250,7 @@ class NasabahController extends Controller
         //update Nasabah
         // $nasabahs = Nasabah::find($request->inputnasabahidedit);
         $nasabahs = Nasabah::where('nasabah_id', $request->inputnasabahidedit)->first();
-        dd($nasabahs);
+        // dd($nasabahs);
         Nasabah::where('nasabah_id', $request->inputnasabahidedit)
             ->update(['NO_DIN' => $request->inputdinedit,
             'CAB' => $request->inputcabedit,

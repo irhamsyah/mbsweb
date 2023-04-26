@@ -129,7 +129,18 @@ class NasabahController extends Controller
       }
       $isChecked = $request->has('inputblacklist');
       $statuskawin = substr($request->inputkawin,1,1);
-      if ($request->inputnasabahid != '' && $request->inputnamanasabah !='' && $request->inputalias !=''){
+      if ($request->inputnasabahid != '' && $request->inputnamanasabah !='' && $request->inputalias !='' && $request->inputalias !=''
+      && $request->inputcab !='' && $request->inputnocif !='' && $request->inputtempatlahir !='' && $request->inputtgllahir !=''
+      && $request->inputjk !='' && $request->inputibukandung !='' && $request->inputnpwp !='' && $request->inputidentitas !=''
+      && $request->inputnoidentitas !='' && $request->inputagama !='' && $request->statuskawin !='' && $request->inputdomisili !=''
+      && $request->inputalamat !='' && $request->inputnohp !='' && $request->inputalamat !='' && $request->inputkelurahan !=''
+      && $request->inputkecamatan !='' && $request->inputkodepos !='' && $request->inputkota !='' && $request->inputnegara !=''
+      && $request->inputnamaperusahaan !='' && $request->inputalamatperusahaan !='' && $request->inputpekerjaan !='' && $request->inputdetpekerjaan !=''
+      && $request->inputsumberdana !='' && $request->inputpenghasilansetahun !='' && $request->inputgelar !='' && $request->inputdetgelar !=''
+      && $request->inputbidangusahasid !='' && $request->inputhubdebsid !='' && $request->inputgoldebsid !='' && $request->inputnamapendamping !=''
+      && $request->inputidpendamping !='' && $request->inputtgllahirpendamping !='' && $request->inputjmltanggungan !='' && $request->inputtujuanbukarek !=''
+      && $request->inputpenggunaandana !='' && $request->inputnamaahliwaris !='' && $request->inputalamatahliwaris !='' && $request->namefoto !=''
+      && $request->namettangan !=''){
         $nasabahs = new Nasabah;
         $nasabahs->NO_DIN = $request->inputdin;
         $nasabahs->nasabah_id = trim($request->inputnasabahid);
@@ -226,11 +237,13 @@ class NasabahController extends Controller
           //upload image to directory
           if ($request->hasFile('inputFotoedit')) {
               $imagefoto = $request->file('inputFotoedit');
-              $namefoto = time().'.'.$imagefoto->getClientOriginalExtension();
+              $namefoto = 'foto'.time().'.'.$imagefoto->getClientOriginalExtension();
               $destinationPathfoto = $_SERVER['DOCUMENT_ROOT'].'/img/foto';
               $imagefoto->move($destinationPathfoto, $namefoto);
               //delete file image from directory
-              unlink($_SERVER['DOCUMENT_ROOT'].'/img/foto/'.$request->inputFotoeditold);
+              if($request->inputFotoeditold!=NULL){
+                unlink($_SERVER['DOCUMENT_ROOT'].'/img/foto/'.$request->inputFotoeditold);
+              }
           }
         }else{
           $namefoto = $request->inputFotoeditold;
@@ -244,11 +257,13 @@ class NasabahController extends Controller
           //upload image to directory
           if ($request->hasFile('inputtandatanganedit')) {
             $imagettangan = $request->file('inputtandatanganedit');
-            $namettangan = time().'.'.$imagettangan->getClientOriginalExtension();
+            $namettangan = 'ttangan'.time().'.'.$imagettangan->getClientOriginalExtension();
             $destinationPathttangan = $_SERVER['DOCUMENT_ROOT'].'/img/ttangan';
             $imagettangan->move($destinationPathttangan, $namettangan);
             //delete file image from directory
-            unlink($_SERVER['DOCUMENT_ROOT'].'/img/ttangan/'.$request->inputtandatanganeditold);
+            if($request->inputtandatanganeditold!=NULL){
+              unlink($_SERVER['DOCUMENT_ROOT'].'/img/ttangan/'.$request->inputtandatanganeditold);
+            }
           }
         }else{
           $namettangan = $request->inputtandatanganeditold;
@@ -259,8 +274,21 @@ class NasabahController extends Controller
         //update Nasabah
         // $nasabahs = Nasabah::find($request->inputnasabahidedit);
         $nasabahs = Nasabah::where('nasabah_id', $request->inputnasabahidedit)->first();
-        // dd($nasabahs);
-        if ($request->inputnasabahidedit != '' && $request->inputnamanasabahedit !='' && $request->inputaliasedit !=''){
+        // dd($statuskawinedit);
+        if ($request->inputnamanasabahedit !='' && $request->inputaliasedit !='' && $request->inputpenggunaandanaedit !=''
+        && $request->inputtempatlahiredit !='' && $request->inputtgllahiredit !='' && $request->inputjkedit !='' 
+        && $request->inputibukandungedit !='' && $request->inputnamaahliwarisedit !='' && $request->inputkawinedit !=''
+        && $request->inputnpwpedit !='' && $request->inputidentitasedit !='' && $request->inputnoidentitasedit !=''
+        && $request->inputmasaberlakuedit !='' && $request->inputagamaedit !=''
+        && $request->inputdomisiliedit !='' && $request->inputnohpedit !='' && $request->inputalamatedit !=''
+        && $request->inputkelurahanedit !='' && $request->inputkecamatanedit !='' && $request->inputkodeposedit !=''
+        && $request->inputnegaraedit !='' && $request->inputnamaperusahaanedit !='' && $request->inputalamatperusahaanedit !=''
+        && $request->inputpekerjaanedit !='' && $request->inputdetpekerjaanedit !='' && $request->inputsumberdanaedit !=''
+        && $request->inputpenghasilansetahunedit !='' && $request->inputgelaredit !='' && $request->inputdetgelaredit !=''
+        && $request->inputbidangusahasidedit !='' && $request->inputhubdebsidedit !='' && $request->inputgoldebsidedit !=''
+        && $request->inputnamapendampingedit !='' && $request->inputidpendampingedit !='' && $request->inputtgllahirpendampingedit !=''
+        && $request->inputjmltanggunganedit !='' && $request->inputtujuanbukarekedit !='' && $request->inputalamatahliwarisedit !='' 
+        ){
           Nasabah::where('nasabah_id', $request->inputnasabahidedit)
             ->update(['NO_DIN' => $request->inputdinedit,
             'CAB' => $request->inputcabedit,

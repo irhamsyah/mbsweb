@@ -4,10 +4,10 @@
 
 @if($msgstatus!=''){
   @if($msgstatus=='1'){
-    @php $statusmsg='success'; $titlemsg='Successfully'; $msgview='Proses Berhasil' @endphp;
+    @php $statusmsg='success'; $titlemsg='Successfully'; @endphp;
   }
   @else{
-    @php $statusmsg='error'; $titlemsg='Error!'; $msgview='Proses Gagal!' @endphp;
+    @php $statusmsg='error'; $titlemsg='Error!'; @endphp;
   }
   @endif
     
@@ -167,7 +167,7 @@
                       data-Alamat_KUASA="{{ $nasabah->ALAMAT_KUASA }}"
                       data-Path_FOTO="{{ $nasabah->PATH_FOTO }}"
                       data-Path_TTANGAN="{{ $nasabah->PATH_TTANGAN }}"
-                      data-nasabah_idhash="{{ md5($nasabah->nasabah_id.'Bast90') }}"
+                      data-nasabah_idhash="{{ md5(trim($nasabah->nasabah_id).'Bast90') }}"
                       data-Path_FOTO_show="{{ asset('img/foto/'.$nasabah->PATH_FOTO) }}"
                       data-Path_TTANGAN_show="{{ asset('img/ttangan/'.$nasabah->PATH_TTANGAN) }}"
                       >

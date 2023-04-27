@@ -43,13 +43,13 @@
                   <label for="namanasabah1">Nama Nasabah</label>
                 </div>     
                 <div class="col-lg-5 col-sm-12">
-                  <input type="text" class="form-control" id="namanasabah1" name="namanasabah1" placeholder="Masukkan Nama Nasabah">
+                  <input type="text" class="form-control" id="namanasabah1" name="namanasabah1" data-action="getProfileNasabah.php" placeholder="Masukkan Nama Nasabah">
                 </div>
               </div>
               <div class="row form-group">
                 <div class="col-lg-3 col-sm-12">
                   <label for="noktp1">No KTP</label>
-                </div>             
+                </div>
                 <div class="col-lg-5 col-sm-12">
                   <input type="text" class="form-control" id="noktp1" name="noktp1" placeholder="Masukkan No KTP">
                 </div>
@@ -81,6 +81,7 @@
               <tr>
                 <th>No</th>
                 <th>Nasabah ID</th>
+                <th>No Identitas</th>
                 <th>Nama Nasabah</th>
                 <th>Alamat</th>
                 <th>TTL</th>
@@ -107,6 +108,7 @@
                 <tr>
                   <td>{{ $index+1 }}</td>
                   <td>{{ $nasabah->nasabah_id }}</td>
+                  <td>{{ $nasabah->no_id }}</td>
                   <td>{{ $nasabah->nama_nasabah }}</td>
                   <td>{{ strtoupper($nasabah->alamat.' '.$nasabah->kelurahan.' '.$nasabah->kecamatan) }}</td>
                   <td>{{ $nasabah->tempatlahir.', '.$tgllahir }}</td>
@@ -191,6 +193,7 @@
               <tr>
                 <th>No</th>
                 <th>Nasabah ID</th>
+                <th>No Identitas</th>
                 <th>Nama Nasabah</th>
                 <th>Alamat</th>
                 <th>TTL</th>
@@ -277,7 +280,7 @@
                       <div class="col-lg-3 col-sm-6">
                         <div class="form-group-lbl">
                           <label for="inputnamanasabahedit">Nama Nasabah</label>
-                          <input type="text" name="inputnamanasabahedit" id="inputnamanasabah" class="form-control" required>
+                          <input type="text" name="inputnamanasabahedit" id="inputnamanasabahedit" class="form-control" required>
                         </div>
                       </div>
                       <div class="col-lg-3 col-sm-6">
@@ -748,9 +751,14 @@
                     </div>
                     <div class="row">
                       <div class="col-lg-3 col-sm-6">
-                        <div class="form-group-lbl">
-                          <label for="inputnamanasabah">Nama Nasabah</label>
-                          <input type="text" name="inputnamanasabah" id="inputnamanasabah" class="form-control" required>
+                        <label for="inputnamanasabah">Nama Nasabah / Anggota</label>
+                        <div class="input-group date" data-target-input="nearest">
+                          <input id="inputnamanasabah" type="text" name="inputnamanasabah" readonly class="form-control">
+
+                          <div class="input-group-append" data-toggle="modal" data-target="#modal-getnasabah">
+                            <div class="input-group-text"><i class="fa fa-user"></i></div>
+                        </div>
+
                         </div>
                       </div>
                       <div class="col-lg-3 col-sm-6">
@@ -814,7 +822,7 @@
                       <div class="col-lg-2 col-sm-6">
                         <div class="form-group-lbl">
                           <label for="inputnoidentitas">No. Identitas</label>
-                          <input type="text" name="inputnoidentitas" class="form-control" required>
+                          <input type="text" id="inputnoidentitas" name="inputnoidentitas" class="form-control" required>
                         </div>
                       </div>
                       <div class="col-lg-2 col-sm-6">
@@ -860,7 +868,7 @@
                       <div class="col-lg-6 col-sm-12">
                         <div class="form-group-lbl">
                           <label for="inputdomisili">Alamat Domisili</label>
-                          <input type="text" name="inputdomisili" class="form-control" required>
+                          <input type="text" id="inputdomisili" name="inputdomisili" class="form-control" required>
                         </div>
                       </div>
                       <div class="col-lg-1 col-sm-2">
@@ -886,7 +894,7 @@
                       <div class="col-lg-6 col-sm-12">
                         <div class="form-group-lbl">
                           <label for="inputalamat">Alamat KTP</label>
-                          <input type="text" name="inputalamat" class="form-control" required>
+                          <input type="text" id="inputalamat" name="inputalamat" class="form-control" required>
                         </div>
                       </div>
                       <div class="col-lg-2 col-sm-12">
@@ -1158,6 +1166,49 @@
     <!-- /.modal-dialog -->
   </div>
   <!-- /.modal -->
+  {{-- MODAL TAMPIL TABEL NASABAH --}}
+  <div class="modal fade bs-modal-nas" id="modal-getnasabah" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="judulmodalnasabah">Data Nasabah</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <table id="nasabahdataget" class="table table-bordered " width="100%">
+            <thead>
+              <tr>
+                  <th>Nasabah Id</th>
+                  <th>Nama Nasabah</th>
+                  <th>Alamat Nasabah</th>
+                  <th>No Identitas</th>
+                  <th>Action</th>
+
+              </tr>
+            </thead>
+            <tbody>
+                @foreach($nasabahall as $value)
+                <tr>
+                  <td>{{ $value->nasabah_id }}</td>
+                  <td>{{ $value->nama_nasabah }}</td>
+                  <td>{{ $value->alamat }}</td>
+                  <td>{{ $value->no_id }}</td>
+                  <td>
+                    <a id="selectednasabah" href="#" class="btn btn-block bg-gradient-primary btn-sm">
+                      pilih
+                    </a>
+                  </td>
+                </tr>
+                @endforeach
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
 </div>
 <!-- /.content -->
 @endsection

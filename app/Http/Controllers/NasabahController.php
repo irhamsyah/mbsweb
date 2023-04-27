@@ -56,6 +56,7 @@ class NasabahController extends Controller
     public function bo_cs_de_nasabah()
     {
       $logos = Logo::all();
+      $nasabahall=Nasabah::select('nasabah_id','nama_nasabah','alamat','no_id')->get();
       $nasabahs = Nasabah::select('*')->limit(20)->orderby('nasabah.nasabah_id','ASC')->get();
       $nasabahsearchs = Nasabah::select('nama_nasabah')->orderby('nasabah.nasabah_id','ASC')->get();
       $users = User::all();
@@ -72,7 +73,7 @@ class NasabahController extends Controller
       $lastnasabahid = Nasabah::max('nasabah_id');
 
       return view('admin/nasabah', ['logos'=> $logos,'nasabahs'=> $nasabahs,'identitass'=> $identitass,'kodegroup1nasabahs'=> $kodegroup1nasabahs,
-      'perkawinans'=> $perkawinans,'negaras'=> $negaras,'kotas'=> $kotas,'pekerjaans'=> $pekerjaans,'gelars'=> $gelars,
+      'perkawinans'=> $perkawinans,'negaras'=> $negaras,'kotas'=> $kotas,'pekerjaans'=> $pekerjaans,'gelars'=> $gelars,'nasabahall'=> $nasabahall,
       'bidangusahas'=> $bidangusahas,'hubungandebiturs'=> $hubungandebiturs,'golongandebiturs'=> $golongandebiturs,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> '','msgview'=> '']);
     }
     public function bo_cs_de_nasabah_cari(Request $request)
@@ -89,6 +90,7 @@ class NasabahController extends Controller
       ->limit(100)->orderby('nasabah.nasabah_id','ASC')->get();
 
       $users = User::all();
+      $nasabahall=Nasabah::select('nasabah_id','nama_nasabah','alamat','no_id')->get();
       $identitass = Identitas::all();
       $kodegroup1nasabahs = KodeGroup1Nasabah::all();
       $perkawinans = Perkawinan::all();
@@ -102,7 +104,7 @@ class NasabahController extends Controller
       $lastnasabahid = Nasabah::max('nasabah_id');
 
       return view('admin/nasabah', ['logos'=> $logos,'nasabahs'=> $nasabahs,'identitass'=> $identitass,'kodegroup1nasabahs'=> $kodegroup1nasabahs,
-      'perkawinans'=> $perkawinans,'negaras'=> $negaras,'kotas'=> $kotas,'pekerjaans'=> $pekerjaans,'gelars'=> $gelars,
+      'perkawinans'=> $perkawinans,'negaras'=> $negaras,'kotas'=> $kotas,'pekerjaans'=> $pekerjaans,'gelars'=> $gelars,'nasabahall'=> $nasabahall,
       'bidangusahas'=> $bidangusahas,'hubungandebiturs'=> $hubungandebiturs,'golongandebiturs'=> $golongandebiturs,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> '','msgview'=> '']);
     }
 

@@ -500,7 +500,7 @@ $(document).ready(function(){
 // Fungsi untuk menampilkan Data Nasabah dari Modal yg akan diinput ke Tabungan
 $(document).ready(function(){
 // code to read selected table row cell data (values).
-$("#nasabahdata").on('click','#tes1',function(){
+  $("#nasabahdata").on('click','#tes1',function(){
      // get the current row
      var currentRow=$(this).closest("tr"); 
      
@@ -512,11 +512,31 @@ $("#nasabahdata").on('click','#tes1',function(){
      document.getElementById("inputNamaNasabahadd").value=col2;
      document.getElementById("inputalamatadd").value=col3;
     //  alert(data);
-    document.getElementById("editidnasabah").value=col1;
+     document.getElementById("editidnasabah").value=col1;
      document.getElementById("editnamanasabah").value=col2;
      document.getElementById("editalamatnasabah").value=col3;
 
-});
+  });
+  $("#nasabahdataget").on('click','#selectednasabah',function(){
+     // get the current row
+     var currentRow=$(this).closest("tr"); 
+     
+     var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+     var col2=currentRow.find("td:eq(1)").text(); // get current row 2nd TD
+     var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
+     var col4=currentRow.find("td:eq(3)").text(); // get current row 3rd TD
+    //  var data=col1+"\n"+col2+"\n"+col3;
+     $('#inputnasabahid').val(col1);
+     $('#inputnamanasabah').val(col2);
+     $('#inputdomisili').val(col3);
+     $('#inputalamat').val(col3);
+     $('#inputnoidentitas').val(col4);
+
+     var kodecab = $('#inputcab').val();
+     $('#inputnocif').val(kodecab+col1);
+
+
+  });
 });
 // Menampilkan data nasabah di input text nasabah_id dengan DATATABEL
 $(document).ready(function () {
@@ -617,19 +637,19 @@ $(document).ready(function () {
      }
     });
 
-    $("#namanasabah1").on('change', function(){
-      var typingNamaNasabah=this.value;
-      // alert(typingNamaNasabah);
-      $.ajax({
-        url: $(this).attr('data-action'),
-        type: "POST",
-        data: { filter: typingNamaNasabah },
-        success: function (dataProfile) {
-        // $("#emailto").text(dataProfile).css('height','250px');
-        alert(dataProfile);
-        }
-      });
-    });
+    // $("#namanasabah1").on('change', function(){
+    //   var typingNamaNasabah=this.value;
+    //   // alert($(this).attr('data-action'));
+    //   $.ajax({
+    //     url: '/bo_cs_de_nasabah/ajax',
+    //     type: "POST",
+    //     data: { filter: typingNamaNasabah },
+    //     success: function (dataProfile) {
+    //     // $("#emailto").text(dataProfile).css('height','250px');
+    //     alert(dataProfile);
+    //     }
+    //   });
+    // });
 
     //config datatables
     $("#example1").DataTable({
@@ -662,6 +682,7 @@ $(document).ready(function () {
       "lengthMenu": [ 10, 25, 50],
       "pageLength":10
     });
+    $('#nasabahdataget').DataTable();
 
     //Initialize Select2 Elements
     $('.select2').select2()

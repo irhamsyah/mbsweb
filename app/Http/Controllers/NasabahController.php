@@ -128,7 +128,7 @@ class NasabahController extends Controller
       && $request->inputsumberdana !='' && $request->inputpenghasilansetahun !='' && $request->inputgelar !='' && $request->inputdetgelar !=''
       && $request->inputbidangusahasid !='' && $request->inputhubdebsid !='' && $request->inputgoldebsid !='' && $request->inputnamapendamping !=''
       && $request->inputidpendamping !='' && $request->inputtgllahirpendamping !='' && $request->inputjmltanggungan !='' && $request->inputtujuanbukarek !=''
-      && $request->inputpenggunaandana !='' && $request->inputnamaahliwaris !='' && $request->inputalamatahliwaris !=''){
+      && $request->inputpenggunaandana !='' && $request->inputnamaahliwaris !='' && $request->inputalamatahliwaris !='' && $request->inputhubahliwaris !=''){
 
         //upload image to directory
         if ($request->hasFile('inputFoto')) {
@@ -200,6 +200,7 @@ class NasabahController extends Controller
         $nasabahs->PENGGUNAAN_DANA_KYC = $request->inputpenggunaandana;
         $nasabahs->NAMA_KUASA = $request->inputnamaahliwaris;
         $nasabahs->ALAMAT_KUASA = $request->inputalamatahliwaris;
+        $nasabahs->hub_ahli_waris = $request->inputhubahliwaris;
         $nasabahs->PATH_FOTO = $namefoto;
         $nasabahs->PATH_TTANGAN = $namettangan;
         $nasabahs->save();
@@ -219,6 +220,7 @@ class NasabahController extends Controller
 
       $users = User::all();
       $nasabahs = Nasabah::select('*')->limit(20)->orderby('nasabah.nasabah_id','ASC')->get();
+      $nasabahall=Nasabah::select('nasabah_id','nama_nasabah','alamat','no_id')->get();
       $identitass = Identitas::all();
       $kodegroup1nasabahs = KodeGroup1Nasabah::all();
       $perkawinans = Perkawinan::all();
@@ -232,7 +234,7 @@ class NasabahController extends Controller
       $lastnasabahid = Nasabah::max('nasabah_id');
 
       return view('admin/nasabah', ['logos'=> $logos,'nasabahs'=> $nasabahs,'identitass'=> $identitass,'kodegroup1nasabahs'=> $kodegroup1nasabahs,
-      'perkawinans'=> $perkawinans,'negaras'=> $negaras,'kotas'=> $kotas,'pekerjaans'=> $pekerjaans,'gelars'=> $gelars,
+      'perkawinans'=> $perkawinans,'negaras'=> $negaras,'kotas'=> $kotas,'pekerjaans'=> $pekerjaans,'gelars'=> $gelars,'nasabahall'=> $nasabahall,
       'bidangusahas'=> $bidangusahas,'hubungandebiturs'=> $hubungandebiturs,'golongandebiturs'=> $golongandebiturs,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> $msg,'msgview'=> $msgdetail]);
     }
 
@@ -258,7 +260,8 @@ class NasabahController extends Controller
         && $request->inputpenghasilansetahunedit !='' && $request->inputgelaredit !='' && $request->inputdetgelaredit !=''
         && $request->inputbidangusahasidedit !='' && $request->inputhubdebsidedit !='' && $request->inputgoldebsidedit !=''
         && $request->inputnamapendampingedit !='' && $request->inputidpendampingedit !='' && $request->inputtgllahirpendampingedit !=''
-        && $request->inputjmltanggunganedit !='' && $request->inputtujuanbukarekedit !='' && $request->inputalamatahliwarisedit !='' 
+        && $request->inputjmltanggunganedit !='' && $request->inputtujuanbukarekedit !='' && $request->inputalamatahliwarisedit !=''  
+        && $request->inputhubahliwarisedit !=''
         ){
 
           if ($request->inputFotoedit!="" OR $request->inputFotoedit!=NULL){
@@ -356,6 +359,7 @@ class NasabahController extends Controller
             'PENGGUNAAN_DANA_KYC' => $request->inputpenggunaandanaedit,
             'NAMA_KUASA' => $request->inputnamaahliwarisedit,
             'ALAMAT_KUASA' => $request->inputalamatahliwarisedit,
+            'hub_ahli_waris' => $request->inputhubahliwarisedit,
             'PATH_FOTO' => $namefoto,
             'PATH_TTANGAN' => $namettangan]
             );
@@ -377,6 +381,7 @@ class NasabahController extends Controller
 
       $users = User::all();
       $nasabahs = Nasabah::select('*')->limit(20)->orderby('nasabah.nasabah_id','ASC')->get();
+      $nasabahall=Nasabah::select('nasabah_id','nama_nasabah','alamat','no_id')->get();
       $identitass = Identitas::all();
       $kodegroup1nasabahs = KodeGroup1Nasabah::all();
       $perkawinans = Perkawinan::all();
@@ -390,7 +395,7 @@ class NasabahController extends Controller
       $lastnasabahid = Nasabah::max('nasabah.nasabah_id');
 
       return view('admin/nasabah', ['logos'=> $logos,'nasabahs'=> $nasabahs,'identitass'=> $identitass,'kodegroup1nasabahs'=> $kodegroup1nasabahs,
-      'perkawinans'=> $perkawinans,'negaras'=> $negaras,'kotas'=> $kotas,'pekerjaans'=> $pekerjaans,'gelars'=> $gelars,
+      'perkawinans'=> $perkawinans,'negaras'=> $negaras,'kotas'=> $kotas,'pekerjaans'=> $pekerjaans,'gelars'=> $gelars,'nasabahall'=> $nasabahall,
       'bidangusahas'=> $bidangusahas,'hubungandebiturs'=> $hubungandebiturs,'golongandebiturs'=> $golongandebiturs,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> $msg,'msgview'=> $msgdetail]);
     }
     
@@ -427,7 +432,7 @@ class NasabahController extends Controller
       $lastnasabahid = Nasabah::max('nasabah_id');
       
       return view('admin/nasabah', ['logos'=> $logos,'nasabahs'=> $nasabahs,'identitass'=> $identitass,'kodegroup1nasabahs'=> $kodegroup1nasabahs,
-      'perkawinans'=> $perkawinans,'negaras'=> $negaras,'kotas'=> $kotas,'pekerjaans'=> $pekerjaans,'gelars'=> $gelars,
+      'perkawinans'=> $perkawinans,'negaras'=> $negaras,'kotas'=> $kotas,'pekerjaans'=> $pekerjaans,'gelars'=> $gelars,'nasabahall'=> $nasabahall,
       'bidangusahas'=> $bidangusahas,'hubungandebiturs'=> $hubungandebiturs,'golongandebiturs'=> $golongandebiturs,'lastnasabahid'=> $lastnasabahid,'msgstatus'=> $msg,'msgview'=> $msgdetail]);
     }
 
@@ -444,12 +449,12 @@ class NasabahController extends Controller
     public function bo_cs_de_profil_cari(Request $request)
     {
       $logos = Logo::all();
-
-      $nasabahs = Nasabah::where('nasabah_id', 'LIKE', '%' . $request->idnasabah1 . '%')
-      ->when($request->namanasabah1, function($query) {
-        $query->where('nama_nasabah', 'LIKE', '%' . $request->namanasabah1 . '%');
+      $nasabahs = Nasabah::where('nasabah_id', 'LIKE', '%' . request()->idnasabah1 . '%')
+      ->when(request()->namanasabah1, function($query) {
+        $query->where('nama_nasabah', 'LIKE', '%' . request()->namanasabah1 . '%');
       })
-      ->limit(20)->orderby('nasabah.nasabah_id','ASC')->get();
+      ->limit(100)->orderby('nasabah.nasabah_id','ASC')->get();
+      
       $users = User::all();
       $lastnasabahid = Nasabah::max('nasabah_id');
 
@@ -566,6 +571,28 @@ class NasabahController extends Controller
       }
       $jenisprofil=$request->jenisprofil;
       return view('admin/profil_kredit', ['logos'=> $logos,'kredits'=> $kredits,'jenisprofil'=> $jenisprofil,'msgstatus'=> '']);
+    }
+
+    public function bo_cs_de_spicemen_rppdf(Request $request)
+    {
+      $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_TAB'.'%'.'NAMA')->get();
+        $filternorekening = request()->printnorekening;
+        $sql="SELECT
+        a.no_rekening,
+        b.nasabah_id,
+        b.ibu_kandung,
+        b.no_id,
+        b.cif,
+        b.nama_nasabah,
+        b.alamat,
+        b.telpon,
+        b.tgllahir
+        FROM tabung a LEFT JOIN nasabah b ON a.NASABAH_ID = b.nasabah_id
+        WHERE a.NO_REKENING = '$filternorekening' 
+        ";
+        $tabungan=DB::select($sql);
+        // dd($tabungan);
+        return view('pdf.cetakspicemen',['tabungan'=>$tabungan,'ttd'=>$ttd]);         
     }
 
 

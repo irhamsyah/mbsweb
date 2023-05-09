@@ -8,8 +8,27 @@
                 <div class="card-header text-center">{{ __('Sign in terlebih dahulu untuk memulai session') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('login') }}">
+                    <form method="POST" action="/login">
                         @csrf
+
+                        <div class="form-group row">
+                            <label for="kodecabang" class="col-md-4 col-form-label text-md-right">{{ __('Kode Kantor') }}</label>
+
+                            <div class="col-md-6">
+                                <select class="form-control @error('kodecabang') is-invalid @enderror" id="kodecabang" name="kodecabang" required>
+                                    <option value="#" selected="true" disabled="disabled">--- Pilih Kantor ---</option>
+                                    @foreach($Kodecabangs as $kantor)
+                                    <option value="{{ $kantor->kode_cab }}">{{ $kantor->kode_cab.' - '.$kantor->nama_cab }}</option>
+                                    @endforeach
+                                </select>
+
+                                @error('kodecabang')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
 
                         <div class="form-group row">
                             <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>

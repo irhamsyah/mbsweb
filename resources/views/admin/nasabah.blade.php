@@ -167,6 +167,7 @@
                       data-penggunaan_dana_KYC="{{ $nasabah->PENGGUNAAN_DANA_KYC }}"
                       data-Nama_Kuasa="{{ $nasabah->NAMA_KUASA }}"
                       data-Alamat_KUASA="{{ $nasabah->ALAMAT_KUASA }}"
+                      data-hub_Kuasa="{{ $nasabah->hub_ahli_waris }}"
                       data-Path_FOTO="{{ $nasabah->PATH_FOTO }}"
                       data-Path_TTANGAN="{{ $nasabah->PATH_TTANGAN }}"
                       data-nasabah_idhash="{{ md5(trim($nasabah->nasabah_id).'Bast90') }}"
@@ -604,7 +605,7 @@
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-lg-3 col-sm-12">
+                      <div class="col-lg-2 col-sm-12">
                         <div class="form-group-lbl">
                           <label for="inputtujuanbukarekedit">Tujuan Pembukaan Rek</label>
                           <input type="text" name="inputtujuanbukarekedit" class="form-control" required>
@@ -622,12 +623,26 @@
                           <input type="text" name="inputnamaahliwarisedit" class="form-control" required>
                         </div>
                       </div>
-                      <div class="col-lg-5 col-sm-12">
+                      <div class="col-lg-3 col-sm-12">
                         <div class="form-group-lbl">
                           <label for="inputalamatahliwarisedit">Alamat Ahli Waris</label>
                           <input type="text" name="inputalamatahliwarisedit"class="form-control" required>
                         </div>
                       </div>
+                      <div class="col-lg-3 col-sm-12">
+                          <div class="form-group">
+                            <label for="inputhubahliwarisedit">Hub Ahli Waris</label>
+                            <select class="form-control" name="inputhubahliwarisedit" required>
+                              <option value="#" disabled="disabled">--- Pilih Hub Ahli Waris ---</option>
+                              <option value="Suami">Suami</option>
+                              <option value="Istri">Istri</option>
+                              <option value="Anak">Anak</option>
+                              <option value="Orang Tua">Orang Tua</option>
+                              <option value="Saudara Kandung">Saudara Kandung</option>
+                              <option value="Lainnya">Lainnya</option>
+                            </select>
+                          </div>
+                        </div>
                     </div>
                   </div>
                   <!-- /.tab-pane -->
@@ -1082,7 +1097,7 @@
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col-lg-3 col-sm-12">
+                        <div class="col-lg-2 col-sm-12">
                           <div class="form-group">
                             <label for="inputtujuanbukarek">Tujuan Pembukaan Rek</label>
                             <input type="text" name="inputtujuanbukarek" class="form-control" required>
@@ -1100,10 +1115,24 @@
                             <input type="text" name="inputnamaahliwaris" class="form-control" required>
                           </div>
                         </div>
-                        <div class="col-lg-5 col-sm-12">
+                        <div class="col-lg-3 col-sm-12">
                           <div class="form-group">
                             <label for="inputalamatahliwaris">Alamat Ahli Waris</label>
                             <input type="text" name="inputalamatahliwaris" class="form-control" required>
+                          </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-12">
+                          <div class="form-group">
+                            <label for="inputhubahliwaris">Hub Ahli Waris</label>
+                            <select class="form-control" name="inputhubahliwaris" required>
+                              <option value="#" selected="true" disabled="disabled">--- Pilih Hub Ahli Waris ---</option>
+                              <option value="Suami">Suami</option>
+                              <option value="Istri">Istri</option>
+                              <option value="Anak">Anak</option>
+                              <option value="Orang Tua">Orang Tua</option>
+                              <option value="Saudara Kandung">Saudara Kandung</option>
+                              <option value="Lainnya">Lainnya</option>
+                            </select>
                           </div>
                         </div>
                     </div>

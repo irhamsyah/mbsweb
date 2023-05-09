@@ -903,6 +903,7 @@ $(document).ready(function () {
       var penggunaan_dana_KYC = $(e.relatedTarget).data('penggunaan_dana_kyc');
       var Nama_Kuasa = $(e.relatedTarget).data('nama_kuasa');
       var Alamat_KUASA = $(e.relatedTarget).data('alamat_kuasa');
+      var hub_KUASA = $(e.relatedTarget).data('hub_kuasa');
       var Path_FOTO = $(e.relatedTarget).data('path_foto');
       var Path_TTANGAN = $(e.relatedTarget).data('path_ttangan');
       var nasabah_idhash = $(e.relatedTarget).data('nasabah_idhash');
@@ -914,7 +915,7 @@ $(document).ready(function () {
       if(Path_TTANGAN_show==origin+'/img/ttangan'){
         Path_TTANGAN_show=origin+'/img/ttangan/default.jpg'
       }
-      // alert(Path_FOTO_show);
+      // alert(hub_KUASA);
 
       if(blacklist=='1')
       {
@@ -966,6 +967,7 @@ $(document).ready(function () {
       $(e.currentTarget).find('input[name="inputpenggunaandanaedit"]').val(penggunaan_dana_KYC);
       $(e.currentTarget).find('input[name="inputnamaahliwarisedit"]').val(Nama_Kuasa);
       $(e.currentTarget).find('input[name="inputalamatahliwarisedit"]').val(Alamat_KUASA);
+      $(e.currentTarget).find('select[name="inputhubahliwarisedit"]').val(hub_KUASA).attr("selected", "selected");
       $(e.currentTarget).find('input[name="inputFotoeditold"]').val(Path_FOTO);
       $(e.currentTarget).find('input[name="inputtandatanganeditold"]').val(Path_TTANGAN);
       $(e.currentTarget).find('input[name="inputIdNasabahHashedit"]').val(nasabah_idhash);

@@ -225,7 +225,7 @@
                     <input type="text" id="editidnasabah" name="nasabah_id" class="form-control">
 
                     <div class="input-group-append" data-toggle="modal" data-target="#ambildatanasabah">
-                      <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                      <div class="input-group-text"><i class="fa fa-user"></i></div>
                   </div>
 
                   </div>
@@ -449,7 +449,7 @@
                             <input id="inputNasabahIdadd" type="text" name="nasabah_id" readonly class="form-control">
 
                             <div class="input-group-append" data-toggle="modal" data-target="#ambildatanasabah">
-                              <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                              <div class="input-group-text"><i class="fa fa-user"></i></div>
                           </div>
 
                           </div>

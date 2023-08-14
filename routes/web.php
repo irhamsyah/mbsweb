@@ -24,9 +24,16 @@ Auth::routes();
 
 // Route::get('/verify','Auth\RegisterController@verifyUser')->name('verify.user');
 //Route To login
-Route::get('/', function () {
-    return redirect(route('login'));
-});
+// Route::get('/', function () {
+//     return redirect(route('login'));
+// });
+
+Route::get('/','Auth\LoginController@LoginUser')->name('login');
+Route::post('/login','Auth\LoginController@AuthLoginUser')->name('authlogin');
+
+// Route::get('/','Auth\LoginController@LoginUser')->name('login');
+// Route::post('/','Auth\LoginController@AuthLoginUser')->name('authlogin');
+
 //Admin Page
 Auth::routes([
     'register'=>false
@@ -45,6 +52,7 @@ Route::post('/bo_cs_de_nasabah', 'NasabahController@bo_cs_de_nasabah_add');
 Route::put('/bo_cs_de_nasabah', 'NasabahController@bo_cs_de_nasabah_edit');
 Route::delete('/bo_cs_de_nasabah', 'NasabahController@bo_cs_de_nasabah_destroy');
 Route::post('/bo_cs_de_nasabah/cari','NasabahController@bo_cs_de_nasabah_cari');//search filter
+Route::get('/bo_cs_de_nasabah/printspicemen','NasabahController@bo_cs_de_spicemen_rppdf')->name('cetakspicemen');//print spicemen profil nasabah
 
 Route::get('/bo_cs_de_profil', 'NasabahController@bo_cs_de_profil');
 // Route::post('/bo_cs_de_profil', 'NasabahController@bo_cs_de_profil_add');

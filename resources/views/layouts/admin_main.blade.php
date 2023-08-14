@@ -212,34 +212,34 @@
                   </li>
                   </ul>
                 </li>
-                <li class="nav-item has-treeview menu-close">
-                  <a href="#" class="nav-link">
+                <li class="nav-item has-treeview <?php if($submenu=='rp'){echo 'menu-open';}?>">
+                  <a href="#" class="nav-link <?php if($submenu=='rp'){echo 'active';}?>">
                     <i class="right fas fa-angle-left"></i>
                     <p class="pl-2">PENCETAKAN LAPORAN</p>
                   </a>
                   <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="/bo_cs_rp_nasabah" class="nav-link">
+                    <a href="/bo_cs_rp_nasabah" class="nav-link <?php if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
                       <p class="pl-4">Dokumen Nasabah</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_cs_rp_tabungan" class="nav-link">
+                    <a href="/bo_cs_rp_tabungan" class="nav-link <?php if($page=='tabungan' or $page=='tabungancari'){echo 'active';}?>">
                       <p class="pl-4">Dokumen Tabungan</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_cs_rp_deposito" class="nav-link">
+                    <a href="/bo_cs_rp_deposito" class="nav-link <?php if($page=='deposito' or $page=='depositocari'){echo 'active';}?>">
                       <p class="pl-4">Dokumen Deposito</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_cs_rp_kredit" class="nav-link">
+                    <a href="/bo_cs_rp_kredit" class="nav-link <?php if($page=='kredit' or $page=='kreditcari'){echo 'active';}?>">
                       <p class="pl-4">Dokumen Kredit</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_cs_rp_umum" class="nav-link">
+                    <a href="/bo_cs_rp_umum" class="nav-link <?php if($page=='umum' or $page=='umumcari'){echo 'active';}?>">
                       <p class="pl-4">Dokumen Umum & Inv</p>
                     </a>
                   </li>
@@ -486,6 +486,9 @@
 <script src="{{ asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
 <!-- Tempusdominus Bootstrap 4 -->
 <script src="{{ asset('plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
+<!-- jquery-validation -->
+<script src="{{ asset('plugins/jquery-validation/jquery.validate.min.js') }}"></script>
+<script src="{{ asset('plugins/jquery-validation/additional-methods.min.js') }}"></script>
 <!-- Ckeditor -->
 <script src="{{ asset('plugins/ckeditor/ckeditor.js') }}"></script>
 <!-- Summernote -->
@@ -506,7 +509,7 @@ $(document).ready(function(){
 // Fungsi untuk menampilkan Data Nasabah dari Modal yg akan diinput ke Tabungan
 $(document).ready(function(){
 // code to read selected table row cell data (values).
-$("#nasabahdata").on('click','#tes1',function(){
+  $("#nasabahdata").on('click','#tes1',function(){
      // get the current row
      var currentRow=$(this).closest("tr"); 
      
@@ -518,11 +521,31 @@ $("#nasabahdata").on('click','#tes1',function(){
      document.getElementById("inputNamaNasabahadd").value=col2;
      document.getElementById("inputalamatadd").value=col3;
     //  alert(data);
-    document.getElementById("editidnasabah").value=col1;
+     document.getElementById("editidnasabah").value=col1;
      document.getElementById("editnamanasabah").value=col2;
      document.getElementById("editalamatnasabah").value=col3;
 
-});
+  });
+  $("#nasabahdataget").on('click','#selectednasabah',function(){
+     // get the current row
+     var currentRow=$(this).closest("tr"); 
+     
+     var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+     var col2=currentRow.find("td:eq(1)").text(); // get current row 2nd TD
+     var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
+     var col4=currentRow.find("td:eq(3)").text(); // get current row 3rd TD
+    //  var data=col1+"\n"+col2+"\n"+col3;
+     $('#inputnasabahid').val(col1);
+     $('#inputnamanasabah').val(col2);
+     $('#inputdomisili').val(col3);
+     $('#inputalamat').val(col3);
+     $('#inputnoidentitas').val(col4);
+
+     var kodecab = $('#inputcab').val();
+     $('#inputnocif').val(kodecab+col1);
+
+
+  });
 });
 // Menampilkan data nasabah di input text nasabah_id dengan DATATABEL
 $(document).ready(function () {
@@ -530,6 +553,114 @@ $(document).ready(function () {
 });
 // ------------------------------------
   $(function () {
+    //validate form add nasabah
+    $('#formaddnasabah').validate({
+      rules: {
+        inputnohp: {
+          minlength: 10
+        }
+      },
+      messages: {
+        inputnohp: {
+          minlength: "No HP minimal 10 karakter"
+        }
+      },
+      errorElement: 'span',
+      errorPlacement: function (error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group-lbl').append(error);
+      },
+      highlight: function (element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+      },
+      unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+      }
+    });
+
+    //validate form edit nasabah
+    $('#formeditnasabah').validate({
+      rules: {
+        inputnohpedit: {
+          minlength: 10
+        }
+      },
+      messages: {
+        inputnohpedit: {
+          minlength: "No HP minimal 10 karakter"
+        }
+      },
+      errorElement: 'span',
+      errorPlacement: function (error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group-lbl').append(error);
+      },
+      highlight: function (element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+      },
+      unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+      }
+    });
+    
+    //Validation min length 10
+    $(".minlength10").on("keydown keyup change", function(){
+      var minLength = 10;
+      var value = $(this).val();
+      if (value.length < minLength){
+        $("span").text("No HP minimal 10 karakter");
+        }
+      else {
+        $("span").text("");
+
+        }
+    });
+
+    //Validation Decimal Only All
+    $(".decimalonly").on("input", function(evt) {
+     var self = $(this);
+     self.val(self.val().replace(/[^0-9\.\-]/g, ''));
+     if ((evt.which != 46 || self.val().indexOf('.') != -1) && (evt.which < 48 || evt.which > 57)) 
+     {
+       evt.preventDefault();
+     }
+    });
+    
+    //Validation number Only
+    $(".numberonly").on("input", function(evt) {
+     var self = $(this);
+     self.val(self.val().replace(/[^0-9\+]/g, ''));
+     if ((evt.which != 46 || self.val().indexOf('.') != -1) && (evt.which < 48 || evt.which > 57)) 
+     {
+       evt.preventDefault();
+     }
+    });
+
+    //Validation number separator
+    $(".separator").on("input", function(evt) {
+     var self = $(this);
+     self.val(self.val().replace(/[^\d.]/g, "").replace(/^(\d*\.)(.*)\.(.*)$/, '$1$2$3').replace(/\.(\d{2})\d+/, '.$1').replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+     if ((evt.which != 46 || self.val().indexOf('.') != -1) && (evt.which < 48 || evt.which > 57)) 
+     {
+       evt.preventDefault();
+     }
+    });
+
+    // $("#namanasabah1").on('change', function(){
+    //   var typingNamaNasabah=this.value;
+    //   // alert($(this).attr('data-action'));
+    //   $.ajax({
+    //     url: '/bo_cs_de_nasabah/ajax',
+    //     type: "POST",
+    //     data: { filter: typingNamaNasabah },
+    //     success: function (dataProfile) {
+    //     // $("#emailto").text(dataProfile).css('height','250px');
+    //     alert(dataProfile);
+    //     }
+    //   });
+    // });
+
+    //config datatables
     $("#example1").DataTable({
       "paging": true,
       "lengthChange": true,
@@ -560,6 +691,7 @@ $(document).ready(function () {
       "lengthMenu": [ 10, 25, 50],
       "pageLength":10
     });
+    $('#nasabahdataget').DataTable();
 
     //Initialize Select2 Elements
     $('.select2').select2()
@@ -636,6 +768,8 @@ $(document).ready(function () {
     CKEDITOR.replace( 'inputText2' );
     CKEDITOR.replace( 'inputTitle2' );
   });
+  
+    //----------------------------------------Bahtera DATA LAMA CONTOH------------------------------
     //Generate Account Name from Company & Entity
     $('#inputEntity_edit').on('change', function() {
       var valueCompany = $("#inputCostumerName_edit").val();
@@ -730,6 +864,134 @@ $(document).ready(function () {
       CKEDITOR.instances['inputText1'].setData(Description);
       $(e.currentTarget).find('input[name="inputTitle"]').val(Title);
       $(e.currentTarget).find('input[name="inputIdContentFooter"]').val(ContentFooterId);
+    });
+    //----------------------------------------Bahtera DATA LAMA------------------------------
+
+
+    // Function show modal Data Nasabah yang di EDIT
+    $('#modal-edit-nasabah').on('show.bs.modal', function(e) {
+      /* Generate / Get variables */
+      var pattern = "00";
+      var url      = window.location.href;
+      var origin   = window.location.origin;
+      /********************************** */
+      var No_din = $(e.relatedTarget).data('no_din');
+      var No_nasabah = $(e.relatedTarget).data('no_nasabah');
+      var cab = $(e.relatedTarget).data('cab');
+      var cif = $(e.relatedTarget).data('cif');
+      var blacklist = $(e.relatedTarget).data('blacklist');
+      var nama_nasabah = $(e.relatedTarget).data('nama_nasabah');
+      var nama_alias = $(e.relatedTarget).data('nama_alias');
+      var tempatlahir = $(e.relatedTarget).data('tempatlahir');
+      var tgllahir = $(e.relatedTarget).data('tgllahir');
+      var jenis_kelamin = $(e.relatedTarget).data('jenis_kelamin');
+      var ibu_kandung = $(e.relatedTarget).data('ibu_kandung');
+      var npwp = $(e.relatedTarget).data('npwp');
+      var jenis_id = $(e.relatedTarget).data('jenis_id');
+      var no_id = $(e.relatedTarget).data('no_id');
+      var tglid = $(e.relatedTarget).data('tglid');
+      var nasabah_kodegroup1 = $(e.relatedTarget).data('nasabah_kodegroup1');
+      var status_kawin_awal = $(e.relatedTarget).data('status_kawin');
+      var status_kawin = (pattern + status_kawin_awal).slice(-2);
+      var alamat_domisili = $(e.relatedTarget).data('alamat_domisili');
+      var kode_area = $(e.relatedTarget).data('kode_area');
+      var telpon = $(e.relatedTarget).data('telpon');
+      var no_hp = $(e.relatedTarget).data('no_hp');
+      var alamat = $(e.relatedTarget).data('alamat');
+      var kelurahan = $(e.relatedTarget).data('kelurahan');
+      var kecamatan = $(e.relatedTarget).data('kecamatan');
+      var kode_pos = $(e.relatedTarget).data('kode_pos');
+      var kota_id = $(e.relatedTarget).data('kota_id');
+      var Kode_Negara = $(e.relatedTarget).data('kode_negara');
+      var Tempat_Kerja = $(e.relatedTarget).data('tempat_kerja');
+      var alamat_kantor = $(e.relatedTarget).data('alamat_kantor');
+      var pekerjaan_id = $(e.relatedTarget).data('pekerjaan_id');
+      var pekerjaan = $(e.relatedTarget).data('pekerjaan');
+      var kode_sumber_penghasilan = $(e.relatedTarget).data('kode_sumber_penghasilan');
+      var penghasilan_setahun = $(e.relatedTarget).data('penghasilan_setahun');
+      var gelar_id = $(e.relatedTarget).data('gelar_id');
+      var Ket_Gelar = $(e.relatedTarget).data('ket_gelar');
+      var Kode_Bidang_Usaha = $(e.relatedTarget).data('kode_bidang_usaha');
+      var Kode_Hubungan_Debitur = $(e.relatedTarget).data('kode_hubungan_debitur');
+      var kode_golongan_debitur = $(e.relatedTarget).data('kode_golongan_debitur');
+      var nama_pendamping = $(e.relatedTarget).data('nama_pendamping');
+      var id_pasangan = $(e.relatedTarget).data('id_pasangan');
+      var tgllhr_pasangan = $(e.relatedTarget).data('tgllhr_pasangan');
+      var jml_tanggungan = $(e.relatedTarget).data('jml_tanggungan');
+      var Tujuan_Pembukaan_KYC = $(e.relatedTarget).data('tujuan_pembukaan_kyc');
+      var penggunaan_dana_KYC = $(e.relatedTarget).data('penggunaan_dana_kyc');
+      var Nama_Kuasa = $(e.relatedTarget).data('nama_kuasa');
+      var Alamat_KUASA = $(e.relatedTarget).data('alamat_kuasa');
+      var hub_KUASA = $(e.relatedTarget).data('hub_kuasa');
+      var Path_FOTO = $(e.relatedTarget).data('path_foto');
+      var Path_TTANGAN = $(e.relatedTarget).data('path_ttangan');
+      var nasabah_idhash = $(e.relatedTarget).data('nasabah_idhash');
+      var Path_FOTO_show = $(e.relatedTarget).data('path_foto_show');
+      var Path_TTANGAN_show = $(e.relatedTarget).data('path_ttangan_show');
+      if(Path_FOTO_show==origin+'/img/foto'){
+        Path_FOTO_show=origin+'/img/foto/default.jpg'
+      }
+      if(Path_TTANGAN_show==origin+'/img/ttangan'){
+        Path_TTANGAN_show=origin+'/img/ttangan/default.jpg'
+      }
+      // alert(hub_KUASA);
+
+      if(blacklist=='1')
+      {
+        $(e.currentTarget).find('input[name="inputblacklistedit"]').prop('checked',true);
+      }
+
+      $(e.currentTarget).find('input[name="inputdinedit"]').val(No_din);
+      $(e.currentTarget).find('input[name="inputnasabahidedit"]').val(No_nasabah);
+      $(e.currentTarget).find('input[name="inputcabedit"]').val(cab);
+      $(e.currentTarget).find('input[name="inputnocifedit"]').val(cif);
+      $(e.currentTarget).find('input[name="inputnamanasabahedit"]').val(nama_nasabah);
+      $(e.currentTarget).find('input[name="inputaliasedit"]').val(nama_alias);
+      $(e.currentTarget).find('input[name="inputtempatlahiredit"]').val(tempatlahir);
+      $(e.currentTarget).find('input[name="inputtgllahiredit"]').val(tgllahir);
+      $(e.currentTarget).find('select[name="inputjkedit"]').val(jenis_kelamin).attr("selected", "selected");
+      $(e.currentTarget).find('input[name="inputibukandungedit"]').val(ibu_kandung);
+      $(e.currentTarget).find('input[name="inputnpwpedit"]').val(npwp);
+      $(e.currentTarget).find('select[name="inputidentitasedit"]').val(jenis_id).attr("selected", "selected");
+      $(e.currentTarget).find('input[name="inputnoidentitasedit"]').val(no_id);
+      $(e.currentTarget).find('input[name="inputmasaberlakuedit"]').val(tglid);
+      $(e.currentTarget).find('select[name="inputagamaedit"]').val(nasabah_kodegroup1).attr("selected", "selected");
+      $(e.currentTarget).find('select[name="inputkawinedit"]').val(status_kawin).attr("selected", "selected");
+      $(e.currentTarget).find('input[name="inputdomisiliedit"]').val(alamat_domisili);
+      $(e.currentTarget).find('input[name="inputkodetlpedit"]').val(kode_area);
+      $(e.currentTarget).find('input[name="inputnotlpedit"]').val(telpon);
+      $(e.currentTarget).find('input[name="inputnohpedit"]').val(no_hp);
+      $(e.currentTarget).find('input[name="inputalamatedit"]').val(alamat);
+      $(e.currentTarget).find('input[name="inputkelurahanedit"]').val(kelurahan);
+      $(e.currentTarget).find('input[name="inputkecamatanedit"]').val(kecamatan);
+      $(e.currentTarget).find('input[name="inputkodeposedit"]').val(kode_pos);
+      $(e.currentTarget).find('select[name="inputkotaedit"]').val(kota_id).attr("selected", "selected");
+      $(e.currentTarget).find('select[name="inputnegaraedit"]').val(Kode_Negara).attr("selected", "selected");
+      $(e.currentTarget).find('input[name="inputnamaperusahaanedit"]').val(Tempat_Kerja);
+      $(e.currentTarget).find('input[name="inputalamatperusahaanedit"]').val(alamat_kantor);
+      $(e.currentTarget).find('select[name="inputpekerjaanedit"]').val(pekerjaan_id).attr("selected", "selected");
+      $(e.currentTarget).find('input[name="inputdetpekerjaanedit"]').val(pekerjaan);
+      $(e.currentTarget).find('select[name="inputsumberdanaedit"]').val(kode_sumber_penghasilan).attr("selected", "selected");
+      $(e.currentTarget).find('input[name="inputpenghasilansetahunedit"]').val(penghasilan_setahun);
+      $(e.currentTarget).find('select[name="inputgelaredit"]').val(gelar_id).attr("selected", "selected");
+      $(e.currentTarget).find('input[name="inputdetgelaredit"]').val(Ket_Gelar);
+      $(e.currentTarget).find('select[name="inputbidangusahasidedit"]').val(Kode_Bidang_Usaha).attr("selected", "selected");
+      $(e.currentTarget).find('select[name="inputhubdebsidedit"]').val(Kode_Hubungan_Debitur).attr("selected", "selected");
+      $(e.currentTarget).find('select[name="inputgoldebsidedit"]').val(kode_golongan_debitur).attr("selected", "selected");
+      $(e.currentTarget).find('input[name="inputnamapendampingedit"]').val(nama_pendamping);
+      $(e.currentTarget).find('input[name="inputidpendampingedit"]').val(id_pasangan);
+      $(e.currentTarget).find('input[name="inputtgllahirpendampingedit"]').val(tgllhr_pasangan);
+      $(e.currentTarget).find('input[name="inputjmltanggunganedit"]').val(jml_tanggungan);
+      $(e.currentTarget).find('input[name="inputtujuanbukarekedit"]').val(Tujuan_Pembukaan_KYC);
+      $(e.currentTarget).find('input[name="inputpenggunaandanaedit"]').val(penggunaan_dana_KYC);
+      $(e.currentTarget).find('input[name="inputnamaahliwarisedit"]').val(Nama_Kuasa);
+      $(e.currentTarget).find('input[name="inputalamatahliwarisedit"]').val(Alamat_KUASA);
+      $(e.currentTarget).find('select[name="inputhubahliwarisedit"]').val(hub_KUASA).attr("selected", "selected");
+      $(e.currentTarget).find('input[name="inputFotoeditold"]').val(Path_FOTO);
+      $(e.currentTarget).find('input[name="inputtandatanganeditold"]').val(Path_TTANGAN);
+      $(e.currentTarget).find('input[name="inputIdNasabahHashedit"]').val(nasabah_idhash);
+      $('#path_foto_show').attr("src", Path_FOTO_show);
+      $('#path_ttangan_show').attr("src", Path_TTANGAN_show);
     });
 
     // Fungsi untuk menampilkan Data Tabungan yang akan d EDIT

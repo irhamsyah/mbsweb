@@ -24,9 +24,16 @@ Auth::routes();
 
 // Route::get('/verify','Auth\RegisterController@verifyUser')->name('verify.user');
 //Route To login
-Route::get('/', function () {
-    return redirect(route('login'));
-});
+// Route::get('/', function () {
+//     return redirect(route('login'));
+// });
+
+Route::get('/','Auth\LoginController@LoginUser')->name('login');
+Route::post('/login','Auth\LoginController@AuthLoginUser')->name('authlogin');
+
+// Route::get('/','Auth\LoginController@LoginUser')->name('login');
+// Route::post('/','Auth\LoginController@AuthLoginUser')->name('authlogin');
+
 //Admin Page
 Auth::routes([
     'register'=>false
@@ -45,6 +52,7 @@ Route::post('/bo_cs_de_nasabah', 'NasabahController@bo_cs_de_nasabah_add');
 Route::put('/bo_cs_de_nasabah', 'NasabahController@bo_cs_de_nasabah_edit');
 Route::delete('/bo_cs_de_nasabah', 'NasabahController@bo_cs_de_nasabah_destroy');
 Route::post('/bo_cs_de_nasabah/cari','NasabahController@bo_cs_de_nasabah_cari');//search filter
+Route::get('/bo_cs_de_nasabah/printspicemen','NasabahController@bo_cs_de_spicemen_rppdf')->name('cetakspicemen');//print spicemen profil nasabah
 
 Route::get('/bo_cs_de_profil', 'NasabahController@bo_cs_de_profil');
 // Route::post('/bo_cs_de_profil', 'NasabahController@bo_cs_de_profil_add');
@@ -80,11 +88,12 @@ Route::delete('/bo_cs_ad_golongan', 'AdministratorController@bo_cs_ad_golongan_d
 Route::post('/bo_cs_ad_golongan/cari','AdministratorController@bo_cs_ad_golongan_cari');//search filter
 
 //BO CS Laporan
-Route::get('/bo_cs_rp_nasabah', 'ReportController@bo_cs_rp_nasabah');
-Route::post('/bo_cs_rp_nasabah', 'ReportController@bo_cs_rp_nasabah_add');
-Route::put('/bo_cs_rp_nasabah', 'ReportController@bo_cs_rp_nasabah_edit');
-Route::delete('/bo_cs_rp_nasabah', 'ReportController@bo_cs_rp_nasabah_destroy');
+Route::get('/bo_cs_rp_nasabah', 'ReportController@bo_cs_rp_nasabah')->name('carinasabah');
 Route::post('/bo_cs_rp_nasabah/cari','ReportController@bo_cs_rp_nasabah_cari');//search filter
+Route::post('/bo_cs_rp_nasabah/exportnasabah', 'ReportController@bo_cs_rp_nasabah_rp');//export nasabah
+Route::get('/bo_cs_rp_nasabah/printnasabah','ReportController@bo_cs_rp_nasabah_rppdf')->name('cetaknasabah');//print nasabah
+Route::post('/bo_cs_rp_nasabah/exportamplop', 'ReportController@bo_cs_rp_nasabah_rp_amplop');//export amplop surat
+
 
 //Route Tabungan
 Route::get('/bo_tb_de_tabungan','TabunganController@bo_tb_de_tabungan')->name('showtabungan');

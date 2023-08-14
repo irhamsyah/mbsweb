@@ -59,9 +59,10 @@
                         <input type="hidden" name="idkredit" value="{{ trim($tabungan->NO_REKENING) }}" class="form-control">
                         <input type="hidden" name="idnasabah" value="{{ trim($tabungan->NASABAH_ID) }}" class="form-control">
                         <button type="submit" tabindex="-1" class="dropdown-item">
-                            Detail Kredit
+                            Detail Tabungan
                         </button>
                       </form>
+                      <a class="dropdown-item" href="{{ route('cetakspicemen',['printnorekening'=>$tabungan->NO_REKENING])}}" target="_blank"> Print Spicemen</a>
                     </div>
                   </td>
                 </tr>

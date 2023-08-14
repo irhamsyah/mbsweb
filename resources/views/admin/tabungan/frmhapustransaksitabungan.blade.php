@@ -20,14 +20,16 @@
             <div class="card-body">
               <div class="row form-group">
                 <div class="mx-auto col-md-3 col-sm-12">
-                    <label for="inputDate1">Tanggal</label>
-                    <div class="input-group date" id="inputDate1" data-target-input="nearest">
-                      <input type="text" name="tgl_trans" class="form-control datetimepicker-input" data-target="#inputDate1"/>
-                        <div class="input-group-append" data-target="#inputDate1" data-toggle="datetimepicker">
-                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                        </div>
-                    </div>
-                </div>
+                  <label for="inputDate1">Tanggal Transaksi</label>
+                  <div class="input-group date" id="idtglnominatif" data-target-input="nearest">
+                    <input type="text" name="tgl_trans" class="form-control datetimepicker-input" data-target="#idtglnominatif"/>
+                      <div class="input-group-append" data-target="#idtglnominatif" data-toggle="datetimepicker">
+                      <div class="input-group-text">
+                          <i class="fa fa-calendar"></i>
+                      </div>
+                      </div>
+                  </div>
+              </div>
               </div>
               <div class="row form-group">
                 <div class="col-4" style="margin-left:450px">
@@ -60,20 +62,16 @@
               </tr>
               </thead>
               <tbody>
-              {{-- @foreach($tabungan->chunk(100) as $index => $values) --}}
               @php($index=0)
               @foreach($tabtran as $values)
               @php($index++)
-                {{-- @foreach ($values as $kunci=>$tabtrans) --}}
-
-
                 <tr>
                   <td>{{ $index}}</td>
                   <td>{{ strtoupper($values->TABTRANS_ID) }}</td>
                   <td>{{ $values->KUITANSI }}</td>
                   <td>{{ $values->TOB}}</td>
                   <td>{{ $values->NO_REKENING}}</td>
-                  <td>{{ $values->nasabah[0]->nama_nasabah }}</td>
+                  <td>{{ $values->nasabah[0]->nama_nasabah}}</td>
                   <td>{{ $values->SALDO_TRANS}}</td>
                   <td>{{ $values->KODE_TRANS}}</td>
                   <td>{{ $values->MY_KODE_TRANS}}</td>
@@ -95,7 +93,6 @@
                       </form>
                   </td>
                 </tr>
-                {{-- @endforeach --}}
               @endforeach
               </tbody>
             </table>

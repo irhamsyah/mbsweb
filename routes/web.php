@@ -149,6 +149,26 @@ Route::get('bo_tb_rpt_nominatifexpress','TabunganController@bo_tb_rpt_nominatife
 Route::post('bo_tb_rpt_nominatifexpressview','TabunganController@bo_tb_rpt_nominatifexpressview');
 Route::post('nominatifexpresseksport/{id}','TabunganController@nominatifexpresseksport')->name('nominatifexpresseksport');
 Route::get('bo_tb_rpt_pdfnominatifexpress','TabunganController@bo_tb_rpt_pdfnominatifexpress')->name('cetaknomtabunganexpress');
+// Report Nominatif Tabungan PASIF
+Route::get('bo_tb_rpt_nominatifpasif','TabunganController@bo_tb_rpt_nominatifpasif')->name('bo_tb_rpt_nominatifpasif');
+Route::post('bo_tb_rpt_nominatifpasifview','TabunganController@bo_tb_rpt_nominatifpasifview');
+Route::post('nominatifpasifeksport','TabunganController@nominatifpasifeksport');
+Route::get('bo_tb_rpt_pdfnominatifpasif','TabunganController@bo_tb_rpt_pdfnominatifpasif')->name('cetaknomtabunganpasif');
+//Form Hitung Bunga Tabungan
+Route::get('bo_tb_de_frmhitungbungatab','TabunganController@bo_tb_de_frmhitungbungatab')->name('frmhitungbungatab');
+Route::post('bo_tb_de_hitungbungatab','TabunganController@bo_tb_de_hitungbungatab');
+// Form Browse Bunga dan Pajak
+Route::get('bo_tb_de_frmbrowsebungapajak','TabunganController@bo_tb_de_frmbrowsebungapajak')->name('frmbrowsebungapajak');
+Route::post('bo_adm_update_bngpjk','TabunganController@bo_adm_update_bngpjk');
+// Form Overbooking tabungan
+Route::get('bo_tb_de_frmoverbooktabungan','TabunganController@bo_tb_de_frmoverbooktabungan')->name('frmoverbooktabungan');
+// Proses Overbooking Tabungan 
+Route::get('bo_tab_overbook','TabunganController@bo_tab_overbook')->name('prosesoverbooking');
+// Form Blokir Tabungan
+Route::get('bo_tb_de_showfrmblokir','TabunganController@bo_tb_de_showfrmblokir')->name('frmblokir');
+// Form simpan blokiran
+Route::post('bo_tb_de_simpanblokirtab','TabunganController@bo_tb_de_simpanblokirtab');
+
 // Form Hapus Transaksi
 Route::get('bo_tb_de_frmhapustransaksi','TabunganController@bo_tb_de_frmhapustransaksi')->name('bo_tb_de_frmhapustransaksi');
 // del transaksi

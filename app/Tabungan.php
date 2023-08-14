@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Tabungan extends Model
 {   
@@ -14,11 +15,23 @@ class Tabungan extends Model
     // return $this->hasMany('App\Comment', 'foreign_key', 'local_key');
     public function tabtrans()
     {
-        return $this->belongsToMany('App\Tabtran','NO_REKENING','NO_REKENING');
+        return $this->hasMany('App\Tabtran','NO_REKENING','NO_REKENING');
     }
+    public function kodetranstab() : HasManyThrough
+    {
+        return $this->HasManyThrough(
+            Kodetranstabungan::class,
+            Tabtran::class,
+            'NO_REKENING',
+            'KODE_TRANS',
+            'NO_REKENING',
+            'KODE_TRANS'
+        );
+    }
+
     public $timestamps=false;
     protected $table = 'tabung';
-    protected $primaryKey = 'no_rekening';
+    protected $primaryKey = 'NO_REKENING';
     //Define primary key not integer is Important because laravel assume your primarykey is Integer
     protected $keyType = 'string';
 

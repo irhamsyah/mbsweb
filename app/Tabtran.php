@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use PhpParser\Node\Expr\FuncCall;
 
 class Tabtran extends Model
 {
@@ -28,11 +29,15 @@ class Tabtran extends Model
         return $this->HasManyThrough(
             Nasabah::class,
             Tabungan::class,
-            'NO_REKENING',
-            'nasabah_id',
-            'NO_REKENING',
-            'NASABAH_ID'
+            trim('NO_REKENING'),
+            trim('nasabah_id'),
+            trim('NO_REKENING'),
+            trim('NASABAH_ID')
         );
+    }
+    public function kodetranstab() 
+    {
+        return $this->hasMany('App\Kodetranstabungan','KODE_TRANS','KODE_TRANS');
     }
     public $timestamps=false;
     protected $table = 'tabtrans';

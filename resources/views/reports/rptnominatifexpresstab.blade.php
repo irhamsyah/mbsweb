@@ -13,7 +13,7 @@
             <div class="card-body">
               <div class="row form-group">
                 <div class="col-1"></div>
-                <div class="mx-auto col-md-3 col-sm-12">
+                <div class="mx-auto col-md-2 col-sm-12">
                   <button type="submit" class="btn btn-warning">Home &nbsp;&nbsp;&nbsp;<i class="fa fa-home" style="color:white"></i></button>
                 </div>
               </div>    
@@ -27,7 +27,7 @@
             {{-- <input hidden name="rekap" value={{$rekap}} class="form-control datetimepicker-input"/> --}}
 
             <div class="col-3"></div>
-            <div class="mx-auto col-md-5 col-sm-12">
+            <div class="mx-auto col-md-6 col-sm-12">
               <button type="submit" class="btn btn-warning">Ekspor Excel&nbsp;&nbsp;&nbsp;<i class="fa fa-search" style="color:white"></i></button>
               <a href="{{ route('cetaknomtabunganexpress',['tgl_nominatif'=>$inputantgl])}}" class="btn btn-md btn-danger"> Cetak Nominatif</a>
             </div>

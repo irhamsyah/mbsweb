@@ -166,6 +166,3 @@ Route::get('bo_tb_de_frmhapustransaksi','TabunganController@bo_tb_de_frmhapustra
 Route::post('bo_tab_del_trs','TabunganController@bo_tab_del_trs');
 // cari transaksi per tgl
 Route::get('bo_tabungan_transaksi_cari','TabunganController@bo_tabungan_transaksi_cari');
-//tes realtionship
-Route::get('tes','TabunganController@tes');
-

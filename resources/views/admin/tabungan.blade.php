@@ -12,15 +12,17 @@
 <div class="content-wrapper" style="margin-top:10px; max-height:800px !important;">
   <div class="container-fluid">
     <div class="row">
+      <h3 style="margin-left:20px" class="card-title">Entry Tabungan</h3>
+
       <div class="col-12">
         <div class="card card-warning card-outline">
-          <!-- form start -->
+          <!-- form for Search Exsisting Saving Customer -->
           <form method="POST" action="/bo_tabungan_edit_cari" role="search">
           @csrf
             <div class="card-body">
               <div class="row form-group">
                 <div class="col-lg-3 col-sm-12">
-                  <label for="idnasabah1">no_rekening</label> 
+                  <label for="idnasabah1">NO_REKENING</label> 
                 </div>             
                 <div class="col-lg-5 col-sm-12">
                   <input type="text" class="form-control" id="idnasabah1" name="norekcari" placeholder="Masukkan No Rek Tabungan">
@@ -28,7 +30,7 @@
               </div>
               <div class="row form-group">
                 <div class="col-lg-3 col-sm-12">
-                  <label for="namanasabah1">nama_nasabah</label>
+                  <label for="namanasabah1">NAMA NASABAH</label>
                 </div>             
                 <div class="col-lg-5 col-sm-12">
                   <input type="text" class="form-control" id="namanasabah1" name="namanasabahcari" placeholder="Masukkan Nama Nasabah">
@@ -42,7 +44,7 @@
               </div>
             </div>
             <!-- /.card-body -->
-          </form>
+          </form> <!-- /Batas Form Search ---->
         </div>
         <!-- /.card -->
         <div class="card">
@@ -96,9 +98,6 @@
                     </a>
                     <div class="dropdown-menu">
                       <form action="/prof_tab_detail" method="post" style="margin-bottom: 0;">
-                          <button type="submit" tabindex="-1" class="dropdown-item">
-                            Detail
-                          </button>
                           <input type="hidden" name="inputIdTransaction" value="{{ $tabungans->NO_REKENING }}" class="form-control">
                           @csrf
                       </form>
@@ -115,8 +114,8 @@
                         data-suku_bunga="{{$tabungans->SUKU_BUNGA}}"
                         data-persen_pph="{{$tabungans->PERSEN_PPH}}"
                         data-tgl_bunga="{{$tabungans->TGL_BUNGA}}"
-                        data-blokir="{{$tabungans->BLOKIR}}"
-                        data-saldo_blokir="{{$tabungans->SALDO_BLOKIR}}"
+                        {{-- data-blokir="{{$tabungans->BLOKIR}}"
+                        data-saldo_blokir="{{$tabungans->SALDO_BLOKIR}}" --}}
                         data-kode_group1="{{$tabungans->KODE_GROUP1}}"
                         data-desc_group1="{{$tabungans->DESKRIPSI_GROUP1}}"
                         data-kode_group2="{{$tabungans->KODE_GROUP2}}"
@@ -201,16 +200,16 @@
               <div class="row">
                 <div class="col-lg-2 col-sm-6">
                     <label for="inputidentitas">Jenis Tabungan</label>
-                    <select class="form-control" name="jenis_tabungan">
+                    <select class="form-control" name="jenis_tabungan" id="editlist">
                       <option id="idSelect" selected></option>
                       @foreach($kodejenistabungan as $value)
-                      <option value="{{ $value->kode_jenis_tabungan}}">{{ $value->DESKRIPSI_JENIS_TABUNGAN}}</option>
+                      <option value="{{ $value->kode_jenis_tabungan}}" data-ebunga="{{$value->SUKU_BUNGA_DEFAULT}}" data-eadm="{{$value->ADM_PER_BLN_DEFAULT}}" data-epph="{{$value->PPH_DEFAULT}}" data-esalmin="{{$value->MINIMUM_DEFAULT}}" data-esetmin="{{$value->SETORAN_MINIMUM_DEFAULT}}" data-esetwajib={{$value->SETORAN_PER_BLN_DEFAULT}} data-erestricted={{$value->FLAG_RESTRICTED}}>{{ $value->DESKRIPSI_JENIS_TABUNGAN}}</option>
                       @endforeach
                     </select>
-                  </div>
+                </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="norek">No.Rekening</label>
-                  <input type="text" name="no_rekening" class="form-control">
+                  <input type="text" name="no_rekening" class="form-control" required >
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputopendate">No.Series</label>
@@ -228,7 +227,7 @@
                     <input type="text" id="editidnasabah" name="nasabah_id" class="form-control">
 
                     <div class="input-group-append" data-toggle="modal" data-target="#ambildatanasabah">
-                      <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                      <div class="input-group-text"><i class="fa fa-user"></i></div>
                   </div>
 
                   </div>
@@ -253,11 +252,11 @@
                 </div>
                 <div class="col-lg-2 col-sm-8">
                   <label for="inputnocif">Bunga per Tahun(%)</label>
-                  <input type="text" name="suku_bunga" class="form-control">
+                  <input type="text" name="suku_bunga" class="form-control" id="ebungga">
                 </div>
                 <div class="col-lg-2 col-sm-8">
                   <label for="inputnocif">PPH (%)</label>
-                  <input type="text" name="persen_pph"  class="form-control">
+                  <input type="text" name="persen_pph" class="form-control" id="epph">
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputDate1">Tgl hitung Bunga</label>
@@ -268,14 +267,14 @@
                       </div>
                   </div>
                 </div>
-                <div class="form-check">
+                {{-- <div class="form-check">
                   <input id="inputblokir" disabled type="checkbox" name="blokir" class="form-check-input">
                   <label for="inputblokir">Blokir</label>
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputnamanasabah">Saldo Blokir</label>
                   <input type="text" name="saldo_blokir" value="0" class="form-control">
-                </div>
+                </div> --}}
               </div>            
             </div>
             <!--Baris ke 3 EDIT tabungan ----->
@@ -343,22 +342,22 @@
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputibukandung">Restricted</label>
                   <select class="form-control" name="flag_restricted">
-                    <option selected id="idrestricted"></option>
+                    <option selected id="erestricted"></option>
                     <option value="UNRESTRICTED">UNRESTRICTED</option>
                     <option value="RESTRICTED">RESTRICTED</option>
                   </select>
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputnpwp">Saldo Minimal</label>
-                  <input type="text" name="minimum" class="form-control" value=0.00>
+                  <input type="text" name="minimum" class="form-control" id="esalmin">
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputidentitas">Setoran Minimal</label>
-                  <input type="text" name="setoran_minimum" class="form-control" value=0.00>
+                  <input type="text" name="setoran_minimum" class="form-control" id="esetmin">
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputnoidentitas">Setoran Wajib</label>
-                  <input type="text" name="setoran_per_bln" class="form-control" value=0.00>
+                  <input type="text" name="setoran_per_bln" class="form-control" id="esetwajib">
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputDate2">Tipe Tab</label>
@@ -372,7 +371,7 @@
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label>Biaya Adm</label>
-                  <input type="text" name="adm_per_bln" class="form-control" value=0.00>
+                  <input type="text" name="adm_per_bln" class="form-control" id="eadm">
                   <input type="hidden" name="periode_adm" class="form-control" value=1>
                 </div>
               </div>            
@@ -425,16 +424,16 @@
               <div class="row">
                 <div class="col-lg-2 col-sm-6">
                     <label for="inputidentitas">Jenis Tabungan</label>
-                    <select class="form-control" name="jenis_tabungan">
+                    <select class="form-control" name="jenis_tabungan" id="listItem">
                       <option id="idSelect" selected></option>
                       @foreach($kodejenistabungan as $value)
-                      <option value="{{ $value->kode_jenis_tabungan}}">{{ $value->DESKRIPSI_JENIS_TABUNGAN}}</option>
+                      <option value="{{ $value->KODE_JENIS_TABUNGAN}}" data-bunga="{{$value->SUKU_BUNGA_DEFAULT}}" data-adm="{{$value->ADM_PER_BLN_DEFAULT}}" data-pph="{{$value->PPH_DEFAULT}}" data-salmin="{{$value->MINIMUM_DEFAULT}}" data-setmin="{{$value->SETORAN_MINIMUM_DEFAULT}}" data-setwajib={{$value->SETORAN_PER_BLN_DEFAULT}} data-restricted={{$value->FLAG_RESTRICTED}}>{{ $value->DESKRIPSI_JENIS_TABUNGAN}}</option>
                       @endforeach
                     </select>
                   </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="norek">No.Rekening</label>
-                  <input id="norekadd" type="text" onchange="" name="no_rekening" class="form-control">
+                  <input id="norekadd" type="text" onchange="" name="no_rekening" class="form-control" required>
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputopendate">No.Series</label>
@@ -449,10 +448,10 @@
                         <div class="col-lg-3 col-sm-6">
                           <label for="nasabahid">Nasabah / Anggota ID</label>
                           <div class="input-group date" data-target-input="nearest">
-                            <input id="inputNasabahIdadd" type="text" name="nasabah_id" readonly class="form-control">
+                            <input id="inputNasabahIdadd" type="text" name="nasabah_id" readonly class="form-control" required>
 
                             <div class="input-group-append" data-toggle="modal" data-target="#ambildatanasabah">
-                              <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                              <div class="input-group-text"><i class="fa fa-user"></i></div>
                           </div>
 
                           </div>
@@ -464,7 +463,7 @@
                 </div>
                 <div class="col-lg-2 col-sm-8">
                   <label for="inputnocif">Alamat</label>
-                  <input type="text" id="inputalamatadd" name="alamat" readonly class="form-control">
+                  <input type="text" id="inputalamatadd" name="alamat" readonly class="form-control" required>
                 </div>
                 <div class="col-lg-2 col-sm-8">
                   <label for="inputtipe">Tipe</label>
@@ -477,11 +476,11 @@
                 </div>
                 <div class="col-lg-2 col-sm-8">
                   <label for="inputnocif">Bunga per Tahun(%)</label>
-                  <input type="text" name="suku_bunga" class="form-control">
+                  <input type="text" name="suku_bunga" class="form-control" id="bunga" required>
                 </div>
                 <div class="col-lg-2 col-sm-8">
                   <label for="inputnocif">PPH (%)</label>
-                  <input type="text" name="persen_pph"  class="form-control">
+                  <input type="text" name="persen_pph"  class="form-control" id="pph">
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputDate1">Tgl hitung Bunga</label>
@@ -491,14 +490,6 @@
                           <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                       </div>
                   </div>
-                </div>
-                <div class="form-check">
-                  <input id="inputblokir" type="checkbox" name="blokir" class="form-check-input">
-                  <label for="inputblokir">Blokir</label>
-                </div>
-                <div class="col-lg-3 col-sm-6">
-                  <label for="inputnamanasabah">Saldo Blokir</label>
-                  <input type="text" name="saldo_blokir" value="0" class="form-control">
                 </div>
               </div>            
             </div>
@@ -567,22 +558,22 @@
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputibukandung">Restricted</label>
                   <select class="form-control" name="flag_restricted">
-                    <option selected id="idrestricted"></option>
+                    <option id="restricted" selected></option>
                     <option value="UNRESTRICTED">UNRESTRICTED</option>
                     <option value="RESTRICTED">RESTRICTED</option>
                   </select>
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputnpwp">Saldo Minimal</label>
-                  <input type="text" name="minimum" class="form-control" value=0.00>
+                  <input type="text" name="minimum" class="form-control" id="salmin">
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputidentitas">Setoran Minimal</label>
-                  <input type="text" name="setoran_minimum" class="form-control" value=0.00>
+                  <input type="text" name="setoran_minimum" class="form-control" id="setmin">
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputnoidentitas">Setoran Wajib</label>
-                  <input type="text" name="setoran_per_bln" class="form-control" value=0.00>
+                  <input type="text" name="setoran_per_bln" class="form-control" id="setwajib">
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputDate2">Tipe Tab</label>
@@ -596,7 +587,7 @@
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label>Biaya Adm</label>
-                  <input type="text" name="adm_per_bln" class="form-control" value=0.00>
+                  <input type="text" name="adm_per_bln" class="form-control" id="adm">
                   <input type="hidden" name="periode_adm" class="form-control" value=1>
                 </div>
               </div>            

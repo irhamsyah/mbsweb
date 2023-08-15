@@ -1922,7 +1922,7 @@ class TabunganController extends Controller
         $tgl=date('Y-m-d',strtotime($request->tgl_trans));
         $tabtran = Tabtran::with('nasabah')->where('TGL_TRANS','=',date('Y-m-d',strtotime($tgl)))->get();
         // dd($tabtran);
-        return view('admin.frmhapustransaksitabungan',['logos'=>$logos,'tgllogin'=>$tgl,'tabtran'=>$tabtran]);
+        return view('admin.tabungan.frmhapustransaksitabungan',['logos'=>$logos,'tgllogin'=>$tgl,'tabtran'=>$tabtran]);
     }
     public function bo_tb_rpt_nominatifpasif()
     {

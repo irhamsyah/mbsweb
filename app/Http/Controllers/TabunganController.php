@@ -2842,9 +2842,68 @@ return redirect()->back()->with('alert','SUDAH PERNAH DILAKUKAN PERHITUNGAN');
         $cari = Tabtran::where('TGL_TRANS','=',$tgl)
                         ->where('KUITANSI','LIKE','SYS%')->get();
 
-        if(count($cari)>0){
+        if(count($cari)>0 AND $request->koreksi<>'on'){
             return redirect()->back()->with('alert','SUDAH PERNAH DILAKUKAN OVERBOOK');
-        }else{
+        }elseif(count($cari)>0 AND $request->koreksi=='on'){
+            DB::select('UPDATE tabung SET SALDO_SETORAN=(SALDO_SETORAN+0),SALDO_PENARIKAN=(SALDO_PENARIKAN+0+0),SALDO_AKHIR=(SALDO_AKHIR+0-0-0) where STATUS_AKTIF=2');
+            DB::select("delete from tabtrans where TGL_TRANS='".$request->inputtgloverbook."' AND KUITANSI='SYS%'");
+            $brwsebngpjk = Tabungan::with('nasabah')
+            ->select('NO_REKENING','NASABAH_ID','saldo_efektif_bln_ini','bunga_bln_ini','pajak_bln_ini','adm_bln_ini','saldo_hitung_pajak','saldo_nominatif','saldo_akhir')->where('STATUS_AKTIF','=',2)->get();
+            // dd(Auth::id());
+            for($i=0;$i<count($brwsebngpjk);$i++){
+                // Insert Bunga
+                $tabtrans = new Tabtran;
+                $tabtrans->TGL_TRANS=$request->inputtgloverbook;
+                $tabtrans->NO_REKENING=$brwsebngpjk[$i]->NO_REKENING;
+                $tabtrans->KODE_TRANS=$request->kode_trans_bunga;
+                $tabtrans->SALDO_TRANS=$brwsebngpjk[$i]->bunga_bln_ini;
+                $tabtrans->MY_KODE_TRANS='110';
+                $tabtrans->USERID=Auth::id();
+                $tabtrans->KUITANSI='SYS-BUNGA';
+                $tabtrans->TOB = 'O';
+                $tabtrans->POSTED = '0';
+                $tabtrans->VALIDATED = '1';
+                $tabtrans->save();
+                // Insert admin
+                if($brwsebngpjk[$i]->adm_bln_ini>0){
+                    $tabtrans = new Tabtran;
+                    $tabtrans->TGL_TRANS=$request->inputtgloverbook;
+                    $tabtrans->NO_REKENING=$brwsebngpjk[$i]->NO_REKENING;
+                    $tabtrans->KODE_TRANS=$request->kode_trans_adm;
+                    $tabtrans->SALDO_TRANS=$brwsebngpjk[$i]->adm_bln_ini;
+                    $tabtrans->MY_KODE_TRANS='275';
+                    $tabtrans->USERID=Auth::id();
+                    $tabtrans->KUITANSI='SYS-ADM';
+                    $tabtrans->TOB = 'O';
+                    $tabtrans->POSTED = '0';
+                    $tabtrans->VALIDATED = '1';
+                    $tabtrans->save();    
+                }
+                // Insert pajak
+                if($brwsebngpjk[$i]->pajak_bln_ini>0){
+                    $tabtrans = new Tabtran;
+                    $tabtrans->TGL_TRANS=$request->inputtgloverbook;
+                    $tabtrans->NO_REKENING=$brwsebngpjk[$i]->NO_REKENING;
+                    $tabtrans->KODE_TRANS=$request->kode_trans_pajak;
+                    $tabtrans->SALDO_TRANS=$brwsebngpjk[$i]->pajak_bln_ini;
+                    $tabtrans->MY_KODE_TRANS='210';
+                    $tabtrans->USERID=Auth::id();
+                    $tabtrans->KUITANSI='SYS-PAJAK';
+                    $tabtrans->TOB = 'O';
+                    $tabtrans->POSTED = '0';
+                    $tabtrans->VALIDATED = '1';
+                    $tabtrans->save();
+                    // untuk nentuin msg
+                    $xx = $tabtrans->save();
+                }
+            }
+            if($xx){
+                $msg='1';
+            }else{$msg='0';}
+            return redirect()->back()->with('alert','OVER BOOK BERHASIL');
+
+        }
+        else{
             DB::select('UPDATE tabung SET SALDO_SETORAN=(SALDO_SETORAN+BUNGA_BLN_INI),SALDO_PENARIKAN=(SALDO_PENARIKAN+ADM_BLN_INI+PAJAK_BLN_INI),SALDO_AKHIR=(SALDO_AKHIR+BUNGA_BLN_INI-ADM_BLN_INI-PAJAK_BLN_INI) where STATUS_AKTIF=2');
 
             // Insert BUNGA,ADMIN DAN PAJAK KE TABTRANS

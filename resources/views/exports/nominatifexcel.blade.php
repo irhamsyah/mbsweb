@@ -4,8 +4,10 @@
         <th>NO_REKENING</th>
         <th>nasabah_id</th>
         <th>no_id</th>
+        <th>CIF</th>
         <th>nama_nasabah</th>
         <th>alamat</th>
+        <th>Kode</th>
         <th>tempatlahir</th>
         <th>tgllahir</th>
         <th>no_id1</th>
@@ -46,8 +48,10 @@
             <td>{{ $key->NO_REKENING }}</td>
             <td>{{ $key->nasabah_id }}</td>
             <td>{{ $key->no_id }}</td>
+            <td>{{ $key->cif }}</td>
             <td>{{ $key->nama_nasabah }}</td>
             <td>{{ $key->alamat }}</td>
+            <td>{{ $key->kota_id }}</td>
             <td>{{ $key->tempatlahir }}</td>
             <td>{{ $key->tgllahir }}</td>
             <td>{{ $key->no_id1 }}</td>

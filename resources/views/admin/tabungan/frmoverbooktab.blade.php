@@ -98,7 +98,7 @@
             </div>
               <div class="row form-group">
               <div class="mx-auto col-md-5 col-sm-12">
-                <input class="form-check-input" type="checkbox" id="gridCheck">
+                <input class="form-check-input" type="checkbox" id="gridCheck" name="koreksi">
                 <label class="form-check-label" for="gridCheck">
                   Koreksi Overbook
                 </label>

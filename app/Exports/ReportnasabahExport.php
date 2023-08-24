@@ -5,7 +5,7 @@ namespace App\Exports;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\Exportable;
-class ReporttabunganExport implements FromView
+class ReportnasabahExport implements FromView
 {
     public $array;
     use Exportable;
@@ -17,7 +17,7 @@ class ReporttabunganExport implements FromView
 
     public function view(): View
     {
-        return view('exports.nominatifexcel',[
+        return view('exports.nasabahexcel',[
             'nomin'=>$this->array
         ]);
     }

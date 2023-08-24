@@ -61,6 +61,8 @@
                 <th>My Kode Trans</th>
               </tr>
               </thead>
+              @if(is_null(Auth::user())==false)
+              @if(Auth::user()->privilege=='admin')
               <tbody>
               @php($index=0)
               @foreach($tabtran as $values)
@@ -95,6 +97,11 @@
                 </tr>
               @endforeach
               </tbody>
+                @endif
+              @else
+              <h1>Login Expired, Silahkan Login Ulang</h1>
+              @endif
+
             </table>
           </div>
           <!-- /.card-body -->

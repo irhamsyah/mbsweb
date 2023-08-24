@@ -168,6 +168,10 @@ Route::get('bo_tab_overbook','TabunganController@bo_tab_overbook')->name('proses
 Route::get('bo_tb_de_showfrmblokir','TabunganController@bo_tb_de_showfrmblokir')->name('frmblokir');
 // Form simpan blokiran
 Route::post('bo_tb_de_simpanblokirtab','TabunganController@bo_tb_de_simpanblokirtab');
+// SHow form for unblokir
+Route::get('bo_tb_de_showfrmunblokir','TabunganController@bo_tb_de_showfrmunblokir');
+Route::post('bo_adm_update_unblokir','TabunganController@bo_adm_update_unblokir');
+
 
 // Form Hapus Transaksi
 Route::get('bo_tb_de_frmhapustransaksi','TabunganController@bo_tb_de_frmhapustransaksi')->name('bo_tb_de_frmhapustransaksi');

@@ -48,7 +48,8 @@
                       </div>
     
                     </div>
-                  </div>              <div class="row form-group">
+                  </div>              
+                  <div class="row form-group">
                 <div class="mx-auto col-md-5 col-sm-12">
                   <label for="inputDate1">No_Rekening</label>
                   <div class="input-group dateYMD" id="inputDate1" data-target-input="nearest">

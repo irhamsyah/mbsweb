@@ -302,20 +302,20 @@
                     <ul class="nav nav-treeview">
                       <li class="nav-item has-treeview menu-close">
                         <li class="nav-item">
-                        <a href="/bo_tb_de_showfrmblokir" class="nav-link">
+                          <a href="/bo_tb_de_showfrmblokir" class="nav-link">
                           <p class="pl-3">Pemblokiran</p>
-                        </a>
-                      </li>
-
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="bo_tb_de_showfrmunblokir" class="nav-link">
+                            <p class="pl-3">UnBlokir</p>
+                          </a>
+                        </li>
                       </li>
                     </ul>
                   </li> 
                   {{-- Batas tree view --}}
-                  <li class="nav-item">
-                    <a href="#" class="nav-link">
-                      <p class="pl-3">Konsolidasi Saldo</p>
-                    </a>
-                  </li>
+
                   </ul>
                 </li>
                 <li class="nav-item has-treeview menu-close">
@@ -1161,8 +1161,21 @@ $("#datatabungan").on('click','#klik',function(){
      document.getElementById("inputsaldoblokir").value=col6;
 
     //  alert(data);
-});
-});
+      });
+    });
+  $('#modal-unblokir').on('show.bs.modal', function(e) {
+
+      var No_rekening = $(e.relatedTarget).data('no_rekening');
+      var Nama_nasabah = $(e.relatedTarget).data('nama_nasabah');
+      var Saldo_blokir = $(e.relatedTarget).data('saldo_blokir');
+      var Tgl_blokir = $(e.relatedTarget).data('tgl_blokir');
+
+      $(e.currentTarget).find('input[name="no_rekening"]').val(No_rekening);
+    $(e.currentTarget).find('input[name="nama_nasabah"]').val(Nama_nasabah);
+    $(e.currentTarget).find('input[name="saldo_blokir"]').val(Saldo_blokir);
+    $(e.currentTarget).find('input[name="tgl_blokir"]').val(Tgl_blokir);
+
+    });
 
 </script>
 <script>

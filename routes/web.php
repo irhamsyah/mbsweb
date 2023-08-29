@@ -152,6 +152,10 @@ Route::get('bo_tb_rpt_pdfnominatifexpress','TabunganController@bo_tb_rpt_pdfnomi
 // Report Nominatif Tabungan PASIF
 Route::get('bo_tb_rpt_nominatifpasif','TabunganController@bo_tb_rpt_nominatifpasif')->name('bo_tb_rpt_nominatifpasif');
 Route::post('bo_tb_rpt_nominatifpasifview','TabunganController@bo_tb_rpt_nominatifpasifview');
+// Report Tabungan Blokir
+Route::get('bo_tb_rpt_tabunganblokir','TabunganController@bo_tb_rpt_tabunganblokir')->name('bo_tb_rpt_tabunganblokir');
+Route::post('bo_tb_rpt_tabunganblokirview','TabunganController@bo_tb_rpt_tabunganblokirview')->name('bo_tb_rpt_tabunganblokirview');
+
 Route::post('nominatifpasifeksport','TabunganController@nominatifpasifeksport');
 Route::get('bo_tb_rpt_pdfnominatifpasif','TabunganController@bo_tb_rpt_pdfnominatifpasif')->name('cetaknomtabunganpasif');
 //Form Hitung Bunga Tabungan

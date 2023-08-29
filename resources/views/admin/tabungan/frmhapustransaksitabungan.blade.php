@@ -59,6 +59,8 @@
                 <th>Jumlah</th>
                 <th>Kode Transaksi</th>
                 <th>My Kode Trans</th>
+                <th>Action</th>
+
               </tr>
               </thead>
               @if(is_null(Auth::user())==false)
@@ -99,7 +101,7 @@
               </tbody>
                 @endif
               @else
-              <h1>Login Expired, Silahkan Login Ulang</h1>
+              <h3>Sesi Anda Telah Habis, Silahkan Login Ulang</h3>
               @endif
 
             </table>

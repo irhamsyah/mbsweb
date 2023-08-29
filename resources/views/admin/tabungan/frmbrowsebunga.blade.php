@@ -77,8 +77,13 @@
                 <th>Saldo Pajak</th>
                 <th>Saldo Nominatif</th>
                 <th>Saldo Akhir</th>
+                <th>Action</th>
+
               </tr>
               </thead>
+              @if(is_null(Auth::user()))
+                <h3>Sesi Anda Telah Habis, Silahkan Login Ulang</h3>
+              @else 
               @if(Auth::user()->privilege=='admin')
               <tbody>
               @php($index=0)
@@ -133,7 +138,7 @@
                     </tr>
                   @endforeach
                   </tbody>
-    
+                  @endif
                 @endif
             </table>
           </div>

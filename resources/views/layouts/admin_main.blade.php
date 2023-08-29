@@ -382,6 +382,14 @@
                     </ul>
                     </li>
                   </ul>
+                  <ul class="nav nav-treeview">
+                    <li class="nav-item has-treeview menu-close">
+                      <a href="/bo_tb_rpt_tabunganblokir" class="nav-link">
+                        <i class="right fas fa-angle-left"></i>
+                        <p class="pl-2">Laporan Blokir</p>
+                      </a>
+                    </li>
+                  </ul>
                 </li>
               </ul>
                 {{-- batas menu tree tabungan --}}
@@ -701,11 +709,15 @@ $(document).ready(function () {
     });
     //Date picker tgl-jam
     $('#inputDate11').datetimepicker({
-        format: 'Y-MM-DD hh:mm:ss'
+        format: 'Y-MM-DD'
     });
     $('#inputDate12').datetimepicker({
         format: 'Y-MM-DD hh:mm:ss'
     });
+    $('#inputDate13').datetimepicker({
+        format: 'Y-MM-DD'
+    });
+
     $('#inputDate5').datetimepicker({
         format: 'Y-MM-DD'
     });

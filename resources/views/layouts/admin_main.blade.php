@@ -379,13 +379,48 @@
                           <p class="pl-3">Nominatif Tab Pasif</p>
                         </a>
                       </li>
+                      <li class="nav-item">
+                        <a href="/bo_tb_rpt_nominatijenis" class="nav-link">
+                          <p class="pl-3">Nominatif Menurut Jenis</p>
+                        </a>
+                      </li>                    
                     </ul>
                     </li>
                   </ul>
                   <ul class="nav nav-treeview">
                     <li class="nav-item has-treeview menu-close">
+
+                    <a href="/adm_transaction" class="nav-link">
+                      <i class="right fas fa-angle-left"></i>
+                      <p class="pl-2">Transaksi</p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                      <li class="nav-item">
+                        <a href="/bo_tb_rpt_frmtransaksi" class="nav-link">
+                          <p class="pl-3">Transaksi Rinci</p>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a href="/bo_tb_rpt_nominatifrekap" class="nav-link">
+                          <p class="pl-3">Transaksi Rekap Kode</p>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a href="/bo_tb_rpt_nominatifexpress" class="nav-link">
+                          <p class="pl-3">Transaksi Rekap</p>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a href="/bo_tb_rpt_nominatifpasif" class="nav-link">
+                          <p class="pl-3">Transaksi Rekasp Mutasi</p>
+                        </a>
+                      </li>
+                    </ul>
+                    </li>
+                  </ul>
+                  <ul class="nav nav-treeview">
+                    <li class="nav-item">
                       <a href="/bo_tb_rpt_tabunganblokir" class="nav-link">
-                        <i class="right fas fa-angle-left"></i>
                         <p class="pl-2">Laporan Blokir</p>
                       </a>
                     </li>
@@ -722,6 +757,12 @@ $(document).ready(function () {
         format: 'Y-MM-DD'
     });
     $('#idtglnominatif').datetimepicker({
+        format: 'Y-MM-DD'
+    });
+    $('#idtglnominatif1').datetimepicker({
+        format: 'Y-MM-DD'
+    });
+    $('#idtglnominatif2').datetimepicker({
         format: 'Y-MM-DD'
     });
 

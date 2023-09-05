@@ -89,7 +89,7 @@
                   <td>{{ $values->nama_nasabah }}</td>
                   <td>{{ $values->alamat}}</td>
                   <td>{{ $values->DESKRIPSI_JENIS_TABUNGAN}}</td>
-                  <td>{{ $values->SALDO_BLOKIR}}</td>
+                  <td>{{ number_format($values->SALDO_BLOKIR)}}</td>
                   <td>{{ $values->TGL_BLOKIR}}</td>
                   <td>
                     <a class="dropdown-toggle btn btn-block bg-gradient-primary btn-sm" data-toggle="dropdown" href="#">

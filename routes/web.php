@@ -155,6 +155,8 @@ Route::post('bo_tb_rpt_nominatifpasifview','TabunganController@bo_tb_rpt_nominat
 // Report Tabungan Blokir
 Route::get('bo_tb_rpt_tabunganblokir','TabunganController@bo_tb_rpt_tabunganblokir')->name('bo_tb_rpt_tabunganblokir');
 Route::post('bo_tb_rpt_tabunganblokirview','TabunganController@bo_tb_rpt_tabunganblokirview')->name('bo_tb_rpt_tabunganblokirview');
+// MUNCULKAN HALAMAN NOMINATIF BLOKIR YANG AKAN DI CETAK
+Route::get('bo_tb_rpt_pdftabblokir','TabunganController@bo_tb_rpt_pdftabblokir')->name('cetaktabunganblokir');
 
 Route::post('nominatifpasifeksport','TabunganController@nominatifpasifeksport');
 Route::get('bo_tb_rpt_pdfnominatifpasif','TabunganController@bo_tb_rpt_pdfnominatifpasif')->name('cetaknomtabunganpasif');
@@ -163,6 +165,31 @@ Route::get('bo_tb_de_frmhitungbungatab','TabunganController@bo_tb_de_frmhitungbu
 Route::post('bo_tb_de_hitungbungatab','TabunganController@bo_tb_de_hitungbungatab');
 // Form Browse Bunga dan Pajak
 Route::get('bo_tb_de_frmbrowsebungapajak','TabunganController@bo_tb_de_frmbrowsebungapajak')->name('frmbrowsebungapajak');
+// EXPORT BROWSE BUNGA DAN PAJAK TABUNGAN
+Route::post('exporttoexcelbungapajaktabungan',
+[
+    'as'=>'exporttoexcelbungapajaktabungan',
+    'uses'=>'TabunganController@exporttoexcelbungapajaktabungan'
+]
+);
+// form Report tabungan berdasarkan jenis
+Route::get('bo_tb_rpt_nominatijenis','TabunganController@bo_tb_rpt_nominatijenis')->name('nominatifperjenistab');
+// Form Report Nominatif Jenis untuk Cetak dan Export
+Route::post('bo_tb_rpt_nominatifperjenisview','TabunganController@bo_tb_rpt_nominatifperjenisview');
+// cetak PDF/PRIN REPORT NOM
+Route::get('cetaknomtabunganperjenis',
+    [
+        'as'=>'cetaknomtabunganperjenis',
+        'uses'=>'TabunganController@cetaknomtabunganperjenis'
+    ]
+);
+Route::post('nominatifperjeniseksport',
+    [
+        'as'=>'nominatifperjeniseksport',
+        'uses'=>'TabunganController@nominatifperjeniseksport'
+    ]
+);
+
 Route::post('bo_adm_update_bngpjk','TabunganController@bo_adm_update_bngpjk');
 // Form Overbooking tabungan
 Route::get('bo_tb_de_frmoverbooktabungan','TabunganController@bo_tb_de_frmoverbooktabungan')->name('frmoverbooktabungan');
@@ -183,3 +210,15 @@ Route::get('bo_tb_de_frmhapustransaksi','TabunganController@bo_tb_de_frmhapustra
 Route::post('bo_tab_del_trs','TabunganController@bo_tab_del_trs');
 // cari transaksi per tgl
 Route::get('bo_tabungan_transaksi_cari','TabunganController@bo_tabungan_transaksi_cari');
+// Form Cetak Transaksi Tabungan
+Route::get('bo_tb_rpt_frmtransaksi','TabunganController@bo_tb_rpt_frmtransaksi')->name('formcetaktransaksi');
+// Cari transaksi tabungan
+Route::post('bo_tb_rpt_caritransaksi','TabunganController@bo_tb_rpt_caritransaksi')->name('formcetaktransaksi2');
+Route::get('bo_tb_rpt_pdftransaksi','TabunganController@bo_tb_rpt_pdftransaksi')->name('cetaktransaksitabungan');
+// EXPORT KE EXCEL TABUNGAN BLOKIR
+Route::post('exporttoexceltabblokir',
+[
+    'as'=>'exporttoexceltabblokir',
+    'uses'=>'TabunganController@exporttoexceltabblokir'
+]
+);

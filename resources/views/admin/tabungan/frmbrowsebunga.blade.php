@@ -32,36 +32,22 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-12">
-        {{-- <div class="card card-warning card-outline">
-          <!-- form start -->
-          <form method="GET" action="/bo_tabungan_transaksi_cari" role="search">
-          @csrf
-            <div class="card-body">
-              <div class="row form-group">
-                <div class="mx-auto col-md-3 col-sm-12">
-                    <label for="inputDate1">Tanggal</label>
-                    <div class="input-group date" id="inputDate1" data-target-input="nearest">
-                      <input type="text" name="tgl_trans" class="form-control datetimepicker-input" data-target="#inputDate1"/>
-                        <div class="input-group-append" data-target="#inputDate1" data-toggle="datetimepicker">
-                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                        </div>
-                    </div>
-                </div>
-              </div>
-              <div class="row form-group">
-                <div class="col-4" style="margin-left:450px">
-                  <button type="submit" class="btn btn-warning"><i class="fa fa-search" style="color:white">Cari</i></button>
-                </div>
-              </div>
-            </div>
-            <!-- /.card-body -->
-          </form>
-        </div> --}}
-        <!-- /.card -->
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">Bunga Tabungan dan Pajak</h3>
           </div>
+          {{-- @php(dd($brwsebngpjk)) --}}
+          <form method="post" action="{{route('exporttoexcelbungapajaktabungan',['caribunga'=>$brwsebngpjk])}}">
+            @csrf
+            <input type="hidden" name="tes" values="dfsdsfs">
+            <div class="row form-group">
+              <div class="col-4" style="margin-left:450px;margin-top:10px">
+                <button type="submit" class="btn btb-lg btn-warning">Export</button>
+              </div>
+            </div>
+  
+          </form>
+
           <!-- /.card-header -->
           <div class="card-body">
             <table id="example1" class="display" width="100">
@@ -93,13 +79,13 @@
                   <td>{{ $index}}</td>
                   <td>{{ $values->no_rekening }}</td>
                   <td>{{ $values->nasabah->nama_nasabah }}</td>
-                  <td>{{ $values->bunga_bln_ini}}</td>
-                  <td>{{ $values->pajak_bln_ini}}</td>
-                  <td>{{ $values->adm_bln_ini}}</td>
-                  <td>{{ $values->saldo_efektif_bln_ini}}</td>
-                  <td>{{ $values->saldo_hitung_pajak}}</td>
-                  <td>{{ $values->saldo_nominatif}}</td>
-                  <td>{{ $values->saldo_akhir}}</td>
+                  <td>{{ number_format($values->bunga_bln_ini,2)}}</td>
+                  <td>{{ number_format($values->pajak_bln_ini,2)}}</td>
+                  <td>{{ number_format($values->adm_bln_ini,2)}}</td>
+                  <td>{{ number_format($values->saldo_efektif_bln_ini,2)}}</td>
+                  <td>{{ number_format($values->saldo_hitung_pajak,2)}}</td>
+                  <td>{{ number_format($values->saldo_nominatif,2)}}</td>
+                  <td>{{ number_format($values->saldo_akhir,2)}}</td>
                   <td>
                     <a class="dropdown-toggle btn btn-block bg-gradient-primary btn-sm" data-toggle="dropdown" href="#">
                       Action <span class="caret"></span>
@@ -107,7 +93,7 @@
                     <div class="dropdown-menu">
                       <a href="#" tabindex="-1" class="dropdown-item" data-toggle="modal" data-target="#modal-update-bungpajaktab"
                       data-no_rekening="{{ $values->no_rekening}}"
-                      {{-- data-nama_nasabah="{{$values->nasabah[1]->nama_nasabah}}" --}}
+                      data-nama_nasabah="{{$values->nasabah->nama_nasabah}}"
                       data-bunga_bln_ini="{{$values->bunga_bln_ini}}"
                       data-pajak_bln_ini="{{$values->pajak_bln_ini}}"
                       data-adm_bln_ini="{{$values->adm_bln_ini}}"
@@ -171,7 +157,7 @@
                     </div>
                     <div class="col-lg-3 col-sm-6">
                       <label for="inputopendate">Nama Nasabah</label>
-                      <input type="text" name="nama_nasabah" class="form-control" id="editidnasabah">
+                      <input readonly type="text" name="nama_nasabah" class="form-control" id="editidnasabah">
                     </div>
                     <div class="col-lg-3 col-sm-6">
                       <label for="inputnasabahid">Bunga Bulan Ini</label>

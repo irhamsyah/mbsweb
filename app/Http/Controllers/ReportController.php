@@ -118,5 +118,24 @@ class ReportController extends Controller
         // dd($nasabah);
         return view('pdf.cetaknasabah',['nasabah'=>$nasabah]);         
     }
+
+    public function bo_cs_rp_nasabah_rp_amplop(Request $request)
+    {
+        $filteridnasabah = request()->inputIdNasabahprint;
+        $sql="SELECT
+        a.nasabah_id,
+        a.nama_nasabah,
+        a.alamat,
+        a.kelurahan,
+        a.kecamatan,
+        a.kode_pos,
+        b.Deskripsi_Kota
+        FROM nasabah a LEFT JOIN jenis_kota b ON a.kota_id = b.Kota_id
+        WHERE a.nasabah_id = '$filteridnasabah' 
+        ";
+        $nasabah=DB::select($sql);
+        // dd($nasabah);
+        return view('pdf.cetaknasabahamplop',['nasabah'=>$nasabah]);         
+    }
     
 }

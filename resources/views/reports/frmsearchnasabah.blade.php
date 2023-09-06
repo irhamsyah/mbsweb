@@ -82,7 +82,7 @@ if($filter!=''){
         <div class="card">
           <div class="card-header">
           <div style="float:right;">
-            <form action="/bo_cs_rp_nasabah/exportnasabah" method="post"  style="margin-bottom: 0;">
+            <form action="/bo_cs_rp_nasabah/exportnasabah" method="post" style="margin-bottom: 0;" target="print_popup"  onsubmit="window.open('about:blank','print_popup','width=1000,height=800');">
                 <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-table" style="color:white"></i> Export</button>
                 <input type="hidden" name="exportidnasabah" value="{{ $filteridnasabah }}" class="form-control">
                 <input type="hidden" name="exportnamanasabah" value="{{ $filternamanasabah }}" class="form-control">
@@ -125,12 +125,7 @@ if($filter!=''){
                   <td>{{ $nasabah->telpon }}</td>
                   <td>{{ $nasabah->tempatlahir.', '.$tgllahir }}</td>
                   <td>
-                    <!-- <form action="/bo_cs_rp_nasabah_rp_amplop" method="post"  style="margin-bottom: 0;">
-                        <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-print" style="color:white"></i> Amplop</button>
-                        <input type="hidden" name="inputIdNasabahprint" value="{{ $nasabah->nasabah_id }}" class="form-control">
-                        <input type="hidden" name="_method" value="POST"/>
-                        @csrf
-                    </form> -->
+                    <a href="{{ route('cetaknasabahamplop',['inputIdNasabahprint'=>$nasabah->nasabah_id])}}" target="_blank" class="btn btn-sm btn-danger"> <i class="fa fa-print" style="color:white"></i> Amplop</a>
                   </td>
                 </tr>
                 @endforeach

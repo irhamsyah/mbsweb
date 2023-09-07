@@ -215,6 +215,16 @@ Route::get('bo_tb_rpt_frmtransaksi','TabunganController@bo_tb_rpt_frmtransaksi')
 // Cari transaksi tabungan
 Route::post('bo_tb_rpt_caritransaksi','TabunganController@bo_tb_rpt_caritransaksi')->name('formcetaktransaksi2');
 Route::get('bo_tb_rpt_pdftransaksi','TabunganController@bo_tb_rpt_pdftransaksi')->name('cetaktransaksitabungan');
+
+// EXPORT KE EXCEL TRANSAKSI TABUNGAN
+Route::post('exporttoexceltransaksitab',
+[
+    'as'=>'exporttoexceltransaksitab',
+    'uses'=>'TabunganController@exporttoexceltransaksitab'
+]
+);
+
+
 // EXPORT KE EXCEL TABUNGAN BLOKIR
 Route::post('exporttoexceltabblokir',
 [

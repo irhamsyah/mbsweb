@@ -137,5 +137,59 @@ class ReportController extends Controller
         // dd($nasabah);
         return view('pdf.cetaknasabahamplop',['nasabah'=>$nasabah]);         
     }
+
+    public function bo_cs_rp_tabungan()
+    {
+      $logos = Logo::all();
+      $nasabahs = Nasabah::select('nasabah.*','jenis_kota.Deskripsi_Kota')
+      ->leftJoin('jenis_kota', function($join) {
+        $join->on('nasabah.kota_id', '=', 'jenis_kota.Kota_id');
+      })
+      ->limit(20)->orderby('nasabah.nasabah_id','ASC')->get();
+
+      return view('reports/frmsearchtabungan', ['logos'=> $logos,'nasabahs'=> $nasabahs,'filter'=> '','msgstatus'=> '']);
+    }
+    public function bo_cs_rp_tabungan_cari(Request $request)
+    {
+      $logos = Logo::all();
+
+      $nasabahs = Nasabah::select('nasabah.*','jenis_kota.Deskripsi_Kota')
+      ->leftJoin('jenis_kota', function($join) {
+        $join->on('nasabah.kota_id', '=', 'jenis_kota.Kota_id');
+      })
+      ->where('nasabah_id', 'LIKE', '%' . request()->idnasabah1 . '%')
+      ->when(request()->namanasabah1, function($query) {
+        $query->where('nama_nasabah', 'LIKE', '%' . request()->namanasabah1 . '%');
+      })
+      ->when(request()->jenisnasabah1, function($query) {
+        $query->where('jenis_nasabah', request()->jenisnasabah1);
+      })
+      ->orderby('nasabah.nasabah_id','ASC')->get();
+
+      $filters = request()->idnasabah1.'|'.request()->namanasabah1.'|'.request()->jenisnasabah1;
+
+      return view('reports/frmsearchtabungan', ['logos'=> $logos,'nasabahs'=> $nasabahs,'filter'=> $filters,'msgstatus'=> '']);
+    }
+
+    public function bo_cs_rp_tabungan_rp_covertab(Request $request)
+    {
+        $filteridnasabah = request()->inputIdNasabahprint;
+        $sql="SELECT
+        a.nasabah_id,
+        a.nama_nasabah,
+        a.alamat,
+        a.kelurahan,
+        a.kecamatan,
+        a.kode_pos,
+        b.Deskripsi_Kota,
+        c.NO_REKENING
+        FROM nasabah a LEFT JOIN jenis_kota b ON a.kota_id = b.Kota_id
+        LEFT JOIN tabung c ON a.nasabah_id = c.NASABAH_ID
+        WHERE a.nasabah_id = '$filteridnasabah' 
+        ";
+        $nasabah=DB::select($sql);
+        // dd($nasabah);
+        return view('pdf.cetakcovertab',['nasabah'=>$nasabah]);         
+    }
     
 }

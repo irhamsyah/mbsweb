@@ -88,11 +88,16 @@ Route::delete('/bo_cs_ad_golongan', 'AdministratorController@bo_cs_ad_golongan_d
 Route::post('/bo_cs_ad_golongan/cari','AdministratorController@bo_cs_ad_golongan_cari');//search filter
 
 //BO CS Laporan
+//nasabah
 Route::get('/bo_cs_rp_nasabah', 'ReportController@bo_cs_rp_nasabah')->name('carinasabah');
 Route::post('/bo_cs_rp_nasabah/cari','ReportController@bo_cs_rp_nasabah_cari');//search filter
 Route::post('/bo_cs_rp_nasabah/exportnasabah', 'ReportController@bo_cs_rp_nasabah_rp');//export nasabah
 Route::get('/bo_cs_rp_nasabah/printnasabah','ReportController@bo_cs_rp_nasabah_rppdf')->name('cetaknasabah');//print nasabah
 Route::get('/bo_cs_rp_nasabah/exportamplop', 'ReportController@bo_cs_rp_nasabah_rp_amplop')->name('cetaknasabahamplop');//print amplop surat
+//tabungan
+Route::get('/bo_cs_rp_tabungan', 'ReportController@bo_cs_rp_tabungan')->name('caritabungan');
+Route::post('/bo_cs_rp_tabungan/cari','ReportController@bo_cs_rp_tabungan_cari');//search filter
+Route::get('/bo_cs_rp_tabungan/exportcovertab', 'ReportController@bo_cs_rp_tabungan_rp_covertab')->name('cetakcovertab');//print cover butab
 
 
 //Route Tabungan

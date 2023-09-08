@@ -2645,18 +2645,25 @@ return redirect()->back()->with('alert','SUDAH PERNAH DILAKUKAN PERHITUNGAN');
                     $bngblnini=(int)$rshitbunga[0]->debet;
                 }
                 $sql="UPDATE tabung SET ADM_BLN_INI=ADM_PER_BLN,BUNGA_BLN_INI=".round((int)$bngblnini,(int)$tabdigitkoma).",SALDO_AKHIR=".(int)$rshitbunga[0]->saldonom.",SALDO_NOMINATIF=".(int)$rshitbunga[0]->saldonom.",PAJAK_BLN_INI=".round($jmlpajak,(int)$tabdigitkoma).",SALDO_HITUNG_PAJAK=".(int)$rshitbunga[0]->saldonom.",SALDO_EFEKTIF_BLN_INI=".(int)$rshitbunga[0]->saldonom." where NO_REKENING='$norekpegangan[$i]'";
-                dd($sql);
+                // dd($sql);
             DB::select("UPDATE tabung SET ADM_BLN_INI=ADM_PER_BLN,BUNGA_BLN_INI=".round((int)$bngblnini,(int)$tabdigitkoma).",SALDO_AKHIR=".(int)$rshitbunga[0]->saldonom.",SALDO_NOMINATIF=".(int)$rshitbunga[0]->saldonom.",PAJAK_BLN_INI=".round($jmlpajak,(int)$tabdigitkoma).",SALDO_HITUNG_PAJAK=".(int)$rshitbunga[0]->saldonom.",SALDO_EFEKTIF_BLN_INI=".(int)$rshitbunga[0]->saldonom." where NO_REKENING='$norekpegangan[$i]'");
 
         }
     // JKA RECORD TRANSAKSI TABTRANS ADA
     else{
-            // UPDATE SALDO_AKHIR,SALDO_SETORAN,SALDO_PENARIKAN
+            // UPDATE SALDO_NOMINATIF,SALDO_SETORAN,SALDO_PENARIKAN
             if($request->koreksi=="on")
             {
-                $sqlupdtbg="UPDATE tabung SET tabung.ADM_BLN_INI=tabung.ADM_PER_BLN,tabung.SALDO_NOMINATIF=(SELECT (tabung.SALDO_AWAL+SUM(if(MY_KODE_TRANS LIKE '1%' AND TGL_TRANS<'$tgl1',SALDO_TRANS,0))+SUM(if(MY_KODE_TRANS LIKE '1%' AND KUITANSI NOT LIKE 'SYS%' AND TGL_TRANS>='$tgl1' AND TGL_TRANS<='$tgl2',SALDO_TRANS,0))-SUM(if(MY_KODE_TRANS LIKE '2%' AND TGL_TRANS<'$tgl1',SALDO_TRANS,0))-SUM(if(MY_KODE_TRANS LIKE '2%' AND KUITANSI NOT LIKE 'SYS%' AND TGL_TRANS>='$tgl1' AND TGL_TRANS<='$tgl2',SALDO_TRANS,0))) as debet FROM tabung inner join tabtrans on tabung.NO_REKENING=tabtrans.NO_REKENING where (tabung.NO_REKENING='$norekpegangan[$i]') GROUP BY tabung.NO_REKENING),tabung.SALDO_SETORAN=(SELECT (SUM(if(MY_KODE_TRANS LIKE '1%' AND TGL_TRANS<'$tgl1',SALDO_TRANS,0))+SUM(if(MY_KODE_TRANS LIKE '1%' AND KUITANSI NOT LIKE 'SYS%' AND TGL_TRANS>='$tgl1' AND TGL_TRANS<='$tgl2',SALDO_TRANS,0))) as debet FROM tabtrans where (NO_REKENING='$norekpegangan[$i]') GROUP BY NO_REKENING),tabung.SALDO_PENARIKAN=(SELECT (SUM(if(MY_KODE_TRANS LIKE '2%' AND TGL_TRANS<'$tgl1',SALDO_TRANS,0))+SUM(if(MY_KODE_TRANS LIKE '2%' AND KUITANSI NOT LIKE 'SYS%' AND TGL_TRANS>='$tgl1' AND TGL_TRANS<='$tgl2',SALDO_TRANS,0))) as debet FROM tabtrans where (NO_REKENING='$norekpegangan[$i]') GROUP BY NO_REKENING) where tabung.NO_REKENING='$norekpegangan[$i]'";
+
+                $sldnomi=DB::select("SELECT (tabung.SALDO_AWAL+SUM(if(MY_KODE_TRANS LIKE '1%' AND TGL_TRANS<'$tgl1',SALDO_TRANS,0))+SUM(if(MY_KODE_TRANS LIKE '1%' AND KUITANSI NOT LIKE 'SYS%' AND TGL_TRANS>='$tgl1' AND TGL_TRANS<='$tgl2',SALDO_TRANS,0))-SUM(if(MY_KODE_TRANS LIKE '2%' AND TGL_TRANS<'$tgl1',SALDO_TRANS,0))-SUM(if(MY_KODE_TRANS LIKE '2%' AND KUITANSI NOT LIKE 'SYS%' AND TGL_TRANS>='$tgl1' AND TGL_TRANS<='$tgl2',SALDO_TRANS,0))) as debet FROM tabung inner join tabtrans on tabung.NO_REKENING=tabtrans.NO_REKENING where (tabung.NO_REKENING='$norekpegangan[$i]') GROUP BY tabung.NO_REKENING")[0]->debet;
+                $sldsetor=DB::select("SELECT (SUM(if(MY_KODE_TRANS LIKE '1%' AND TGL_TRANS<'$tgl1',SALDO_TRANS,0))+SUM(if(MY_KODE_TRANS LIKE '1%' AND KUITANSI NOT LIKE 'SYS%' AND TGL_TRANS>='$tgl1' AND TGL_TRANS<='$tgl2',SALDO_TRANS,0))) as debet FROM tabtrans where (NO_REKENING='$norekpegangan[$i]') GROUP BY NO_REKENING")[0]->debet;
+                $sldtarik=DB::select("SELECT (SUM(if(MY_KODE_TRANS LIKE '2%' AND TGL_TRANS<'$tgl1',SALDO_TRANS,0))+SUM(if(MY_KODE_TRANS LIKE '2%' AND KUITANSI NOT LIKE 'SYS%' AND TGL_TRANS>='$tgl1' AND TGL_TRANS<='$tgl2',SALDO_TRANS,0))) as debet FROM tabtrans where (NO_REKENING='$norekpegangan[$i]') GROUP BY NO_REKENING")[0]->debet;
+                $sqlupdtbg="UPDATE tabung SET tabung.ADM_BLN_INI=tabung.ADM_PER_BLN,tabung.SALDO_NOMINATIF=$sldnomi,tabung.SALDO_SETORAN=$sldsetor,tabung.SALOD_PENARIKAN=$sldtarik where tabung.NO_REKENING='$norekpegangan[$i]'";
             }else{
-                $sqlupdtbg="UPDATE tabung SET tabung.ADM_BLN_INI=tabung.ADM_PER_BLN,tabung.SALDO_NOMINATIF=(SELECT (tabung.SALDO_AWAL+SUM(if(MY_KODE_TRANS LIKE '1%',SALDO_TRANS,0))-SUM(if(MY_KODE_TRANS LIKE '2%',SALDO_TRANS,0))) as debet FROM tabung inner join tabtrans on tabung.NO_REKENING=tabtrans.NO_REKENING where (tabung.NO_REKENING='$norekpegangan[$i]' AND tabtrans.TGL_TRANS<='$tgl2') GROUP BY tabung.NO_REKENING),tabung.SALDO_SETORAN=(SELECT (SUM(if(MY_KODE_TRANS LIKE '1%' AND TGL_TRANS<='$tgl2',SALDO_TRANS,0))) as debet FROM tabtrans where (NO_REKENING='$norekpegangan[$i]') GROUP BY NO_REKENING),tabung.SALDO_PENARIKAN=(SELECT (SUM(if(MY_KODE_TRANS LIKE '2%' AND TGL_TRANS<='$tgl2',SALDO_TRANS,0))) as debet FROM tabtrans where (NO_REKENING='$norekpegangan[$i]') GROUP BY NO_REKENING) where tabung.NO_REKENING='$norekpegangan[$i]'";
+                $sldnomi=DB::select("SELECT (tabung.SALDO_AWAL+SUM(if(MY_KODE_TRANS LIKE '1%',SALDO_TRANS,0))-SUM(if(MY_KODE_TRANS LIKE '2%',SALDO_TRANS,0))) as debet FROM tabung inner join tabtrans on tabung.NO_REKENING=tabtrans.NO_REKENING where (tabung.NO_REKENING='$norekpegangan[$i]' AND tabtrans.TGL_TRANS<='$tgl2') GROUP BY tabung.NO_REKENING),tabung.SALDO_SETORAN=(SELECT (SUM(if(MY_KODE_TRANS LIKE '1%' AND TGL_TRANS<='$tgl2',SALDO_TRANS,0))) as debet FROM tabtrans where (NO_REKENING='$norekpegangan[$i]') GROUP BY NO_REKENING")[0]->debet;
+                $sldsetor=DB::select("SELECT (SUM(if(MY_KODE_TRANS LIKE '1%' AND TGL_TRANS<='$tgl2',SALDO_TRANS,0))) as debet FROM tabtrans where (NO_REKENING='$norekpegangan[$i]') GROUP BY NO_REKENING")[0]->debet;
+                $sldtarik=DB::select("SELECT (SUM(if(MY_KODE_TRANS LIKE '2%' AND TGL_TRANS<='$tgl2',SALDO_TRANS,0))) as debet FROM tabtrans where (NO_REKENING='$norekpegangan[$i]') GROUP BY NO_REKENING")[0]->debet;
+                $sqlupdtbg="UPDATE tabung SET tabung.ADM_BLN_INI=tabung.ADM_PER_BLN,tabung.SALDO_NOMINATIF=$sldnomi,tabung.SALDO_SETORAN=$sldsetor,tabung.SALDO_PENARIKAN=$sldtarik where tabung.NO_REKENING='$norekpegangan[$i]'";
 
             }
             DB::select($sqlupdtbg);
@@ -2691,7 +2698,7 @@ return redirect()->back()->with('alert','SUDAH PERNAH DILAKUKAN PERHITUNGAN');
                     } 
 
                 }elseif($j>0){
-                // Unutk Menghitung Bunga dan Saldo Efektif jika sudah punya saldo awal bulan
+                // Untuk Menghitung Bunga dan Saldo Efektif jika sudah punya saldo awal bulan
                     $selisihhari=(strtotime($tgltrans[$j])-strtotime($tgltrans[($j-1)]))*1/60*1/60*1/24;
                     // Hitung bunga
                     $bunga=$bunga+ ($tottrans)*($selisihhari)*($sqltab[0]->SUKU_BUNGA)/100*1/$jmlsetahun;

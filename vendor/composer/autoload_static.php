@@ -62,6 +62,7 @@ class ComposerStaticInit00e2b37b581c27ce0b8b3205b5af7ca6
         ),
         'T' => 
         array (
+            'Tuta\\Terbilang\\' => 15,
             'TijsVerkoyen\\CssToInlineStyles\\' => 31,
             'Tests\\' => 6,
         ),
@@ -219,6 +220,10 @@ class ComposerStaticInit00e2b37b581c27ce0b8b3205b5af7ca6
         'Webmozart\\Assert\\' => 
         array (
             0 => __DIR__ . '/..' . '/webmozart/assert/src',
+        ),
+        'Tuta\\Terbilang\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/tuta/terbilang/src',
         ),
         'TijsVerkoyen\\CssToInlineStyles\\' => 
         array (
@@ -6083,6 +6088,9 @@ class ComposerStaticInit00e2b37b581c27ce0b8b3205b5af7ca6
         'TijsVerkoyen\\CssToInlineStyles\\Css\\Property\\Property' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/Css/Property/Property.php',
         'TijsVerkoyen\\CssToInlineStyles\\Css\\Rule\\Processor' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/Css/Rule/Processor.php',
         'TijsVerkoyen\\CssToInlineStyles\\Css\\Rule\\Rule' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/Css/Rule/Rule.php',
+        'Tuta\\Terbilang\\Facades\\TerbilangFacade' => __DIR__ . '/..' . '/tuta/terbilang/src/Facades/TerbilangFacade.php',
+        'Tuta\\Terbilang\\Terbilang' => __DIR__ . '/..' . '/tuta/terbilang/src/Terbilang.php',
+        'Tuta\\Terbilang\\TerbilangServiceProvider' => __DIR__ . '/..' . '/tuta/terbilang/src/TerbilangServiceProvider.php',
         'TypeError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/TypeError 2.php',
         'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError 2.php',
         'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError 2.php',

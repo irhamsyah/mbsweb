@@ -7851,6 +7851,49 @@
             "install-path": "../tijsverkoyen/css-to-inline-styles"
         },
         {
+            "name": "tuta/terbilang",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tutacare/terbilang.git",
+                "reference": "5dd7c8ad9ac4ae4e7e950ccff4282ba271587f5e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tutacare/terbilang/zipball/5dd7c8ad9ac4ae4e7e950ccff4282ba271587f5e",
+                "reference": "5dd7c8ad9ac4ae4e7e950ccff4282ba271587f5e",
+                "shasum": ""
+            },
+            "time": "2015-12-16T07:54:31+00:00",
+            "default-branch": true,
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Tuta\\Terbilang\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Irfan Mahfudz Guntur",
+                    "email": "irfanmg@mytuta.com",
+                    "homepage": "http://mytuta.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Menampilkan nilai terbilang dari jumlah uang atau angka",
+            "support": {
+                "issues": "https://github.com/tutacare/terbilang/issues",
+                "source": "https://github.com/tutacare/terbilang/tree/master"
+            },
+            "install-path": "../tuta/terbilang"
+        },
+        {
             "name": "vlucas/phpdotenv",
             "version": "v4.1.8",
             "version_normalized": "4.1.8.0",

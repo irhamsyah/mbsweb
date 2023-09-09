@@ -97,7 +97,9 @@ Route::get('/bo_cs_rp_nasabah/exportamplop', 'ReportController@bo_cs_rp_nasabah_
 //tabungan
 Route::get('/bo_cs_rp_tabungan', 'ReportController@bo_cs_rp_tabungan')->name('caritabungan');
 Route::post('/bo_cs_rp_tabungan/cari','ReportController@bo_cs_rp_tabungan_cari');//search filter
-Route::get('/bo_cs_rp_tabungan/exportcovertab', 'ReportController@bo_cs_rp_tabungan_rp_covertab')->name('cetakcovertab');//print cover butab
+Route::get('/bo_cs_rp_tabungan/printcovertab', 'ReportController@bo_cs_rp_tabungan_rp_covertab')->name('cetakcovertab');//print cover butab
+Route::post('/bo_cs_rp_tabungan/buktisetortab', 'ReportController@bo_cs_rp_tabungan_buktisetor')->name('caribuktisetortab');//form bukti setor tabungan
+Route::post('/bo_cs_rp_tabungan/printbuktisetortab', 'ReportController@bo_cs_rp_tabungan_rp_buktisetortab');//print bukti setor tab
 
 
 //Route Tabungan

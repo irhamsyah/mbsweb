@@ -26,12 +26,12 @@ if($filter!=''){
     $pecahFilter = explode('|', $filter);
     $filteridnasabah=$pecahFilter[0];
     $filternamanasabah=$pecahFilter[1];
-    $filterjenisnasabah=$pecahFilter[2];
+    $filternorekening=$pecahFilter[2];
 
 }else{
     $filteridnasabah='';
     $filternamanasabah='';
-    $filterjenisnasabah='';
+    $filternorekening='';
 }
 @endphp
 <!-- Main content -->
@@ -57,15 +57,15 @@ if($filter!=''){
                   <label for="namanasabah1">Nama Nasabah</label>
                 </div>             
                 <div class="col-lg-5 col-sm-12">
-                  <input type="text" class="form-control" id="namanasabah1" name="namanasabah1" value="{{$filternamanasabah}}" placeholder="Masukkan Nama Nasabah">
+                  <input type="text" class="form-control" id="namanasabah1" name="namanasabah1" value="{{ $filternamanasabah }}" placeholder="Masukkan Nama Nasabah">
                 </div>
               </div>
               <div class="row form-group">
                 <div class="col-lg-3 col-sm-12">
-                  <label for="jenisnasabah1">Jenis Nasabah</label>
+                  <label for="norekening1">No Rekening</label>
                 </div>             
                 <div class="col-lg-5 col-sm-12">
-                  <input type="text" class="form-control" id="jenisnasabah1" name="jenisnasabah1" value="{{$filterjenisnasabah}}" placeholder="Masukkan Jenis Nasabah">
+                  <input type="text" class="form-control" id="norekening1" name="norekening1" value="{{ $filternorekening }}" placeholder="Masukkan Nomor Rekening">
                 </div>
               </div>
               <div class="row form-group">
@@ -87,32 +87,39 @@ if($filter!=''){
               <thead>
               <tr>
                 <th>No</th>
-                <th>No Nasabah</th>
+                <th>No Rekening</th>
                 <th>Nama Debitur</th>
                 <th>Alamat</th>
                 <th>Kota</th>
-                <th>No Telp</th>
-                <th>TTL</th>
+                <th>Jenis Tabungan</th>
+                <th>Saldo Saat Ini</th>
                 <th>Action</th>
               </tr>
               </thead>
               <tbody>
-                @foreach($nasabahs as $index => $nasabah)
-                  @if($nasabah->tgllahir==NULL)
+                @foreach($tabungans as $index => $tabungan)
+                  @if($tabungan->tgllahir==NULL)
                     @php ($tgllahir='')
                   @else
-                    @php ($tgllahir=$nasabah->tgllahir->format('d/m/Y'))
+                    @php ($tgllahir=$tabungan->tgllahir->format('d/m/Y'))
                   @endif
                 <tr>
                   <td>{{ $index+1 }}</td>
-                  <td>{{ strtoupper($nasabah->nasabah_id) }}</td>
-                  <td>{{ $nasabah->nama_nasabah }}</td>
-                  <td>{{ strtoupper($nasabah->alamat.' '.$nasabah->kelurahan.' '.$nasabah->kecamatan) }}</td>
-                  <td>{{ $nasabah->Deskripsi_Kota }}</td>
-                  <td>{{ $nasabah->telpon }}</td>
-                  <td>{{ $nasabah->tempatlahir.', '.$tgllahir }}</td>
+                  <td>{{ strtoupper($tabungan->NO_REKENING) }}</td>
+                  <td>{{ $tabungan->nama_nasabah }}</td>
+                  <td>{{ strtoupper($tabungan->alamat.' '.$tabungan->kelurahan.' '.$tabungan->kecamatan) }}</td>
+                  <td>{{ $tabungan->Deskripsi_Kota }}</td>
+                  <td>{{ $tabungan->JENIS_TABUNGAN }}</td>
+                  <td>{{ $tabungan->SALDO_AKHIR }}</td>
                   <td>
-                    <a href="{{ route('cetakcovertab',['inputIdNasabahprint'=>$nasabah->nasabah_id])}}" target="_blank" class="btn btn-sm btn-danger"> <i class="fa fa-print" style="color:white"></i> Cover Butab</a>
+                    <a href="{{ route('cetakcovertab',['inputIdNasabahprint'=>$tabungan->nasabah_id,'inputNoRekprint'=>$tabungan->NO_REKENING])}}" target="_blank" class="btn btn-sm btn-danger"> <i class="fa fa-print" style="color:white"></i> Cover Butab</a>
+                    <form action="/bo_cs_rp_tabungan/buktisetortab" method="post" style="margin-bottom: 0;">
+                        <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-print" style="color:white"></i> Bukti Setor</button>
+                        <input type="hidden" name="inputIdNasabahprint" value="{{ $tabungan->nasabah_id }}" class="form-control">
+                        <input type="hidden" name="inputNoRekprint" value="{{ $tabungan->NO_REKENING }}" class="form-control">
+                        <input type="hidden" name="_method" value="POST"/>
+                        @csrf
+                    </form>
                   </td>
                 </tr>
                 @endforeach

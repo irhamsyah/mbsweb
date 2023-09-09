@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\Nasabah;
+use App\Tabungan;
 use App\Logo;
+use App\Kodetranstabungan;
 use App\Exports\ReportnasabahExport;
 use App\Exports\ReportnasabahamplopExport;
 
@@ -141,39 +143,48 @@ class ReportController extends Controller
     public function bo_cs_rp_tabungan()
     {
       $logos = Logo::all();
-      $nasabahs = Nasabah::select('nasabah.*','jenis_kota.Deskripsi_Kota')
-      ->leftJoin('jenis_kota', function($join) {
-        $join->on('nasabah.kota_id', '=', 'jenis_kota.Kota_id');
+      $tabungans = Tabungan::select('tabung.NO_REKENING','tabung.SALDO_AKHIR','tabung.JENIS_TABUNGAN','nasabah.nasabah_id','nasabah.nama_nasabah','nasabah.alamat',
+      'nasabah.kelurahan','nasabah.kecamatan','nasabah.kode_pos','jenis_kota.Deskripsi_Kota')
+      ->leftJoin('nasabah', function($join1) {
+        $join1->on('tabung.NASABAH_ID', '=', 'nasabah.nasabah_id');
       })
-      ->limit(20)->orderby('nasabah.nasabah_id','ASC')->get();
+      ->leftJoin('jenis_kota', function($join2) {
+        $join2->on('nasabah.kota_id', '=', 'jenis_kota.Kota_id');
+      })
+      ->limit(20)->orderby('nasabah.nama_nasabah','ASC')->get();
 
-      return view('reports/frmsearchtabungan', ['logos'=> $logos,'nasabahs'=> $nasabahs,'filter'=> '','msgstatus'=> '']);
+      return view('reports/frmsearchtabungan', ['logos'=> $logos,'tabungans'=> $tabungans,'filter'=> '','msgstatus'=> '']);
     }
     public function bo_cs_rp_tabungan_cari(Request $request)
     {
       $logos = Logo::all();
 
-      $nasabahs = Nasabah::select('nasabah.*','jenis_kota.Deskripsi_Kota')
-      ->leftJoin('jenis_kota', function($join) {
-        $join->on('nasabah.kota_id', '=', 'jenis_kota.Kota_id');
+      $tabungans = Tabungan::select('tabung.NO_REKENING','tabung.SALDO_AKHIR','tabung.JENIS_TABUNGAN','nasabah.nasabah_id','nasabah.nama_nasabah','nasabah.alamat',
+      'nasabah.kelurahan','nasabah.kecamatan','nasabah.kode_pos','jenis_kota.Deskripsi_Kota')
+      ->leftJoin('nasabah', function($join1) {
+        $join1->on('tabung.NASABAH_ID', '=', 'nasabah.nasabah_id');
       })
-      ->where('nasabah_id', 'LIKE', '%' . request()->idnasabah1 . '%')
+      ->leftJoin('jenis_kota', function($join2) {
+        $join2->on('nasabah.kota_id', '=', 'jenis_kota.Kota_id');
+      })
+      ->where('tabung.NASABAH_ID', 'LIKE', '%' . request()->idnasabah1 . '%')
       ->when(request()->namanasabah1, function($query) {
-        $query->where('nama_nasabah', 'LIKE', '%' . request()->namanasabah1 . '%');
+        $query->where('nasabah.nama_nasabah', 'LIKE', '%' . request()->namanasabah1 . '%');
       })
-      ->when(request()->jenisnasabah1, function($query) {
-        $query->where('jenis_nasabah', request()->jenisnasabah1);
+      ->when(request()->norekening1, function($query) {
+        $query->where('tabung.NO_REKENING', request()->norekening1);
       })
-      ->orderby('nasabah.nasabah_id','ASC')->get();
+      ->orderby('nasabah.nama_nasabah','ASC')->get();
 
-      $filters = request()->idnasabah1.'|'.request()->namanasabah1.'|'.request()->jenisnasabah1;
+      $filters = request()->idnasabah1.'|'.request()->namanasabah1.'|'.request()->norekening1;
 
-      return view('reports/frmsearchtabungan', ['logos'=> $logos,'nasabahs'=> $nasabahs,'filter'=> $filters,'msgstatus'=> '']);
+      return view('reports/frmsearchtabungan', ['logos'=> $logos,'tabungans'=> $tabungans,'filter'=> $filters,'msgstatus'=> '']);
     }
 
     public function bo_cs_rp_tabungan_rp_covertab(Request $request)
     {
         $filteridnasabah = request()->inputIdNasabahprint;
+        $filternorektab = request()->inputNoRekprint;
         $sql="SELECT
         a.nasabah_id,
         a.nama_nasabah,
@@ -185,11 +196,53 @@ class ReportController extends Controller
         c.NO_REKENING
         FROM nasabah a LEFT JOIN jenis_kota b ON a.kota_id = b.Kota_id
         LEFT JOIN tabung c ON a.nasabah_id = c.NASABAH_ID
-        WHERE a.nasabah_id = '$filteridnasabah' 
+        WHERE a.nasabah_id = '$filteridnasabah' AND c.NO_REKENING = '$filternorektab'
         ";
         $nasabah=DB::select($sql);
         // dd($nasabah);
         return view('pdf.cetakcovertab',['nasabah'=>$nasabah]);         
+    }
+
+    public function bo_cs_rp_tabungan_buktisetor(Request $request)
+    {
+      $logos = Logo::all();
+        $filteridnasabah = request()->inputIdNasabahprint;
+        $filternorektab = request()->inputNoRekprint;
+        $sql="SELECT
+        a.nasabah_id,
+        a.nama_nasabah,
+        a.alamat,
+        a.kelurahan,
+        a.kecamatan,
+        a.kode_pos,
+        b.Deskripsi_Kota,
+        c.NO_REKENING,
+        c.SALDO_AKHIR
+        FROM nasabah a LEFT JOIN jenis_kota b ON a.kota_id = b.Kota_id LEFT JOIN tabung c ON a.nasabah_id=c.NASABAH_ID
+        WHERE a.nasabah_id = '$filteridnasabah' AND c.NO_REKENING = '$filternorektab'
+        ";
+        $nasabah=DB::select($sql);
+        $kodetranstab = KodeTransTabungan::all();
+        // dd($nasabah);
+        return view('reports/frmsearchtabunganbuktisetor',['logos'=> $logos,'nasabah'=>$nasabah,'kodetranstab'=> $kodetranstab,'msgstatus'=> '']);         
+    }
+
+    public function bo_cs_rp_tabungan_rp_buktisetortab(Request $request)
+    {
+        $tanggal = request()->tanggal;
+        $norek = request()->norek;
+        $namanasabah = request()->namanasabah;
+        $alamat = request()->alamat;
+        $kwitansi = request()->kwitansi;
+        $jumlah = request()->jumlah;
+        $debetkredit = request()->debetkredit;
+        $tunaiovb = request()->tunaiovb;
+        $keterangan = request()->keterangan;
+        $kodetranstab = request()->kodetranstab;
+        $kota = request()->kota;
+        return view('pdf.cetakbuktisetortab',['tanggal'=>$tanggal,'norek'=>$norek,'namanasabah'=>$namanasabah,'kwitansi'=>$kwitansi,
+        'jumlah'=>$jumlah,'debetkredit'=>$debetkredit,'tunaiovb'=>$tunaiovb,'keterangan'=>$keterangan,'kodetranstab'=>$kodetranstab,
+        'kota'=>$kota]);         
     }
     
 }

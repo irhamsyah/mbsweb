@@ -3,7 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'b33c6d848b7d959255b8eea484ba0366459ef95e',
+        'reference' => 'a06026161d3e8e90154c7d77656f8c13314c22b3',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -430,7 +430,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'b33c6d848b7d959255b8eea484ba0366459ef95e',
+            'reference' => 'a06026161d3e8e90154c7d77656f8c13314c22b3',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -1290,6 +1290,17 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../tijsverkoyen/css-to-inline-styles',
             'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'tuta/terbilang' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => '5dd7c8ad9ac4ae4e7e950ccff4282ba271587f5e',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../tuta/terbilang',
+            'aliases' => array(
+                0 => '9999999-dev',
+            ),
             'dev_requirement' => false,
         ),
         'vlucas/phpdotenv' => array(

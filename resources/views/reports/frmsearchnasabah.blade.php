@@ -126,7 +126,7 @@ if($filter!=''){
                   <td>{{ $nasabah->tempatlahir.', '.$tgllahir }}</td>
                   <td>
                     <a href="{{ route('cetaknasabahamplop',['inputIdNasabahprint'=>$nasabah->nasabah_id])}}" target="_blank" class="btn btn-sm btn-danger"> <i class="fa fa-print" style="color:white"></i> Amplop</a>
-                  </td>
+                    </td>
                 </tr>
                 @endforeach
               </tbody>

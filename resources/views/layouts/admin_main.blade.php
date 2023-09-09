@@ -224,7 +224,7 @@
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_cs_rp_tabungan" class="nav-link <?php if($page=='tabungan' or $page=='tabungancari'){echo 'active';}?>">
+                    <a href="/bo_cs_rp_tabungan" class="nav-link <?php if($page=='tabungan' or $page=='tabungancari' or $page=='tabunganbuktisetortab'){echo 'active';}?>">
                       <p class="pl-4">Dokumen Tabungan</p>
                     </a>
                   </li>

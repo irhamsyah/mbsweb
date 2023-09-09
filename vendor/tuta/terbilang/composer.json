@@ -1,0 +1,20 @@
+{
+    "name": "tuta/terbilang",
+    "description": "Menampilkan nilai terbilang dari jumlah uang atau angka",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Irfan Mahfudz Guntur",
+            "email": "irfanmg@mytuta.com",
+            "homepage": "http://mytuta.com",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+      "psr-4": {
+        "Tuta\\Terbilang\\": "src/"
+      }
+    },
+    "minimum-stability": "dev",
+    "require": {}
+}

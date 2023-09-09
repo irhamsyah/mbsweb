@@ -163,6 +163,11 @@ return [
         Illuminate\View\ViewServiceProvider::class,
 
         /*
+         * Package Terbilang
+         */
+        Tuta\Terbilang\TerbilangServiceProvider::class,
+
+        /*
          * Package PDF
          */
         Barryvdh\DomPDF\ServiceProvider::class,

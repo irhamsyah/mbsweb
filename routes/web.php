@@ -100,7 +100,10 @@ Route::post('/bo_cs_rp_tabungan/cari','ReportController@bo_cs_rp_tabungan_cari')
 Route::get('/bo_cs_rp_tabungan/printcovertab', 'ReportController@bo_cs_rp_tabungan_rp_covertab')->name('cetakcovertab');//print cover butab
 Route::post('/bo_cs_rp_tabungan/buktisetortab', 'ReportController@bo_cs_rp_tabungan_buktisetor')->name('caribuktisetortab');//form bukti setor tabungan
 Route::post('/bo_cs_rp_tabungan/printbuktisetortab', 'ReportController@bo_cs_rp_tabungan_rp_buktisetortab');//print bukti setor tab
-
+//Umum
+Route::get('/bo_cs_rp_umum', 'ReportController@bo_cs_rp_umum')->name('cariumum');
+Route::post('/bo_cs_rp_umum/cari','ReportController@bo_cs_rp_umum_cari');//search filter
+Route::post('/bo_cs_rp_umum/printdokumenumum', 'ReportController@bo_cs_rp_umum_rp_umum');//print umum
 
 //Route Tabungan
 Route::get('/bo_tb_de_tabungan','TabunganController@bo_tb_de_tabungan')->name('showtabungan');

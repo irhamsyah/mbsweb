@@ -921,6 +921,22 @@ $(document).ready(function () {
     //----------------------------------------Bahtera DATA LAMA------------------------------
 
 
+
+    //set show hidden form at Laporan CS UMUM 
+    $("#typedokumencsumum").on('change', function(){
+      var typedokumencsumum = this.value;
+      if(typedokumencsumum=="umum"){
+        $(".formkasdong").css("display","none");
+        $(".formumumdong").css("display","flex");
+      }else{
+        $(".formkasdong").css("display","flex");
+        $(".formumumdong").css("display","none");
+      }
+    });
+
+
+
+
     // Function show modal Data Nasabah yang di EDIT
     $('#modal-edit-nasabah').on('show.bs.modal', function(e) {
       /* Generate / Get variables */

@@ -8,6 +8,8 @@ use App\Nasabah;
 use App\Tabungan;
 use App\Logo;
 use App\Kodetranstabungan;
+use App\KodeJurnal;
+use App\Perkiraan;
 use App\Exports\ReportnasabahExport;
 use App\Exports\ReportnasabahamplopExport;
 
@@ -45,6 +47,7 @@ class ReportController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
 
+    //Nasabah
     public function bo_cs_rp_nasabah()
     {
       $logos = Logo::all();
@@ -77,7 +80,6 @@ class ReportController extends Controller
 
       return view('reports/frmsearchnasabah', ['logos'=> $logos,'nasabahs'=> $nasabahs,'filter'=> $filters,'msgstatus'=> '']);
     }
-
     public function bo_cs_rp_nasabah_rp(Request $request)
     {
       $filteridnasabah = request()->exportidnasabah;
@@ -98,7 +100,6 @@ class ReportController extends Controller
       $nasabah=DB::select($sql);
       return (new ReportnasabahExport($nasabah))->download('nasabah.xlsx');
     }
-
     public function bo_cs_rp_nasabah_rppdf(Request $request)
     {
         $filteridnasabah = request()->printidnasabah;
@@ -120,7 +121,6 @@ class ReportController extends Controller
         // dd($nasabah);
         return view('pdf.cetaknasabah',['nasabah'=>$nasabah]);         
     }
-
     public function bo_cs_rp_nasabah_rp_amplop(Request $request)
     {
         $filteridnasabah = request()->inputIdNasabahprint;
@@ -140,6 +140,7 @@ class ReportController extends Controller
         return view('pdf.cetaknasabahamplop',['nasabah'=>$nasabah]);         
     }
 
+    //Tabungan
     public function bo_cs_rp_tabungan()
     {
       $logos = Logo::all();
@@ -180,7 +181,6 @@ class ReportController extends Controller
 
       return view('reports/frmsearchtabungan', ['logos'=> $logos,'tabungans'=> $tabungans,'filter'=> $filters,'msgstatus'=> '']);
     }
-
     public function bo_cs_rp_tabungan_rp_covertab(Request $request)
     {
         $filteridnasabah = request()->inputIdNasabahprint;
@@ -202,7 +202,6 @@ class ReportController extends Controller
         // dd($nasabah);
         return view('pdf.cetakcovertab',['nasabah'=>$nasabah]);         
     }
-
     public function bo_cs_rp_tabungan_buktisetor(Request $request)
     {
       $logos = Logo::all();
@@ -226,7 +225,6 @@ class ReportController extends Controller
         // dd($nasabah);
         return view('reports/frmsearchtabunganbuktisetor',['logos'=> $logos,'nasabah'=>$nasabah,'kodetranstab'=> $kodetranstab,'msgstatus'=> '']);         
     }
-
     public function bo_cs_rp_tabungan_rp_buktisetortab(Request $request)
     {
         $tanggal = request()->tanggal;
@@ -244,5 +242,38 @@ class ReportController extends Controller
         'jumlah'=>$jumlah,'debetkredit'=>$debetkredit,'tunaiovb'=>$tunaiovb,'keterangan'=>$keterangan,'kodetranstab'=>$kodetranstab,
         'kota'=>$kota]);         
     }
-    
+
+    //Umum
+    public function bo_cs_rp_umum()
+    {
+      $logos = Logo::all();
+      $kodejurnals = KodeJurnal::all();
+      $perkiraans = Perkiraan::all();
+      
+      $nasabahs = Nasabah::select('nasabah.*','jenis_kota.Deskripsi_Kota')
+      ->leftJoin('jenis_kota', function($join) {
+        $join->on('nasabah.kota_id', '=', 'jenis_kota.Kota_id');
+      })
+      ->orderby('nasabah.nama_nasabah','ASC')->get();
+
+      // dd($kodejurnals);
+      return view('reports/frmsearchumum', ['logos'=> $logos,'nasabahs'=> $nasabahs,'kodejurnals'=> $kodejurnals,'perkiraans'=> $perkiraans,'filter'=> '','msgstatus'=> '']);
+    }
+    public function bo_cs_rp_umum_rp_umum(Request $request)
+    {
+        $tanggal = request()->tanggal;
+        $kodejurnal = request()->kodejurnal;
+        $atasnama = request()->atasnama;
+        $keteranganumum = request()->keteranganumum;
+        $glbalance1 = request()->glbalance1;
+        $glbalance2 = request()->glbalance2;
+        $uraian = request()->uraian;
+        $jumlah = request()->jumlah;
+        $typedokumen = request()->typedokumen;
+        $nasabah = request()->nasabah;
+        
+        return view('pdf.cetakdokumenumum',['tanggal'=>$tanggal,'kodejurnal'=>$kodejurnal,'atasnama'=>$atasnama,'keteranganumum'=>$keteranganumum,
+        'glbalance1'=>$glbalance1,'glbalance2'=>$glbalance2,'uraian'=>$uraian,'jumlah'=>$jumlah,'nasabah'=>$nasabah,
+        'typedokumen'=>$typedokumen]);
+    }
 }

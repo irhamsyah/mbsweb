@@ -138,7 +138,7 @@
                   </button> --}}
                 </div>
                 <div class="modal-body">
-                  <table id="datatabungan" class="display" width="100%">
+                  <table id="datatabunganx" class="display" width="100%">
                     <thead>
                       <tr>
                           <th>No_Rekening</th>

@@ -247,188 +247,204 @@
                 </li>
                 </ul>
               </li>
-              <li class="nav-item has-treeview menu-close">
-                <a href="/adm_transaction" class="nav-link">
+              {{-- Menu Tree TELLER --}}
+              <li class="nav-item has-treeview menu-close <?php if($menu=='tl'){echo 'menu-open';}?>">
+                <a href="#" class="nav-link <?php if($menu=='tl'){echo 'active';}?>">
                   <i class="right fas fa-angle-left"></i>
                   <p class="pl-1">TELLER</p>
                 </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item has-treeview <?php if(($menu=='tt')){echo'menu-open';}?>">
+                      <a href="#" class="nav-link <?php if($menu=='tt'){echo 'active';} ?>" >
+                        <i class="right fas fa-angle-left"></i>
+                        <p class="pl-1">TRANSAKSI TABUNGAN</p>
+                      </a>
+                      <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                          <a href="{{route('setoranpenarikantabungan')}}" class="nav-link <?php if($page=='setoranpenarikantabungan' or $page=='setpentabungan'){echo 'active';}?>">
+                            <p class="pl-3">Setoran & Penarikan</p>
+                          </a>
+                        </li>
+                      </ul>
+                    </li>
+                </ul>
               </li>
+              {{-- Menu Tree TABUNGAN --}}
               <li class="nav-item has-treeview menu-close <?php if($menu=='tb'){echo 'menu-open';}?>">
                 <a href="#" class="nav-link <?php if($menu=='tb'){echo 'active';}?>">
                   <i class="right fas fa-angle-left"></i>
                   <p class="pl-1">TABUNGAN</p>
                 </a>
-                {{-- Menu Tree Tabungan --}}
-              <ul class="nav nav-treeview"> 
+                <ul class="nav nav-treeview"> 
 
-                <li class="nav-item has-treeview <?php if($submenu=='de'){echo 'menu-open';}?>">
-                  <a href="#" class="nav-link <?php if($submenu=='de'){echo 'active';}?>">
-                    <i class="right fas fa-angle-left"></i>
-                    <p class="pl-2">DATA ENTRY</p>
-                  </a>
-                  <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <a href="/bo_tb_de_tabungan" class="nav-link <?php if($page=='tabungan' or $page=='tabungancari'){echo 'active';}?>">
-                      <p class="pl-3">Rekening Tabungan</p>
+                  <li class="nav-item has-treeview <?php if($submenu=='de'){echo 'menu-open';}?>">
+                    <a href="#" class="nav-link <?php if($submenu=='de'){echo 'active';}?>">
+                      <i class="right fas fa-angle-left"></i>
+                      <p class="pl-2">DATA ENTRY</p>
                     </a>
+                    <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                      <a href="/bo_tb_de_tabungan" class="nav-link <?php if($page=='tabungan' or $page=='tabungancari'){echo 'active';}?>">
+                        <p class="pl-3">Rekening Tabungan</p>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="/bo_tb_de_frmhapustransaksi" class="nav-link">
+                        <p class="pl-3">Hapus Transaksi</p>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="bo_tb_de_frmhitungbungatab" class="nav-link">
+                        <p class="pl-3">Perhitungan Bunga</p>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="bo_tb_de_frmbrowsebungapajak" class="nav-link">
+                        <p class="pl-3">Browse Bunga & Pajak</p>
+                      </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                      <a href="bo_tb_de_frmoverbooktabungan" class="nav-link">
+                        <p class="pl-3">Overbook Bunga</p>
+                      </a>
+                    </li>
+                    {{-- MENU TREE VIEW  --}}
+                    <li class="nav-item has-treeview menu-close">
+                      <a href="/adm_transaction" class="nav-link">
+                        <i class="right fas fa-angle-left"></i>
+                        <p class="pl-2">Pencatatan Blokir</p>
+                      </a>
+                      <ul class="nav nav-treeview">
+                        <li class="nav-item has-treeview menu-close">
+                          <li class="nav-item">
+                            <a href="/bo_tb_de_showfrmblokir" class="nav-link">
+                            <p class="pl-3">Pemblokiran</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="bo_tb_de_showfrmunblokir" class="nav-link">
+                              <p class="pl-3">UnBlokir</p>
+                            </a>
+                          </li>
+                        </li>
+                      </ul>
+                    </li> 
+                    {{-- Batas tree view --}}
+
+                    </ul>
                   </li>
-                  <li class="nav-item">
-                    <a href="/bo_tb_de_frmhapustransaksi" class="nav-link">
-                      <p class="pl-3">Hapus Transaksi</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="bo_tb_de_frmhitungbungatab" class="nav-link">
-                      <p class="pl-3">Perhitungan Bunga</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="bo_tb_de_frmbrowsebungapajak" class="nav-link">
-                      <p class="pl-3">Browse Bunga & Pajak</p>
-                    </a>
-                  </li>
-                  
-                  <li class="nav-item">
-                    <a href="bo_tb_de_frmoverbooktabungan" class="nav-link">
-                      <p class="pl-3">Overbook Bunga</p>
-                    </a>
-                  </li>
-                  {{-- MENU TREE VIEW  --}}
                   <li class="nav-item has-treeview menu-close">
                     <a href="/adm_transaction" class="nav-link">
                       <i class="right fas fa-angle-left"></i>
-                      <p class="pl-2">Pencatatan Blokir</p>
+                      <p class="pl-2">ADMINISTRATOR</p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                      <a href="/adm_transaction" class="nav-link">
+                        <p class="pl-3">Produk Tabungan</p>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="/adm_transaction" class="nav-link">
+                        <p class="pl-3">Konfigurasi Tabungan</p>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="/adm_transaction" class="nav-link">
+                        <p class="pl-3">Update Prosentase Bunga</p>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="/adm_transaction" class="nav-link">
+                        <p class="pl-3">Tabel Pendukung</p>
+                      </a>
+                    </li>
+                    </ul>
+                  </li>
+                  <li class="nav-item has-treeview menu-close">
+                    <a href="/adm_transaction" class="nav-link">
+                      <i class="right fas fa-angle-left"></i>
+                      <p class="pl-2">PENCETAKAN LAPORAN</p>
                     </a>
                     <ul class="nav nav-treeview">
                       <li class="nav-item has-treeview menu-close">
-                        <li class="nav-item">
-                          <a href="/bo_tb_de_showfrmblokir" class="nav-link">
-                          <p class="pl-3">Pemblokiran</p>
-                          </a>
-                        </li>
-                        <li class="nav-item">
-                          <a href="bo_tb_de_showfrmunblokir" class="nav-link">
-                            <p class="pl-3">UnBlokir</p>
-                          </a>
-                        </li>
-                      </li>
-                    </ul>
-                  </li> 
-                  {{-- Batas tree view --}}
 
-                  </ul>
-                </li>
-                <li class="nav-item has-treeview menu-close">
-                  <a href="/adm_transaction" class="nav-link">
-                    <i class="right fas fa-angle-left"></i>
-                    <p class="pl-2">ADMINISTRATOR</p>
-                  </a>
-                  <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Produk Tabungan</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Konfigurasi Tabungan</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Update Prosentase Bunga</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="/adm_transaction" class="nav-link">
-                      <p class="pl-3">Tabel Pendukung</p>
-                    </a>
-                  </li>
-                  </ul>
-                </li>
-                <li class="nav-item has-treeview menu-close">
-                  <a href="/adm_transaction" class="nav-link">
-                    <i class="right fas fa-angle-left"></i>
-                    <p class="pl-2">PENCETAKAN LAPORAN</p>
-                  </a>
-                  <ul class="nav nav-treeview">
-                    <li class="nav-item has-treeview menu-close">
-
-                    <a href="/adm_transaction" class="nav-link">
-                      <i class="right fas fa-angle-left"></i>
-                      <p class="pl-2">Nominatif</p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                      <li class="nav-item">
-                        <a href="/bo_tb_rpt_nominatif" class="nav-link">
-                          <p class="pl-3">Nominatif Rinci</p>
-                        </a>
-                      </li>
-                      <li class="nav-item">
-                        <a href="/bo_tb_rpt_nominatifrekap" class="nav-link">
-                          <p class="pl-3">Nominatif Rekap</p>
-                        </a>
-                      </li>
-                      <li class="nav-item">
-                        <a href="/bo_tb_rpt_nominatifexpress" class="nav-link">
-                          <p class="pl-3">Nominatif Express</p>
-                        </a>
-                      </li>
-                      <li class="nav-item">
-                        <a href="/bo_tb_rpt_nominatifpasif" class="nav-link">
-                          <p class="pl-3">Nominatif Tab Pasif</p>
-                        </a>
-                      </li>
-                      <li class="nav-item">
-                        <a href="/bo_tb_rpt_nominatijenis" class="nav-link">
-                          <p class="pl-3">Nominatif Menurut Jenis</p>
-                        </a>
-                      </li>                    
-                    </ul>
-                    </li>
-                  </ul>
-                  <ul class="nav nav-treeview">
-                    <li class="nav-item has-treeview menu-close">
-
-                    <a href="/adm_transaction" class="nav-link">
-                      <i class="right fas fa-angle-left"></i>
-                      <p class="pl-2">Transaksi</p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                      <li class="nav-item">
-                        <a href="/bo_tb_rpt_frmtransaksi" class="nav-link">
-                          <p class="pl-3">Transaksi Rinci</p>
-                        </a>
-                      </li>
-                      <li class="nav-item">
-                        <a href="/bo_tb_rpt_nominatifrekap" class="nav-link">
-                          <p class="pl-3">Transaksi Rekap Kode</p>
-                        </a>
-                      </li>
-                      <li class="nav-item">
-                        <a href="/bo_tb_rpt_nominatifexpress" class="nav-link">
-                          <p class="pl-3">Transaksi Rekap</p>
-                        </a>
-                      </li>
-                      <li class="nav-item">
-                        <a href="/bo_tb_rpt_nominatifpasif" class="nav-link">
-                          <p class="pl-3">Transaksi Rekasp Mutasi</p>
-                        </a>
-                      </li>
-                    </ul>
-                    </li>
-                  </ul>
-                  <ul class="nav nav-treeview">
-                    <li class="nav-item">
-                      <a href="/bo_tb_rpt_tabunganblokir" class="nav-link">
-                        <p class="pl-2">Laporan Blokir</p>
+                      <a href="/adm_transaction" class="nav-link">
+                        <i class="right fas fa-angle-left"></i>
+                        <p class="pl-2">Nominatif</p>
                       </a>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
+                      <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                          <a href="/bo_tb_rpt_nominatif" class="nav-link">
+                            <p class="pl-3">Nominatif Rinci</p>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="/bo_tb_rpt_nominatifrekap" class="nav-link">
+                            <p class="pl-3">Nominatif Rekap</p>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="/bo_tb_rpt_nominatifexpress" class="nav-link">
+                            <p class="pl-3">Nominatif Express</p>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="/bo_tb_rpt_nominatifpasif" class="nav-link">
+                            <p class="pl-3">Nominatif Tab Pasif</p>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="/bo_tb_rpt_nominatijenis" class="nav-link">
+                            <p class="pl-3">Nominatif Menurut Jenis</p>
+                          </a>
+                        </li>                    
+                      </ul>
+                      </li>
+                    </ul>
+                    <ul class="nav nav-treeview">
+                      <li class="nav-item has-treeview menu-close">
+
+                      <a href="/adm_transaction" class="nav-link">
+                        <i class="right fas fa-angle-left"></i>
+                        <p class="pl-2">Transaksi</p>
+                      </a>
+                      <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                          <a href="/bo_tb_rpt_frmtransaksi" class="nav-link">
+                            <p class="pl-3">Transaksi Rinci</p>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="/bo_tb_rpt_nominatifrekap" class="nav-link">
+                            <p class="pl-3">Transaksi Rekap Kode</p>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="/bo_tb_rpt_nominatifexpress" class="nav-link">
+                            <p class="pl-3">Transaksi Rekap</p>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="/bo_tb_rpt_nominatifpasif" class="nav-link">
+                            <p class="pl-3">Transaksi Rekasp Mutasi</p>
+                          </a>
+                        </li>
+                      </ul>
+                      </li>
+                    </ul>
+                    <ul class="nav nav-treeview">
+                      <li class="nav-item">
+                        <a href="/bo_tb_rpt_tabunganblokir" class="nav-link">
+                          <p class="pl-2">Laporan Blokir</p>
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
                 {{-- batas menu tree tabungan --}}
-                </li>
+              </li>
               <li class="nav-item has-treeview menu-close">
                 <a href="/adm_transaction" class="nav-link">
                   <i class="right fas fa-angle-left"></i>
@@ -441,11 +457,26 @@
                   <p class="pl-1">KREDIT</p>
                 </a>
               </li>
-              <li class="nav-item has-treeview menu-close">
-                <a href="/adm_transaction" class="nav-link">
+              <li class="nav-item has-treeview menu-close <?php if($menu=='ak'){echo 'menu-open';}?>">
+                <a href="#" class="nav-link <?php if($menu=='ak'){echo 'active';}?>">
                   <i class="right fas fa-angle-left"></i>
                   <p class="pl-1">AKUNTANSI</p>
                 </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item has-treeview <?php if(($menu=='tt')){echo'menu-open';}?>">
+                      <a href="#" class="nav-link <?php if($menu=='tt'){echo 'active';} ?>" >
+                        <i class="right fas fa-angle-left"></i>
+                        <p class="pl-1">TRANSAKSI</p>
+                      </a>
+                      <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                          <a href="{{route('postingdatatransaksi')}}" class="nav-link <?php if($page=='setoranpenarikantabungan' or $page=='setpentabungan'){echo 'active';}?>">
+                            <p class="pl-3">Posting Data Transaksi</p>
+                          </a>
+                        </li>
+                      </ul>
+                    </li>
+                </ul>
               </li>
               <li class="nav-item has-treeview menu-close">
                 <a href="/adm_transaction" class="nav-link">
@@ -1207,10 +1238,14 @@ $(e.currentTarget).find('input[name="hidden_jenis_tabungan"]').val(Hidden_jenis_
       $(e.currentTarget).find('input[name="adm_bln_ini"]').val(Adm_bln_ini);
 
     });
+// DATATABLE
+$(document).ready(function () {
+    $('#datatabunganx').DataTable();
+});
 // Fungsi untuk menampilkan Data Tabungan pada Modal yg akan diinput ke Form BlokirTabungan
 $(document).ready(function(){
 // code to read selected table row cell data (values).
-$("#datatabungan").on('click','#klik',function(){
+$("#datatabunganx").on('click','#klik',function(){
      // get the current row
      var currentRow=$(this).closest("tr"); 
      
@@ -1232,8 +1267,8 @@ $("#datatabungan").on('click','#klik',function(){
     //  alert(data);
       });
     });
-  $('#modal-unblokir').on('show.bs.modal', function(e) {
 
+  $('#modal-unblokir').on('show.bs.modal', function(e) {
       var No_rekening = $(e.relatedTarget).data('no_rekening');
       var Nama_nasabah = $(e.relatedTarget).data('nama_nasabah');
       var Saldo_blokir = $(e.relatedTarget).data('saldo_blokir');
@@ -1244,6 +1279,37 @@ $("#datatabungan").on('click','#klik',function(){
     $(e.currentTarget).find('input[name="saldo_blokir"]').val(Saldo_blokir);
     $(e.currentTarget).find('input[name="tgl_blokir"]').val(Tgl_blokir);
 
+    })
+
+    // DATATABLE
+$(document).ready(function () {
+    $('#datatabungan').DataTable();
+});
+
+// Fungsi untuk menampilkan Data Tabungan pada Modal yg akan diinput ke Form TRANSAKSI
+$(document).ready(function(){
+// code to read selected table row cell data (values).
+$("#datatabungan").on('click','#klik',function(){
+     // get the current row
+     var currentRow=$(this).closest("tr"); 
+     
+     var col1=currentRow.find("td:eq(0)").text(); // no_rek/get current row 1st TD value
+     var col2=currentRow.find("td:eq(1)").text(); // nama/get current row 2nd TD
+     var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
+     var col4=currentRow.find("td:eq(3)").text(); // get current row 4th TD
+     var col5=currentRow.find("td:eq(4)").text(); // get current row 5th TD
+     var col6=currentRow.find("td:eq(5)").text(); // get current row 6th TD
+
+    //  var data=col1+"\n"+col2+"\n"+col3;
+     document.getElementById("putnorekening").value=col1;
+     document.getElementById("putnamanasabah").value=col2;
+     document.getElementById("putalamat").value=col3;
+     document.getElementById("putjenistab").value=col4;
+     document.getElementById("putsaldoakhir").value=col5;
+     document.getElementById("putsaldoblokir").value=col6;
+
+    //  alert(data);
+      });
     });
 
 </script>

@@ -55,7 +55,7 @@ class TabunganController extends Controller
         $tgllogin=Mysysid::where('KeyName','=','TANGGALHARIINI')->get();
 
         return view('admin.tabungan', ['users'=>$users,'nasabah'=>$nasabah,'logos'=> $logos,'tabungan'=> $tabungan,'kodegrou1tabungan'=> $kodegrou1tabungan,'kodegrou2tabungan'=> $kodegrou2tabungan,'kodegrou3tabungan'=>$kodegrou3tabungan,'kodejenistabungan'=> $kodejenistabungan,'golonganpihaklawan'=>$golonganpihaklawan,'kodeketerkaitanlapbul'=>$kodeketerkaitanlapbul,'kodemetoda'=>$kodemetoda,'kodecabang'=>$kodecabang,'tgllogin'=>$tgllogin,'tgl_login'=>$tgllogin]);
-        }
+    }
 
     public function bo_tab_edit_tabungan(Request $request)
     {
@@ -3008,7 +3008,7 @@ return redirect()->back()->with('alert','SUDAH PERNAH DILAKUKAN PERHITUNGAN');
     {
         $users = User::all();
         $logos = Logo::all();
-        $tabungan=DB::select("SELECT tabung.NO_REKENING,nasabah.nama_nasabah,nasabah.alamat,tabung.JENIS_TABUNGAN,kodejenistabungan.DESKRIPSI_JENIS_TABUNGAN,tabung.SALDO_AKHIR,tabung.BLOKIR,tabung.SALDO_BLOKIR,tabung.TGL_BLOKIR,tabung.TGL_UNBLOKIR FROM (tabung INNER JOIN nasabah ON tabung.NASABAH_ID=nasabah.nasabah_id) INNER JOIN kodejenistabungan ON tabung.JENIS_TABUNGAN=kodejenistabungan.KODE_JENIS_TABUNGAN limit 25");
+        $tabungan=DB::select("SELECT tabung.NO_REKENING,nasabah.nama_nasabah,nasabah.alamat,tabung.JENIS_TABUNGAN,kodejenistabungan.DESKRIPSI_JENIS_TABUNGAN,tabung.SALDO_AKHIR,tabung.BLOKIR,tabung.SALDO_BLOKIR,tabung.TGL_BLOKIR,tabung.TGL_UNBLOKIR FROM (tabung INNER JOIN nasabah ON tabung.NASABAH_ID=nasabah.nasabah_id) INNER JOIN kodejenistabungan ON tabung.JENIS_TABUNGAN=kodejenistabungan.KODE_JENIS_TABUNGAN");
 
         return view('admin.tabungan.frmblokirtab',['users'=>$users,'logos'=>$logos,'tabungan'=>$tabungan,'msgstatus'=>'']);
     }

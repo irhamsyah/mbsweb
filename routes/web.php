@@ -228,8 +228,6 @@ Route::post('exporttoexceltransaksitab',
     'uses'=>'TabunganController@exporttoexceltransaksitab'
 ]
 );
-
-
 // EXPORT KE EXCEL TABUNGAN BLOKIR
 Route::post('exporttoexceltabblokir',
 [
@@ -237,3 +235,8 @@ Route::post('exporttoexceltabblokir',
     'uses'=>'TabunganController@exporttoexceltabblokir'
 ]
 );
+// TELLER
+Route::get('bo_tl_tt_setoranpenarikantabungan','TellertabunganController@bo_tl_tt_setoranpenarikantabungan')->name('setoranpenarikantabungan');
+Route::post('bo_tl_tt_simpantrstabungan','TellertabunganController@bo_tl_tt_simpantrstabungan');
+// AKUNTANSI
+Route::get('bo_ak_tt_postingdatatransaksi','AkuntansiController@bo_ak_tt_postingdatatransaksi')->name('postingdatatransaksi');

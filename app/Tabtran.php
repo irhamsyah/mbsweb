@@ -35,9 +35,15 @@ class Tabtran extends Model
             trim('NASABAH_ID')
         );
     }
+    // Relasi ke kodetranstabungan
     public function kodetranstab() 
     {
         return $this->hasMany('App\Kodetranstabungan','KODE_TRANS','KODE_TRANS');
+    }
+    // Relasi ke Tellettrans
+    public function tellertran()
+    {
+        return $this->belongsToMany('App\Tellertran','TABTRANS_ID','modul_trans_id');
     }
     public $timestamps=false;
     protected $table = 'tabtrans';

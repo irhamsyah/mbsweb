@@ -48,12 +48,17 @@ class TellertabunganController extends Controller
         // UPDATE TABUNG
         $norekpegangan = $request->no_rekening;
         $tgl = $request->tgl_trans;
-        $sldnomi=DB::select("SELECT (tabung.SALDO_AWAL+SUM(if(MY_KODE_TRANS LIKE '1%',SALDO_TRANS,0))-SUM(if(MY_KODE_TRANS LIKE '2%',SALDO_TRANS,0))) as debet FROM tabung inner join tabtrans on tabung.NO_REKENING=tabtrans.NO_REKENING where (tabung.NO_REKENING='$norekpegangan' AND tabtrans.TGL_TRANS<='$tgl') GROUP BY tabung.NO_REKENING),tabung.SALDO_SETORAN=(SELECT (SUM(if(MY_KODE_TRANS LIKE '1%' AND TGL_TRANS<='$tgl',SALDO_TRANS,0))) as debet FROM tabtrans where (NO_REKENING='$norekpegangan') GROUP BY NO_REKENING")[0]->debet;
+        $sldnomi=DB::select("SELECT (tabung.SALDO_AWAL+SUM(if(MY_KODE_TRANS LIKE '1%',SALDO_TRANS,0))-SUM(if(MY_KODE_TRANS LIKE '2%',SALDO_TRANS,0))) as debet FROM tabung inner join tabtrans on tabung.NO_REKENING=tabtrans.NO_REKENING where (tabung.NO_REKENING='$norekpegangan' AND tabtrans.TGL_TRANS<='$tgl') GROUP BY tabung.NO_REKENING")[0]->debet;
         $sldsetor=DB::select("SELECT (SUM(if(MY_KODE_TRANS LIKE '1%' AND TGL_TRANS<='$tgl',SALDO_TRANS,0))) as debet FROM tabtrans where (NO_REKENING='$norekpegangan') GROUP BY NO_REKENING")[0]->debet;
         $sldtarik=DB::select("SELECT (SUM(if(MY_KODE_TRANS LIKE '2%' AND TGL_TRANS<='$tgl',SALDO_TRANS,0))) as debet FROM tabtrans where (NO_REKENING='$norekpegangan') GROUP BY NO_REKENING")[0]->debet;
         $sqlupdate="UPDATE tabung SET tabung.ADM_BLN_INI=tabung.ADM_PER_BLN,tabung.SALDO_AKHIR=$sldnomi,tabung.SALDO_SETORAN=$sldsetor,tabung.SALDO_PENARIKAN=$sldtarik where tabung.NO_REKENING='$norekpegangan'";
         DB::select($sqlupdate);
         // --------------
+        // UPDATE KE TABLES TELLERTRANS
+        $sql=DB::select("SELECT * FROM tabtrans WHERE KUITANSI ='$request->kuitansi' AND TGL_TRANS='$request->tgl_trans'");
+        // for($i=0;$i<count($sql);$i++){
+            dd($sql);
+        // }
         if($transaksi->exists){
             $msg='1';
         }else{

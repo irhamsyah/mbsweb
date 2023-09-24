@@ -112,6 +112,7 @@
                     <div class="dropdown-menu">
                       <a href="#" tabindex="-1" class="dropdown-item" data-toggle="modal" data-target="#modal-edit-deposito"
                         data-no_rekening="{{ $deposito->NO_REKENING }}"
+                        data-no_rekeninghash="{{ md5($deposito->NO_REKENING.'Bast90') }}"
                         data-no_alternatif="{{ $deposito->NO_ALTERNATIF }}"
                         data-nasabah_id="{{ $deposito->NASABAH_ID }}"
                         data-qq="{{ $deposito->QQ }}"
@@ -144,7 +145,7 @@
                         data-akad="{{ $deposito->AKAD }}"
                         data-gol_nasabah="{{ $deposito->gol_nasabah }}"
                         data-keterangan="{{ $deposito->KETERANGAN }}"
-                        data-cab="{{ $deposito->CAB }}"
+                        data-cab="{{ $deposito->KODE_CAB }}"
                         data-nama_nasabah="{{ $deposito->nama_nasabah }}"
                         data-alamat="{{ $deposito->alamat }}"
                         >
@@ -181,7 +182,7 @@
   </div>
   {{-- MODAL EDIT DEPOSITO --}}
   <div class="modal fade" id="modal-edit-deposito">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
       <form action="/bo_dp_de_deposito" id="formeditdeposito" method="post" enctype="multipart/form-data">
         <div class="modal-content">
           <div class="modal-header">
@@ -197,11 +198,11 @@
                 <div class="col-lg-3 col-sm-6">
                   <label for="einputstatus">Status</label>
                   <div class="form-check">
-                    <input class="form-check-input" type="radio" name="einputstatus" value="1" checked>
+                    <input class="form-check-input" type="radio" id="einputstatus1" name="einputstatus" value="1">
                     <label class="form-check-label" style="margin-right:30px;">Baru</label>
-                    <input class="form-check-input" type="radio" name="einputstatus" value="2" disabled>
+                    <input class="form-check-input" type="radio" id="einputstatus2" name="einputstatus" value="2">
                     <label class="form-check-label" style="margin-right:30px;">Aktif</label>
-                    <input class="form-check-input" type="radio" name="einputstatus" value="3" disabled>
+                    <input class="form-check-input" type="radio" id="einputstatus3" name="einputstatus" value="3">
                     <label class="form-check-label">Tutup</label>
                   </div>
                 </div>
@@ -227,7 +228,7 @@
                   </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="enorek">No.Rekening</label>
-                  <input id="enorek" type="text" name="eno_rekening" class="form-control" required>
+                  <input id="enorek" type="text" name="eno_rekening" class="form-control" readonly required>
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="eno_bilyet">No. Bilyet</label>
@@ -236,9 +237,9 @@
               </div>
               <div class="row">
                 <div class="col-lg-3 col-sm-6">
-                  <label for="enasabahid">Nasabah / Anggota ID</label>
+                  <label for="editidnasabah">Nasabah / Anggota ID</label>
                   <div class="input-group date" data-target-input="nearest">
-                    <input id="enasabahid" type="text" name="enasabah_id" readonly class="form-control" required>
+                    <input id="editidnasabah" type="text" name="enasabah_id" readonly class="form-control" required>
 
                     <div class="input-group-append" data-toggle="modal" data-target="#ambildatanasabah">
                       <div class="input-group-text"><i class="fa fa-user"></i></div>
@@ -247,16 +248,16 @@
                   </div>
                 </div>
                 <div class="col-lg-3 col-sm-12">
-                  <label for="enama_nasabah">Nama</label>
-                  <input type="text" id="einputNamaNasabah" name="enama_nasabah" readonly class="form-control">
+                  <label for="editnamanasabah">Nama</label>
+                  <input type="text" id="editnamanasabah" name="enama_nasabah" readonly class="form-control">
                 </div>
                 <div class="col-lg-2 col-sm-12">
                   <label for="eqq">QQ</label>
                   <input type="text" id="einputqq" name="eqq" readonly class="form-control">
                 </div>
                 <div class="col-lg-4 col-sm-12">
-                  <label for="einputalamat">Alamat</label>
-                  <input type="text" id="einputalamat" name="ealamat" readonly class="form-control" required>
+                  <label for="editalamatnasabah">Alamat</label>
+                  <input type="text" id="editalamatnasabah" name="ealamat" readonly class="form-control" required>
                 </div>
               </div>
               <div class="row">
@@ -268,7 +269,7 @@
                   <label for="eblokir">.</label>
                   <div class="row">
                     <div class="form-check">
-                      <input id="eblokir" type="checkbox" name="eblokir" class="form-check-input" disabled>
+                      <input id="eblokir" type="checkbox" name="eblokir" class="form-check-input">
                       <label for="eblokir">Blokir</label>
                     </div>
                   </div>
@@ -335,9 +336,9 @@
                   </div>
                 </div>
                 <div class="col-lg-3 col-sm-6">
-                  <label for="ekerekeningtab">Ke Rekening Tab</label>
+                  <label for="editkerekeningtab">Ke Rekening Tab</label>
                   <div class="input-group date" data-target-input="nearest">
-                    <input id="ekerekeningtab" type="text" name="ekerekeningtab" readonly class="form-control" required>
+                    <input id="editkerekeningtab" type="text" name="ekerekeningtab" readonly class="form-control" required>
 
                     <div class="input-group-append" data-toggle="modal" data-target="#ambildatarektab">
                       <div class="input-group-text"><i class="fa fa-user"></i></div>
@@ -462,6 +463,7 @@
                 <div class="col-lg-3 col-sm-6">
                   <label for="eadministrasi">Administrasi</label>
                   <input type="text" name="eadministrasi" class="form-control" value="{{ number_format(0,2) }}" id="eadministrasi" readonly>
+                  <input type="hidden" name="eno_rekeningHashedit"  class="form-control"/>
                   <input type="hidden" name="_method" value="PUT"/>
                 </div>
               </div>            
@@ -482,7 +484,7 @@
   {{-- MODAL UNTUK MENAMPILKAN TAMBAH DATA DEPOSITO --}}
   <div class="modal fade bs-modal-deposito" id="modal-add-deposito">
     <div class="modal-dialog modal-dialog-scrollable modal-xl">
-      <form action="/bo_dp_de_deposito" method="post" enctype="multipart/form-data">
+      <form action="/bo_dp_de_deposito" method="post" enctype="multipart/form-data" id="formadddeposito">
         <div class="modal-content">
           <div class="modal-header">
             <h4 class="modal-title">Data Entry Deposito</h4>
@@ -527,7 +529,7 @@
                   </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="norek">No.Rekening</label>
-                  <input id="norekadd" type="text" onchange="" name="no_rekening" class="form-control" required>
+                  <input id="norekadd" type="text" name="no_rekening" class="form-control" required>
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="bilyet">No. Bilyet</label>

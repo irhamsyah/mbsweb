@@ -705,6 +705,24 @@ $(document).ready(function(){
     $("#type_bunga").val(typesukubunga);
     // alert(idjenisdeposito+'_'+sukubungadeposito);
   });
+  $("#elistjenisdeposito").change(function(e){
+    var element = $(this).find('option:selected');
+    var idjenisdeposito = element.val();
+    var sukubungadeposito = element.data('ebunga');
+    var pph = element.data('epph');
+    var jkw = element.data('ejkw');
+    var flagdep = element.data('eflagdep');
+    var typesukubunga = element.data('etypesukubunga');
+    var prosenprovisi = element.data('eprovisi');
+    var prosenadm = element.data('eadm');
+    $("#ebunga").val(sukubungadeposito);
+    $("#epph").val(pph);
+    $("#ejkw").val(jkw);
+    $("#etipe_deposito").val(flagdep);
+    $("#eprovisi").val(prosenprovisi);
+    $("#eadm").val(prosenadm);
+    $("#etype_bunga").val(typesukubunga);
+  });
   $("#tgl_registrasidepo").change(function(e){
     var tglregis = $(this).val();
     var tglvaluta = tglregis.split("-");
@@ -1086,6 +1104,7 @@ $(document).ready(function () {
     //***************************************EDIT MODAL DEPOSITO************************** */
     $('#modal-edit-deposito').on('show.bs.modal', function(e) {
       var no_rekening = $(e.relatedTarget).data('no_rekening');
+      var no_rekeninghash = $(e.relatedTarget).data('no_rekeninghash');
       var no_alternatif = $(e.relatedTarget).data('no_alternatif');
       var nasabah_id = $(e.relatedTarget).data('nasabah_id');
       var qq = $(e.relatedTarget).data('qq');
@@ -1138,22 +1157,23 @@ $(document).ready(function () {
       {
         $(e.currentTarget).find('input[name="earo"]').prop('checked',true);
       }
-      if(Status_aktif==1){
-        $(e.currentTarget).find('input[name="einputstatus"],value=1').prop('checked',true);
-      }else if(Status_aktif==2){
-        $(e.currentTarget).find('input[name="einputstatus"],value=2').prop('checked',true);
+      if(status_aktif=='1'){
+        $(e.currentTarget).find('input[id="einputstatus1"]').prop('checked',true);
+      }else if(status_aktif=='2'){
+        $(e.currentTarget).find('input[id="einputstatus2"]').prop('checked',true);
       }else{
-        $(e.currentTarget).find('input[name="einputstatus"],value=3').prop('checked',true);
+        $(e.currentTarget).find('input[id="einputstatus3"]').prop('checked',true);
       }
 
       $(e.currentTarget).find('input[name="ecab"]').val(cab);
       $(e.currentTarget).find('select[name="ejenis_deposito"]').val(jenis_deposito).attr("selected", "selected");
       $(e.currentTarget).find('input[name="eno_rekening"]').val(no_rekening);
+      $(e.currentTarget).find('input[name="eno_rekeningHashedit"]').val(no_rekeninghash);
       $(e.currentTarget).find('input[name="eno_bilyet"]').val(no_alternatif);
       $(e.currentTarget).find('input[name="enasabah_id"]').val(nasabah_id);
       $(e.currentTarget).find('input[name="enama_nasabah"]').val(nama_nasabah);
       $(e.currentTarget).find('input[name="ealamat"]').val(alamat);
-      $(e.currentTarget).find('input[name="ejmldeposito"]').val(jml_deposito);
+      $(e.currentTarget).find('input[name="ejml_deposito"]').val(jml_deposito);
       $(e.currentTarget).find('select[name="etype_bunga"]').val(type_suku_bunga).attr("selected", "selected");
       $(e.currentTarget).find('input[name="esuku_bunga"]').val(suku_bunga);
       $(e.currentTarget).find('input[name="epersen_pph"]').val(persen_pph);

@@ -57,7 +57,7 @@ class DepositoController extends Controller
         $kodemetoda = Kodemetoda::all();
         $tgllogin=Mysysid::where('KeyName','=','TANGGALHARIINI')->get();
 
-        return view('admin.deposito', ['users'=>$users,'nasabah'=>$nasabah,'tabungan'=>$tabungan,'logos'=> $logos,'depositos'=> $depositos,'kodegroup1deposito'=> $kodegroup1deposito,'kodegroup2deposito'=> $kodegroup2deposito,'kodegroup3deposito'=>$kodegroup3deposito,'kodejenisdeposito'=> $kodejenisdeposito,'golonganpihaklawan'=>$golonganpihaklawan,'kodeketerkaitanlapbul'=>$kodeketerkaitanlapbul,'kodemetoda'=>$kodemetoda,'kodecabang'=>$kodecabang,'tgllogin'=>$tgllogin,'tgl_login'=>$tgllogin,'msgstatus'=> '']);
+        return view('admin.deposito', ['users'=>$users,'nasabah'=>$nasabah,'tabungan'=>$tabungan,'logos'=> $logos,'depositos'=> $depositos,'kodegroup1deposito'=> $kodegroup1deposito,'kodegroup2deposito'=> $kodegroup2deposito,'kodegroup3deposito'=>$kodegroup3deposito,'kodejenisdeposito'=> $kodejenisdeposito,'golonganpihaklawan'=>$golonganpihaklawan,'kodeketerkaitanlapbul'=>$kodeketerkaitanlapbul,'kodemetoda'=>$kodemetoda,'kodecabang'=>$kodecabang,'tgllogin'=>$tgllogin,'tgl_login'=>$tgllogin,'msgstatus'=> '','msgview'=> '']);
     }
     
     public function bo_dp_de_deposito_cari(Request $request) 
@@ -87,106 +87,199 @@ class DepositoController extends Controller
         $kodemetoda = Kodemetoda::all();
         $tgllogin=Mysysid::where('KeyName','=','TANGGALHARIINI')->get();
 
-        return view('admin.deposito', ['users'=>$users,'nasabah'=>$nasabah,'tabungan'=>$tabungan,'logos'=> $logos,'depositos'=> $depositos,'kodegroup1deposito'=> $kodegroup1deposito,'kodegroup2deposito'=> $kodegroup2deposito,'kodegroup3deposito'=>$kodegroup3deposito,'kodejenisdeposito'=> $kodejenisdeposito,'golonganpihaklawan'=>$golonganpihaklawan,'kodeketerkaitanlapbul'=>$kodeketerkaitanlapbul,'kodemetoda'=>$kodemetoda,'kodecabang'=>$kodecabang,'tgllogin'=>$tgllogin,'tgl_login'=>$tgllogin,'msgstatus'=> '']);
+        return view('admin.deposito', ['users'=>$users,'nasabah'=>$nasabah,'tabungan'=>$tabungan,'logos'=> $logos,'depositos'=> $depositos,'kodegroup1deposito'=> $kodegroup1deposito,'kodegroup2deposito'=> $kodegroup2deposito,'kodegroup3deposito'=>$kodegroup3deposito,'kodejenisdeposito'=> $kodejenisdeposito,'golonganpihaklawan'=>$golonganpihaklawan,'kodeketerkaitanlapbul'=>$kodeketerkaitanlapbul,'kodemetoda'=>$kodemetoda,'kodecabang'=>$kodecabang,'tgllogin'=>$tgllogin,'tgl_login'=>$tgllogin,'msgstatus'=> '','msgview'=> '']);
+    }
+
+    public function bo_dp_de_deposito_add(Request $request)
+    {
+      $logos = Logo::all();
+
+      if ($request->no_rekening != '' && $request->jenis_deposito !='' && $request->jml_deposito !='' && $request->tgl_registrasi !='' && $request->inputstatus !='')
+      {
+        if($request->aro=="on"){
+            $aro='1';
+        }else{
+            $aro='0';
+        }
+        if($request->bungaberbunga=="on"){
+            $bungaberbunga='1';
+        }else{
+            $bungaberbunga='0';
+        }
+        if($request->masuktitipan=="on"){
+            $masuktitipan='1';
+        }else{
+            $masuktitipan='0';
+        }
+        if($request->blokir=="on"){
+            $blokir='1';
+        }else{
+            $blokir='0';
+        }
+        $depositos = new Deposito;
+        $depositos->NO_REKENING = $request->no_rekening;
+        $depositos->NO_ALTERNATIF = $request->no_bilyet;
+        $depositos->NASABAH_ID = $request->nasabah_id;
+        $depositos->QQ = $request->qq;
+        $depositos->KODE_BI_PEMILIK = $request->kode_bi_pemilik;
+        $depositos->KODE_BI_HUBUNGAN = $request->kode_bi_hubungan;
+        $depositos->KODE_BI_METODA = $request->metoda;
+        $depositos->JENIS_DEPOSITO = $request->jenis_deposito;
+        $depositos->JML_DEPOSITO = $request->jml_deposito;
+        $depositos->SUKU_BUNGA = $request->suku_bunga;
+        $depositos->PERSEN_PPH = $request->persen_pph;
+        $depositos->TGL_REGISTRASI = $request->tgl_registrasi;
+        $depositos->JKW = $request->jkw;
+        $depositos->TGL_JT = $request->tgl_jt;
+        $depositos->STATUS_AKTIF = $request->inputstatus;
+        $depositos->KODE_GROUP1 = $request->kode_group1;
+        $depositos->KODE_GROUP2 = $request->kode_group2;
+        $depositos->KODE_GROUP3 = $request->kode_group3;
+        $depositos->STATUS_BUNGA = $request->catatanaro;
+        $depositos->ARO = $aro;
+        $depositos->NO_REK_TABUNGAN = $request->kerekeningtab;
+        $depositos->BUNGA_BERBUNGA = $bungaberbunga;
+        $depositos->MASUK_TITIPAN = $masuktitipan;
+        $depositos->KODE_CAB = $request->cab;
+        $depositos->ABP = $request->tipe_deposito;
+        $depositos->PROVISI = $request->provisi;
+        $depositos->ADM = $request->administrasi;
+        $depositos->TYPE_SUKU_BUNGA = $request->type_bunga;
+        $depositos->TGL_VALUTA = $request->tgl_valuta;
+        $depositos->TGL_MULAI = $request->tgl_penempatan;
+        $depositos->BLOKIR = $blokir;
+        $depositos->AKAD = '2';
+        $depositos->gol_nasabah = '876';
+        $depositos->KETERANGAN = $request->keterangan;
+        $depositos->save();
+
+        if ($depositos){
+          $msg='1';
+          $msgdetail='Proses Berhasil';
+        }else{
+          $msg='0';
+          $msgdetail='Proses Simpan Data Gagal!';
+        }
+      }else{
+        $msg='0';
+        $msgdetail='Proses Gagal, Harap mengisi data dengan lengkap!';
+      }
+      
+        $nasabah=Nasabah::select('nasabah_id','nama_nasabah','alamat')->get();
+        $tabungan=DB::select('select tabung.NO_REKENING,tabung.NASABAH_ID,tabung.JENIS_TABUNGAN,tabung.SALDO_AKHIR,nasabah.nama_nasabah,nasabah.alamat FROM tabung LEFT JOIN nasabah ON tabung.NASABAH_ID=nasabah.nasabah_id');
+        $depositos = DB::select('select deposito.*,nasabah.nama_nasabah,nasabah.alamat FROM deposito LEFT JOIN nasabah ON deposito.NASABAH_ID = nasabah.nasabah_id WHERE deposito.NO_REKENING="'.$request->no_rekening.'"');
+        $users = User::all();
+        $kodecabang=Kodecabang::where('DATA_CAB','=','mydata')->get();
+        $kodegroup1deposito = KodeGroup1Deposito::all();
+        $kodegroup2deposito = KodeGroup2Deposito::all();
+        $kodegroup3deposito = KodeGroup3Deposito::all();
+        $kodejenisdeposito = Kodejenisdeposito::all();
+        $golonganpihaklawan = Golonganpihaklawan::all();
+        $kodeketerkaitanlapbul = Kodeketerkaitanlapbul::all();
+        $kodemetoda = Kodemetoda::all();
+        $tgllogin=Mysysid::where('KeyName','=','TANGGALHARIINI')->get();
+
+        return view('admin.deposito', ['users'=>$users,'nasabah'=>$nasabah,'tabungan'=>$tabungan,'logos'=> $logos,'depositos'=> $depositos,'kodegroup1deposito'=> $kodegroup1deposito,'kodegroup2deposito'=> $kodegroup2deposito,'kodegroup3deposito'=>$kodegroup3deposito,'kodejenisdeposito'=> $kodejenisdeposito,'golonganpihaklawan'=>$golonganpihaklawan,'kodeketerkaitanlapbul'=>$kodeketerkaitanlapbul,'kodemetoda'=>$kodemetoda,'kodecabang'=>$kodecabang,'tgllogin'=>$tgllogin,'tgl_login'=>$tgllogin,'msgstatus'=> $msg,'msgview'=> $msgdetail]);
     }
 
     public function bo_dp_de_deposito_edit(Request $request)
     {
-        // dd($request);
-        $this->validate($request,[
-            'jenis_tabungan'=>'required',
-            'no_rekening'=>'required',
-            'nasabah_id'=>'required',
-            'type_tabungan'=>'required',
-            'suku_bunga'=>'required',
-        ]);
-        $nilai=0;
-        if($request->saldo_blokir>0){
-            $nilai=1;
-        }
-        Tabungan::where('NO_REKENING',$request->no_rekening)
-        ->update(['nasabah_id' => $request->nasabah_id,
-                    'jenis_tabungan' => $request->jenis_tabungan,
-                    'no_rekening' => $request->no_rekening,
-                    'no_alternatif' => $request->no_alternatif,
-                    'cab' => $request->cab,
-                    'type_tabungan' => $request->type_tabungan,
-                    'suku_bunga' => $request->suku_bunga,
-                    'persen_pph' => $request->persen_pph,
-                    'tgl_bunga' => date('Y-m-d',strtotime($request->tgl_bunga)),
-                    'saldo_blokir' => $request->saldo_blokir,
-                    'blokir' => $nilai,
-                    'kode_group1' => $request->kode_group1,
-                    'kode_group2' => $request->kode_group2,
-                    'kode_group3' => $request->kode_group3,
-                    'kode_bi_pemilik' => $request->kode_bi_pemilik,
-                    'kode_bi_metoda' => $request->kode_bi_metoda,
-                    'kode_bi_hubungan' => $request->kode_bi_hubungan,
-                    'flag_restricted' => $request->flag_restricted,
-                    'minimum' => $request->minimum,
-                    'setoran_minimum' => $request->setoran_minimum,
-                    'setoran_per_bln' => $request->setoran_per_bln,
-                    'abp' => $request->abp,
-                    'adm_per_bln' => $request->adm_per_bln,
-                    'periode_adm' => $request->periode_adm
+        $logos = Logo::all();
+        if(md5($request->eno_rekening.'Bast90') == $request->eno_rekeningHashedit)
+        {
+            //update Deposito
+            $depositos = Deposito::where('NO_REKENING', $request->eno_rekening)->first();
+            
+            if ($request->eno_rekening != '' && $request->ejenis_deposito !='' && $request->ejml_deposito !='' && $request->etgl_registrasi !='' && $request->einputstatus !='')
+            {   
+                if($request->earo=="on"){
+                    $earo='1';
+                }else{
+                    $earo='0';
+                }
+                if($request->ebungaberbunga=="on"){
+                    $ebungaberbunga='1';
+                }else{
+                    $ebungaberbunga='0';
+                }
+                if($request->emasuktitipan=="on"){
+                    $emasuktitipan='1';
+                }else{
+                    $emasuktitipan='0';
+                }
+                if($request->eblokir=="on"){
+                    $eblokir='1';
+                }else{
+                    $eblokir='0';
+                }
+
+                Deposito::where('NO_REKENING',$request->eno_rekening)
+                ->update(['NO_ALTERNATIF' => $request->eno_bilyet,
+                    'NASABAH_ID' => $request->enasabah_id,
+                    'QQ' => $request->eqq,
+                    'KODE_BI_PEMILIK' => $request->ekode_bi_pemilik,
+                    'KODE_BI_HUBUNGAN' => $request->ekode_bi_hubungan,
+                    'KODE_BI_METODA' => $request->emetoda,
+                    'JENIS_DEPOSITO' => $request->ejenis_deposito,
+                    'JML_DEPOSITO' => $request->ejml_deposito,
+                    'SUKU_BUNGA' => $request->esuku_bunga,
+                    'PERSEN_PPH' => $request->epersen_pph,
+                    'TGL_REGISTRASI' => $request->etgl_registrasi,
+                    'JKW' => $request->ejkw,
+                    'TGL_JT' => $request->etgl_jt,
+                    'STATUS_AKTIF' => $request->einputstatus,
+                    'KODE_GROUP1' => $request->ekode_group1,
+                    'KODE_GROUP2' => $request->ekode_group2,
+                    'KODE_GROUP3' => $request->ekode_group3,
+                    'STATUS_BUNGA' => $request->ecatatanaro,
+                    'ARO' => $earo,
+                    'NO_REK_TABUNGAN' => $request->ekerekeningtab,
+                    'BUNGA_BERBUNGA' => $ebungaberbunga,
+                    'MASUK_TITIPAN' => $emasuktitipan,
+                    'KODE_CAB' => $request->ecab,
+                    'ABP' => $request->etipe_deposito,
+                    'PROVISI' => $request->eprovisi,
+                    'ADM' => $request->eadministrasi,
+                    'TYPE_SUKU_BUNGA' => $request->etype_bunga,
+                    'TGL_VALUTA' => $request->etgl_valuta,
+                    'TGL_MULAI' => $request->etgl_penempatan,
+                    'BLOKIR' => $eblokir,
+                    'KETERANGAN' => $request->eketerangan
               
                 ]);
-
-                return redirect()->back() ->with('alert', 'Data berhasil diupdate!');
+                
+                if ($depositos){
+                    $msg='1';
+                    $msgdetail='Proses Berhasil';
+                }else{
+                    $msg='0';
+                    $msgdetail='Proses Simpan Data Gagal!';
+                }
+            }else{
+                $msg='0';
+                $msgdetail='Proses Gagal, Harap mengisi data dengan lengkap!';
             }
-
-    public function bo_tab_add_tabung(Request $request)
-    {
-        // dd($request);
-        $this->validate($request,
-        [
-            'jenis_tabungan'=>'required',
-            'no_rekening'=>'required',
-            'nasabah_id'=>'required',
-            'tgl_bunga'=>'required',
-            'type_tabungan'=>'required',
-            'suku_bunga'=>'required',
-            'persen_pph'=>'required',
-        ]);
-        $simpantabung = new Tabungan();
-
-        $simpantabung->jenis_tabungan = $request->jenis_tabungan;
-        $simpantabung->no_rekening = $request->no_rekening;
-        $simpantabung->no_alternatif = $request->no_alternatif;
-        $simpantabung->status_aktif = 1;
-        $simpantabung->cab = $request->cab;
-        $simpantabung->nasabah_id = $request->nasabah_id;
-        $simpantabung->type_tabungan = $request->type_tabungan;
-        $simpantabung->suku_bunga = $request->suku_bunga;
-        $simpantabung->persen_pph = $request->persen_pph;
-        $simpantabung->tgl_bunga = date('Y-m-d',strtotime($request->tgl_bunga));
-        $simpantabung->tgl_registrasi = date('Y-m-d',strtotime($request->tgl_bunga));
-        $simpantabung->blokir = 0;
-        $simpantabung->jkw = 0;
-        $simpantabung->saldo_blokir = 0;
-        $simpantabung->kode_group1 = $request->kode_group1;
-        if(is_null($request->kode_group2)){
-            $simpantabung->kode_group2 = "";
         }else{
-            $simpantabung->kode_group2 = $request->kode_group2;
-
+        $msg='0';
+        $msgdetail='Proses Gagal, No Rekening Deposito tidak dapat diganti.';
         }
-        if(is_null($request->kode_group3)!=true){
-            $simpantabung->kode_group3 = $request->kode_group3;
-        }
-        $simpantabung->kode_bi_pemilik = $request->kode_bi_pemilik;
-        $simpantabung->kode_bi_metoda = $request->kode_bi_metoda;
-        $simpantabung->kode_bi_hubungan = $request->kode_bi_hubungan;
-        $simpantabung->flag_restricted = $request->flag_restricted;
-        $simpantabung->minimum = $request->minimum;
-        $simpantabung->setoran_minimum = $request->setoran_minimum;
-        $simpantabung->setoran_per_bln = $request->setoran_per_bln;
-        $simpantabung->abp = $request->abp;
-        $simpantabung->adm_per_bln = $request->adm_per_bln;
-        $simpantabung->periode_adm = 1;
-        $simpantabung->save();
 
-            return redirect()->back() ->with('alert', 'Data Berhasil Ditambahkan!');
+        $nasabah=Nasabah::select('nasabah_id','nama_nasabah','alamat')->get();
+        $tabungan=DB::select('select tabung.NO_REKENING,tabung.NASABAH_ID,tabung.JENIS_TABUNGAN,tabung.SALDO_AKHIR,nasabah.nama_nasabah,nasabah.alamat FROM tabung LEFT JOIN nasabah ON tabung.NASABAH_ID=nasabah.nasabah_id');
+        $depositos = DB::select('select deposito.*,nasabah.nama_nasabah,nasabah.alamat FROM deposito LEFT JOIN nasabah ON deposito.NASABAH_ID = nasabah.nasabah_id WHERE deposito.NO_REKENING="'.$request->eno_rekening.'"');
+        $users = User::all();
+        $kodecabang=Kodecabang::where('DATA_CAB','=','mydata')->get();
+        $kodegroup1deposito = KodeGroup1Deposito::all();
+        $kodegroup2deposito = KodeGroup2Deposito::all();
+        $kodegroup3deposito = KodeGroup3Deposito::all();
+        $kodejenisdeposito = Kodejenisdeposito::all();
+        $golonganpihaklawan = Golonganpihaklawan::all();
+        $kodeketerkaitanlapbul = Kodeketerkaitanlapbul::all();
+        $kodemetoda = Kodemetoda::all();
+        $tgllogin=Mysysid::where('KeyName','=','TANGGALHARIINI')->get();
+
+        return view('admin.deposito', ['users'=>$users,'nasabah'=>$nasabah,'tabungan'=>$tabungan,'logos'=> $logos,'depositos'=> $depositos,'kodegroup1deposito'=> $kodegroup1deposito,'kodegroup2deposito'=> $kodegroup2deposito,'kodegroup3deposito'=>$kodegroup3deposito,'kodejenisdeposito'=> $kodejenisdeposito,'golonganpihaklawan'=>$golonganpihaklawan,'kodeketerkaitanlapbul'=>$kodeketerkaitanlapbul,'kodemetoda'=>$kodemetoda,'kodecabang'=>$kodecabang,'tgllogin'=>$tgllogin,'tgl_login'=>$tgllogin,'msgstatus'=> $msg,'msgview'=> $msgdetail]);
+    
     }
 
     public function bo_tb_rpt_nominatif()

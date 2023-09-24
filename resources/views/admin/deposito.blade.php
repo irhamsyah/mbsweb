@@ -247,10 +247,14 @@
                   </div>
                 </div>
                 <div class="col-lg-3 col-sm-12">
-                  <label for="einputNamaNasabah">Nama</label>
+                  <label for="enama_nasabah">Nama</label>
                   <input type="text" id="einputNamaNasabah" name="enama_nasabah" readonly class="form-control">
                 </div>
-                <div class="col-lg-6 col-sm-12">
+                <div class="col-lg-2 col-sm-12">
+                  <label for="eqq">QQ</label>
+                  <input type="text" id="einputqq" name="eqq" readonly class="form-control">
+                </div>
+                <div class="col-lg-4 col-sm-12">
                   <label for="einputalamat">Alamat</label>
                   <input type="text" id="einputalamat" name="ealamat" readonly class="form-control" required>
                 </div>
@@ -546,7 +550,11 @@
                   <label for="inputnocif">Nama</label>
                   <input type="text" id="inputNamaNasabahadd" name="nama_nasabah" readonly class="form-control">
                 </div>
-                <div class="col-lg-6 col-sm-12">
+                <div class="col-lg-2 col-sm-12">
+                  <label for="qq">QQ</label>
+                  <input type="text" id="inputqqadd" name="qq" class="form-control">
+                </div>
+                <div class="col-lg-4 col-sm-12">
                   <label for="inputnocif">Alamat</label>
                   <input type="text" id="inputalamatadd" name="alamat" readonly class="form-control" required>
                 </div>

@@ -247,11 +247,54 @@
                 </li>
                 </ul>
               </li>
-              <li class="nav-item has-treeview menu-close">
-                <a href="/adm_transaction" class="nav-link">
+              <li class="nav-item has-treeview <?php if($menu=='tl'){echo 'menu-open';}?>">
+                <a href="#" class="nav-link <?php if($menu=='tl'){echo 'active';}?>">
                   <i class="right fas fa-angle-left"></i>
                   <p class="pl-1">TELLER</p>
                 </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item has-treeview <?php if($menu=='tl' AND $submenu=='tt'){echo 'menu-open';}?>">
+                  <a href="#" class="nav-link <?php if($menu=='tl' AND $submenu=='tt'){echo 'active';}?>">
+                    <i class="right fas fa-angle-left"></i>
+                    <p class="pl-2">TRANSAKSI TABUNGAN</p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="/bo_tl_tt_setoranpenarikantabungan" class="nav-link <?php if($page=='setoranpenarikantabungan'){echo 'active';}?>">
+                      <p class="pl-4">Setoran & Penarikan</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/bo_tl_tt_penutupantabungan" class="nav-link <?php if($page == 'penutupantabungan'){echo 'active';}?>">
+                      <p class="pl-4">Penutupan Tabungan</p>
+                    </a>
+                  </li>
+                  </ul>
+                </li>
+                <li class="nav-item has-treeview  <?php if($menu=='tl' AND $submenu=='td'){echo 'menu-open';}?>">
+                  <a href="#" class="nav-link <?php if($menu=='tl' AND $submenu=='td'){echo 'active';}?>">
+                    <i class="right fas fa-angle-left"></i>
+                    <p class="pl-2">TRANSAKSI DEPOSITO</p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="/bo_tl_td_setorandeposito" class="nav-link <?php if($page=='setorandeposito'){echo 'active';}?>">
+                      <p class="pl-4">Setoran Deposito</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/bo_tl_td_pengambilanbungadeposito" class="nav-link <?php if($page=='pengambilanbungadeposito'){echo 'active';}?>">
+                      <p class="pl-4">Pengambilan Bunga Deposito</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/bo_tl_td_penutupandeposito" class="nav-link <?php if($page=='penutupandeposito'){echo 'active';}?>">
+                      <p class="pl-4">Penutupan Deposito</p>
+                    </a>
+                  </li>
+                  </ul>
+                </li>
+                </ul>
               </li>
               <li class="nav-item has-treeview menu-close <?php if($menu=='tb'){echo 'menu-open';}?>">
                 <a href="#" class="nav-link <?php if($menu=='tb'){echo 'active';}?>">
@@ -666,7 +709,60 @@ $(document).ready(function(){
 
   });
   
-  //page deposito
+  //page Teller deposito ***********************************************
+  //get rekening Deposito nasabah
+  $("#datadepositoteller").on('click','#klikdeposito',function(){
+     // get the current row
+     var currentRow=$(this).closest("tr"); 
+     
+     var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+     var col2=currentRow.find("td:eq(1)").text(); // get current row 2nd TD
+     var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
+     var col4=currentRow.find("td:eq(3)").text(); // get current row 4th TD
+     var col5=currentRow.find("td:eq(4)").text(); // get current row 5th TD
+     var col6=currentRow.find("td:eq(5)").text(); // get current row 6th TD
+     var col7=currentRow.find("td:eq(6)").text(); // get current row 7th TD
+     var col8=currentRow.find("td:eq(7)").text(); // get current row 8th TD
+     var col9=currentRow.find("td:eq(8)").text(); // get current row 9th TD
+     var col10=currentRow.find("td:eq(9)").text(); // get current row 10th TD
+     var col11=currentRow.find("td:eq(10)").text(); // get current row 11th TD
+     var col12=currentRow.find("td:eq(11)").text(); // get current row 12th TD
+     var col13=currentRow.find("td:eq(12)").text(); // get current row 13th TD
+    //  var data=col1+"\n"+col2+"\n"+col3;
+     document.getElementById("putnorekening").value=col1;
+     document.getElementById("putnamanasabah").value=col2;
+     document.getElementById("putalamat").value=col3;
+     document.getElementById("puttglregistrasi").value=col4;
+     document.getElementById("puttgljt").value=col5;
+     document.getElementById("putnominal").value=col6;
+     document.getElementById("putjkw").value=col9;
+     document.getElementById("putpph").value=col10;
+     document.getElementById("putbunga").value=col11;
+     document.getElementById("putalternatif").value=col12;
+     document.getElementById("putkodepemilik").value=col13;
+     document.getElementById("putjumlahsetoran").value=col6;
+
+     $('#ambildatadepositoteller').modal('hide');
+
+  });
+  $("#datatabunganteller").on('click','#kliktabungan',function(){
+     // get the current row
+     var currentRow=$(this).closest("tr"); 
+     
+     var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+     var col2=currentRow.find("td:eq(1)").text(); // get current row 2nd TD
+     var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
+     var col4=currentRow.find("td:eq(3)").text(); // get current row 4th TD
+     var col5=currentRow.find("td:eq(4)").text(); // get current row 5th TD
+     var col6=currentRow.find("td:eq(5)").text(); // get current row 6th TD
+    //  var data=col1+"\n"+col2+"\n"+col3;
+     $('#putnorekeningtab').val(col1);
+     $('#putnamanasabahtab').val(col2);
+     $('#putsaldoakhirtab').val(col5);
+
+     $('#ambildatatabunganteller').modal('hide');
+  });
+  //page deposito *****************************************************
   //get rekening tabungan nasabah
   $("#rektabungandata").on('click','#tes2',function(){
      // get the current row
@@ -881,6 +977,17 @@ $(document).ready(function () {
       "autoWidth": false,
       "lengthMenu": [ 10, 25, 50],
       "pageLength":10
+    });
+    $(".tablemodal").DataTable({
+      "paging": true,
+      "lengthChange": true,
+      "searching": true,
+      "ordering": true,
+      "info": true,
+      "responsive": true,
+      "autoWidth": false,
+      "lengthMenu": [ 25, 50, 100 ],
+      "pageLength":50
     });
     $('#nasabahdataget').DataTable();
 

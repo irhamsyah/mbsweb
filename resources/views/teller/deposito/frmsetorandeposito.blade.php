@@ -37,7 +37,7 @@
         </div>
         <div class="card card-warning card-outline">
           <!-- form start -->
-          <form method="POST" action="/bo_tl_td_setorandeposito" role="search">
+          <form method="POST" action="/bo_tl_td_setorandeposito">
             @csrf
             <div class="card-body">
                   <div class="form-group">
@@ -134,14 +134,10 @@
                         <select class="form-control" name="kode_trans" id="putkodetrans">
                           @php($i=0)
                           @while ($i<count($kodetransdep) )
-                          <option value="{{$kodetransdep[$i]->KODE_TRANS}}-{{$kodetransdep[$i]->TOB}}-{{$kodetransdep[$i]->TYPE_TRANS}}">{{$kodetransdep[$i]->KODE_TRANS}}-{{$kodetransdep[$i]->DESKRIPSI_TRANS}}</option>
+                          <option value="{{$kodetransdep[$i]->KODE_TRANS}}-{{$kodetransdep[$i]->TOB}}">{{$kodetransdep[$i]->KODE_TRANS}}-{{$kodetransdep[$i]->DESKRIPSI_TRANS}}</option>
                               @php($i++)
                           @endwhile
                         </select>
-                      </div>
-                      <div class="col-lg-1 col-sm-2">
-                        <label for="inputkodetransdepkode">.</label>
-                        <input type="text" name="kode_trans_kode" class="form-control" id="putkodetranskode" readonly required>
                       </div>
                       <input hidden type="text" name="cab" value={{$kodecabang[0]->kode_cab}}>
                       <div class="col-lg-2 col-sm-6">
@@ -201,7 +197,7 @@
                         <div class="col-lg-10">
                         </div>
                         <div class="col-lg-2">
-                            <button type="submit" class="btn btn-primary" style="float:right;margin-top:15px;">Simpan</button>
+                            <button type="submit" class="btn btn-primary" style="float:right;margin-top:15px;"><i class="fa fa-check" aria-hidden="true"></i>  Simpan</button>
                         </div>
                     </div>
                   </div>

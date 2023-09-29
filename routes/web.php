@@ -260,6 +260,6 @@ Route::get('bo_ak_tt_postingdatatransaksi','AkuntansiController@bo_ak_tt_posting
 Route::get('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito')->name('showsetorandeposito');
 Route::post('/bo_tl_td_setorandeposito/cari','TellerDepositoController@bo_tl_td_setorandeposito_cari');//search filter
 Route::post('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito_add');
-Route::put('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito_edit');
-Route::delete('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito_destroy');
+// Route::put('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito_edit');
+// Route::delete('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito_destroy');
 Route::get('/bo_tl_td_setorandeposito/printbukarekdeposito','TellerDepositoController@bo_tl_td_setorandeposito_rppdf')->name('cetakbukarekdeposito');//print buka rekening deposito

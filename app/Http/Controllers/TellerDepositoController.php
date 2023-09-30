@@ -32,11 +32,11 @@ class TellerDepositoController extends Controller
     }
     //SIMPAN SETORAN DEPOSITO TELLER
     public function bo_tl_td_setorandeposito_add(Request $request)
-    {   
+    {
         $maxId=DB::select("SELECT MAX(DEPTRANS_ID)+1 AS maxIdDeptran FROM deptrans")[0]->maxIdDeptran;
         // dd($maxId);
         $setorandep = new Deptran();
-        $setorandep->DEPTRANS_ID = $request->maxId;        
+        $setorandep->DEPTRANS_ID = $request->maxId;
         $setorandep->TGL_TRANS = $request->tgl_trans;
         $setorandep->NO_REKENING = $request->no_rekening;
         $setorandep->KODE_TRANS = substr($request->kode_trans,0,3);
@@ -93,6 +93,14 @@ class TellerDepositoController extends Controller
         $tabtrans->FLAG_CETAK = 'N';
         $tabtrans->MY_KODE_TRANS = 270;
         $tabtrans->save();
+
+        // UPDATE TABUNG
+        if($norekeningtab!=""){
+            $norekeningtab = $request->no_rekening_tab;
+            $jmlsetoran = $request->jumlah_setoran;
+            $sqlupdatetab="UPDATE tabung SET tabung.SALDO_PENARIKAN=tabung.SALDO_PENARIKAN-$jmlsetoran,tabung.SALDO_AKHIR=tabung.SALDO_AKHIR-$jmlsetoran where tabung.NO_REKENING='$norekeningtab'";
+            DB::select($sqlupdatetab);
+        }
 
         if ($setorandep->exists){
             $msg='1';

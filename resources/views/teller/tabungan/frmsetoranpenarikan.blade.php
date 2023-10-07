@@ -102,7 +102,7 @@
                       <div class="col-md-5 col-sm-12">
                         <label for="inputDate1">Jumlah</label>
                         <div class="input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                            <input type="text" name="pembayaran" id="inputjmlsaldoblokir" class="form-control datetimepicker-input" />
+                            <input type="text" name="pembayaran" id="inputjmlsaldoblokir" class="form-control datetimepicker-input" required>
                         </div>
                       </div>
                       <div class="col-lg-2 col-sm-8">

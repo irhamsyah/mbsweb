@@ -254,7 +254,17 @@ Route::post('exporttoexceltabblokir',
 Route::get('bo_tl_tt_setoranpenarikantabungan','TellertabunganController@bo_tl_tt_setoranpenarikantabungan')->name('setoranpenarikantabungan');
 Route::post('bo_tl_tt_simpantrstabungan','TellertabunganController@bo_tl_tt_simpantrstabungan');
 // AKUNTANSI
-Route::get('bo_ak_tt_postingdatatransaksi','AkuntansiController@bo_ak_tt_postingdatatransaksi')->name('postingdatatransaksi');
+Route::get('bo_ak_tt_postingdatatransaksi','AkuntansiController@bo_ak_tt_postingdatatransaksi')->name('showformpostingdatatransaksi');
+// cari dan posting ke trans_master_buffer dan trans_detail_buffer
+Route::post('bo_ak_tr_postingtransaksi','AkuntansiController@bo_ak_tr_postingtransaksi');
+// Show form validation
+Route::get('bo_ak_tt_validasidatatransaksi','AkuntansiController@bo_ak_tt_validasidatatransaksi')->name('showformvalidasidatatransaksi');
+Route::get('bo_ak_tt_caridatatransaksi','AkuntansiController@bo_ak_tt_caridatatransaksi')->name('caritrans');
+// simpan update/perubhan validasi
+Route::post('bo_ak_tt_simpanupdvalidasi','AkuntansiController@bo_ak_tt_simpanupdvalidasi')->name('simpanperubahankodeperk');
+// simpan penambahan record trans_detail_buffer
+Route::post('bo_ak_tt_addrecvalidasi','AkuntansiController@bo_ak_tt_addrecvalidasi')->name('addcodetransdetailbuff');
+Route::delete('bo_ak_tt_deltransdetailbuff','AkuntansiController@bo_ak_tt_deltransdetailbuff')->name('hapustransdetailbuff');
 
 //TELLER TRANS DEPOSITO
 Route::get('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito')->name('showsetorandeposito');

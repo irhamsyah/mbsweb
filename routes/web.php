@@ -105,6 +105,16 @@ Route::get('/bo_cs_rp_umum', 'ReportController@bo_cs_rp_umum')->name('cariumum')
 Route::post('/bo_cs_rp_umum/cari','ReportController@bo_cs_rp_umum_cari');//search filter
 Route::post('/bo_cs_rp_umum/printdokumenumum', 'ReportController@bo_cs_rp_umum_rp_umum');//print umum
 
+
+//BO DEPOSITO DP Data Entry Deposito
+Route::get('/bo_dp_de_deposito', 'DepositoController@bo_dp_de_deposito')->name('showdeposito');
+Route::post('/bo_dp_de_deposito/cari','DepositoController@bo_dp_de_deposito_cari');//search filter
+Route::post('/bo_dp_de_deposito', 'DepositoController@bo_dp_de_deposito_add');
+Route::put('/bo_dp_de_deposito', 'DepositoController@bo_dp_de_deposito_edit');
+Route::delete('/bo_dp_de_deposito', 'DepositoController@bo_dp_de_deposito_destroy');
+Route::get('/bo_dp_de_deposito/printbukarekdeposito','DepositoController@bo_cs_de_bukarekdeposito_rppdf')->name('cetakbukarekdeposito');//print buka rekening deposito
+
+
 //Route Tabungan
 Route::get('/bo_tb_de_tabungan','TabunganController@bo_tb_de_tabungan')->name('showtabungan');
 //Route Edit Tabungan 
@@ -255,3 +265,11 @@ Route::post('bo_ak_tt_simpanupdvalidasi','AkuntansiController@bo_ak_tt_simpanupd
 // simpan penambahan record trans_detail_buffer
 Route::post('bo_ak_tt_addrecvalidasi','AkuntansiController@bo_ak_tt_addrecvalidasi')->name('addcodetransdetailbuff');
 Route::delete('bo_ak_tt_deltransdetailbuff','AkuntansiController@bo_ak_tt_deltransdetailbuff')->name('hapustransdetailbuff');
+
+//TELLER TRANS DEPOSITO
+Route::get('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito')->name('showsetorandeposito');
+Route::post('/bo_tl_td_setorandeposito/cari','TellerDepositoController@bo_tl_td_setorandeposito_cari');//search filter
+Route::post('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito_add');
+// Route::put('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito_edit');
+// Route::delete('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito_destroy');
+Route::get('/bo_tl_td_setorandeposito/printbukarekdeposito','TellerDepositoController@bo_tl_td_setorandeposito_rppdf')->name('cetakbukarekdeposito');//print buka rekening deposito

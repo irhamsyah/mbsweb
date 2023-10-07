@@ -470,10 +470,17 @@
                       </a>
                       <ul class="nav nav-treeview">
                         <li class="nav-item">
-                          <a href="{{route('postingdatatransaksi')}}" class="nav-link <?php if($page=='setoranpenarikantabungan' or $page=='setpentabungan'){echo 'active';}?>">
+                          <a href="{{route('showformpostingdatatransaksi')}}" class="nav-link">
                             <p class="pl-3">Posting Data Transaksi</p>
                           </a>
                         </li>
+                        {{-- VALIDASI --}}
+                        <li class="nav-item">
+                          <a href="{{route('showformvalidasidatatransaksi')}}" class="nav-link">
+                            <p class="pl-3">Validasi Data Transaksi</p>
+                          </a>
+                        </li>
+
                       </ul>
                     </li>
                 </ul>
@@ -1307,6 +1314,48 @@ $("#datatabungan").on('click','#klik',function(){
      document.getElementById("putjenistab").value=col4;
      document.getElementById("putsaldoakhir").value=col5;
      document.getElementById("putsaldoblokir").value=col6;
+
+    //  alert(data);
+      });
+    });
+    // UPDATE KODE PERKIRAAN PADA FORM VALIDASI TRANSAKSI
+    $('#modal-update-kodeperk').on('show.bs.modal', function(e) {
+      var Trans_id = $(e.relatedTarget).data('trans_id');
+      var Master_id = $(e.relatedTarget).data('master_id');
+      var Kode_perk = $(e.relatedTarget).data('kode_perk');
+      var Nama_perk = $(e.relatedTarget).data('nama_perk');
+      var Uraian = $(e.relatedTarget).data('uraian');
+      var Type = $(e.relatedTarget).data('type');
+      $(e.currentTarget).find('input[name="trans_id"]').val(Trans_id);
+      $(e.currentTarget).find('input[name="master_id"]').val(Master_id);
+      $(e.currentTarget).find('input[name="kode_perk"]').val(Kode_perk);
+      $(e.currentTarget).find('input[name="nama_perk"]').val(Nama_perk);
+      $(e.currentTarget).find('input[name="uraian"]').val(Uraian);
+      $(e.currentTarget).find('input[name="type"]').val(Type);
+    });
+
+// DATATABLE
+$(document).ready(function () {
+    $('#idperkiraan').DataTable();
+});
+    // PROSES GANTI PERKIRAAN SAAT KLIK/PILIH PERKIRAAN TERUPDATE KE FORM VALIDASI
+// Fungsi untuk menampilkan Data Tabungan pada Modal yg akan diinput ke Form TRANSAKSI
+$(document).ready(function(){
+// code to read selected table row cell data (values).
+$("#idperkiraan").on('click','#klik',function(){
+     // get the current row
+     var currentRow=$(this).closest("tr"); 
+     
+     var col1=currentRow.find("td:eq(0)").text(); // no_rek/get current row 1st TD value
+     var col2=currentRow.find("td:eq(1)").text(); // nama/get current row 2nd TD
+     var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
+
+    //  var data=col1+"\n"+col2+"\n"+col3;
+     document.getElementById("idkodeperk").value=col1;
+     document.getElementById("idnamaperk").value=col2;
+     document.getElementById("idkodeperk2").value=col1;
+     document.getElementById("idnamaperk2").value=col2;
+     document.getElementById("idtypex").value=col3;
 
     //  alert(data);
       });

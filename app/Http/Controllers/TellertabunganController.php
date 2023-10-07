@@ -9,6 +9,7 @@ use App\Logo;
 use App\Kodetranstabungan;
 use App\Kodecabang;
 use App\Tabtran;
+use App\Tellertran;
 use Illuminate\Support\Facades\Auth;
 
 class TellertabunganController extends Controller
@@ -25,6 +26,13 @@ class TellertabunganController extends Controller
     // SIMPAN DATA TRANSAKSI
     public function bo_tl_tt_simpantrstabungan(Request $request)
     {   
+        $this->validate($request,[
+            'no_rekening'=>'required',
+            'tgl_trans'=>'required',
+            'kode_trans'=>'required',
+            'pembayaran'=>'required',
+            'kuitansi'=>'required',
+        ]);
         $transaksi = new Tabtran();
         $transaksi->TGL_TRANS = $request->tgl_trans;
         $transaksi->NO_REKENING = $request->no_rekening;
@@ -37,7 +45,7 @@ class TellertabunganController extends Controller
         }
         $transaksi->KUITANSI = $request->kuitansi;
         $transaksi->USERID=Auth::id();
-        $transaksi->TOB = substr($request->kode_trans,5,1);
+        $transaksi->TOB = substr($request->kode_trans,3,1);
         $transaksi->POSTED = 0;
         $transaksi->VALIDATED = 1;
         $transaksi->KETERANGAN = $request->keterangan;
@@ -56,15 +64,44 @@ class TellertabunganController extends Controller
         // --------------
         // UPDATE KE TABLES TELLERTRANS
         $sql=DB::select("SELECT * FROM tabtrans WHERE KUITANSI ='$request->kuitansi' AND TGL_TRANS='$request->tgl_trans'");
-        // for($i=0;$i<count($sql);$i++){
-            dd($sql);
-        // }
-        if($transaksi->exists){
-            $msg='1';
-        }else{
-            $msg='0';
+        for($i=0;$i<count($sql);$i++){
+            if(substr($request->kode_trans,5,1)=='K'){
+                $inputtellertran=new Tellertran();
+                $inputtellertran->modul = 'TAB';
+                $inputtellertran->tgl_trans = $request->tgl_trans;
+                $inputtellertran->NO_BUKTI=$request->kuitansi;
+                $inputtellertran->uraian='Setoran tabungan: '.$request->no_rekening.'-'. $request->nama_nasabah;
+                $inputtellertran->my_kode_trans='200';
+                $inputtellertran->saldo_trans= (float)preg_replace("/[^0-9]/", "", $request->pembayaran);
+                $inputtellertran->tob=$transaksi->TOB;
+                $inputtellertran->tob_RAK='T';
+                $inputtellertran->modul_trans_id=$sql[$i]->TABTRANS_ID;
+                $inputtellertran->userid=Auth::id();
+                $inputtellertran->VALIDATED=0;
+                $inputtellertran->POSTED=0;
+                $inputtellertran->cab=$request->cab;
+                $msgbox=$inputtellertran->save();
+
+            }else{
+                $inputtellertran=new Tellertran();
+                $inputtellertran->modul = 'TAB';
+                $inputtellertran->tgl_trans = $request->tgl_trans;
+                $inputtellertran->NO_BUKTI=$request->kuitansi;
+                $inputtellertran->uraian='Penarikan tabungan: '.$request->no_rekening.'-'. $request->nama_nasabah;
+                $inputtellertran->my_kode_trans='300';
+                $inputtellertran->saldo_trans= (float)preg_replace("/[^0-9]/", "", $request->pembayaran);
+                $inputtellertran->tob=$transaksi->TOB;
+                $inputtellertran->tob_RAK='T';
+                $inputtellertran->modul_trans_id=$sql[$i]->TABTRANS_ID;
+                $inputtellertran->userid=Auth::id();
+                $inputtellertran->VALIDATED=0;
+                $inputtellertran->POSTED=0;
+                $inputtellertran->cab=$request->cab;
+                $msgbox=$inputtellertran->save();
+
+            }
         }
-        return redirect()->back();
+        return redirect()->back() ->with('alert', 'Transaksi berhasil ditambahkan!');
 
     }
 }

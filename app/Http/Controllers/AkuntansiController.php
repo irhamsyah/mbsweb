@@ -695,7 +695,20 @@ class AkuntansiController extends Controller
     }
     public function bo_tb_de_simpanjurnalmemorial(Request $request)
     {
+        dd($request);
         $simpan = new Trans_detail_buffer();
+        
+        $tes['no_bukti']=$request->no_bukti;
+        $tes['tgl'] = $request->inputtglblokir;
+        $tes['kode_perk']=$request->kode_perk;
+        $tes['nama_perk']=$request->nama_perk;
+        $tes['debet']=$request->debet;
+        $tes['kredit']=$request->kredit;
+        $users = User::all();
+        $logos = Logo::all();
+        $kodejurnal=KodeJurnal::all();
+        $perkiraan= Perkiraan::orderBy('kode_perk', 'ASC')->get();
+        return view('akuntansi.frmcatatjurnaltransaksi',['logos'=>$logos,'users'=>$users,'perkiraan'=>$perkiraan,'kodejurnal'=>$kodejurnal,'msgstatus'=>'']);
 
     }
 }

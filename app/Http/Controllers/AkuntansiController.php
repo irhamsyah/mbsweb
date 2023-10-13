@@ -8,8 +8,11 @@ use App\User;
 use App\Logo;
 use App\Kodetranstabungan;
 use App\Kodecabang;
+use App\KodeJurnal;
 use App\Perkiraan;
 use App\Tabtran;
+use App\Trans_detail;
+use App\Trans_master;
 use App\Trans_master_buffer;
 use App\Trans_detail_buffer;
 
@@ -645,5 +648,54 @@ class AkuntansiController extends Controller
         ]);
         Trans_detail_buffer::where('trans_id',$request->trans_id)->delete();
         return redirect()->route('caritrans',['trans_id'=>$request->master_id]);
+    }
+    public function bo_ak_tt_simpanjurnal(Request $request)
+    {
+        $buffermst = Trans_master_buffer::where('trans_id',$request->master_id)->get();
+        for ($i=0; $i<count($buffermst); $i++)
+        {
+            $simpantrms=new Trans_master();
+            $simpantrms->tgl_trans = $buffermst[$i]->tgl_trans;
+            $simpantrms->kode_jurnal = $buffermst[$i]->kode_jurnal;
+            $simpantrms->no_bukti = $buffermst[$i]->no_bukti;
+            $simpantrms->src = 'TL';
+            $simpantrms->NOMINAL = $buffermst[$i]->nominal;
+            $simpantrms->KETERANGAN = $buffermst[$i]->keterangan;
+            $simpantrms->save();
+        }
+        $masteridbaru=$simpantrms->trans_id;
+        Trans_detail_buffer::where('master_id',$request->master_id)
+                                    ->update([
+                                        'master_id' => $masteridbaru
+                                    ]);
+        $buffer = Trans_detail_buffer::where('master_id',$masteridbaru)->get();
+        for ($i=0; $i<count($buffer); $i++)
+        {
+            $simpantrdt=new Trans_detail();
+            $simpantrdt->master_id = $buffer[$i]->master_id;
+            $simpantrdt->URAIAN = $buffer[$i]->URAIAN;
+            $simpantrdt->kode_perk = $buffer[$i]->kode_perk;
+            $simpantrdt->debet = $buffer[$i]->debet;
+            $simpantrdt->kredit = $buffer[$i]->kredit;
+            $simpantrdt->save();
+        }
+        Trans_detail_buffer::where('master_id',$masteridbaru)->delete();    
+        Trans_master_buffer::where('trans_id',$request->master_id)->delete();
+        return redirect()->route('showformvalidasidatatransaksi')->with('alert','SIMPAN POSTING TRANSAKSI SELESAI');
+    }
+    // SHOW FORM CREATE JOURNAL TRANSACTION 
+    public function bo_ak_tt_showfrmctttransaksi()
+    {
+        $users = User::all();
+        $logos = Logo::all();
+        $kodejurnal=KodeJurnal::all();
+        $perkiraan= Perkiraan::orderBy('kode_perk', 'ASC')->get();
+        return view('akuntansi.frmcatatjurnaltransaksi',['logos'=>$logos,'users'=>$users,'perkiraan'=>$perkiraan,'kodejurnal'=>$kodejurnal,'msgstatus'=>'']);
+
+    }
+    public function bo_tb_de_simpanjurnalmemorial(Request $request)
+    {
+        $simpan = new Trans_detail_buffer();
+
     }
 }

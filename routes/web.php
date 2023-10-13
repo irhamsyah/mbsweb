@@ -255,3 +255,8 @@ Route::post('bo_ak_tt_simpanupdvalidasi','AkuntansiController@bo_ak_tt_simpanupd
 // simpan penambahan record trans_detail_buffer
 Route::post('bo_ak_tt_addrecvalidasi','AkuntansiController@bo_ak_tt_addrecvalidasi')->name('addcodetransdetailbuff');
 Route::delete('bo_ak_tt_deltransdetailbuff','AkuntansiController@bo_ak_tt_deltransdetailbuff')->name('hapustransdetailbuff');
+// Simpan jurnal
+Route::post('bo_ak_tt_simpanjurnal','AkuntansiController@bo_ak_tt_simpanjurnal');
+// Pencatatan Transaksi Jurnal Memorial/Manual
+Route::get('bo_ak_tt_showfrmctttransaksi','AkuntansiController@bo_ak_tt_showfrmctttransaksi')->name('showformcatattransaksi');
+Route::post('bo_tb_de_simpanjurnalmemorial','AkuntansiController@bo_tb_de_simpanjurnalmemorial');

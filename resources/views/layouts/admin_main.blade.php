@@ -480,6 +480,12 @@
                             <p class="pl-3">Validasi Data Transaksi</p>
                           </a>
                         </li>
+                        {{-- PENCATATAN TRANSAKSI --}}
+                        <li class="nav-item">
+                          <a href="{{route('showformcatattransaksi')}}" class="nav-link">
+                            <p class="pl-3">Pencatatan Transaksi</p>
+                          </a>
+                        </li>
 
                       </ul>
                     </li>
@@ -1339,7 +1345,6 @@ $(document).ready(function () {
     $('#idperkiraan').DataTable();
 });
     // PROSES GANTI PERKIRAAN SAAT KLIK/PILIH PERKIRAAN TERUPDATE KE FORM VALIDASI
-// Fungsi untuk menampilkan Data Tabungan pada Modal yg akan diinput ke Form TRANSAKSI
 $(document).ready(function(){
 // code to read selected table row cell data (values).
 $("#idperkiraan").on('click','#klik',function(){
@@ -1351,13 +1356,42 @@ $("#idperkiraan").on('click','#klik',function(){
      var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
 
     //  var data=col1+"\n"+col2+"\n"+col3;
-     document.getElementById("idkodeperk").value=col1;
-     document.getElementById("idnamaperk").value=col2;
-     document.getElementById("idkodeperk2").value=col1;
-     document.getElementById("idnamaperk2").value=col2;
-     document.getElementById("idtypex").value=col3;
+      if(col3=='D'){
+        document.getElementById("idkodeperk").value=col1;
+        document.getElementById("idnamaperk").value=col2;
+        document.getElementById("idkodeperk2").value=col1;
+        document.getElementById("idnamaperk2").value=col2;
+        document.getElementById("idtypex").value=col3;
+      }else{
+         alert("HARUS TYPE CABANG BUKAN INDUK");
+      }
+      });
+    });
+    // DATATABLE
+    $(document).ready(function () {
+        $('#idperkiraanxx').DataTable();
+    });
+    // munculin data perk saat diklik
+    $(document).ready(function(){
+// code to read selected table row cell data (values).
+$("#idperkiraanxx").on('click','#klik',function(){
+     // get the current row
+     var currentRow=$(this).closest("tr"); 
+     var col1=currentRow.find("td:eq(0)").text(); // no_rek/get current row 1st TD value
+     var col2=currentRow.find("td:eq(1)").text(); // nama/get current row 2nd TD
+     var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
+     var col4=currentRow.find("td:eq(3)").text(); // get current row 3rd TD
+     var col5=currentRow.find("td:eq(4)").text(); // get current row 3rd TD
+    //  var data=col1+"\n"+col2+"\n"+col3;
+    //  FORM PENCATATAN JURNAL TRANSAKSI 
+    if(col5=='D'){
+      document.getElementById("idKodePerkadd").value=col1;
+      document.getElementById("idNamaPerkadd").value=col2;
+      }else{
+         alert("HARUS TYPE CABANG BUKAN INDUK");
 
-    //  alert(data);
+      }
+
       });
     });
 

@@ -93,7 +93,7 @@
                                   <input type="hidden" name="_method" value="DELETE"/>
                               @csrf
                         </form>
-                        </div>
+                    </div>
                   </td>                
                 </tr>
               @endforeach
@@ -144,18 +144,18 @@
                                     <input id="idkodeperk" type="text" name="kode_perk" readonly class="form-control" required>
         
                                     <div class="input-group-append" data-toggle="modal" data-target="#ambildataperkiraan">
-                                        <div class="input-group-text"><i class="fa fa-user"></i></div>
+                                        <div class="input-group-text"><i class="fa fa-book"></i></div>
                                     </div>
         
                                     </div>
                                 </div>
                                 <div class="col-lg-6 col-sm-12" >
                                     <label for="inputnpwp">Nama Perkiraan</label>
-                                    <input type="text" id="idnamaperk" name="nama_perk" class="form-control" id="salmin">
+                                    <input type="text" id="idnamaperk" name="nama_perk" class="form-control" id="salmin" readonly>
                                 </div>
                                 <div class="col-lg-6 col-sm-12" >
                                     <label for="inputnpwp">Type</label>
-                                    <input type="text" name="type" class="form-control" id="idtype">
+                                    <input type="text" name="type" class="form-control" id="idtype" readonly>
                                 </div>
                             </div>
                         </div>
@@ -197,13 +197,13 @@
                                     <input id="idkodeperk2" type="text" name="kode_perk" readonly class="form-control" required>
         
                                     <div class="input-group-append" data-toggle="modal" data-target="#ambildataperkiraan">
-                                        <div class="input-group-text"><i class="fa fa-user"></i></div>
+                                        <div class="input-group-text"><i class="fa fa-book"></i></div>
                                     </div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6 col-sm-12" >
                                     <label for="inputnpwp">Nama Perkiraan</label>
-                                    <input type="text" id="idnamaperk2" name="nama_perk" class="form-control" id="salmin">
+                                    <input type="text" id="idnamaperk2" name="nama_perk" class="form-control" id="salmin" readonly>
                                 </div>
                                 <div class="col-lg-6 col-sm-12" >
                                     <label for="inputnpwp">Debet</label>

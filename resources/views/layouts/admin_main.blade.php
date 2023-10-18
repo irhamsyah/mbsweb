@@ -486,6 +486,11 @@
                             <p class="pl-3">Pencatatan Transaksi</p>
                           </a>
                         </li>
+                        <li class="nav-item">
+                          <a href="{{route('showformhistoryjurnal')}}" class="nav-link">
+                            <p class="pl-3">History Pencatatan Jurnal</p>
+                          </a>
+                        </li>
 
                       </ul>
                     </li>
@@ -1288,10 +1293,9 @@ $("#datatabunganx").on('click','#klik',function(){
       var Tgl_blokir = $(e.relatedTarget).data('tgl_blokir');
 
       $(e.currentTarget).find('input[name="no_rekening"]').val(No_rekening);
-    $(e.currentTarget).find('input[name="nama_nasabah"]').val(Nama_nasabah);
-    $(e.currentTarget).find('input[name="saldo_blokir"]').val(Saldo_blokir);
-    $(e.currentTarget).find('input[name="tgl_blokir"]').val(Tgl_blokir);
-
+      $(e.currentTarget).find('input[name="nama_nasabah"]').val(Nama_nasabah);
+      $(e.currentTarget).find('input[name="saldo_blokir"]').val(Saldo_blokir);
+      $(e.currentTarget).find('input[name="tgl_blokir"]').val(Tgl_blokir);
     })
 
     // DATATABLE
@@ -1332,68 +1336,90 @@ $("#datatabungan").on('click','#klik',function(){
       var Nama_perk = $(e.relatedTarget).data('nama_perk');
       var Uraian = $(e.relatedTarget).data('uraian');
       var Type = $(e.relatedTarget).data('type');
+      var Debet = $(e.relatedTarget).data('debet');
+      var Kredit = $(e.relatedTarget).data('kredit');
+
       $(e.currentTarget).find('input[name="trans_id"]').val(Trans_id);
       $(e.currentTarget).find('input[name="master_id"]').val(Master_id);
       $(e.currentTarget).find('input[name="kode_perk"]').val(Kode_perk);
       $(e.currentTarget).find('input[name="nama_perk"]').val(Nama_perk);
       $(e.currentTarget).find('input[name="uraian"]').val(Uraian);
       $(e.currentTarget).find('input[name="type"]').val(Type);
+      $(e.currentTarget).find('input[name="debet"]').val(Debet);
+      $(e.currentTarget).find('input[name="kredit"]').val(Kredit);
     });
 
 // DATATABLE
-$(document).ready(function () {
-    $('#idperkiraan').DataTable();
-});
-    // PROSES GANTI PERKIRAAN SAAT KLIK/PILIH PERKIRAAN TERUPDATE KE FORM VALIDASI
-$(document).ready(function(){
-// code to read selected table row cell data (values).
-$("#idperkiraan").on('click','#klik',function(){
-     // get the current row
-     var currentRow=$(this).closest("tr"); 
-     
-     var col1=currentRow.find("td:eq(0)").text(); // no_rek/get current row 1st TD value
-     var col2=currentRow.find("td:eq(1)").text(); // nama/get current row 2nd TD
-     var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
-
-    //  var data=col1+"\n"+col2+"\n"+col3;
-      if(col3=='D'){
-        document.getElementById("idkodeperk").value=col1;
-        document.getElementById("idnamaperk").value=col2;
-        document.getElementById("idkodeperk2").value=col1;
-        document.getElementById("idnamaperk2").value=col2;
-        document.getElementById("idtypex").value=col3;
-      }else{
-         alert("HARUS TYPE CABANG BUKAN INDUK");
-      }
-      });
+    $(document).ready(function () {
+        $('#idperkiraan').DataTable({ordering:false});
     });
+    // PROSES GANTI PERKIRAAN SAAT KLIK/PILIH PERKIRAAN TERUPDATE KE FORM VALIDASI
+      $(document).ready(function(){
+      // code to read selected table row cell data (values).
+      $("#idperkiraan").on('click','#klik',function(){
+          // get the current row
+          var currentRow=$(this).closest("tr"); 
+          var col1=currentRow.find("td:eq(0)").text(); // no_rek/get current row 1st TD value
+          var col2=currentRow.find("td:eq(1)").text(); // nama/get current row 2nd TD
+          var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
+
+          //  var data=col1+"\n"+col2+"\n"+col3;
+            if(col3=='D'){
+              document.getElementById("idkodeperk").value=col1;
+              document.getElementById("idnamaperk").value=col2;
+              document.getElementById("idkodeperk2").value=col1;
+              document.getElementById("idnamaperk2").value=col2;
+              document.getElementById("idtypex").value=col3;
+            }else{
+              alert("HARUS TYPE CABANG BUKAN INDUK");
+            }
+        });
+      });
     // DATATABLE
     $(document).ready(function () {
-        $('#idperkiraanxx').DataTable();
+        $('#idperkiraanxx').DataTable({ordering:false});
+        // DATATABLE PADA PENCATATAN TRANSAKSI PADA BAGIAN RECORD PENCATATATAN TRANSAKSI
+        $('#idperkiraancatat').DataTable({ordering:false});
     });
     // munculin data perk saat diklik
     $(document).ready(function(){
-// code to read selected table row cell data (values).
-$("#idperkiraanxx").on('click','#klik',function(){
-     // get the current row
-     var currentRow=$(this).closest("tr"); 
-     var col1=currentRow.find("td:eq(0)").text(); // no_rek/get current row 1st TD value
-     var col2=currentRow.find("td:eq(1)").text(); // nama/get current row 2nd TD
-     var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
-     var col4=currentRow.find("td:eq(3)").text(); // get current row 3rd TD
-     var col5=currentRow.find("td:eq(4)").text(); // get current row 3rd TD
-    //  var data=col1+"\n"+col2+"\n"+col3;
-    //  FORM PENCATATAN JURNAL TRANSAKSI 
-    if(col5=='D'){
-      document.getElementById("idKodePerkadd").value=col1;
-      document.getElementById("idNamaPerkadd").value=col2;
-      }else{
-         alert("HARUS TYPE CABANG BUKAN INDUK");
-
-      }
-
-      });
+      // code to read selected table row cell data (values).
+        $("#idperkiraanxx").on('click','#klik',function(){
+            // get the current row
+            var currentRow=$(this).closest("tr"); 
+            var col1=currentRow.find("td:eq(0)").text(); // no_rek/get current row 1st TD value
+            var col2=currentRow.find("td:eq(1)").text(); // nama/get current row 2nd TD
+            var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
+            var col4=currentRow.find("td:eq(3)").text(); // get current row 3rd TD
+            var col5=currentRow.find("td:eq(4)").text(); // get current row 3rd TD
+            //  FORM PENCATATAN JURNAL TRANSAKSI 
+            if(col5=='D'){
+              document.getElementById("idKodePerkadd").value=col1;
+              document.getElementById("idNamaPerkadd").value=col2;
+              }else{
+                alert("HARUS TYPE CABANG BUKAN INDUK");
+              }
+          });
+      //Pada FORM PENCATATAN JURNAL TRANSAKSI PADA MODAL PERUBHAHAN KODE_PERK
+      $("#idperkiraancatat").on('click','#kliky',function(){
+            // get the current row
+            var currentRow=$(this).closest("tr"); 
+            var col1=currentRow.find("td:eq(0)").text(); // no_rek/get current row 1st TD value
+            var col2=currentRow.find("td:eq(1)").text(); // nama/get current row 2nd TD
+            var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
+            var col4=currentRow.find("td:eq(3)").text(); // get current row 3rd TD
+            var col5=currentRow.find("td:eq(4)").text(); // get current row 3rd TD
+            //  FORM PENCATATAN JURNAL TRANSAKSI 
+            if(col5=='D'){
+              document.getElementById("idKodePerkcatat").value=col1;
+              document.getElementById("idNamaPerkcatat").value=col2;
+              }else{
+                alert("HARUS TYPE CABANG BUKAN INDUK CUKX");
+              }
+          });
     });
+
+
 
 </script>
 <script>

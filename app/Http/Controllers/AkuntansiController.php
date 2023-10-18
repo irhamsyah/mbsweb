@@ -8,11 +8,14 @@ use App\User;
 use App\Logo;
 use App\Kodetranstabungan;
 use App\Kodecabang;
+use App\KodeJurnal;
 use App\Perkiraan;
 use App\Tabtran;
+use App\Trans_detail;
+use App\Trans_master;
 use App\Trans_master_buffer;
 use App\Trans_detail_buffer;
-
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Prophecy\Call\Call;
 use Symfony\Component\Console\Input\InputOption;
@@ -646,4 +649,199 @@ class AkuntansiController extends Controller
         Trans_detail_buffer::where('trans_id',$request->trans_id)->delete();
         return redirect()->route('caritrans',['trans_id'=>$request->master_id]);
     }
+    public function bo_ak_tt_simpanjurnal(Request $request)
+    {
+        $buffermst = Trans_master_buffer::where('trans_id',$request->master_id)->get();
+        for ($i=0; $i<count($buffermst); $i++)
+        {
+            $simpantrms=new Trans_master();
+            $simpantrms->tgl_trans = $buffermst[$i]->tgl_trans;
+            $simpantrms->kode_jurnal = $buffermst[$i]->kode_jurnal;
+            $simpantrms->no_bukti = $buffermst[$i]->no_bukti;
+            $simpantrms->src = 'TL';
+            $simpantrms->NOMINAL = $buffermst[$i]->nominal;
+            $simpantrms->KETERANGAN = $buffermst[$i]->keterangan;
+            $simpantrms->save();
+        }
+        $masteridbaru=$simpantrms->trans_id;
+        Trans_detail_buffer::where('master_id',$request->master_id)
+                                    ->update([
+                                        'master_id' => $masteridbaru
+                                    ]);
+        $buffer = Trans_detail_buffer::where('master_id',$masteridbaru)->get();
+        for ($i=0; $i<count($buffer); $i++)
+        {
+            $simpantrdt=new Trans_detail();
+            $simpantrdt->master_id = $buffer[$i]->master_id;
+            $simpantrdt->URAIAN = $buffer[$i]->URAIAN;
+            $simpantrdt->kode_perk = $buffer[$i]->kode_perk;
+            $simpantrdt->debet = $buffer[$i]->debet;
+            $simpantrdt->kredit = $buffer[$i]->kredit;
+            $simpantrdt->save();
+        }
+        Trans_detail_buffer::where('master_id',$masteridbaru)->delete();    
+        Trans_master_buffer::where('trans_id',$request->master_id)->delete();
+        return redirect()->route('showformvalidasidatatransaksi')->with('alert','SIMPAN POSTING TRANSAKSI SELESAI');
+    }
+    // SHOW FORM CREATE JOURNAL TRANSACTION 
+    public function bo_ak_tt_showfrmctttransaksi()
+    {
+        $users = User::all();
+        $logos = Logo::all();
+        $hasil =[];
+        $kodejurnal=KodeJurnal::all();
+        $perkiraan= Perkiraan::orderBy('kode_perk', 'ASC')->get();
+        Trans_detail_buffer::where('master_id','<=',10)->delete();
+        $hasil = Trans_detail_buffer::with('perkiraan')->where('master_id','<=',10)->get();
+        return view('akuntansi.frmcatatjurnaltransaksi',['logos'=>$logos,'users'=>$users,'perkiraan'=>$perkiraan,'kodejurnal'=>$kodejurnal,'hasil'=>$hasil,'masterid'=>'','msgstatus'=>'']);
+
+    }
+    // Simpan Jurnal Sementara sebelum di simpan ke Trans_master dan trans_detail
+    public function bo_tb_de_savetempjurnalmemorial(Request $request)
+    {
+        // dd($request);
+        $this->validate($request,[
+            'kode_perk'=>'required'
+        ]);
+
+        $simpan = new Trans_detail_buffer();
+        if(is_null($request->masterid)) {
+            $simpan->master_id = rand(1,10);
+        }else{
+            $simpan->master_id = $request->masterid;
+        }
+        // BUAT SIMPAN TRANSAKSI JURNAL MEMORIAL
+        $tgl_trans=$request->inputtgljurnal;
+        $kode_jurnal = $request->kode_jurnal;
+        $no_bukti = $request->no_bukti;
+        $keterangan = $request->keterangan;
+        // --------------------------------
+        $simpan->URAIAN = $request->keterangan;
+        $simpan->kode_perk = $request->kode_perk;
+        $simpan->debet =$request->debet;
+        $simpan->kredit =$request->kredit;
+        $simpan->save();
+        $masterid = $simpan->master_id;
+        $jml=DB::select('SELECT SUM(debet) as jml from trans_detail_buffer WHERE master_id='.$masterid);
+        $total =$jml[0]->jml;
+        $users = User::all();
+        $logos = Logo::all();
+        $kodejurnal=KodeJurnal::all();
+        $perkiraan= Perkiraan::orderBy('kode_perk', 'ASC')->get();
+        $hasil = Trans_detail_buffer::with('perkiraan')->where('master_id',$simpan->master_id)->orderBy('trans_id')->get();
+        return view('akuntansi.frmcatatjurnaltransaksi',['logos'=>$logos,'users'=>$users,'perkiraan'=>$perkiraan,'kodejurnal'=>$kodejurnal,'hasil'=>$hasil,'masterid'=>$masterid,'tgl_trans'=>$tgl_trans,'kode_jurnal'=>$kode_jurnal,'no_bukti'=>$no_bukti,'keterangan'=>$keterangan,'total'=>$total,'msgstatus'=>'']);
+    }
+    public function bo_ak_tt_delcatatjurnaldetail(Request $request)
+    {
+        // dd($request);
+        if(is_null($request->master_id)) {
+            $master_id = rand(1,10);
+        }else{
+            $master_id = $request->master_id;
+        }
+        Trans_detail_buffer::where('trans_id',$request->trans_id)->delete();
+        $users = User::all();
+        $logos = Logo::all();
+        $kodejurnal=KodeJurnal::all();
+        $perkiraan= Perkiraan::orderBy('kode_perk', 'ASC')->get();
+        $hasil = Trans_detail_buffer::with('perkiraan')->where('master_id',$master_id)->orderBy('trans_id')->get();
+        // BUAT SIMPAN TRANSAKSI JURNAL MEMORIAL
+        $tgl_trans=$request->tgl_transx;
+        $kode_jurnal = $request->kode_jurnalx;
+        $no_bukti = $request->no_buktix;
+        $keterangan = $request->keteranganx;
+        $jml=DB::select('SELECT SUM(debet) as jml from trans_detail_buffer WHERE master_id='.$master_id);
+        $total =$jml[0]->jml;
+
+        return view('akuntansi.frmcatatjurnaltransaksi',['logos'=>$logos,'users'=>$users,'perkiraan'=>$perkiraan,'kodejurnal'=>$kodejurnal,'hasil'=>$hasil,'masterid'=>$master_id,'tgl_trans'=>$tgl_trans,'kode_jurnal'=>$kode_jurnal,'no_bukti'=>$no_bukti,'keterangan'=>$keterangan,'total'=>$total,'msgstatus'=>'']);
+    }
+    // SIMPAN PENCATATAN JURNAL MEMORIAL/TRANSAKSI  
+    public function bo_ak_tt_simpancatatjurnal(Request $request)
+    {
+        // dd($request);
+        $simpanmstr = new Trans_master();
+        $simpanmstr->tgl_trans = $request->tgl_trans;
+        $simpanmstr->kode_jurnal = $request->kode_jurnal;
+        $simpanmstr->no_bukti = $request->no_bukti;
+        $simpanmstr->src = 'GL';
+        $simpanmstr->NOMINAL = $request->total;
+        $simpanmstr->KETERANGAN = $request->keterangan;
+        $simpanmstr->save();
+
+        $rs = Trans_detail_buffer::where('master_id', $request->master_idx)->get();
+        foreach($rs as $value){
+            $simpan = new Trans_detail();
+            $simpan->master_id = $request->master_idx;
+            $simpan->URAIAN = $value->URAIAN;
+            $simpan->kode_perk = $value->kode_perk;
+            $simpan->debet =$value->debet;
+            $simpan->kredit =$value->kredit;
+            $simpan->save();
+        }
+        Trans_detail::where('master_id', $request->master_idx)
+                            ->update(
+                                [
+                                    'master_id' => $simpanmstr->trans_id
+                                ]);
+        // HAPUS TRANS_DETAIL_BUFFFER
+        Trans_detail_buffer::where('master_id',$request->master_idx)->delete();
+        return  redirect()->route('showformcatattransaksi')->with('alert', 'JURNAL TRANSAKSI BERHASIL DI SIMPAN');
+    }
+    // UPDATE KODE_PERK SAAT MERUBAH DATA PADA PENCATATAN JURNAL TRANSAKSI
+    public function bo_ak_tt_updatecatatjurnal(Request $request)
+    {
+        // BUAT SIMPAN TRANSAKSI JURNAL MEMORIAL
+        if(is_null($request->master_id)) {
+            $master_id = rand(1,10);
+        }else{
+            $master_id = $request->master_id;
+        }
+        $tgl_trans=$request->tgl_transupd;
+        $kode_jurnal = $request->kode_jurnalupd;
+        $no_bukti = $request->no_buktiupd;
+        $keterangan = $request->keteranganupd;
+        $jml=DB::select('SELECT SUM(debet) as jml from trans_detail_buffer WHERE master_id='.$master_id);
+        $total =$jml[0]->jml;
+        Trans_detail_buffer::where('trans_id',$request->trans_id)
+                            ->update(
+                            [
+                                'kode_perk'=>$request->kode_perk,
+                                'debet'=>$request->debet,
+                                'kredit'=>$request->kredit
+                            ]
+                            );
+        $users = User::all();
+        $logos = Logo::all();
+        $kodejurnal=KodeJurnal::all();
+        $perkiraan= Perkiraan::orderBy('kode_perk', 'ASC')->get();
+        $hasil = Trans_detail_buffer::with('perkiraan')->where('master_id',$master_id)->orderBy('trans_id')->get();
+        return view('akuntansi.frmcatatjurnaltransaksi',['logos'=>$logos,'users'=>$users,'perkiraan'=>$perkiraan,'kodejurnal'=>$kodejurnal,'hasil'=>$hasil,'masterid'=>$master_id,'tgl_trans'=>$tgl_trans,'kode_jurnal'=>$kode_jurnal,'no_bukti'=>$no_bukti,'keterangan'=>$keterangan,'total'=>$total,'msgstatus'=>'']);
+    }
+    // Show hsitory Pencatatan Jurnal 
+    public function bo_ak_tt_historycatatjurnal()
+    {
+        $users = User::all();
+        $logos = Logo::all();
+        $history =[];
+        return view('akuntansi.frmhistorycatatjurnal',['users'=>$users,'logos'=>$logos,'history'=>$history,'msgstatus'=>'']);
+    }
+    // Cari Pencatatan Jurnal 
+    public function bo_ak_tt_carihistorycatatjurnal(Request $request)
+    {
+        $this->validate($request,[
+            'no_bukti'=>'required'
+        ]);
+        if(is_null($request->keterangan))
+        {
+            $history = Trans_master::with('perkiraan')->where('no_bukti','LIKE','%'.$request->no_bukti.'%')->get();
+        }else{
+            $history = Trans_master::with('perkiraan')->where('no_bukti','LIKE','%'.$request->no_bukti.'%')->orWhere('KETERANGAN','LIKE','%'.$request->keterangan.'%')->get();
+        }
+        $users = User::all();
+        $logos = Logo::all();
+        dd($history);
+        return view('akuntansi.frmhistorycatatjurnal',['users'=>$users,'logos'=>$logos,'history'=>$history,'msgstatus'=>'']);
+
+    }
 }
+

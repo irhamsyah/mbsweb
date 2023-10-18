@@ -265,6 +265,17 @@ Route::post('bo_ak_tt_simpanupdvalidasi','AkuntansiController@bo_ak_tt_simpanupd
 // simpan penambahan record trans_detail_buffer
 Route::post('bo_ak_tt_addrecvalidasi','AkuntansiController@bo_ak_tt_addrecvalidasi')->name('addcodetransdetailbuff');
 Route::delete('bo_ak_tt_deltransdetailbuff','AkuntansiController@bo_ak_tt_deltransdetailbuff')->name('hapustransdetailbuff');
+// Simpan jurnal
+Route::post('bo_ak_tt_simpanjurnal','AkuntansiController@bo_ak_tt_simpanjurnal');
+// Pencatatan Transaksi Jurnal Memorial/Manual
+Route::get('bo_ak_tt_showfrmctttransaksi','AkuntansiController@bo_ak_tt_showfrmctttransaksi')->name('showformcatattransaksi');
+Route::post('bo_tb_de_savetempjurnalmemorial','AkuntansiController@bo_tb_de_savetempjurnalmemorial');
+Route::delete('bo_ak_tt_delcatatjurnaldetail','AkuntansiController@bo_ak_tt_delcatatjurnaldetail');
+Route::post('bo_ak_tt_simpancatatjurnal','AkuntansiController@bo_ak_tt_simpancatatjurnal');
+// Update kode_perk, debet.kredit pada pencatatan transaksi dari Modal
+Route::post('bo_ak_tt_updatecatatjurnal','AkuntansiController@bo_ak_tt_updatecatatjurnal')->name('saveperubahankodeperkpencttjur');
+Route::get('bo_ak_tt_historycatatjurnal','AkuntansiCOntroller@bo_ak_tt_historycatatjurnal')->name('showformhistoryjurnal');
+Route::post('bo_ak_tt_carihistorycatatjurnal','AkuntansiController@bo_ak_tt_carihistorycatatjurnal');
 
 //TELLER TRANS DEPOSITO
 Route::get('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito')->name('showsetorandeposito');

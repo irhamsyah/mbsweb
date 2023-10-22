@@ -823,7 +823,9 @@ class AkuntansiController extends Controller
         $users = User::all();
         $logos = Logo::all();
         $history =[];
-        return view('akuntansi.frmhistorycatatjurnal',['users'=>$users,'logos'=>$logos,'history'=>$history,'msgstatus'=>'']);
+        $perkiraan= Perkiraan::orderBy('kode_perk', 'ASC')->get();
+
+        return view('akuntansi.frmhistorycatatjurnal',['users'=>$users,'logos'=>$logos,'history'=>$history,'perkiraan'=>$perkiraan,'msgstatus'=>'']);
     }
     // Cari Pencatatan Jurnal 
     public function bo_ak_tt_carihistorycatatjurnal(Request $request)
@@ -833,15 +835,46 @@ class AkuntansiController extends Controller
         ]);
         if(is_null($request->keterangan))
         {
-            $history = Trans_master::with('perkiraan')->where('no_bukti','LIKE','%'.$request->no_bukti.'%')->get();
+            $history = Trans_master::with(['perkiraan','transdetail'])->where('no_bukti','LIKE','%'.$request->no_bukti.'%')->get();
         }else{
-            $history = Trans_master::with('perkiraan')->where('no_bukti','LIKE','%'.$request->no_bukti.'%')->orWhere('KETERANGAN','LIKE','%'.$request->keterangan.'%')->get();
+            $history = Trans_master::with(['perkiraan','transdetail'])->where('no_bukti','LIKE','%'.$request->no_bukti.'%')->orWhere('KETERANGAN','LIKE','%'.$request->keterangan.'%')->get();
         }
         $users = User::all();
         $logos = Logo::all();
-        dd($history);
-        return view('akuntansi.frmhistorycatatjurnal',['users'=>$users,'logos'=>$logos,'history'=>$history,'msgstatus'=>'']);
+        $perkiraan= Perkiraan::orderBy('kode_perk', 'ASC')->get();
 
+        return view('akuntansi.frmhistorycatatjurnal',['users'=>$users,'logos'=>$logos,'history'=>$history,'perkiraan'=>$perkiraan,'msgstatus'=>'']);
+
+    }
+    // SHOW detail perk pencatatan jurnal
+    public function bo_ak_tt_detailhistorycatatjurnal($id)
+    {
+        $rs = Trans_detail::with('perkiraan')->where('master_id',$id)->get();
+        $users = User::all();
+        $logos = Logo::all();
+        $perkiraan= Perkiraan::orderBy('kode_perk', 'ASC')->get();
+        $history = [];
+        return view('akuntansi.frmhistorycatatjurnal',['users'=>$users,'logos'=>$logos,'history'=>$history,'cari'=>$rs,'perkiraan'=>$perkiraan,'msgstatus'=>'']);
+    }
+    // SImpan perubahan history pencatatan jurnal
+    public function bo_ak_tt_updatehistorycatatjurnal(Request $request)
+    {
+        Trans_detail::where('trans_id',$request->trans_id)->update(
+            [
+                'kode_perk'=>$request->kode_perk,
+                'debet'=>$request->debet,
+                'kredit'=>$request->kredit
+            ]
+        );
+        return redirect()->route('historycatatjurnal',['id'=>$request->master_id])->with('alert','Update Berhasil');
+    }
+    public function bo_ak_tt_deletehistorycatatjurnal(Request $request)
+    {
+        Trans_master::where('trans_id',$request->trans_id)->delete();
+        Trans_detail::where('master_id',$request->trans_id)->delete();;
+        
+        // $trd->delete();
+        return redirect()->route('historycatatjurnal',['id'=>$request->trans_id])->with('alert','Delete master_id : '.$request->trans_id.' Berhasil');
     }
 }
 

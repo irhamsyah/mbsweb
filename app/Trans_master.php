@@ -13,7 +13,7 @@ class Trans_master extends Model
 
     public function transdetail()
     {
-        return $this->belongsTo('App\Trans_detail','trans_id','master_id');
+        return $this->hasMany('App\Trans_detail','master_id','trans_id');
     }
         // Relasi HasManyThrough untuk akses dari App\Tabtran->App\Nasabah melalui App\Tabungan
     // return $this->HasManyThrough(

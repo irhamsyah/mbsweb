@@ -876,5 +876,79 @@ class AkuntansiController extends Controller
         // $trd->delete();
         return redirect()->route('historycatatjurnal',['id'=>$request->trans_id])->with('alert','Delete master_id : '.$request->trans_id.' Berhasil');
     }
+    // show form data admin perkiraan 
+    public function bo_ak_de_showformdataperkiraan()
+    {
+        $perk=DB::table('perkiraan')->orderBy('kode_perk','asc')->get();
+        $logos = Logo::all();
+        $users = User::all();
+        
+        return view('akuntansi/dataperkiraan',['users'=>$users,'perkiraan'=>$perk,'logos'=>$logos,'msgstatus'=>'']);
+    }
+    // ADD Perkiraan
+    public function bo_ak_de_addperkiraan(Request $request)
+    {
+        $validasi=$request->validate([
+            'kode_perk' => 'required|unique:perkiraan',
+            'kode_induk' => 'required',
+            'nama_perk' => 'required|unique:perkiraan',
+            'type' => 'required',
+            'dk' => 'required',
+        ]);
+        $savekodeperk=DB::table('perkiraan')->insert(
+            [
+                'kode_perk'=>$request->kode_perk,
+                'nama_perk'=>$request->nama_perk,
+                'kode_induk'=>$request->kode_induk,
+                'type'=>'D',
+                'dk'=>$request->dk
+            ]);
+            DB::table('perkiraan')
+                        ->where('kode_perk',$request->kode_induk)
+                        ->update([
+                            'kode_perk_d_max'=>$request->kode_perk,
+                            'type'=>'G'
+                        ]);
+        return redirect()->route('showformperkiraan')->with('alert','Data Perkiraan '.$request->kode_perk.' Berhasil Ditambahkan');
+    }
+    // Delete perkiraan
+    public function bo_ak_de_delperkiraan(Request $request)
+    {   
+        // dd($request);
+        $validasi=$request->validate([
+            'saldo_akhir'=>'numeric|max:0'
+        ]);
+        $hapus=DB::table('perkiraan')->where('kode_perk',$request->kode_perk)->delete();
+
+        if($hapus){$msg='1';}else{$msg='0';}
+        $cekkodeperk=Perkiraan::where('kode_induk',$request->kode_induk)->get();
+        if(count($cekkodeperk)==0)
+        {
+            Perkiraan::where('kode_perk',$request->kode_induk)->update(['type'=>'D','kode_perk_d_max'=>NULL]);
+        }
+        return redirect()->route('showformperkiraan')->with('alert','Data Perkiraan '.$request->kode_perk.' Berhasil Dihapus');
+    }
+        // Update Perkiraan
+    public function bo_ak_de_updateperkiraan(Request $request)
+    {
+                DB::table('perkiraan')
+                ->where('kode_perk',$request->kode_perk)
+                ->update(
+                    [
+                        'kode_perk'=>$request->kode_perk,
+                        'nama_perk'=>$request->nama_perk
+                    ]);
+            return redirect()->route('showformperkiraan')->with('alert','Data Perkiraan '.$request->kode_perk.' Berhasil DiUpdate');
+    }
+        // Show form pencatatan kode jurnal transaksi
+    public function bo_ak_de_showfrmkodetransaksi()
+    {
+        $kode=DB::table('kodejurnal')->orderBy('kode_perk','asc')->get();
+        $logos = Logo::all();
+        $users = User::all();
+        
+        return view('akuntansi/frmkodejurnal',['users'=>$users,'kodejur'=>$kode,'logos'=>$logos,'msgstatus'=>'']);
+
+    }
 }
 

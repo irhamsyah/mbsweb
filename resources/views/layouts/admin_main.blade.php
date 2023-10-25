@@ -569,7 +569,7 @@
                     <li class="nav-item has-treeview <?php if(($menu=='tt')){echo'menu-open';}?>">
                       <a href="#" class="nav-link <?php if($menu=='tt'){echo 'active';} ?>" >
                         <i class="right fas fa-angle-left"></i>
-                        <p class="pl-1">TRANSAKSI</p>
+                        <p class="pl-2">TRANSAKSI</p>
                       </a>
                       <ul class="nav nav-treeview">
                         <li class="nav-item">
@@ -583,9 +583,47 @@
                             <p class="pl-3">Validasi Data Transaksi</p>
                           </a>
                         </li>
+                        {{-- PENCATATAN TRANSAKSI --}}
+                        <li class="nav-item">
+                          <a href="{{route('showformcatattransaksi')}}" class="nav-link">
+                            <p class="pl-3">Pencatatan Transaksi</p>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="{{route('showformhistoryjurnal')}}" class="nav-link">
+                            <p class="pl-3">History Pencatatan Jurnal</p>
+                          </a>
+                        </li>
 
                       </ul>
                     </li>
+                    <li class="nav-item has-treeview <?php if(($menu=='de')){echo'menu-open';}?>">
+                      <a href="#" class="nav-link <?php if($menu=='de'){echo 'active';} ?>" >
+                        <i class="right fas fa-angle-left"></i>
+                        <p class="pl-2">DATA ENTRY</p>
+                      </a>
+                      <ul class="nav nav-treeview">
+                        <li class="nav-item has-treeview <?php if(($menu=='de')){echo'menu-open';}?>">
+                          <a href="#" class="nav-link <?php if($menu=='de'){echo 'active';} ?>" >                           <i class="right fas fa-angle-left"></i>
+                            <p class="pl-3">Daftar Perkiraan GL (CoA)</p>
+                          </a>
+                          <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                              <a href="{{route('showformperkiraan')}}" class="nav-link">
+                                <p class="pl-4">Daftar Perkiraan</p>
+                              </a>
+                            </li>
+                          </ul>
+                        </li>
+                        {{-- VALIDASI --}}
+                        <li class="nav-item">
+                          <a href="{{route('showfrmkodetransaksi')}}" class="nav-link">
+                            <p class="pl-3">Pencatatan Kode Transaksi</p>
+                          </a>
+                        </li>
+                        {{-- PENCATATAN TRANSAKSI --}}
+                      </ul>
+                    </li>                
                 </ul>
               </li>
               <li class="nav-item has-treeview menu-close">

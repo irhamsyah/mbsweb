@@ -274,8 +274,43 @@ Route::delete('bo_ak_tt_delcatatjurnaldetail','AkuntansiController@bo_ak_tt_delc
 Route::post('bo_ak_tt_simpancatatjurnal','AkuntansiController@bo_ak_tt_simpancatatjurnal');
 // Update kode_perk, debet.kredit pada pencatatan transaksi dari Modal
 Route::post('bo_ak_tt_updatecatatjurnal','AkuntansiController@bo_ak_tt_updatecatatjurnal')->name('saveperubahankodeperkpencttjur');
-Route::get('bo_ak_tt_historycatatjurnal','AkuntansiCOntroller@bo_ak_tt_historycatatjurnal')->name('showformhistoryjurnal');
+// SHOW FORM HISTORY CATAT JURNAL/MEMORIAL
+Route::get('bo_ak_tt_historycatatjurnal','AkuntansiController@bo_ak_tt_historycatatjurnal')->name('showformhistoryjurnal');
 Route::post('bo_ak_tt_carihistorycatatjurnal','AkuntansiController@bo_ak_tt_carihistorycatatjurnal');
+// Munculkan detail jurnal pada history pencatatan jurnal
+Route::get('bo_ak_tt_detailhistorycatatjurnal/{id}','AkuntansiController@bo_ak_tt_detailhistorycatatjurnal')->name('historycatatjurnal');
+// SIMPAN DATA PERUBAHAN HISTORY PENCATATAN JURNAL
+Route::post('bo_ak_tt_updatehistorycatatjurnal','AkuntansiController@bo_ak_tt_updatehistorycatatjurnal')->name('updatehistorycttjurnal');
+Route::delete('bo_ak_tt_deletehistorycatatjurnal','AkuntansiController@bo_ak_tt_deletehistorycatatjurnal');
+    // DATA ENTRY DAFTAR PERKIRAAN
+Route::get('bo_ak_de_showformdataperkiraan','AkuntansiController@bo_ak_de_showformdataperkiraan')->name('showformperkiraan');
+// ADD Perkiraan
+Route::post('bo_ak_de_addperkiraan','AkuntansiController@bo_ak_de_addperkiraan')->name('addperkiraan');
+// Update / Edit Perkiraan
+Route::post('bo_ak_de_updateperkiraan','AkuntansiController@bo_ak_de_updateperkiraan')->name('updtperkiraan');
+// DELETE Perkiraan
+Route::delete('bo_ak_de_delperkiraan','AkuntansiController@bo_ak_de_delperkiraan')->name('delperkiraan');
+// SHow form pencatatan Kode Jurnal Transaksi
+Route::get('bo_ak_de_showfrmkodetransaksi','AkuntansiController@bo_ak_de_showfrmkodetransaksi')->name('showfrmkodetransaksi');
+// Add Kode Jurnal
+Route::post('bo_ak_de_addkodejurnal','AkuntansiController@bo_ak_de_addkodejurnal');
+// Update Kode Jurnal
+Route::post('bo_ak_de_updatekodejurnal','AkuntansiController@bo_ak_de_updatekodejurnal');
+// delete Kode Jurnal
+Route::delete('bo_ak_de_delkodejurnaltrans','AkuntansiController@bo_ak_de_delkodejurnaltrans');
+// LAPORAN-LAPORAN AKUNTANSI
+Route::get('bo_ak_lp_showfrnrptdaftarperkiraan','AkuntansiController@bo_ak_lp_showfrnrptdaftarperkiraan')->name('showfrnrptdaftarperkiraan');
+// Munculkan preview cetak daftar perkiraan
+Route::get('bo_pr_perkiraan','AkuntansiController@bo_pr_perkiraan')->name('pdfperkiraan');
+// export to excel daftar perkiraan
+Route::post('bo_ex_daftarperkiraan','AkuntansiController@bo_ex_daftarperkiraan');
+// Show form report translation jurnal
+Route::get('bo_ak_lp_showfrmrptjurnaltransaksi','AkuntansiController@showfrmrptjurnaltransaksi')->name('showfrmrptjurnaltransaksi');
+// cari jurnal transaksi
+Route::post('bo_ak_lp_carijurnal','AkuntansiController@bo_ak_lp_carijurnal');
+// cetak pdf jurnal transaksi
+Route::post('bo_ak_lp_cetakjurnal','AkuntansiController@bo_ak_lp_cetakjurnal');
+
 
 //TELLER TRANS DEPOSITO
 Route::get('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito')->name('showsetorandeposito');

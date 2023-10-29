@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\User;
 use App\Nasabah;
 use App\Logo;
+use App\Testimoni;
+use App\Service;
+use App\Slider;
+
 
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;

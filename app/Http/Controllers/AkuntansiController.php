@@ -15,6 +15,7 @@ use App\Trans_detail;
 use App\Trans_master;
 use App\Trans_master_buffer;
 use App\Trans_detail_buffer;
+use App\Exports\ReportdaftarperkiraanExport;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Prophecy\Call\Call;
@@ -909,7 +910,7 @@ class AkuntansiController extends Controller
                             'kode_perk_d_max'=>$request->kode_perk,
                             'type'=>'G'
                         ]);
-        return redirect()->route('showformperkiraan')->with('alert','Data Perkiraan '.$request->kode_perk.' Berhasil Ditambahkan');
+        return redirect()->route('showformperkiraan')->with('alert','Data Perkiraan '.$request->kode_perk.' Berhasil iupdate');
     }
     // Delete perkiraan
     public function bo_ak_de_delperkiraan(Request $request)
@@ -943,12 +944,91 @@ class AkuntansiController extends Controller
         // Show form pencatatan kode jurnal transaksi
     public function bo_ak_de_showfrmkodetransaksi()
     {
-        $kode=DB::table('kodejurnal')->orderBy('kode_perk','asc')->get();
+        $kode=DB::table('kodejurnal')->get();
         $logos = Logo::all();
         $users = User::all();
         
         return view('akuntansi/frmkodejurnal',['users'=>$users,'kodejur'=>$kode,'logos'=>$logos,'msgstatus'=>'']);
+    }
+    // add Kode Jurnal
+    public function bo_ak_de_addkodejurnal(Request $request)
+    {
+        $this->validate($request,[
+            'kode_jurnal'=>'required|unique:kodejurnal',
+            'nama_jurnal'=>'required'
+        ]);
+        $simpan = new KodeJurnal();
+        $simpan->kode_jurnal = $request->kode_jurnal;
+        $simpan->nama_jurnal = $request->nama_jurnal;
+        $simpan->save();
+        return redirect()->route('showfrmkodetransaksi')->with('alert','Kode Jurnal Berhasil Ditambahkan');
+    }
 
+    public function bo_ak_de_updatekodejurnal(Request $request)
+    {
+        KodeJurnal::where('kode_jurnal',$request->kode_jurnal)->update([
+                'kode_jurnal'=>$request->kode_jurnal,
+                'nama_jurnal'=>$request->nama_jurnal,
+        ]);
+        return redirect()->route('showfrmkodetransaksi')->with('alert','Kode Jurnal Berhasil iupdate');
+    }
+    // delete kode jurnal
+    public function bo_ak_de_delkodejurnaltrans(Request $request)
+    {
+        KodeJurnal::where('kode_jurnal',$request->kode_jurnal)->delete();
+        return redirect()->route('showfrmkodetransaksi')->with('alert','Kode Jurnal Berhasil iupdate');
+    }
+    // form tampilan laporan
+    public function bo_ak_lp_showfrnrptdaftarperkiraan()
+    {
+        $users = User::all();
+        $logos = Logo::all();
+        $perkiraan = Perkiraan::orderBy('kode_perk')->get();
+        return view('reports.akuntansi.frmrptperkiraan',['users' => $users, 'logos' => $logos, 'perkiraan'=>$perkiraan,'msgstatus'=>'']);
+    }
+    // munculkan preview cetak daftar perkiraan
+    public function bo_pr_perkiraan()
+    {
+        $perkiraan = Perkiraan::orderBy('kode_perk')->get();
+        return view('pdf.akuntansi.cetakperkiraan',['perkiraan'=>$perkiraan]);
+    }
+    // export daftar perkiraan
+    public function bo_ex_daftarperkiraan()
+    {
+        $perkiraan = DB::select("select * from perkiraan order by kode_perk");
+        return (new ReportdaftarperkiraanExport($perkiraan))->download('perkiraan.xlsx');
+    }
+    // show form report of transactions jurnal
+    public function showfrmrptjurnaltransaksi()
+    {
+        $users = User::all();
+        $logos = Logo::all();
+        return view('reports.akuntansi.frmrptjurnaltrans',['users' => $users, 'logos' => $logos]);
+    }
+    public function bo_ak_lp_carijurnal(Request $request)
+    {
+        $this->validate($request,[
+            'tgl_trans1'=>'required',
+            'tgl_trans2'=>'required'
+        ]);
+        $users = User::all();
+        $logos = Logo::all();
+        $sql = "SELECT * FROM (trans_master INNER JOIN trans_detail ON trans_master.trans_id=trans_detail.master_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk WHERE trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2'";
+        $rs = DB::select($sql);
+        return view('reports.akuntansi.frmrptjurnaltrans',['users' => $users,'logos' => $logos,'jurnal'=>$rs,'tgl_trans1'=>$request->tgl_trans1,'tgl_trans2'=>$request->tgl_trans2]);
+    }
+    public function bo_ak_lp_cetakjurnal(Request $request)
+    {
+        $this->validate($request,[
+            'tgl_trans1'=>'required',
+            'tgl_trans2'=>'required'
+        ]);
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+
+        $sql = "SELECT * FROM (trans_master INNER JOIN trans_detail ON trans_master.trans_id=trans_detail.master_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk WHERE trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2' order by trans_detail.master_id, trans_detail.debet DESC";
+        $rs = DB::select($sql);
+
+        return view('pdf.akuntansi.cetakjurnaltrans',['jurnal' => $rs,'lembaga'=>$lembaga,'ttd' =>$ttd]);          
     }
 }
-

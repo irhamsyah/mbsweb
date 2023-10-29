@@ -41,7 +41,7 @@
             @endforeach
             {{-- <p class="text-center">REKAPITULASI TABUNGAN</p> --}}
             <p class="text-center">TANGGAL : {{date('d F Y',strtotime($inputantgl))}}</p><br>
-            <table id="tbl1" class="table table-bordered">
+            <table id="tbl1" class="table table-bordered" style="border-style: none">
             <thead>
             <tr>
                 <th>No </th>

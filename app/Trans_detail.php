@@ -12,7 +12,7 @@ class Trans_detail extends Model
 
     public function transmaster()
     {
-        return $this->belongsToMany('App\Trans_master','master_id','trans_id');
+        return $this->belongsTo('App\Trans_master','master_id','trans_id');
     }
     public function perkiraan()
     {

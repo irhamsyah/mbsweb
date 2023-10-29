@@ -60,7 +60,7 @@
         <!-- /.card -->
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">Bunga Tabungan dan Pajak</h3>
+            <h3 class="card-title">UnBlokir Tabungan</h3>
           </div>
           <!-- /.card-header -->
           <div class="card-body">
@@ -172,4 +172,3 @@
 </div>
 <!-- /.content -->
 @endsection
-s

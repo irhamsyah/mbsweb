@@ -40,8 +40,8 @@
             <br>{{$lembaga->Value}}<br>
             @endforeach
 
-          <table id="tbl1" class="table table-bordered table-responsive">
-            <thead>
+            <table id="tbl1" class="table table-bordered" style="border-style: none">
+              <thead>
             <tr>
                 <th rowspan="2">No </th>
                 <th rowspan="2">No Rek</th>

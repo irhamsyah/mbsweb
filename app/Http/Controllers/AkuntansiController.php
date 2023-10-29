@@ -1026,7 +1026,7 @@ class AkuntansiController extends Controller
         $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
         $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
 
-        $sql = "SELECT * FROM (trans_master INNER JOIN trans_detail ON trans_master.trans_id=trans_detail.master_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk WHERE trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2' order by trans_detail.master_id, trans_detail.debet DESC";
+        $sql = "SELECT * FROM (trans_master INNER JOIN trans_detail ON trans_master.trans_id=trans_detail.master_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk WHERE trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2' order by trans_master.trans_id,trans_detail.trans_id";
         $rs = DB::select($sql);
 
         return view('pdf.akuntansi.cetakjurnaltrans',['jurnal' => $rs,'lembaga'=>$lembaga,'ttd' =>$ttd]);          

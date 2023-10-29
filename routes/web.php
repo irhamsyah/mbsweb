@@ -292,11 +292,24 @@ Route::post('bo_ak_de_updateperkiraan','AkuntansiController@bo_ak_de_updateperki
 Route::delete('bo_ak_de_delperkiraan','AkuntansiController@bo_ak_de_delperkiraan')->name('delperkiraan');
 // SHow form pencatatan Kode Jurnal Transaksi
 Route::get('bo_ak_de_showfrmkodetransaksi','AkuntansiController@bo_ak_de_showfrmkodetransaksi')->name('showfrmkodetransaksi');
-// TES
-Route::get('/tes',function(){
-    return view('tes');
-});
-
+// Add Kode Jurnal
+Route::post('bo_ak_de_addkodejurnal','AkuntansiController@bo_ak_de_addkodejurnal');
+// Update Kode Jurnal
+Route::post('bo_ak_de_updatekodejurnal','AkuntansiController@bo_ak_de_updatekodejurnal');
+// delete Kode Jurnal
+Route::delete('bo_ak_de_delkodejurnaltrans','AkuntansiController@bo_ak_de_delkodejurnaltrans');
+// LAPORAN-LAPORAN AKUNTANSI
+Route::get('bo_ak_lp_showfrnrptdaftarperkiraan','AkuntansiController@bo_ak_lp_showfrnrptdaftarperkiraan')->name('showfrnrptdaftarperkiraan');
+// Munculkan preview cetak daftar perkiraan
+Route::get('bo_pr_perkiraan','AkuntansiController@bo_pr_perkiraan')->name('pdfperkiraan');
+// export to excel daftar perkiraan
+Route::post('bo_ex_daftarperkiraan','AkuntansiController@bo_ex_daftarperkiraan');
+// Show form report translation jurnal
+Route::get('bo_ak_lp_showfrmrptjurnaltransaksi','AkuntansiController@showfrmrptjurnaltransaksi')->name('showfrmrptjurnaltransaksi');
+// cari jurnal transaksi
+Route::post('bo_ak_lp_carijurnal','AkuntansiController@bo_ak_lp_carijurnal');
+// cetak pdf jurnal transaksi
+Route::post('bo_ak_lp_cetakjurnal','AkuntansiController@bo_ak_lp_cetakjurnal');
 
 
 //TELLER TRANS DEPOSITO

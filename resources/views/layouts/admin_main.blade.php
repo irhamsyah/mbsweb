@@ -219,27 +219,27 @@
                   </a>
                   <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="/bo_cs_rp_nasabah" class="nav-link <?php if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
+                    <a href="/bo_cs_rp_nasabah" class="nav-link <?php if($menu=='cs' AND $submenu=='rp' AND ($page=='nasabah' or $page=='nasabahcari')){echo 'active';}?>">
                       <p class="pl-4">Dokumen Nasabah</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_cs_rp_tabungan" class="nav-link <?php if($page=='tabungan' or $page=='tabungancari' or $page=='tabunganbuktisetortab'){echo 'active';}?>">
+                    <a href="/bo_cs_rp_tabungan" class="nav-link <?php if($menu=='cs' AND $submenu=='rp' AND ($page=='tabungan' or $page=='tabungancari' or $page=='tabunganbuktisetortab')){echo 'active';}?>">
                       <p class="pl-4">Dokumen Tabungan</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_cs_rp_deposito" class="nav-link <?php if($page=='deposito' or $page=='depositocari'){echo 'active';}?>">
+                    <a href="/bo_cs_rp_deposito" class="nav-link <?php if($menu=='cs' AND $submenu=='rp' AND ($page=='deposito' or $page=='depositocari')){echo 'active';}?>">
                       <p class="pl-4">Dokumen Deposito</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_cs_rp_kredit" class="nav-link <?php if($page=='kredit' or $page=='kreditcari'){echo 'active';}?>">
+                    <a href="/bo_cs_rp_kredit" class="nav-link <?php if($menu=='cs' AND $submenu=='rp' AND ($page=='kredit' or $page=='kreditcari')){echo 'active';}?>">
                       <p class="pl-4">Dokumen Kredit</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_cs_rp_umum" class="nav-link <?php if($page=='umum' or $page=='umumcari'){echo 'active';}?>">
+                    <a href="/bo_cs_rp_umum" class="nav-link <?php if($menu=='cs' AND $submenu=='rp' AND ($page=='umum' or $page=='umumcari')){echo 'active';}?>">
                       <p class="pl-4">Dokumen Umum & Inv</p>
                     </a>
                   </li>
@@ -278,17 +278,17 @@
                   </a>
                   <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="/bo_tl_td_setorandeposito" class="nav-link <?php if($page=='setorandeposito'){echo 'active';}?>">
+                    <a href="/bo_tl_td_setorandeposito" class="nav-link <?php if($menu=='tl' AND $submenu=='td' AND ($page=='setorandeposito')){echo 'active';}?>">
                       <p class="pl-4">Setoran Deposito</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_tl_td_pengambilanbungadeposito" class="nav-link <?php if($page=='pengambilanbungadeposito'){echo 'active';}?>">
+                    <a href="/bo_tl_td_pengambilanbungadeposito" class="nav-link <?php if($menu=='tl' AND $submenu=='td' AND ($page=='pengambilanbungadeposito')){echo 'active';}?>">
                       <p class="pl-4">Pengambilan Bunga Deposito</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_tl_td_penutupandeposito" class="nav-link <?php if($page=='penutupandeposito'){echo 'active';}?>">
+                    <a href="/bo_tl_td_penutupandeposito" class="nav-link <?php if($menu=='tl' AND $submenu=='td' AND ($page=='penutupandeposito')){echo 'active';}?>">
                       <p class="pl-4">Penutupan Deposito</p>
                     </a>
                   </li>
@@ -490,8 +490,28 @@
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="#" class="nav-link <?php if($page=='hitungbunga'){echo 'active';}?>">
+                    <a href="/bo_dp_de_hitungbunga" class="nav-link <?php if($page=='hitungbunga'){echo 'active';}?>">
                       <p class="pl-4">Hitung Bunga</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/bo_dp_de_perpanjangandeposito" class="nav-link <?php if($page=='perpanjangandeposito'){echo 'active';}?>">
+                      <p class="pl-4">Perpanjangan Deposito</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/bo_dp_de_hapusdatatransaksideposito" class="nav-link <?php if($page=='hapusdatatransaksideposito'){echo 'active';}?>">
+                      <p class="pl-4">Hapus Data Transaksi</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/bo_dp_de_saldoawaltitipanbunga" class="nav-link <?php if($page=='saldoawaltitipanbunga'){echo 'active';}?>">
+                      <p class="pl-4">Saldo Awal Titipan Bunga</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/bo_dp_de_blokirdeposito" class="nav-link <?php if($page=='blokirdeposito'){echo 'active';}?>">
+                      <p class="pl-4">Blokir & UnBlokir Deposito</p>
                     </a>
                   </li>
                   </ul>
@@ -502,19 +522,29 @@
                     <p class="pl-2">ADMINISTRATOR</p>
                   </a>
                   <ul class="nav nav-treeview">
-                  <!-- <li class="nav-item">
-                    <a href="/bo_dp_ad_konfnasabah" class="nav-link <?php if($page=='konfnasabah'){echo 'active';}?>">
-                      <p class="pl-4">Konfigurasi Nasabah</p>
-                    </a>
-                  </li> -->
                   <li class="nav-item">
-                    <a href="/bo_dp_ad_agama" class="nav-link <?php if($page=='agama'){echo 'active';}?>">
-                      <p class="pl-4">Data Agama</p>
+                    <a href="/bo_dp_ad_produkdeposito" class="nav-link <?php if($page=='produkdeposito'){echo 'active';}?>">
+                      <p class="pl-4">Produk Deposito</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_dp_ad_golongan" class="nav-link <?php if($page=='golongan'){echo 'active';}?>">
-                      <p class="pl-4">Data Golongan</p>
+                    <a href="/bo_dp_ad_konfigurasideposito" class="nav-link <?php if($page=='konfigurasideposito'){echo 'active';}?>">
+                      <p class="pl-4">Konfigurasi Deposito</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/bo_dp_ad_resetbungadeposito" class="nav-link <?php if($page=='resetbungadeposito'){echo 'active';}?>">
+                      <p class="pl-4">Reset Perhitungan Bunga</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/bo_dp_ad_updatebungapajakdeposito" class="nav-link <?php if($page=='updatebungapajakdeposito'){echo 'active';}?>">
+                      <p class="pl-4">Update Bunga & Pajak</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/bo_dp_ad_tabelpendukungdeposito" class="nav-link <?php if($page=='tabelpendukungdeposito'){echo 'active';}?>">
+                      <p class="pl-4">Tabel Pendukung</p>
                     </a>
                   </li>
                   </ul>
@@ -526,28 +556,53 @@
                   </a>
                   <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="/bo_dp_rp_nasabah" class="nav-link <?php if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
-                      <p class="pl-4">Dokumen Nasabah</p>
+                    <a href="/bo_dp_rp_nominatifdeposito" class="nav-link <?php if($page=='nominatifdeposito'){echo 'active';}?>">
+                      <p class="pl-4">Nominatif</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_dp_rp_tabungan" class="nav-link <?php if($page=='tabungan' or $page=='tabungancari' or $page=='tabunganbuktisetortab'){echo 'active';}?>">
-                      <p class="pl-4">Dokumen Tabungan</p>
+                    <a href="/bo_dp_rp_transaksideposito" class="nav-link <?php if($page=='transaksideposito'){echo 'active';}?>">
+                      <p class="pl-4">Transaksi</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_dp_rp_deposito" class="nav-link <?php if($page=='deposito' or $page=='depositocari'){echo 'active';}?>">
-                      <p class="pl-4">Dokumen Deposito</p>
+                    <a href="/bo_dp_rp_bungapajakdeposito" class="nav-link <?php if($page=='bungapajakdeposito'){echo 'active';}?>">
+                      <p class="pl-4">Bunga & Pajak</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_dp_rp_kredit" class="nav-link <?php if($page=='kredit' or $page=='kreditcari'){echo 'active';}?>">
-                      <p class="pl-4">Dokumen Kredit</p>
+                    <a href="/bo_dp_rp_depositobelumaktif" class="nav-link <?php if($page=='=depositobelumaktif'){echo 'active';}?>">
+                      <p class="pl-4">Deposito Belum Aktif</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/bo_dp_rp_umum" class="nav-link <?php if($page=='umum' or $page=='umumcari'){echo 'active';}?>">
-                      <p class="pl-4">Dokumen Umum & Inv</p>
+                    <a href="/bo_dp_rp_depositoblokir" class="nav-link <?php if($page=='depositoblokir'){echo 'active';}?>">
+                      <p class="pl-4">Deposito Blokir</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/bo_dp_rp_formperpanjangandeposito" class="nav-link <?php if($page=='formperpanjangandeposito'){echo 'active';}?>">
+                      <p class="pl-4">Form Perpanjangan</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/bo_dp_rp_depositojt" class="nav-link <?php if($page=='depositojt'){echo 'active';}?>">
+                      <p class="pl-4">Deposito Jatuh Tempo</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/bo_dp_rp_kuitansideposito" class="nav-link <?php if($page=='kuitansideposito'){echo 'active';}?>">
+                      <p class="pl-4">Kuitansi Deposito</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/bo_dp_rp_kartukontroldeposito" class="nav-link <?php if($page=='kartukontroldeposito'){echo 'active';}?>">
+                      <p class="pl-4">Kartu Kontrol Deposito</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/bo_dp_rp_cetakbilyetdeposito" class="nav-link <?php if($page=='cetakbilyetdeposito'){echo 'active';}?>">
+                      <p class="pl-4">Cetak Bilyet Deposito</p>
                     </a>
                   </li>
                   </ul>
@@ -750,6 +805,8 @@ $(document).ready(function(){
      var col11=currentRow.find("td:eq(10)").text(); // get current row 11th TD
      var col12=currentRow.find("td:eq(11)").text(); // get current row 12th TD
      var col13=currentRow.find("td:eq(12)").text(); // get current row 13th TD
+     var col14=currentRow.find("td:eq(13)").text(); // get current row 14th TD
+     var totalditerima=col6-col14;
     //  var data=col1+"\n"+col2+"\n"+col3;
      document.getElementById("putnorekening").value=col1;
      document.getElementById("putnamanasabah").value=col2;
@@ -763,6 +820,8 @@ $(document).ready(function(){
      document.getElementById("putalternatif").value=col12;
      document.getElementById("putkodepemilik").value=col13;
      document.getElementById("putjumlahsetoran").value=col6;
+     document.getElementById("putpinalti").value=col14;
+     document.getElementById("puttotalterima").value=totalditerima;
 
      $('#ambildatadepositoteller').modal('hide');
 

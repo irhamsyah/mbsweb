@@ -7,8 +7,7 @@ use SoftDeletes;
 
 class KodeJurnal extends Model
 {
-    public $timestamp=false;    
+    public $timestamps=false;
     protected $table='kodejurnal';
     protected $guarded = ['kode_jurnal','nama_jurnal'];
-
 }

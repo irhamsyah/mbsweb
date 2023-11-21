@@ -114,6 +114,14 @@ Route::put('/bo_dp_de_deposito', 'DepositoController@bo_dp_de_deposito_edit');
 Route::delete('/bo_dp_de_deposito', 'DepositoController@bo_dp_de_deposito_destroy');
 Route::get('/bo_dp_de_deposito/printbukarekdeposito','DepositoController@bo_cs_de_bukarekdeposito_rppdf')->name('cetakbukarekdeposito');//print buka rekening deposito
 
+//BO KREDIT Data Entry KREDIT
+Route::get('/bo_kr_de_kredit', 'KreditController@bo_kr_de_kredit')->name('showkredit');
+// Route::post('/bo_dp_de_deposito/cari','DepositoController@bo_dp_de_deposito_cari');//search filter
+// Route::post('/bo_dp_de_deposito', 'DepositoController@bo_dp_de_deposito_add');
+// Route::put('/bo_dp_de_deposito', 'DepositoController@bo_dp_de_deposito_edit');
+// Route::delete('/bo_dp_de_deposito', 'DepositoController@bo_dp_de_deposito_destroy');
+// Route::get('/bo_dp_de_deposito/printbukarekdeposito','DepositoController@bo_cs_de_bukarekdeposito_rppdf')->name('cetakbukarekdeposito');//print buka rekening deposito
+
 
 //Route Tabungan
 Route::get('/bo_tb_de_tabungan','TabunganController@bo_tb_de_tabungan')->name('showtabungan');

@@ -18,6 +18,11 @@ use Illuminate\Support\Facades\Auth;
 
 class TellerDepositoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function bo_tl_td_setorandeposito()
     {
         $users = User::all();
@@ -95,7 +100,7 @@ class TellerDepositoController extends Controller
         $tabtrans->save();
 
         // UPDATE TABUNG
-        if($norekeningtab!=""){
+        if(isset($norekeningtab)!=""){
             $norekeningtab = $request->no_rekening_tab;
             $jmlsetoran = $request->jumlah_setoran;
             $sqlupdatetab="UPDATE tabung SET tabung.SALDO_PENARIKAN=tabung.SALDO_PENARIKAN-$jmlsetoran,tabung.SALDO_AKHIR=tabung.SALDO_AKHIR-$jmlsetoran where tabung.NO_REKENING='$norekeningtab'";

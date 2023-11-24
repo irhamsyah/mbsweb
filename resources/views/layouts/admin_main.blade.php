@@ -28,6 +28,8 @@
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css" integrity="sha384-QYIZto+st3yW+o8+5OHfT6S482Zsvz2WfOzpFSXMF9zqeLcFV0/wlZpMtyFcZALm" crossorigin="anonymous">
+
   <link rel="stylesheet" href="{{ asset('plugins/fontawesome-free/css/all.min.css') }}">
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
@@ -668,7 +670,89 @@
                           <p class="pl-3">Jurnal Transaksi</p>
                         </a>
                       </li>
-                      {{-- PENCATATAN TRANSAKSI --}}
+                      {{-- Buku Besar --}}
+                      <li class="nav-item has-treeview <?php if(($menu=='de')){echo'menu-open';}?>">
+                        <a href="#" class="nav-link <?php if($menu=='de'){echo 'active';} ?>" >
+                          <i class="right fas fa-angle-left"></i>
+                          <p class="pl-3">Buku Besar</p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                          <li class="nav-item">
+                            <a href="{{route('showfrmbukubesar')}}" class="nav-link">
+                              <p class="pl-4">Buku Besar</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="#" class="nav-link">
+                              <p class="pl-4">Buku Besar Pembantu Detail</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="#" class="nav-link">
+                              <p class="pl-4">Buku Besar Bulanan</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="#" class="nav-link">
+                              <p class="pl-4">Pencetakan Sub Buku Besar</p>
+                            </a>
+                          </li>
+                        </ul>
+                      </li>
+                      {{-- Trial Balance --}}
+                      <li class="nav-item has-treeview <?php if(($menu=='de')){echo'menu-open';}?>">
+                        <a href="#" class="nav-link <?php if($menu=='de'){echo 'active';} ?>" >
+                          <i class="right fas fa-angle-left"></i>
+                          <p class="pl-3">Trial Balance</p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                          <li class="nav-item">
+                            <a href="{{route('showfrmtrialbalance')}}" class="nav-link">
+                              <p class="pl-4">Trial Balance</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{{route('showfrmtrialbalance')}}" class="nav-link">
+                              <p class="pl-4">Trial Balance Komparatif</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{{route('showfrmrekapperk')}}" class="nav-link">
+                              <p class="pl-4">Rekapitulasi Perkiraan</p>
+                            </a>
+                          </li>
+                        </ul>
+                      </li>
+                      {{-- NERACA --}}
+                      <li class="nav-item has-treeview <?php if(($menu=='de')){echo'menu-open';}?>">
+                        <a href="#" class="nav-link <?php if($menu=='de'){echo 'active';} ?>" >
+                          <i class="right fas fa-angle-left"></i>
+                          <p class="pl-3">Neraca</p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                          <li class="nav-item">
+                            <a href="{{route('showfrmneraca')}}" class="nav-link">
+                              <p class="pl-4">Neraca</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{{route('showfrmneracaharian')}}" class="nav-link">
+                              <p class="pl-4">Neraca Harian</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{{route('showfrmrekapperk')}}" class="nav-link">
+                              <p class="pl-4">Neraca Administrative</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{{route('showfrmrekapperk')}}" class="nav-link">
+                              <p class="pl-4">Neraca Komparatif</p>
+                            </a>
+                          </li>
+                        </ul>
+                      </li>                    
+
                     </ul>
                   </li>                              
                 </ul>

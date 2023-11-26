@@ -1053,12 +1053,23 @@ class AkuntansiController extends Controller
     // Cari transaksi buku besar
     public function bo_ak_caribukubesar(Request $request)
     {
-        $saldo_awal = DB::select("SELECT (perkiraan.saldo_awal+(SUM(debet)-SUM(kredit))) as SALDO_AWAL FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk where trans_detail.kode_perk='$request->kode_perk' AND  trans_master.tgl_trans<'$request->tgl_trans1'");
-        $sqlcari = DB::select("SELECT trans_master.tgl_trans,'Total Mutasi' as keterangan,SUM(debet) as debet,SUM(kredit) as kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id where kode_perk='$request->kode_perk' AND ( trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2') GROUP BY trans_master.tgl_trans");
-        $dk = Perkiraan::where('kode_perk',$request->kode_perk)->get();
-        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
-        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
-        return view('pdf.akuntansi.cetakbukubesar',['saldo_awal'=>$saldo_awal,'result'=>$sqlcari,'kode_perk'=>$request->kode_perk,'nama_perk'=>$request->nama_perk,'dk'=>$dk[0]->dk,'lembaga'=>$lembaga,'ttd'=>$ttd,'tgl1'=>$request->tgl_trans1,'tgl2'=>$request->tgl_trans2]);
+        // dd($request);
+        $tgl_trans1=date("Y-m-d",strtotime($request->tgl_trans1));
+        $tgl_trans2=date("Y-m-d",strtotime($request->tgl_trans2));
+        if(is_null($request->kode_perk)==false){
+            $saldo_awal = DB::select("SELECT perkiraan.kode_perk,(perkiraan.saldo_awal+(SUM(debet)-SUM(kredit))) as SALDO_AWAL FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk where trans_detail.kode_perk='$request->kode_perk' AND  trans_master.tgl_trans<'$tgl_trans1'");
+            $sqlcari = DB::select("SELECT trans_master.tgl_trans,'Total Mutasi' as keterangan,SUM(debet) as debet,SUM(kredit) as kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id where kode_perk='$request->kode_perk' AND ( trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2') GROUP BY trans_master.tgl_trans");
+            $dk = Perkiraan::where('kode_perk',$request->kode_perk)->get();
+            $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+            $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+            return view('pdf.akuntansi.cetakbukubesar',['saldo_awal'=>$saldo_awal,'result'=>$sqlcari,'kode_perk'=>$request->kode_perk,'nama_perk'=>$request->nama_perk,'dk'=>$dk[0]->dk,'lembaga'=>$lembaga,'ttd'=>$ttd,'tgl1'=>$request->tgl_trans1,'tgl2'=>$request->tgl_trans2]);
+    
+        }else{
+            $sqlcari = DB::select("SELECT tblsldwal.SALDO_AWAL,trans_detail.kode_perk,perkiraan.nama_perk,tblsldwal.dk,trans_master.tgl_trans,'Total Mutasi' as keterangan,SUM(debet) as debet,SUM(kredit) as kredit FROM ((trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk) INNER JOIN (SELECT perkiraan.kode_perk,perkiraan.dk,(perkiraan.saldo_awal+(SUM(debet)-SUM(kredit))) as SALDO_AWAL FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk where trans_master.tgl_trans<'$tgl_trans1' GROUP BY perkiraan.kode_perk) AS tblsldwal ON trans_detail.kode_perk=tblsldwal.kode_perk where ( trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2') GROUP BY trans_detail.kode_perk,trans_master.tgl_trans");
+            $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+            $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+            return view('pdf.akuntansi.cetakbukubesarall',['result'=>$sqlcari,'lembaga'=>$lembaga,'ttd'=>$ttd,'tgl1'=>$request->tgl_trans1,'tgl2'=>$request->tgl_trans2]);
+            }
     }
     // show form Trial Balance
     public function bo_ak_lp_showfrmtrialbalance()

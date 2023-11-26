@@ -53,7 +53,7 @@
                 <th>{{$nama_perk}}</th>
                 <th></th>
                 <th>Saldo awal</th>
-                <th>{{$saldo_awal[0]->SALDO_AWAL}}</th>
+                <th>{{number_format($saldo_awal[0]->SALDO_AWAL,2,".",",")}}</th>
             </tr>
             </thead>
             <tbody>

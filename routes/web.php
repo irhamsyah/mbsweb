@@ -304,18 +304,53 @@ Route::get('bo_ak_lp_showfrnrptdaftarperkiraan','AkuntansiController@bo_ak_lp_sh
 Route::get('bo_pr_perkiraan','AkuntansiController@bo_pr_perkiraan')->name('pdfperkiraan');
 // export to excel daftar perkiraan
 Route::post('bo_ex_daftarperkiraan','AkuntansiController@bo_ex_daftarperkiraan');
-// Show form report translation jurnal
+// Show form report jurnal transaction
 Route::get('bo_ak_lp_showfrmrptjurnaltransaksi','AkuntansiController@showfrmrptjurnaltransaksi')->name('showfrmrptjurnaltransaksi');
 // cari jurnal transaksi
 Route::post('bo_ak_lp_carijurnal','AkuntansiController@bo_ak_lp_carijurnal');
 // cetak pdf jurnal transaksi
 Route::post('bo_ak_lp_cetakjurnal','AkuntansiController@bo_ak_lp_cetakjurnal');
-
+// export to excel jurnal transaksi
+Route::get('bo_ak_ex_jurnaltrans','AkuntansiController@bo_ak_ex_jurnaltrans')->name('exportjurnaltransaksi');
+// Show form pencarian buku besar 
+Route::get('bo_ak_lp_showfrmbukubesar','AkuntansiController@bo_ak_lp_showfrmbukubesar')->name('showfrmbukubesar');
+// Cari buku besar 
+Route::post('bo_ak_caribukubesar','AkuntansiController@bo_ak_caribukubesar');
+// Show form pencarian Trial Balance/Trial Balance Komparatif
+Route::get('bo_ak_lp_showfrmtrialbalance','AkuntansiController@bo_ak_lp_showfrmtrialbalance')->name('showfrmtrialbalance');
+// cari trial balance/neraca /Trial Balance Komparatif
+Route::post('bo_ak_caritrial','AkuntansiController@bo_ak_caritrial');
+// SHow form pencarian rekapiyulasi perkiraan
+Route::get('bo_ak_lp_showfrmrekapperk','AkuntansiController@bo_ak_lp_showfrmrekapperk')->name('showfrmrekapperk');
+// Cari rekap perkiraan 
+Route::post('bo_ak_carirekapperk','AkuntansiController@bo_ak_carirekapperk');
+// Show form neraca SCONTRO
+Route::get('bo_ak_lp_showfrmneraca','AkuntansiController@bo_ak_lp_showfrmneraca')->name('showfrmneraca');
+// Cari Neraca SCONTRO
+Route::post('bo_ak_carineraca','AkuntansiController@bo_ak_carineraca');
+// Export neraca Scontro
+Route::get('export_neraca_lajur','AkuntansiController@export_neraca_lajur')->name('export_neraca_lajur');
+// Show form neraca harian
+Route::get('bo_ak_lp_showfrmneracaharian','AkuntansiController@bo_ak_lp_showfrmneracaharian')->name('showfrmneracaharian');
+// Cari /Proses neraca Harian
+Route::post('bo_ak_carineracaharian','AkuntansiController@bo_ak_carineracaharian');
+Route::get('tes',function(){
+    return view('tes');
+});
 
 //TELLER TRANS DEPOSITO
+//SETORAN DEPOSITO
 Route::get('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito')->name('showsetorandeposito');
-Route::post('/bo_tl_td_setorandeposito/cari','TellerDepositoController@bo_tl_td_setorandeposito_cari');//search filter
+//Route::post('/bo_tl_td_setorandeposito/cari','TellerDepositoController@bo_tl_td_setorandeposito_cari');//search filter
 Route::post('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito_add');
 // Route::put('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito_edit');
 // Route::delete('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito_destroy');
 Route::get('/bo_tl_td_setorandeposito/printbukarekdeposito','TellerDepositoController@bo_tl_td_setorandeposito_rppdf')->name('cetakbukarekdeposito');//print buka rekening deposito
+//PENGAMBILAN BUNGA DEPOSITO
+Route::get('/bo_tl_td_pengambilanbungadeposito', 'TellerDepositoController@bo_tl_td_pengambilanbungadeposito')->name('showpengambilanbungadeposito');
+//Route::post('/bo_tl_td_pengambilanbungadeposito/cari','TellerDepositoController@bo_tl_td_pengambilanbungadeposito_cari');//search filter
+Route::post('/bo_tl_td_pengambilanbungadeposito', 'TellerDepositoController@bo_tl_td_pengambilanbungadeposito_add');
+//PENUTUPAN BUNGA DEPOSITO
+Route::get('/bo_tl_td_penutupandeposito', 'TellerDepositoController@bo_tl_td_penutupandeposito')->name('showpenutupandeposito');
+//Route::post('/bo_tl_td_penutupandeposito/cari','TellerDepositoController@bo_tl_td_penutupandeposito_cari');//search filter
+Route::post('/bo_tl_td_penutupandeposito', 'TellerDepositoController@bo_tl_td_penutupandeposito_add');

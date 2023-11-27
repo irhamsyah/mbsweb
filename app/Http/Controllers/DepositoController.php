@@ -7,6 +7,8 @@ use App\KodeGroup3Deposito;
 use App\KodeJenisDeposito;
 use App\Kodecabang;
 use App\KodeTransDeposito;
+use App\Kodejenistabungan;
+use App\Kodetranstabungan;
 use App\Deposito;
 use App\Kodeketerkaitanlapbul;
 use App\Kodemetoda;
@@ -16,6 +18,7 @@ use App\Mysysid;
 use App\Nasabah;
 use App\User;
 use App\Tabungan;
+use App\Tabtran;
 use App\Deptran;
 use App\Tellertran;
 
@@ -39,7 +42,12 @@ class DepositoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-
+        // Mbalekno Kehalaman LOGIN jika Waktu expired
+        public function __construct()
+        {
+            $this->middleware('auth');
+        }
+    
     public function bo_dp_de_deposito()
     {
         $logos = Logo::all();

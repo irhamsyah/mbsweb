@@ -116,7 +116,7 @@ Route::get('/bo_dp_de_deposito/printbukarekdeposito','DepositoController@bo_cs_d
 
 //BO KREDIT Data Entry KREDIT
 Route::get('/bo_kr_de_kredit', 'KreditController@bo_kr_de_kredit')->name('showkredit');
-// Route::post('/bo_dp_de_deposito/cari','DepositoController@bo_dp_de_deposito_cari');//search filter
+Route::post('/bo_kr_de_kredit/add','KreditController@bo_kr_de_kredit_add');//add kredit
 // Route::post('/bo_dp_de_deposito', 'DepositoController@bo_dp_de_deposito_add');
 // Route::put('/bo_dp_de_deposito', 'DepositoController@bo_dp_de_deposito_edit');
 // Route::delete('/bo_dp_de_deposito', 'DepositoController@bo_dp_de_deposito_destroy');

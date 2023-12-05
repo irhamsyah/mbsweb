@@ -316,6 +316,16 @@ Route::get('bo_ak_ex_jurnaltrans','AkuntansiController@bo_ak_ex_jurnaltrans')->n
 Route::get('bo_ak_lp_showfrmbukubesar','AkuntansiController@bo_ak_lp_showfrmbukubesar')->name('showfrmbukubesar');
 // Cari buku besar 
 Route::post('bo_ak_caribukubesar','AkuntansiController@bo_ak_caribukubesar');
+// EXPORT BUKU BESAR
+Route::get('export_buku_besar','AkuntansiController@export_buku_besar')->name('exportbukubesar');
+// Show form pencarian buku besar pembantu
+Route::get('bo_ak_lp_showfrmbukubesarhelper','AkuntansiController@bo_ak_lp_showfrmbukubesarhelper')->name('showfrmbukubesarhelper');
+// Cari buku besar pembantu
+Route::post('bo_ak_caribukubesarhelper','AkuntansiController@bo_ak_caribukubesarhelper');
+// Export buku besar ke EXCEL
+Route::get('export_buku_besar_helper','AkuntansiController@export_buku_besar_helper')->name('exportbukubesarhelper');
+
+
 // Show form pencarian Trial Balance/Trial Balance Komparatif
 Route::get('bo_ak_lp_showfrmtrialbalance','AkuntansiController@bo_ak_lp_showfrmtrialbalance')->name('showfrmtrialbalance');
 // cari trial balance/neraca /Trial Balance Komparatif
@@ -334,9 +344,14 @@ Route::get('export_neraca_lajur','AkuntansiController@export_neraca_lajur')->nam
 Route::get('bo_ak_lp_showfrmneracaharian','AkuntansiController@bo_ak_lp_showfrmneracaharian')->name('showfrmneracaharian');
 // Cari /Proses neraca Harian
 Route::post('bo_ak_carineracaharian','AkuntansiController@bo_ak_carineracaharian');
-Route::get('tes',function(){
-    return view('tes');
-});
+// Show Form Neraca Komparatif
+Route::get('bo_ak_lp_showfrmkomparatif','AkuntansiController@showfrmneracakomparatif')->name('showfrmneracakomparatif');
+// Cari Neraca Komparatif
+Route::post('bo_ak_carineracakomparatif','AkuntansiController@bo_ak_carineracakomparatif');
+// Export neraca komparatif ke excel
+Route::get('bo_ak_exportkomparatif','AkuntansiController@bo_ak_exportkomparatif')->name('exportneracakomparatif');
+
+
 
 //TELLER TRANS DEPOSITO
 //SETORAN DEPOSITO

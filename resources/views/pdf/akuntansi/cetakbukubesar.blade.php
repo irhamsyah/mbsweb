@@ -32,11 +32,13 @@
           <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.707l.547.547 1.17-1.951a.5.5 0 1 1 .858.514Z"/>
         </svg>
       </a>
+      {{-- return view('pdf.akuntansi.cetakbukubesar',['saldo_awal'=>$saldo_awal,'result'=>$sqlcari,'kode_perk'=>$request->kode_perk,'nama_perk'=>$request->nama_perk,'dk'=>$dk[0]->dk,'lembaga'=>$lembaga,'ttd'=>$ttd,'tgl1'=>$request->tgl_trans1,'tgl2'=>$request->tgl_trans2]); --}}
+
+      <a href="{{route('exportbukubesar',['kode_perk'=>$kode_perk,'tgl_trans1'=>$tgl1,'tgl_trans2'=>$tgl2,'type'=>$type])}}">export</a>
         <h4>Buku Besar</h4>
         @foreach($lembaga as $values)
         <br>{{$values->Value}}<br>
         @endforeach
-
             <h5 style="font-size: 70%">periode {{date('d F Y',strtotime($tgl1))}} s/d {{date('d F Y',strtotime($tgl2))}}</h5>
           <table id="tbl1" class="table table-responsive" style="border-style:none">
             <thead>

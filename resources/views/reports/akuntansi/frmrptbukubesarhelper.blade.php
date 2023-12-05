@@ -3,13 +3,13 @@
 @section('content')
 <!-- Main content -->
 <div class="content-wrapper" style="margin-top:10px; max-height:800px !important;">
-  <h5 style="margin-left:10px ">Pencetakan Buku Besar</h5>
+  <h5 style="margin-left:10px ">Pencetakan Buku Besar Pembantu</h5>
   <div class="container-fluid">
     <div class="row">
       <div class="col-12">
         <div class="card card-warning card-outline">
           <!-- form start -->
-          <form method="POST" action="/bo_ak_caribukubesar" role="search">
+          <form method="POST" action="/bo_ak_caribukubesarhelper" role="search">
           @csrf
             <div class="card-body">
               <div class="row form-group">

@@ -672,8 +672,8 @@
                             </a>
                           </li>
                           <li class="nav-item">
-                            <a href="#" class="nav-link">
-                              <p class="pl-4">Buku Besar Pembantu Detail</p>
+                            <a href="{{route('showfrmbukubesarhelper')}}" class="nav-link">
+                              <p class="pl-4">Buku Besar Pembantu</p>
                             </a>
                           </li>
                           <li class="nav-item">
@@ -729,13 +729,13 @@
                               <p class="pl-4">Neraca Harian</p>
                             </a>
                           </li>
-                          <li class="nav-item">
-                            <a href="{{route('showfrmrekapperk')}}" class="nav-link">
+                          {{-- <li class="nav-item">
+                            <a href="#" class="nav-link">
                               <p class="pl-4">Neraca Administrative</p>
                             </a>
-                          </li>
+                          </li> --}}
                           <li class="nav-item">
-                            <a href="{{route('showfrmrekapperk')}}" class="nav-link">
+                            <a href="{{route('showfrmneracakomparatif')}}" class="nav-link">
                               <p class="pl-4">Neraca Komparatif</p>
                             </a>
                           </li>
@@ -1898,6 +1898,7 @@ $("#datatabungan").on('click','#klik',function(){
               }
           });
       //Pada FORM PENCATATAN JURNAL TRANSAKSI PADA MODAL PERUBHAHAN KODE_PERK
+      // untuk from cari bukubesar
       $("#idperkiraancatat").on('click','#kliky',function(){
             // get the current row
             var currentRow=$(this).closest("tr"); 
@@ -1907,12 +1908,10 @@ $("#datatabungan").on('click','#klik',function(){
             var col4=currentRow.find("td:eq(3)").text(); // get current row 3rd TD
             var col5=currentRow.find("td:eq(4)").text(); // get current row 3rd TD
             //  FORM PENCATATAN JURNAL TRANSAKSI 
-            if(col5=='D'){
               document.getElementById("idKodePerkcatat").value=col1;
               document.getElementById("idNamaPerkcatat").value=col2;
-              }else{
-                alert("HARUS TYPE CABANG BUKAN INDUK");
-              }
+              document.getElementById("idType").value=col5;
+
           });
           // Fungsi menampilkan Data Perkiraan di Tabel Modal jika di KLIK akan terinput ke Textbox form Pencatatan Perkiraan
     $("#perkiraandata").on('click','#tes1',function(){

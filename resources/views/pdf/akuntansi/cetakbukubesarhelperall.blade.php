@@ -18,7 +18,7 @@
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     
-        <title>Buku Besar</title>
+        <title>Buku Besar Pembantu</title>
       </head>
       <body>
     <div class="container">
@@ -26,14 +26,15 @@
         <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
         <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/>
       </svg></button>
-      <a href="{{route('showfrmbukubesar')}}" class="btn btn-md btn-normal">
+      <a href="{{route('showfrmbukubesarhelper')}}" class="btn btn-md btn-normal">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-check" viewBox="0 0 16 16">
           <path d="M7.293 1.5a1 1 0 0 1 1.414 0L11 3.793V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v3.293l2.354 2.353a.5.5 0 0 1-.708.708L8 2.207l-5 5V13.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 2 13.5V8.207l-.646.647a.5.5 0 1 1-.708-.708L7.293 1.5Z"/>
           <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.707l.547.547 1.17-1.951a.5.5 0 1 1 .858.514Z"/>
         </svg>
       </a>
-      <a href="{{route('exportbukubesar',['tgl_trans1'=>$tgl1,'tgl_trans2'=>$tgl2,'kode_perk'=>''])}}">export</a>
-        <h4>Buku Besar</h4>
+
+      <a href="{{route('exportbukubesarhelper',['tgl_trans1'=>$tgl1,'tgl_trans2'=>$tgl2,'kode_perk'=>''])}}">export</a>
+        <h4>Buku Besar Pembantu</h4>
         @foreach($lembaga as $values)
         <br>{{$values->Value}}<br>
         @endforeach
@@ -54,8 +55,10 @@
             @if($index==0)
             <thead>
             <tr>
-                <th>Tanggal </th>
-                <th>Keterangan</th>
+                <th>Tgl Trans </th>
+                <th>Kode</th>
+                <th>No.bukti</th>
+                <th>Uraian</th>
                 <th>Debet</th>
                 <th>Kredit</th>
                 <th>Saldo</th>
@@ -63,6 +66,8 @@
             <tr>
                 <th>{{$values->kode_perk}}</th>
                 <th>{{$values->nama_perk}}</th>
+                <th></th>
+                <th></th>
                 <th></th>
                 <th>Saldo awal</th>
                 <th>{{number_format($values->SALDO_AWAL,2,".",",")}}</th>
@@ -86,7 +91,9 @@
                 @if($index==0)
                 <tr>
                     <td>{{ $values->tgl_trans}}</td>
-                    <td>{{ $values->keterangan}}</td>
+                    <td>{{ $values->kode_jurnal}}</td>
+                    <td>{{ $values->no_bukti}}</td>
+                    <td>{{ $values->URAIAN}}</td>
                     <td>{{ number_format($values->debet,2,".",",")}}</td>
                     <td>{{ number_format($values->kredit,2,".",",")}}</td>
                     <td>{{ number_format($totsaldo,2,".",",")}}</td>
@@ -98,7 +105,9 @@
                 @elseif($index>0 &&($perk[($index-1)]==$perk[($index)]))
                 <tr>
                     <td>{{ $values->tgl_trans}}</td>
-                    <td>{{ $values->keterangan}}</td>
+                    <td>{{ $values->kode_jurnal}}</td>
+                    <td>{{ $values->no_bukti}}</td>
+                    <td>{{ $values->URAIAN}}</td>
                     <td>{{ number_format($values->debet,2,".",",")}}</td>
                     <td>{{ number_format($values->kredit,2,".",",")}}</td>
                     <td>{{ number_format($totsaldo,2,".",",")}}</td>
@@ -110,6 +119,8 @@
                 @elseif($index>0 &&($perk[($index-1)]<>$perk[($index)]))
                 <tr>
                     <td>Total Jumlah {{$namaperk[($index-1)]}}</td>
+                    <td></td>
+                    <td></td>
                     <td></td>
                     <td>{{number_format($totdebet,2,".",",")}}</td>
                     <td>{{number_format($totkredit,2,".",",")}}</td>
@@ -126,16 +137,20 @@
 
                         <thead>
                         <tr>
-                            <th>Tanggal </th>
-                            <th>Keterangan</th>
+                            <th>Tgl Trans </th>
+                            <th>Kode</th>
+                            <th>No.bukti</th>
+                            <th>Uraian</th>
                             <th>Debet</th>
                             <th>Kredit</th>
                             <th>Saldo</th>
-                        </tr>
+                                    </tr>
                         <tr>
                             <th>{{$values->kode_perk}}</th>
                             <th>{{$values->nama_perk}}</th>
                             <th></th>
+                            <th></th>
+                            <th></th>        
                             <th>Saldo awal</th>
                             <th>{{number_format($values->SALDO_AWAL,2,".",",")}}</th>
                         </tr>
@@ -156,7 +171,9 @@
                             {{-- @if($index==0) --}}
                             <tr>
                                 <td>{{ $values->tgl_trans}}</td>
-                                <td>{{ $values->keterangan}}</td>
+                                <td>{{ $values->kode_jurnal}}</td>
+                                <td>{{ $values->no_bukti}}</td>
+                                <td>{{ $values->URAIAN}}</td>
                                 <td>{{ number_format($values->debet,2,".",",")}}</td>
                                 <td>{{ number_format($values->kredit,2,".",",")}}</td>
                                 <td>{{ number_format($totsaldo,2,".",",")}}</td>

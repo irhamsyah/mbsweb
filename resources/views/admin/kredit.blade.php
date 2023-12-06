@@ -370,15 +370,19 @@ autocomplete(document.getElementsByName("inputnasabahid")[0], document.getElemen
       document.getElementsByName("inputtanggaljttempo")[0].value=tanggaljatuhtempo;
     }  
   }
-
+  var provisi = 0;
+  function hitungprovisi(){
+    provisi = parseInt(document.getElementsByName("inputprovisirp")[0].value);
+  }
   var pokok = 0;
   var bunga = 0;
+  
   function hitungbunga(){
     pokok = parseInt(document.getElementsByName("inputjumlahpinjaman")[0].value);    
     var sukubunga=(parseInt(document.getElementsByName("inputbungaperthn")[0].value) /12);
     document.getElementsByName("inputjumlahbungapinjaman")[0].value = parseInt(document.getElementsByName("inputjumlahpinjaman")[0].value) * parseInt(document.getElementsByName("inputjmlangsuran")[0].value) * sukubunga/100;
     document.getElementsByName("inputsukubunga")[0].value = sukubunga;
-    bunga = parseInt(document.getElementsByName("inputjumlahbungapinjaman")[0].value);
+    bunga = parseInt(document.getElementsByName("inputjumlahbungapinjaman")[0].value);    
     var nilaiakhir = parseFloat(document.getElementsByName("inputjumlahpinjaman")[0].value)+parseFloat(document.getElementsByName("inputjumlahbungapinjaman")[0].value);
     var nilaiawal = parseFloat(document.getElementsByName("inputjumlahpinjaman")[0].value);
     var pembagi = document.getElementsByName("inputjmlangsuran")[0].value/12;

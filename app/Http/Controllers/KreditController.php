@@ -95,7 +95,7 @@ class KreditController extends Controller
       $newkredit->JML_ANGSURAN = $request->input("inputjmlangsuran");
       $newkredit->SATUAN_WAKTU_ANGSURAN = $request->input("inputsatuanwaktuangsuran");
       $newkredit->BI_JANGKA_WAKTU = $request->input("inputjw");
-      $newkredit->TGL_JATUH_TEMPO = $request->input("inputtanggaljttempo");
+      $newkredit->TGL_JATUH_TEMPO = \DateTime::createFromFormat('d/m/Y', $request->input("inputtanggaljttempo"))->format('Y-m-d');
       $newkredit->SUKU_BUNGA_PER_TAHUN = $request->input("inputbungaperthn");
       $newkredit->suku_bunga_eff_per_tahun = $request->input("inputbungaeffperthn");
       $newkredit->SUKU_BUNGA_PER_ANGSURAN = $request->input("inputsukubunga");
@@ -106,8 +106,10 @@ class KreditController extends Controller
       $newkredit->PERIODE_ANGSURAN_BUNGA = $request->input("inputterminbunga");
       $newkredit->GRACE_PERIOD_POKOK = $request->input("inputgppokok");
       $newkredit->GRACE_PERIOD_BUNGA = $request->input("inputgpbunga");
-      $newkredit->JML_BUNGA_PINJAMAN = $request->input("inputangsuranblnpersen");
+      $newkredit->JML_BUNGA_PINJAMAN = $request->input("inputjumlahbungapinjaman");
       $newkredit->angsuran_total = $request->input("inputangsuranbln");
+      $newkredit->angsuran_pokok = $request->input("angsuranpokok")[1];
+      $newkredit->angsuran_bunga = $request->input("angsuranbunga")[1];
       $newkredit->SUKU_BUNGA_EKIVALEN = $request->input("inputbungaekiv");
       $newkredit->FEE_BUNGA_1_PER_TAHUN = $request->input("inputangsuranfee1");
       $newkredit->FEE_BUNGA_2_PER_TAHUN = $request->input("inputangsuranfee2");
@@ -141,11 +143,23 @@ class KreditController extends Controller
       for ($i = 0; $i < $length; $i++) {
         $newkretrans = New Kretrans();
         $newkretrans->NO_REKENING = $request->input("inputnorekening");
-        $newkretrans->TGL_TRANS = $request->input("tglangsuran")[$i];
+        $newkretrans->TGL_TRANS = \DateTime::createFromFormat('d/m/Y', $request->input("tglangsuran")[$i])->format('Y-m-d');
         $newkretrans->POKOK_TRANS = $request->input("angsuranpokok")[$i];
         $newkretrans->BUNGA_TRANS = $request->input("angsuranbunga")[$i];
+        $newkretrans->PROVISI_TRANS = 0;
         $newkretrans->ANGSURAN_KE = $i+1;
+        $newkretrans->MY_KODE_TRANS = '200';
         $newkretrans->save();
+
+        $newkretrans2 = New Kretrans();
+        $newkretrans2->NO_REKENING = $request->input("inputnorekening");
+        $newkretrans2->TGL_TRANS = \DateTime::createFromFormat('d/m/Y', $request->input("tglprovisi")[$i])->format('Y-m-d');
+        $newkretrans2->POKOK_TRANS = 0;
+        $newkretrans2->BUNGA_TRANS = 0;
+        $newkretrans2->PROVISI_TRANS = $request->input("angsuranprovisi")[$i];
+        $newkretrans2->ANGSURAN_KE = $i+1;
+        $newkretrans2->MY_KODE_TRANS = '225';
+        $newkretrans2->save();
       }
       
       

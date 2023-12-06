@@ -323,7 +323,7 @@
         </div>
         <div class="col-lg-5 col-sm-12">
           <label for="inputprovisirp">.</label>
-          <input type="text" name="inputprovisirp"  value="0" class="form-control">
+          <input type="text" name="inputprovisirp"  onchange="hitungprovisi()" value="0" class="form-control">
         </div>
         <div class="col-lg-3 col-sm-12">
           <label for="inputamortisasiprovisi">.</label>

@@ -896,6 +896,12 @@
                               <p class="pl-4">Neraca Komparatif</p>
                             </a>
                           </li>
+                          <li class="nav-item">
+                            <a href="{{route('showfrmneracaannual')}}" class="nav-link">
+                              <p class="pl-4">Neraca Annual</p>
+                            </a>
+                          </li>
+
                         </ul>
                       </li>                    
 
@@ -1356,6 +1362,9 @@ $(document).ready(function () {
         format: 'Y-MM-DD'
     });
     $('#idtglnominatif2').datetimepicker({
+        format: 'Y-MM-DD'
+    });
+    $('#idtglnominatif3').datetimepicker({
         format: 'Y-MM-DD'
     });
     

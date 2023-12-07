@@ -20,6 +20,7 @@ use App\Exports\ReportbukubesarallExport;
 use App\Exports\ReportbukubesarHelperExport;
 use App\Exports\ReportbukubesarHelperAllExport;
 use App\Exports\ReportNeracaKomparatifExport;
+use App\Exports\ReportNeracaAnnualExport;
 
 class AkuntansiController extends Controller
 {
@@ -1693,5 +1694,11 @@ class AkuntansiController extends Controller
        
                return view('pdf.akuntansi.cetakneracaannual',['rsneraca'=>$rsneraca,'lembaga'=>$lembaga,'ttd'=>$ttd,'tgl_trans1'=>$tgl_trans1,'tgl_trans2'=>$tgl_trans2,'tgl_trans3'=>$tgl_trans3,'totaktiva1'=>$totaktiva1,'totpasiva1'=>$totaktiva1,'laba1'=>$laba1,'totaktiva2'=>$totaktiva2,'totpasiva2'=>$totaktiva2,'laba2'=>$laba2,'totaktiva3'=>$totaktiva3,'totpasiva3'=>$totaktiva3,'laba3'=>$laba3]);
 
+    }
+    // EXPORT NERACA ANNUAL
+    public function bo_ak_exportneracaannual(Request $request)
+    {
+        $result = DB::select("select * from neraca_annual where aktiva_bln1<>0 OR pasiva_bln1<>0");
+        return (new ReportNeracaAnnualExport($result,$request->tgl_trans1,$request->tgl_trans2,$request->tgl_trans3,$request->totaktiva1,$request->totpasiva1,$request->laba1,$request->totaktiva2,$request->totpasiva2,$request->laba2,$request->totaktiva3,$request->totpasiva3,$request->laba3))->download('exportneracaannual.xlsx');
     }
 }

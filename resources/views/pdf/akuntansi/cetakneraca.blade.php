@@ -54,7 +54,7 @@
         <tr>
             <th rowspan="2">AKTIVA </th>
             <th rowspan="2">Rupiah</th>
-            <th rowspan="2">AKTIVA</th>
+            <th rowspan="2">PASIVA</th>
             <th rowspan="2">Rupiah</th>
         </tr>
         </thead>

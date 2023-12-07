@@ -1585,4 +1585,113 @@ class AkuntansiController extends Controller
         $totkreditby = DB::select("SELECT SUM(trans_detail.kredit) kredit FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk where trans_detail.kode_perk LIKE '5%' AND  (trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2')");
         return (new ReportNeracaKomparatifExport($rstrial,$totdebetpend,$totkreditpend,$totdebetby,$totkreditby,$tgl_trans1,$tgl_trans2))->download('exportneracakomparatif.xlsx');
     }
+    // Show form NERACA ANNUAL 
+    public function bo_ak_lp_showfrmneracaannual()
+    {
+        $users = User::all();
+        $logos = Logo::all();
+        return view('reports.akuntansi.frmrptneracaannual',['users'=>$users,'logos'=>$logos,'msgstatus'=>'']);
+    }
+    // Cari Neraca Annual
+    public function bo_ak_carineracaannual(Request $request)
+    {
+        $this->validate($request,[
+            'perkiraan_induk'=>'required'
+        ]);
+        $tgl_trans1 = date('Y-m-d',strtotime($request->tgl_trans1));
+        $tgl_trans2 = date('Y-m-d',strtotime($request->tgl_trans2));
+        $tgl_trans3 = date('Y-m-d',strtotime($request->tgl_trans3));
+
+        $saldo_akhir=0;$totaktiva1=0;$totpasiva1=0;$totekuitas1=0;$laba1=0;
+        $totaktiva2=0;$totpasiva2=0;$totekuitas2=0;$laba2=0;
+        $totaktiva3=0;$totpasiva3=0;$totekuitas3=0;$laba3=0;
+        set_time_limit(2000);
+
+        DB::select("update neraca_annual set aktiva_bln1=0,aktiva_bln2=0,aktiva_bln3=0,pasiva_bln1=0,pasiva_bln2=0,pasiva_bln3=0");
+        // Perhitungan Tahap Pertama 1
+        $rs = Perkiraan::where('type','G')->OrderBy('kode_perk','asc')->get();
+                foreach($rs as $values)
+                {
+            // PROSES HITUNG SALDO_AKHIR SUATU PERKIRAAN DAN UPDATE KE TBL NERACA_ANNUAL
+                    if(substr($values->kode_perk, 0, 1)=="1"){
+                        $sldak = DB::select("SELECT (sum(trans_detail.debet)-sum(trans_detail.kredit)) as saldo_akhir from trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<='$tgl_trans1' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                        $saldo_akhir =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        DB::select("update neraca_annual set aktiva_bln1 = $saldo_akhir where kode_perk_aktiva='$values->kode_perk'");
+                    // FILTER nilai saldo_akhir bukan 0
+                    if($values->kode_perk=="1"){
+                        $totaktiva1 =$saldo_akhir;
+                    }
+
+                    }elseif(substr($values->kode_perk, 0, 1)=="2"||substr($values->kode_perk, 0, 1)=="3"){
+                        $sldak = DB::select("SELECT (sum(trans_detail.kredit)-sum(trans_detail.debet)) as saldo_akhir from trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<='$tgl_trans1' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                        $saldo_akhir =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        DB::select("update neraca_annual set pasiva_bln1 = $saldo_akhir where kode_perk_pasiva='$values->kode_perk'");
+                        if($values->kode_perk=="2"){
+                            $totpasiva1 =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        }elseif($values->kode_perk=="3"){
+                            $totekuitas1 =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        }
+                        }
+                }
+               $laba1=$totaktiva1-$totpasiva1-$totekuitas1;
+        // Perhitungan Tahap 2
+        $rs = Perkiraan::where('type','G')->OrderBy('kode_perk','asc')->get();
+                foreach($rs as $values)
+                {
+            // PROSES HITUNG SALDO_AKHIR SUATU PERKIRAAN DAN UPDATE KE TBL NERACA_ANNUAL
+                    if(substr($values->kode_perk, 0, 1)=="1"){
+                        $sldak = DB::select("SELECT (sum(trans_detail.debet)-sum(trans_detail.kredit)) as saldo_akhir from trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<='$tgl_trans2' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                        $saldo_akhir =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        DB::select("update neraca_annual set aktiva_bln2 = $saldo_akhir where kode_perk_aktiva='$values->kode_perk'");
+                    // FILTER nilai saldo_akhir bukan 0
+                    if($values->kode_perk=="1"){
+                        $totaktiva2 =$saldo_akhir;
+                    }
+
+                    }elseif(substr($values->kode_perk, 0, 1)=="2"||substr($values->kode_perk, 0, 1)=="3"){
+                        $sldak = DB::select("SELECT (sum(trans_detail.kredit)-sum(trans_detail.debet)) as saldo_akhir from trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<='$tgl_trans2' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                        $saldo_akhir =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        DB::select("update neraca_annual set pasiva_bln2 = $saldo_akhir where kode_perk_pasiva='$values->kode_perk'");
+                        if($values->kode_perk=="2"){
+                            $totpasiva2 =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        }elseif($values->kode_perk=="3"){
+                            $totekuitas2 =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        }
+                        }
+                }
+               $laba2=$totaktiva2-$totpasiva2-$totekuitas2;
+        // Perhitungan Tahap 3
+        $rs = Perkiraan::where('type','G')->OrderBy('kode_perk','asc')->get();
+                foreach($rs as $values)
+                {
+            // PROSES HITUNG SALDO_AKHIR SUATU PERKIRAAN DAN UPDATE KE TBL NERACA_ANNUAL
+                    if(substr($values->kode_perk, 0, 1)=="1"){
+                        $sldak = DB::select("SELECT (sum(trans_detail.debet)-sum(trans_detail.kredit)) as saldo_akhir from trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<='$tgl_trans3' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                        $saldo_akhir =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        DB::select("update neraca_annual set aktiva_bln3 = $saldo_akhir where kode_perk_aktiva='$values->kode_perk'");
+                    // FILTER nilai saldo_akhir bukan 0
+                    if($values->kode_perk=="1"){
+                        $totaktiva3 =$saldo_akhir;
+                    }
+
+                        }elseif(substr($values->kode_perk, 0, 1)=="2"||substr($values->kode_perk, 0, 1)=="3"){
+                        $sldak = DB::select("SELECT (sum(trans_detail.kredit)-sum(trans_detail.debet)) as saldo_akhir from trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<='$tgl_trans3' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                        $saldo_akhir =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        DB::select("update neraca_annual set pasiva_bln3 = $saldo_akhir where kode_perk_pasiva='$values->kode_perk'");
+                        if($values->kode_perk=="2"){
+                            $totpasiva3 =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        }elseif($values->kode_perk=="3"){
+                            $totekuitas3 =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        }
+                        }
+                }
+               $laba3=$totaktiva3-$totpasiva3-$totekuitas3;
+               $rsneraca = DB::select("select * from neraca_annual where aktiva_bln1<>0 OR pasiva_bln1<>0");
+                // -----------------------------------------------------
+               $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+               $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+       
+               return view('pdf.akuntansi.cetakneracaannual',['rsneraca'=>$rsneraca,'lembaga'=>$lembaga,'ttd'=>$ttd,'tgl_trans1'=>$tgl_trans1,'tgl_trans2'=>$tgl_trans2,'tgl_trans3'=>$tgl_trans3,'totaktiva1'=>$totaktiva1,'totpasiva1'=>$totaktiva1,'laba1'=>$laba1,'totaktiva2'=>$totaktiva2,'totpasiva2'=>$totaktiva2,'laba2'=>$laba2,'totaktiva3'=>$totaktiva3,'totpasiva3'=>$totaktiva3,'laba3'=>$laba3]);
+
+    }
 }

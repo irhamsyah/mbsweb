@@ -358,7 +358,9 @@ Route::get('bo_ak_lp_showfrmkomparatif','AkuntansiController@showfrmneracakompar
 Route::post('bo_ak_carineracakomparatif','AkuntansiController@bo_ak_carineracakomparatif');
 // Export neraca komparatif ke excel
 Route::get('bo_ak_exportkomparatif','AkuntansiController@bo_ak_exportkomparatif')->name('exportneracakomparatif');
-
+// Show Form Neraca ANNUAL
+Route::get('bo_ak_lp_showfrmneracaannual','AkuntansiController@bo_ak_lp_showfrmneracaannual')->name('showfrmneracaannual');
+Route::post('bo_ak_carineracaannual','AkuntansiController@bo_ak_carineracaannual');
 
 
 //TELLER TRANS DEPOSITO

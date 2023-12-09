@@ -84,6 +84,7 @@
                   <td>No Rekening</td>
                   <td>Saldo Awal</td>
                   <td>Saldo Saat Ini</td>
+                  <td>Action</td>
                 </tr>
               </thead>
             </table>
@@ -98,11 +99,29 @@
                 serverSide: true,
                 ajax: "{{route('Getkredits')}}",
                 columns: [
-                    { data: 'nama' },
-                    { data: 'deskripsi' },
-                    { data: 'norek' },
-                    { data: 'saldorealisasi' },
-                    { data: 'saldoakhir' },
+                    { data: 'nama_nasabah' },
+                    { data: 'DESKRIPSI_JENIS_KREDIT' },
+                    { data: 'NO_REKENING' },
+                    { data: 'POKOK_SALDO_REALISASI' },
+                    { data: 'POKOK_SALDO_AKHIR' },
+                    { title: "Action", 
+                      "render": function(data, type, row, meta) {
+                        console.log( 'in render function' );
+                        return '<a class="dropdown-toggle btn btn-block bg-gradient-primary btn-sm" data-toggle="dropdown" href="#">' +
+                                'Action <span class="caret"></span>' +
+                                '</a>' +
+                                '<div class="dropdown-menu">' +
+                                  '<form method="post" action="/bo_cs_de_profil/kredit">' +
+                                    '@csrf' +
+                                    '<input type="hidden" name="jenisprofil" value="kredit" class="form-control">' +
+                                    '<input type="hidden" name="idkredit" value="'+row['NO_REKENING']+'" class="form-control">' +                                    
+                                    '<button type="submit" tabindex="-1" class="dropdown-item">' +
+                                    ' Detail Kredit' +
+                                    '</button>' +
+                                  '</form>' +
+                                '</div>';
+                      }
+                    },
                 ]
               });
 

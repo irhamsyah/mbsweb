@@ -254,8 +254,11 @@ class KreditController extends Controller
             $join->on('kredit.NASABAH_ID', '=', 'nasabah.nasabah_id');
           })
         ->where('NO_REKENING', 'like', '%' .$searchValue . '%')
+        ->orWhere('nama_nasabah', 'like', '%' .$searchValue . '%')
+        ->orWhere('DESKRIPSI_JENIS_KREDIT', 'like', '%' .$searchValue . '%')
         ->skip($start)
         ->take($rowperpage)
+        ->orderBy($columnName,$columnSortOrder)
         ->get();
 
     $data_arr = array();
@@ -268,11 +271,11 @@ class KreditController extends Controller
       $saldoakhir = $record->POKOK_SALDO_AKHIR; 
 
        $data_arr[] = array(
-         "nama" => $namanasabah,
-         "deskripsi" => $deskripsi,
-         "norek" => $norek,
-         "saldorealisasi" => $saldorealisasi,
-         "saldoakhir" => $saldoakhir
+         "nama_nasabah" => $namanasabah,
+         "DESKRIPSI_JENIS_KREDIT" => $deskripsi,
+         "NO_REKENING" => $norek,
+         "POKOK_SALDO_REALISASI" => $saldorealisasi,
+         "POKOK_SALDO_AKHIR" => $saldoakhir
        );
     }
 

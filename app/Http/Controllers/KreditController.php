@@ -13,6 +13,25 @@ use App\KodeGroup3Kredit;
 use App\KodeSumberDanaKredit;
 use App\KodeTypeKredit;
 use App\KodeSatuanWaktuKredit;
+use App\KodeSifatKredit;
+use App\KodeJenisPenggunaanKredit;
+use App\KodeGolDebitur;
+use App\KodeSektorEkonomiKredit;
+use App\KodeGolPenjaminKredit;
+use App\KodeAsuransiKredit;
+use App\Kodemetoda;
+use App\KodeSumberPelunasan;
+use App\Kodeketerkaitanlapbul;
+use App\KodeJenisUsaha;
+use App\SidKodeSifatKredit;
+use App\SidKodeJenisPenggunaan;
+use App\SidKodeBidangUsaha;
+use App\SidKodeGolonganPenjamin;
+use App\SidKodeJenisAsuransi;
+use App\SidKodeGolKredit;
+use App\SidKodeJenisFasilitas;
+use App\KodePeriodePembayaran;
+
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -36,20 +55,39 @@ class KreditController extends Controller
         $kodesumberdanakredit = KodeSumberDanaKredit::all()->sort();
         $kodetypekredit = KodeTypeKredit::all()->sort();
         $kodesatuanwaktuangsuran = KodeSatuanWaktuKredit::all()->sort();
+        //lapbul options
+        $kodesifatkredit = KodeSifatKredit::all()->sort();
+        $kodejenispenggunaankredit = KodeJenisPenggunaanKredit::all()->sort();
+        $kodegoldebitur = KodeGolDebitur::all()->sort();
+        $kodesektorekonomikredit = KodeSektorEkonomiKredit::all()->sort();
+        $kodegolpenjaminkredit = KodeGolPenjaminKredit::all()->sort();
+        $kodeasuransikredit = KodeAsuransiKredit::all()->sort();
+        $kodemetoda = Kodemetoda::all()->sort();
+        $kodesumberpelunasan = KodeSumberPelunasan::all()->sort();
+        $kodeketerkaitanlapbul = Kodeketerkaitanlapbul::all()->sort();
+        $kodejenisusaha = KodeJenisUsaha::all()->sort();
+        $sidkodebidangusaha = SidKodeBidangUsaha::all()->sort();
+        $sidkodesifatkredit = SidKodeSifatKredit::all()->sort();
+        $sidkodejenispenggunaan = SidKodeJenisPenggunaan::all()->sort();
+        $sidkodegolonganpenjamin = SidKodeGolonganPenjamin::all()->sort();
+        $sidkodejenisasuransi = SidKodeJenisAsuransi::all()->sort();
+        $sidkodegolkredit = SidKodeGolKredit::all()->sort();
+        $sidkodejenisfasilitas = SidKodeJenisFasilitas::all()->sort();
+        $kodeperiodepembayaran = KodePeriodePembayaran::all()->sort();
         $nasabahs = Nasabah::select('nasabah_id','nama_nasabah','alamat')->get()->toArray();
         $kodejeniskredit=Kodejeniskredit::all();
-        $kredits = Kredit::select('nasabah.*','NO_REKENING','JENIS_PINJAMAN','POKOK_SALDO_REALISASI','POKOK_SALDO_AKHIR','DESKRIPSI_JENIS_KREDIT','kredit.NASABAH_ID')
-        ->leftJoin('kodejeniskredit', function($join) {
-        $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
-        })
-        ->leftJoin('nasabah', function($join) {
-            $join->on('kredit.NASABAH_ID', '=', 'nasabah.nasabah_id');
-          })
-        ->orderby('kredit.NO_REKENING','ASC')->get();
-      if(!$kredits)
-        abort('404');
+        // $kredits = Kredit::select('nasabah.*','NO_REKENING','JENIS_PINJAMAN','POKOK_SALDO_REALISASI','POKOK_SALDO_AKHIR','DESKRIPSI_JENIS_KREDIT','kredit.NASABAH_ID')
+        // ->leftJoin('kodejeniskredit', function($join) {
+        // $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
+        // })
+        // ->leftJoin('nasabah', function($join) {
+        //     $join->on('kredit.NASABAH_ID', '=', 'nasabah.nasabah_id');
+        //   })
+        // ->orderby('kredit.NO_REKENING','ASC')->paginate(5);
+      // if(!$kredits)
+      //   abort('404');
       return view('admin/kredit', ['logos'=> $logos, '
-      users'=> $users,'kredits'=> $kredits,'nasabahs'=> $nasabahs,
+      users'=> $users,'nasabahs'=> $nasabahs,
       'kodejeniskredit'=>$kodejeniskredit, 
       'kodegroup1kredit'=>$kodegroup1kredit, 
       'kodegroup2kredit'=>$kodegroup2kredit, 
@@ -57,6 +95,25 @@ class KreditController extends Controller
       'kodesumberdanakredit'=>$kodesumberdanakredit, 
       'kodetypekredit'=>$kodetypekredit,
       'kodesatuanwaktuangsuran'=>$kodesatuanwaktuangsuran,
+      'kodesifatkredit'=>$kodesifatkredit,
+      'sidkodesifatkredit'=>$sidkodesifatkredit,
+      'kodejenispenggunaankredit'=>$kodejenispenggunaankredit,
+      'sidkodejenispenggunaan'=>$sidkodejenispenggunaan,
+      'kodegoldebitur'=>$kodegoldebitur,
+      'kodesektorekonomikredit'=>$kodesektorekonomikredit,
+      'sidkodebidangusaha'=>$sidkodebidangusaha,
+      'kodegolpenjaminkredit'=>$kodegolpenjaminkredit,
+      'sidkodegolonganpenjamin'=>$sidkodegolonganpenjamin,
+      'kodeasuransikredit'=>$kodeasuransikredit,
+      'sidkodejenisasuransi'=>$sidkodejenisasuransi,
+      'sidkodegolkredit'=>$sidkodegolkredit,
+      'kodemetoda'=>$kodemetoda,
+      'sidkodejenisfasilitas'=>$sidkodejenisfasilitas,
+      'kodesumberpelunasan'=>$kodesumberpelunasan,
+      'kodeketerkaitanlapbul'=>$kodeketerkaitanlapbul,
+      'kodeperiodepembayaranpokok'=>$kodeperiodepembayaran,
+      'kodeperiodepembayaranbunga'=>$kodeperiodepembayaran,
+      'kodejenisusaha'=>$kodejenisusaha,
       'msgstatus'=> '']);
     }
 
@@ -161,10 +218,73 @@ class KreditController extends Controller
         $newkretrans2->MY_KODE_TRANS = '225';
         $newkretrans2->save();
       }
-      
-      
-      
       return redirect()->back()->with('msgstatus', '1');
     }
+
+    /*
+   AJAX request
+   */
+   public function getKredits(Request $request){
+
+    ## Read value
+    $draw = $request->get('draw');
+    $start = $request->get("start");
+    $rowperpage = $request->get("length"); // Rows display per page
+
+    $columnIndex_arr = $request->get('order');
+    $columnName_arr = $request->get('columns');
+    $order_arr = $request->get('order');
+    $search_arr = $request->get('search');
+
+    $columnIndex = $columnIndex_arr[0]['column']; // Column index
+    $columnName = $columnName_arr[$columnIndex]['data']; // Column name
+    $columnSortOrder = $order_arr[0]['dir']; // asc or desc
+    $searchValue = $search_arr['value']; // Search value
+
+    // Total records
+    $totalRecords = Kredit::select('count(*) as allcount')->count();
+    $totalRecordswithFilter = Kredit::select('count(*) as allcount')->where('NO_REKENING', 'like', '%' .$searchValue . '%')->count();
+
+    // Fetch records
+    $records = Kredit::select('nasabah.*','NO_REKENING','JENIS_PINJAMAN','POKOK_SALDO_REALISASI','POKOK_SALDO_AKHIR','DESKRIPSI_JENIS_KREDIT','kredit.NASABAH_ID')
+        ->leftJoin('kodejeniskredit', function($join) {
+        $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
+        })
+        ->leftJoin('nasabah', function($join) {
+            $join->on('kredit.NASABAH_ID', '=', 'nasabah.nasabah_id');
+          })
+        ->where('NO_REKENING', 'like', '%' .$searchValue . '%')
+        ->skip($start)
+        ->take($rowperpage)
+        ->get();
+
+    $data_arr = array();
+    
+    foreach($records as $record){
+      $namanasabah = $record->nama_nasabah;
+      $deskripsi = $record->DESKRIPSI_JENIS_KREDIT;
+      $norek = $record->NO_REKENING; 
+      $saldorealisasi = $record->POKOK_SALDO_REALISASI; 
+      $saldoakhir = $record->POKOK_SALDO_AKHIR; 
+
+       $data_arr[] = array(
+         "nama" => $namanasabah,
+         "deskripsi" => $deskripsi,
+         "norek" => $norek,
+         "saldorealisasi" => $saldorealisasi,
+         "saldoakhir" => $saldoakhir
+       );
+    }
+
+    $response = array(
+       "draw" => intval($draw),
+       "iTotalRecords" => $totalRecords,
+       "iTotalDisplayRecords" => $totalRecordswithFilter,
+       "aaData" => $data_arr
+    );
+
+    echo json_encode($response);
+    exit;
+  }
     
 }

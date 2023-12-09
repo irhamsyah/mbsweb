@@ -76,48 +76,39 @@
           </div>
           <!-- /.card-header -->
           <div class="card-body">
-            <table id="example3" class="table table-bordered table-hover">
+            <table id='kreditTable' width='100%' class="table table-bordered table-hover">
               <thead>
                 <tr>
-                  <th>No</th>
-                  <th>Nama Nasabah</th>
-                  <th>Produk</th>
-                  <th>No Rekening</th>
-                  <th>Saldo Awal</th>
-                  <th>Saldo Saat Ini</th>
-                  <th>Action</th>
+                  <td>Nama Nasabah</td>
+                  <td>Produk</td>
+                  <td>No Rekening</td>
+                  <td>Saldo Awal</td>
+                  <td>Saldo Saat Ini</td>
                 </tr>
               </thead>
-              <tbody>
-
-                @foreach($kredits as $index => $kredit)
-                <tr>
-                  <td>{{ $index+1 }}</td>
-                  <td>{{ $kredit->nama_nasabah }}</td>
-                  <td>{{ strtoupper($kredit->DESKRIPSI_JENIS_KREDIT) }}</td>
-                  <td>{{ $kredit->NO_REKENING }}</td>
-                  <td>{{ $kredit->POKOK_SALDO_REALISASI }}</td>
-                  <td>{{ $kredit->POKOK_SALDO_AKHIR }}</td>
-                  <td>
-                    <a class="dropdown-toggle btn btn-block bg-gradient-primary btn-sm" data-toggle="dropdown" href="#">
-                      Action <span class="caret"></span>
-                    </a>
-                    <div class="dropdown-menu">
-                      <form method="post" action="/bo_cs_de_profil/kredit">
-                        @csrf
-                        <input type="hidden" name="jenisprofil" value="kredit" class="form-control">
-                        <input type="hidden" name="idkredit" value="{{ trim($kredit->NO_REKENING) }}" class="form-control">
-                        <input type="hidden" name="idnasabah" value="{{ trim($kredit->NASABAH_ID) }}" class="form-control">
-                        <button type="submit" tabindex="-1" class="dropdown-item">
-                          Detail Kredit
-                        </button>
-                      </form>
-                    </div>
-                  </td>
-                </tr>
-                @endforeach
-              </tbody>
             </table>
+
+            <!-- Script -->
+            <script type="text/javascript">
+            $(document).ready(function(){
+
+              // DataTable
+              $('#kreditTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{route('Getkredits')}}",
+                columns: [
+                    { data: 'nama' },
+                    { data: 'deskripsi' },
+                    { data: 'norek' },
+                    { data: 'saldorealisasi' },
+                    { data: 'saldoakhir' },
+                ]
+              });
+
+            });
+            </script>
+            
           </div>
           <!-- /.card-body -->
         </div>
@@ -154,6 +145,8 @@
                 <div class="tab-content">
                     @include('admin.kredit.master')
                     @include('admin.kredit.jadwal')
+                    @include('admin.kredit.lapbul')
+                    @include('admin.kredit.agunan')
                   </div>
                </div>
           <div class="modal-footer justify-content-between">

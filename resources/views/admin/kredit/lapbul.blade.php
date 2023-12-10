@@ -68,7 +68,7 @@
     <div class="col-lg-4">
       <select class="form-control" name="inputkodesifatkredit">
         @foreach($kodesifatkredit as $kodesifatkredit)
-          <option value="{{ $kodesifatkredit->KODE_SIFAT }}">{{ $kodesifatkredit->KODE_SIFAT.' - '.$kodesifatkredit->DESKRIPSI_SIFAT }}</option>
+          <option value="{{ $kodesifatkredit->KODE_SIFAT }}" <?php if($kodesifatkredit->KODE_SIFAT=='03'){echo 'selected';}?>>{{ $kodesifatkredit->KODE_SIFAT.' - '.$kodesifatkredit->DESKRIPSI_SIFAT }}</option>
         @endforeach                                
       </select>   
     </div>
@@ -78,7 +78,7 @@
     <div class="col-lg-4">
       <select class="form-control" name="inputsidkodesifatkredit">
         @foreach($sidkodesifatkredit as $sidkodesifatkredit)
-          <option value="{{ $sidkodesifatkredit->KODE_DESC }}">{{ $sidkodesifatkredit->KODE_DESC.' - '.$sidkodesifatkredit->DESKRIPSI_DESC }}</option>
+          <option value="{{ $sidkodesifatkredit->KODE_DESC }}" <?php if($sidkodesifatkredit->KODE_DESC=='79'){echo 'selected';}?>>{{ $sidkodesifatkredit->KODE_DESC.' - '.$sidkodesifatkredit->DESKRIPSI_DESC }}</option>
         @endforeach                                  
       </select>  
     </div>                            
@@ -90,7 +90,7 @@
     <div class="col-lg-4">
       <select class="form-control" name="inputkodejenispenggunaankredit">
         @foreach($kodejenispenggunaankredit as $kodejenispenggunaankredit)
-          <option value="{{ $kodejenispenggunaankredit->KODE_JENIS_PENGGUNAAN }}">{{ $kodejenispenggunaankredit->KODE_JENIS_PENGGUNAAN.' - '.$kodejenispenggunaankredit->DESKRIPSI_JENIS_PENGGUNAAN }}</option>
+          <option value="{{ $kodejenispenggunaankredit->KODE_JENIS_PENGGUNAAN }}" <?php if($kodejenispenggunaankredit->KODE_JENIS_PENGGUNAAN=='10'){echo 'selected';}?>>{{ $kodejenispenggunaankredit->KODE_JENIS_PENGGUNAAN.' - '.$kodejenispenggunaankredit->DESKRIPSI_JENIS_PENGGUNAAN }}</option>
         @endforeach                                  
       </select>  
     </div>
@@ -100,7 +100,7 @@
     <div class="col-lg-4">
       <select class="form-control" name="inputsidkodejenispenggunaan">
         @foreach($sidkodejenispenggunaan as $sidkodejenispenggunaan)
-          <option value="{{ $sidkodejenispenggunaan->KODE_DESC }}">{{ $sidkodejenispenggunaan->KODE_DESC.' - '.$sidkodejenispenggunaan->DESKRIPSI_DESC }}</option>
+          <option value="{{ $sidkodejenispenggunaan->KODE_DESC }}" <?php if($sidkodejenispenggunaan->KODE_DESC=='10'){echo 'selected';}?>>{{ $sidkodejenispenggunaan->KODE_DESC.' - '.$sidkodejenispenggunaan->DESKRIPSI_DESC }}</option>
         @endforeach 
       </select> 
     </div>                            
@@ -112,7 +112,7 @@
     <div class="col-lg-4">
       <select class="form-control" name="inputkodegoldebitur">
         @foreach($kodegoldebitur as $kodegoldebitur)
-          <option value="{{ $kodegoldebitur->KODE_GOL_DEBITUR }}">{{ $kodegoldebitur->KODE_GOL_DEBITUR.' - '.$kodegoldebitur->DESKRIPSI_GOL_DEBITUR }}</option>
+          <option value="{{ $kodegoldebitur->KODE_GOL_DEBITUR }}" <?php if($kodegoldebitur->KODE_GOL_DEBITUR=='800'){echo 'selected';}?>>{{ $kodegoldebitur->KODE_GOL_DEBITUR.' - '.$kodegoldebitur->DESKRIPSI_GOL_DEBITUR }}</option>
         @endforeach 
       </select> 
     </div>
@@ -128,7 +128,7 @@
     <div class="col-lg-4">
       <select class="form-control" name="inputkodesektorekonomikredit">
         @foreach($kodesektorekonomikredit as $kodesektorekonomikredit)
-          <option value="{{ $kodesektorekonomikredit->KODE_SEKTOR_EKONOMI }}">{{ $kodesektorekonomikredit->KODE_SEKTOR_EKONOMI.' - '.$kodesektorekonomikredit->DESKRIPSI_SEKTOR_EKONOMI }}</option>
+          <option value="{{ $kodesektorekonomikredit->KODE_SEKTOR_EKONOMI }}" <?php if($kodesektorekonomikredit->KODE_SEKTOR_EKONOMI=='009000'){echo 'selected';}?>>{{ $kodesektorekonomikredit->KODE_SEKTOR_EKONOMI.' - '.$kodesektorekonomikredit->DESKRIPSI_SEKTOR_EKONOMI }}</option>
         @endforeach 
       </select> 
     </div>
@@ -138,7 +138,7 @@
     <div class="col-lg-4">
       <select class="form-control" name="inputsidkodebidangusaha">
         @foreach($sidkodebidangusaha as $sidkodebidangusaha)
-          <option value="{{ $sidkodebidangusaha->KODE_BIDANG_USAHA }}">{{ $sidkodebidangusaha->KODE_BIDANG_USAHA.' - '.$sidkodebidangusaha->DESKRIPSI_BIDANG_USAHA }}</option>
+          <option value="{{ $sidkodebidangusaha->KODE_BIDANG_USAHA }}" <?php if($sidkodebidangusaha->KODE_BIDANG_USAHA=='6500'){echo 'selected';}?>>{{ $sidkodebidangusaha->KODE_BIDANG_USAHA.' - '.$sidkodebidangusaha->DESKRIPSI_BIDANG_USAHA }}</option>
         @endforeach 
       </select>
     </div>                            
@@ -150,7 +150,7 @@
     <div class="col-lg-4">
       <select class="form-control" name="inputkodegolpenjaminkredit">
         @foreach($kodegolpenjaminkredit as $kodegolpenjaminkredit)
-          <option value="{{ $kodegolpenjaminkredit->KODE_GOL_PENJAMIN }}">{{ $kodegolpenjaminkredit->KODE_GOL_PENJAMIN.' - '.$kodegolpenjaminkredit->DESKRIPSI_GOL_PENJAMIN }}</option>
+          <option value="{{ $kodegolpenjaminkredit->KODE_GOL_PENJAMIN }}" <?php if($kodegolpenjaminkredit->KODE_GOL_PENJAMIN=='000'){echo 'selected';}?>>{{ $kodegolpenjaminkredit->KODE_GOL_PENJAMIN.' - '.$kodegolpenjaminkredit->DESKRIPSI_GOL_PENJAMIN }}</option>
         @endforeach 
       </select>
     </div>
@@ -160,7 +160,7 @@
     <div class="col-lg-4">
       <select class="form-control" name="inputsidkodegolonganpenjamin">
         @foreach($sidkodegolonganpenjamin as $sidkodegolonganpenjamin)
-          <option value="{{ $sidkodegolonganpenjamin->KODE_GOL_PENJAMIN }}">{{ $sidkodegolonganpenjamin->KODE_GOL_PENJAMIN.' - '.$sidkodegolonganpenjamin->DESKRIPSI_GOL_PENJAMIN }}</option>
+          <option value="{{ $sidkodegolonganpenjamin->KODE_GOL_PENJAMIN }}" <?php if($sidkodegolonganpenjamin->KODE_GOL_PENJAMIN=='907'){echo 'selected';}?>>{{ $sidkodegolonganpenjamin->KODE_GOL_PENJAMIN.' - '.$sidkodegolonganpenjamin->DESKRIPSI_GOL_PENJAMIN }}</option>
         @endforeach 
       </select>
     </div>                            
@@ -172,7 +172,7 @@
     <div class="col-lg-4">
      <select class="form-control" name="inputkodeasuransikredit">
         @foreach($kodeasuransikredit as $kodeasuransikredit)
-          <option value="{{ $kodeasuransikredit->KODE_ASURANSI }}">{{ $kodeasuransikredit->KODE_ASURANSI.' - '.$kodeasuransikredit->DESKRIPSI_ASURANSI }}</option>
+          <option value="{{ $kodeasuransikredit->KODE_ASURANSI }}" <?php if($kodeasuransikredit->KODE_ASURANSI=='000'){echo 'selected';}?>>{{ $kodeasuransikredit->KODE_ASURANSI.' - '.$kodeasuransikredit->DESKRIPSI_ASURANSI }}</option>
         @endforeach 
       </select>
     </div>
@@ -182,7 +182,7 @@
     <div class="col-lg-4">
       <select class="form-control" name="inputsidkodejenisasuransi">
         @foreach($sidkodejenisasuransi as $sidkodejenisasuransi)
-          <option value="{{ $sidkodejenisasuransi->KODE_DESC }}">{{ $sidkodejenisasuransi->KODE_DESC.' - '.$sidkodejenisasuransi->DESKRIPSI_DESC }}</option>
+          <option value="{{ $sidkodejenisasuransi->KODE_DESC }}" <?php if($sidkodejenisasuransi->KODE_DESC=='T'){echo 'selected';}?>>{{ $sidkodejenisasuransi->KODE_DESC.' - '.$sidkodejenisasuransi->DESKRIPSI_DESC }}</option>
         @endforeach 
       </select>
     </div>                            
@@ -209,7 +209,7 @@
     <div class="col-lg-4">
       <select class="form-control" name="inputsidkodegolkredit">
         @foreach($sidkodegolkredit as $sidkodegolkredit)
-          <option value="{{ $sidkodegolkredit->KODE_DESC }}">{{ $sidkodegolkredit->KODE_DESC.' - '.$sidkodegolkredit->DESKRIPSI_DESC }}</option>
+          <option value="{{ $sidkodegolkredit->KODE_DESC }}"<?php if($sidkodegolkredit->KODE_DESC=='19'){echo 'selected';}?>>{{ $sidkodegolkredit->KODE_DESC.' - '.$sidkodegolkredit->DESKRIPSI_DESC }}</option>
         @endforeach 
       </select>
     </div>                            
@@ -221,7 +221,7 @@
     <div class="col-lg-4">
       <select class="form-control" name="inputkodemetoda">
         @foreach($kodemetoda as $kodemetoda)
-          <option value="{{ $kodemetoda->KODE_METODA }}">{{ $kodemetoda->KODE_METODA.' - '.$kodemetoda->DESKRIPSI_METODA }}</option>
+          <option value="{{ $kodemetoda->KODE_METODA }}" <?php if($kodemetoda->KODE_METODA=='2'){echo 'selected';}?>>{{ $kodemetoda->KODE_METODA.' - '.$kodemetoda->DESKRIPSI_METODA }}</option>
         @endforeach 
       </select>
     </div>
@@ -231,7 +231,7 @@
     <div class="col-lg-4">
       <select class="form-control" name="inputsidkodejenisfasilitas">
         @foreach($sidkodejenisfasilitas as $sidkodejenisfasilitas)
-          <option value="{{ $sidkodejenisfasilitas->KODE_DESC }}">{{ $sidkodejenisfasilitas->KODE_DESC.' - '.$sidkodejenisfasilitas->DESKRIPSI_DESC }}</option>
+          <option value="{{ $sidkodejenisfasilitas->KODE_DESC }}" <?php if($sidkodejenisfasilitas->KODE_DESC=='0605'){echo 'selected';}?>>{{ $sidkodejenisfasilitas->KODE_DESC.' - '.$sidkodejenisfasilitas->DESKRIPSI_DESC }}</option>
         @endforeach 
       </select>
     </div>                            
@@ -243,7 +243,7 @@
     <div class="col-lg-4">
       <select class="form-control" name="inputkodesumberpelunasan">
         @foreach($kodesumberpelunasan as $kodesumberpelunasan)
-          <option value="{{ $kodesumberpelunasan->KODE_SUMBER_PELUNASAN }}">{{ $kodesumberpelunasan->KODE_SUMBER_PELUNASAN.' - '.$kodesumberpelunasan->DESKRIPSI_SUMBER_PELUNASAN }}</option>
+          <option value="{{ $kodesumberpelunasan->KODE_SUMBER_PELUNASAN }}" <?php if($kodesumberpelunasan->KODE_SUMBER_PELUNASAN=='32'){echo 'selected';}?>>{{ $kodesumberpelunasan->KODE_SUMBER_PELUNASAN.' - '.$kodesumberpelunasan->DESKRIPSI_SUMBER_PELUNASAN }}</option>
         @endforeach 
       </select>
     </div>
@@ -261,7 +261,7 @@
     <div class="col-lg-4">
       <select class="form-control" name="inputkodeketerkaitanlapbul">
         @foreach($kodeketerkaitanlapbul as $kodeketerkaitanlapbul)
-          <option value="{{ $kodeketerkaitanlapbul->SANDI }}">{{ $kodeketerkaitanlapbul->SANDI.' - '.$kodeketerkaitanlapbul->DESKRIPSI_SANDI }}</option>
+          <option value="{{ $kodeketerkaitanlapbul->SANDI }}" <?php if($kodeketerkaitanlapbul->SANDI=='20'){echo 'selected';}?>>{{ $kodeketerkaitanlapbul->SANDI.' - '.$kodeketerkaitanlapbul->DESKRIPSI_SANDI }}</option>
         @endforeach 
       </select>
     </div>
@@ -271,7 +271,7 @@
     <div class="col-lg-4">
       <select class="form-control" name="inputkodeperiodepembayaranpokok">
         @foreach($kodeperiodepembayaranpokok as $kodeperiodepembayaranpokok)
-          <option value="{{ $kodeperiodepembayaranpokok->kode_periode_pembayaran }}">{{ $kodeperiodepembayaranpokok->kode_periode_pembayaran.' - '.$kodeperiodepembayaranpokok->deskripsi_periode_pembayaran }}</option>
+          <option value="{{ $kodeperiodepembayaranpokok->kode_periode_pembayaran }}" <?php if($kodeperiodepembayaranpokok->kode_periode_pembayaran=='3'){echo 'selected';}?>>{{ $kodeperiodepembayaranpokok->kode_periode_pembayaran.' - '.$kodeperiodepembayaranpokok->deskripsi_periode_pembayaran }}</option>
         @endforeach 
       </select>
     </div>                            
@@ -283,7 +283,7 @@
     <div class="col-lg-4">
       <select class="form-control" name="inputkodejenisusaha">
         @foreach($kodejenisusaha as $kodejenisusaha)
-          <option value="{{ $kodejenisusaha->KODE_JENIS_USAHA }}">{{ $kodejenisusaha->KODE_JENIS_USAHA.' - '.$kodejenisusaha->DESKRIPSI_JENIS_USAHA }}</option>
+          <option value="{{ $kodejenisusaha->KODE_JENIS_USAHA }}" <?php if($kodejenisusaha->KODE_JENIS_USAHA=='4'){echo 'selected';}?>>{{ $kodejenisusaha->KODE_JENIS_USAHA.' - '.$kodejenisusaha->DESKRIPSI_JENIS_USAHA }}</option>
         @endforeach 
       </select>
     </div>
@@ -293,7 +293,7 @@
     <div class="col-lg-4">
       <select class="form-control" name="inputkodeperiodepembayaranbunga">
         @foreach($kodeperiodepembayaranbunga as $kodeperiodepembayaranbunga)
-          <option value="{{ $kodeperiodepembayaranbunga->kode_periode_pembayaran }}">{{ $kodeperiodepembayaranbunga->kode_periode_pembayaran.' - '.$kodeperiodepembayaranbunga->deskripsi_periode_pembayaran }}</option>
+          <option value="{{ $kodeperiodepembayaranbunga->kode_periode_pembayaran }}" <?php if($kodeperiodepembayaranbunga->kode_periode_pembayaran=='3'){echo 'selected';}?>>{{ $kodeperiodepembayaranbunga->kode_periode_pembayaran.' - '.$kodeperiodepembayaranbunga->deskripsi_periode_pembayaran }}</option>
         @endforeach 
       </select>
     </div>                            

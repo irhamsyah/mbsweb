@@ -31,6 +31,7 @@ use App\SidKodeJenisAsuransi;
 use App\SidKodeGolKredit;
 use App\SidKodeJenisFasilitas;
 use App\KodePeriodePembayaran;
+use App\JenisAgunan;
 
 
 use Illuminate\Http\Request;
@@ -74,18 +75,10 @@ class KreditController extends Controller
         $sidkodegolkredit = SidKodeGolKredit::all()->sort();
         $sidkodejenisfasilitas = SidKodeJenisFasilitas::all()->sort();
         $kodeperiodepembayaran = KodePeriodePembayaran::all()->sort();
+        $jenisagunan = JenisAgunan::all()->sort();
         $nasabahs = Nasabah::select('nasabah_id','nama_nasabah','alamat')->get()->toArray();
         $kodejeniskredit=Kodejeniskredit::all();
-        // $kredits = Kredit::select('nasabah.*','NO_REKENING','JENIS_PINJAMAN','POKOK_SALDO_REALISASI','POKOK_SALDO_AKHIR','DESKRIPSI_JENIS_KREDIT','kredit.NASABAH_ID')
-        // ->leftJoin('kodejeniskredit', function($join) {
-        // $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
-        // })
-        // ->leftJoin('nasabah', function($join) {
-        //     $join->on('kredit.NASABAH_ID', '=', 'nasabah.nasabah_id');
-        //   })
-        // ->orderby('kredit.NO_REKENING','ASC')->paginate(5);
-      // if(!$kredits)
-      //   abort('404');
+
       return view('admin/kredit', ['logos'=> $logos, '
       users'=> $users,'nasabahs'=> $nasabahs,
       'kodejeniskredit'=>$kodejeniskredit, 
@@ -114,6 +107,7 @@ class KreditController extends Controller
       'kodeperiodepembayaranpokok'=>$kodeperiodepembayaran,
       'kodeperiodepembayaranbunga'=>$kodeperiodepembayaran,
       'kodejenisusaha'=>$kodejenisusaha,
+      'jenisagunan'=>$jenisagunan,
       'msgstatus'=> '']);
     }
 

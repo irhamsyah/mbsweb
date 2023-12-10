@@ -7,8 +7,8 @@
         </div>
         <div class="col-lg-10">
           <select class="form-control" name="inputkodegorup1">
-            @foreach($kodegroup1kredit as $kodegroup1kredit)
-              <option value="{{ $kodegroup1kredit->KODE_GROUP1 }}">{{ $kodegroup1kredit->KODE_GROUP1.' - '.$kodegroup1kredit->DESKRIPSI_GROUP1 }}</option>
+            @foreach($jenisagunan as $jenisagunan)
+              <option value="{{ $jenisagunan->KODE_AGUNAN }}" <?php if($jenisagunan->KODE_AGUNAN=='213'){echo 'selected';}?>>{{ $jenisagunan->KODE_AGUNAN.' - '.$jenisagunan->DESKRIPSI_AGUNAN }}</option>
             @endforeach                                  
           </select>
         </div> 

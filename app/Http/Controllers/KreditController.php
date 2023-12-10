@@ -32,11 +32,13 @@ use App\SidKodeGolKredit;
 use App\SidKodeJenisFasilitas;
 use App\KodePeriodePembayaran;
 use App\JenisAgunan;
+use App\Mysysid;
 
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 
 class KreditController extends Controller
 {
@@ -216,72 +218,155 @@ class KreditController extends Controller
     }
 
     /*
-   AJAX request
-   */
-   public function getKredits(Request $request){
+    AJAX request
+    */
+    public function getKredits(Request $request){
 
-    ## Read value
-    $draw = $request->get('draw');
-    $start = $request->get("start");
-    $rowperpage = $request->get("length"); // Rows display per page
+      ## Read value
+      $draw = $request->get('draw');
+      $start = $request->get("start");
+      $rowperpage = $request->get("length"); // Rows display per page
 
-    $columnIndex_arr = $request->get('order');
-    $columnName_arr = $request->get('columns');
-    $order_arr = $request->get('order');
-    $search_arr = $request->get('search');
+      $columnIndex_arr = $request->get('order');
+      $columnName_arr = $request->get('columns');
+      $order_arr = $request->get('order');
+      $search_arr = $request->get('search');
 
-    $columnIndex = $columnIndex_arr[0]['column']; // Column index
-    $columnName = $columnName_arr[$columnIndex]['data']; // Column name
-    $columnSortOrder = $order_arr[0]['dir']; // asc or desc
-    $searchValue = $search_arr['value']; // Search value
+      $columnIndex = $columnIndex_arr[0]['column']; // Column index
+      $columnName = $columnName_arr[$columnIndex]['data']; // Column name
+      $columnSortOrder = $order_arr[0]['dir']; // asc or desc
+      $searchValue = $search_arr['value']; // Search value
 
-    // Total records
-    $totalRecords = Kredit::select('count(*) as allcount')->count();
-    $totalRecordswithFilter = Kredit::select('count(*) as allcount')->where('NO_REKENING', 'like', '%' .$searchValue . '%')->count();
+      // Total records
+      $totalRecords = Kredit::select('count(*) as allcount')->count();
+      $totalRecordswithFilter = Kredit::select('count(*) as allcount')->where('NO_REKENING', 'like', '%' .$searchValue . '%')->count();
 
-    // Fetch records
-    $records = Kredit::select('nasabah.*','NO_REKENING','JENIS_PINJAMAN','POKOK_SALDO_REALISASI','POKOK_SALDO_AKHIR','DESKRIPSI_JENIS_KREDIT','kredit.NASABAH_ID')
-        ->leftJoin('kodejeniskredit', function($join) {
-        $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
-        })
-        ->leftJoin('nasabah', function($join) {
-            $join->on('kredit.NASABAH_ID', '=', 'nasabah.nasabah_id');
+      // Fetch records
+      $records = Kredit::select('nasabah.*','NO_REKENING','JENIS_PINJAMAN','POKOK_SALDO_REALISASI','POKOK_SALDO_AKHIR','DESKRIPSI_JENIS_KREDIT','kredit.NASABAH_ID')
+          ->leftJoin('kodejeniskredit', function($join) {
+          $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
           })
-        ->where('NO_REKENING', 'like', '%' .$searchValue . '%')
-        ->orWhere('nama_nasabah', 'like', '%' .$searchValue . '%')
-        ->orWhere('DESKRIPSI_JENIS_KREDIT', 'like', '%' .$searchValue . '%')
-        ->skip($start)
-        ->take($rowperpage)
-        ->orderBy($columnName,$columnSortOrder)
-        ->get();
+          ->leftJoin('nasabah', function($join) {
+              $join->on('kredit.NASABAH_ID', '=', 'nasabah.nasabah_id');
+            })
+          ->where('NO_REKENING', 'like', '%' .$searchValue . '%')
+          ->orWhere('nama_nasabah', 'like', '%' .$searchValue . '%')
+          ->orWhere('DESKRIPSI_JENIS_KREDIT', 'like', '%' .$searchValue . '%')
+          ->skip($start)
+          ->take($rowperpage)
+          ->orderBy($columnName,$columnSortOrder)
+          ->get();
 
-    $data_arr = array();
+      $data_arr = array();
+      
+      foreach($records as $record){
+        $namanasabah = $record->nama_nasabah;
+        $deskripsi = $record->DESKRIPSI_JENIS_KREDIT;
+        $norek = $record->NO_REKENING; 
+        $saldorealisasi = $record->POKOK_SALDO_REALISASI; 
+        $saldoakhir = $record->POKOK_SALDO_AKHIR; 
+
+        $data_arr[] = array(
+          "nama_nasabah" => $namanasabah,
+          "DESKRIPSI_JENIS_KREDIT" => $deskripsi,
+          "NO_REKENING" => $norek,
+          "POKOK_SALDO_REALISASI" => $saldorealisasi,
+          "POKOK_SALDO_AKHIR" => $saldoakhir
+        );
+      }
+
+      $response = array(
+        "draw" => intval($draw),
+        "iTotalRecords" => $totalRecords,
+        "iTotalDisplayRecords" => $totalRecordswithFilter,
+        "aaData" => $data_arr
+      );
+
+      echo json_encode($response);
+      exit;
+    }
     
-    foreach($records as $record){
-      $namanasabah = $record->nama_nasabah;
-      $deskripsi = $record->DESKRIPSI_JENIS_KREDIT;
-      $norek = $record->NO_REKENING; 
-      $saldorealisasi = $record->POKOK_SALDO_REALISASI; 
-      $saldoakhir = $record->POKOK_SALDO_AKHIR; 
-
-       $data_arr[] = array(
-         "nama_nasabah" => $namanasabah,
-         "DESKRIPSI_JENIS_KREDIT" => $deskripsi,
-         "NO_REKENING" => $norek,
-         "POKOK_SALDO_REALISASI" => $saldorealisasi,
-         "POKOK_SALDO_AKHIR" => $saldoakhir
-       );
+    public function bo_kr_de_kredittrans(Request $request)
+    {
+      $logos = Logo::all();
+      $users = User::all();
+      $tanggaltransaksi = Mysysid::select('Value')->where('KeyName','=','TANGGALHARIINI')->get();
+      $tanggal = $tanggaltransaksi[0]->Value;
+      return view('admin/kredittransdelete',['logos'=> $logos, 
+      'users'=> $users,
+      'tanggaltransaksi'=>$tanggal,
+      'msgstatus'=> '']);
     }
 
-    $response = array(
-       "draw" => intval($draw),
-       "iTotalRecords" => $totalRecords,
-       "iTotalDisplayRecords" => $totalRecordswithFilter,
-       "aaData" => $data_arr
-    );
+    public function bo_kr_de_kredittransdelete(Request $request)
+    {
+      Kretrans::where('KRETRANS_ID',$request->input("kretransid"))->delete();
+      return redirect()->back()->with('msgstatus', '1');
+    }
 
-    echo json_encode($response);
-    exit;
-  }
-    
+    public function getKreditTransactions(Request $request){
+
+      ## Read value
+      $draw = $request->get('draw');
+      $start = $request->get("start");
+      $rowperpage = $request->get("length"); // Rows display per page
+
+      $columnIndex_arr = $request->get('order');
+      $columnName_arr = $request->get('columns');
+      $order_arr = $request->get('order');
+      $search_arr = $request->get('search');
+
+      $columnIndex = $columnIndex_arr[0]['column']; // Column index
+      $columnName = $columnName_arr[$columnIndex]['data']; // Column name
+      $columnSortOrder = $order_arr[0]['dir']; // asc or desc
+      $searchValue = $search_arr['value']; // Search value
+
+      // Total records
+      $totalRecords = Kretrans::select('count(*) as allcount')->count();
+      $totalRecordswithFilter = Kretrans::select('count(*) as allcount')->where('MY_KODE_TRANS', '=', '300')->orWhere('MY_KODE_TRANS', '=', '100')->where('NO_REKENING', 'like', '%' .$searchValue . '%')->count();
+
+      // Fetch records
+      $records = Kretrans::select('kretrans.*')
+          // ->leftJoin('kodejeniskredit', function($join) {
+          // $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
+          // })
+          // ->leftJoin('nasabah', function($join) {
+          //     $join->on('kredit.NASABAH_ID', '=', 'nasabah.nasabah_id');
+          //   })
+          ->where('NO_REKENING', 'like', '%' .$searchValue . '%')
+          ->where(function ($query) {
+            $query->where('MY_KODE_TRANS', '=', '300')
+            ->orWhere('MY_KODE_TRANS', '=', '100');
+            })
+          ->skip($start)
+          ->take($rowperpage)
+          ->orderBy($columnName,$columnSortOrder)
+          ->get();
+
+      $data_arr = array();
+      
+      foreach($records as $record){
+        $kretransid = $record->KRETRANS_ID;
+        $norek = $record->NO_REKENING; 
+        $kuitansi = $record->KUITANSI; 
+        $kodetrans = $record->MY_KODE_TRANS; 
+
+        $data_arr[] = array(
+          "KRETRANS_ID" => $kretransid,
+          "NO_REKENING" => $norek,
+          "KUITANSI" => $kuitansi,
+          "MY_KODE_TRANS" => $kodetrans
+        );
+      }
+
+      $response = array(
+        "draw" => intval($draw),
+        "iTotalRecords" => $totalRecords,
+        "iTotalDisplayRecords" => $totalRecordswithFilter,
+        "aaData" => $data_arr
+      );
+
+      echo json_encode($response);
+      exit;
+    }
 }

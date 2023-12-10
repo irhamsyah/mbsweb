@@ -572,7 +572,7 @@
                         </a>
                       </li>
                       <li class="nav-item">
-                        <a href="#" class="nav-link <?php //if($page=='kredit' or $page=='kreditcari'){echo 'active';}?>">
+                        <a href="/bo_kr_de_kredittrans" class="nav-link <?php if($page=='kredittrans'){echo 'active';}?>">
                           <p class="pl-3">Hapus Data Transaksi</p>
                         </a>
                       </li>

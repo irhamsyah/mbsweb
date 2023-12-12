@@ -321,9 +321,13 @@ class KreditController extends Controller
       $columnSortOrder = $order_arr[0]['dir']; // asc or desc
       $searchValue = $search_arr['value']; // Search value
 
+      $tanggaltransaksi = Mysysid::select('Value')->where('KeyName','=','TANGGALHARIINI')->get();
+      $tanggal = $tanggaltransaksi[0]->Value;
+      $tglhariini = \DateTime::createFromFormat('d/m/Y', $tanggal)->format('Y-m-d');
+
       // Total records
       $totalRecords = Kretrans::select('count(*) as allcount')->count();
-      $totalRecordswithFilter = Kretrans::select('count(*) as allcount')->where('MY_KODE_TRANS', '=', '300')->orWhere('MY_KODE_TRANS', '=', '100')->where('NO_REKENING', 'like', '%' .$searchValue . '%')->count();
+      $totalRecordswithFilter = Kretrans::select('count(*) as allcount')->where('MY_KODE_TRANS', '=', '300')->orWhere('MY_KODE_TRANS', '=', '100')->where('NO_REKENING', 'like', '%' .$searchValue . '%')->where('TGL_TRANS','=',$tglhariini)->count();
 
       // Fetch records
       $records = Kretrans::select('kretrans.*')
@@ -334,6 +338,7 @@ class KreditController extends Controller
           //     $join->on('kredit.NASABAH_ID', '=', 'nasabah.nasabah_id');
           //   })
           ->where('NO_REKENING', 'like', '%' .$searchValue . '%')
+          ->where('TGL_TRANS','=',$tglhariini)
           ->where(function ($query) {
             $query->where('MY_KODE_TRANS', '=', '300')
             ->orWhere('MY_KODE_TRANS', '=', '100');

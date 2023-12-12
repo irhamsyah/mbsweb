@@ -27,43 +27,7 @@
     <div class="row">
       <div class="col-12">
         <div class="card card-warning card-outline">
-          <!-- form start -->
-          <form method="POST" action="/bo_kr_de_kredit/add" role="search">
-            @csrf
-            <div class="card-body">
-              <div class="row form-group">
-                <div class="col-lg-3 col-sm-12">
-                  <label for="idnasabah1">Id Nasabah</label>
-                </div>
-                <div class="col-lg-5 col-sm-12">
-                  <input type="text" class="form-control" id="idnasabah1" name="idnasabah1" placeholder="Masukkan ID Nasabah">
-                </div>
-              </div>
-              <div class="row form-group">
-                <div class="col-lg-3 col-sm-12">
-                  <label for="namanasabah1">Nama Nasabah</label>
-                </div>
-                <div class="col-lg-5 col-sm-12">
-                  <input type="text" class="form-control" id="namanasabah1" name="namanasabah1" data-action="getProfileNasabah.php" placeholder="Masukkan Nama Nasabah">
-                </div>
-              </div>
-              <div class="row form-group">
-                <div class="col-lg-3 col-sm-12">
-                  <label for="noktp1">No KTP</label>
-                </div>
-                <div class="col-lg-5 col-sm-12">
-                  <input type="text" class="form-control" id="noktp1" name="noktp1" placeholder="Masukkan No KTP">
-                </div>
-              </div>
-              <div class="row form-group">
-                <div class="col-3"></div>
-                <div class="col-3">
-                  <button type="submit" class="btn btn-warning"><i class="fa fa-search" style="color:white"></i></button>
-                </div>
-              </div>
-            </div>
-            <!-- /.card-body -->
-          </form>
+          
         </div>
         <div class="card">
           <div class="card-header">

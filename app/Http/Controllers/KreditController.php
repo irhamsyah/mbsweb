@@ -330,18 +330,21 @@ class KreditController extends Controller
       $totalRecordswithFilter = Kretrans::select('count(*) as allcount')->where('MY_KODE_TRANS', '=', '300')->orWhere('MY_KODE_TRANS', '=', '100')->where('NO_REKENING', 'like', '%' .$searchValue . '%')->where('TGL_TRANS','=',$tglhariini)->count();
 
       // Fetch records
-      $records = Kretrans::select('kretrans.*')
-          // ->leftJoin('kodejeniskredit', function($join) {
-          // $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
-          // })
-          // ->leftJoin('nasabah', function($join) {
-          //     $join->on('kredit.NASABAH_ID', '=', 'nasabah.nasabah_id');
-          //   })
-          ->where('NO_REKENING', 'like', '%' .$searchValue . '%')
-          ->where('TGL_TRANS','=',$tglhariini)
+      $records = Kretrans::select('kretrans.*', 'kredit.*','nasabah.*','my_kodetrans.*')
+          ->leftJoin('my_kodetrans', function($join) {
+            $join->on('my_kodetrans.MY_KODE_TRANS', '=', 'kretrans.MY_KODE_TRANS');
+            })
+          ->leftJoin('kredit', function($join) {
+          $join->on('kredit.NO_REKENING', '=', 'kretrans.NO_REKENING');
+          })
+          ->leftJoin('nasabah', function($join) {
+              $join->on('kredit.NASABAH_ID', '=', 'nasabah.nasabah_id');
+            })
+          ->where('kretrans.NO_REKENING', 'like', '%' .$searchValue . '%')
+          ->where('kretrans.TGL_TRANS','=',$tglhariini)
           ->where(function ($query) {
-            $query->where('MY_KODE_TRANS', '=', '300')
-            ->orWhere('MY_KODE_TRANS', '=', '100');
+            $query->where('kretrans.MY_KODE_TRANS', '=', '300')
+            ->orWhere('kretrans.MY_KODE_TRANS', '=', '100');
             })
           ->skip($start)
           ->take($rowperpage)
@@ -352,13 +355,27 @@ class KreditController extends Controller
       
       foreach($records as $record){
         $kretransid = $record->KRETRANS_ID;
+        $tgltrans = \DateTime::createFromFormat('Y-m-d', $record->TGL_TRANS)->format('d/m/Y');
+        $nasabahid = $record->NASABAH_ID;
+        $namanasabah = $record->nama_nasabah;
         $norek = $record->NO_REKENING; 
+        $deskripsikodetransaksi = $record->DESKRIPSI_MY_KODE_TRANS;
+        $pokok = $record->POKOK_TRANS;
+        $bunga = $record->BUNGA_TRANS;
+        $denda = $record->DENDA_TRANS;
         $kuitansi = $record->KUITANSI; 
         $kodetrans = $record->MY_KODE_TRANS; 
 
         $data_arr[] = array(
           "KRETRANS_ID" => $kretransid,
+          "TGL_TRANS" => $tgltrans,
+          "NASABAH_ID" => $nasabahid,
+          "nama_nasabah" => $namanasabah,
           "NO_REKENING" => $norek,
+          "DESKRIPSI_MY_KODE_TRANS" => $deskripsikodetransaksi,
+          "POKOK_TRANS" => $pokok,
+          "BUNGA_TRANS" => $bunga,
+          "DENDA_TRANS" => $denda,
           "KUITANSI" => $kuitansi,
           "MY_KODE_TRANS" => $kodetrans
         );

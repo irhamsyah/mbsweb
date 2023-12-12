@@ -82,9 +82,18 @@
               <thead>
                 <tr>
                   <td>ID</td>
+                  <td>Tgl Transaksi</td>
                   <td>No Rekening</td>
+                  <td>Nama Nasabah</td>
+                  <td>Type</td>
+                  <td>Pokok</td>
+                  <td>Bunga</td>
+                  <td>Denda</td>
+                  <!-- <td>Amortisasi Provisi</td> -->
+                  <td>MyKodeTrans</td>
                   <td>Kuitansi</td>
-                  <td>Kode Transaksi</td>
+                  <!-- <td>Validasi</td>
+                  <td>User</td> -->
                   <td>Action</td>
                 </tr>
               </thead>
@@ -99,11 +108,17 @@
                 processing: true,
                 serverSide: true,
                 ajax: "{{route('GetKreditTransaction')}}",
-                columns: [
+                columns: [                    
                     { data: 'KRETRANS_ID' },
+                    { data: 'TGL_TRANS' },                   
                     { data: 'NO_REKENING' },
-                    { data: 'KUITANSI' },
+                    { data: 'nama_nasabah' }, 
+                    { data: 'DESKRIPSI_MY_KODE_TRANS' },
+                    { data: 'POKOK_TRANS' },
+                    { data: 'BUNGA_TRANS' },
+                    { data: 'DENDA_TRANS' },
                     { data: 'MY_KODE_TRANS' },
+                    { data: 'KUITANSI' },
                     { title: "Action", 
                       "render": function(data, type, row, meta) {
                         console.log( 'in render function' );

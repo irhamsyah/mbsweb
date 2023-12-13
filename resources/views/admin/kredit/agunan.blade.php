@@ -18,7 +18,7 @@
           <span class="labeljudulright">Nilai Agunan</span>
         </div>
         <div class="col-lg-4 col-sm-12">          
-          <input type="text" name="inputnilaiagunan" class="form-control">
+          <input type="text" name="inputnilaiagunan" class="form-control" onchange="setNilaiAgunanBI()">
         </div>
         <div class="col-lg-2">
           <span class="labeljudulright">Pemilik Agunan</span>
@@ -48,7 +48,7 @@
         <div class="col-lg-4 col-sm-12"> 
           <div class="row">             
             <div class="col-lg-6 col-sm-12">          
-              <input type="text" name="inputpersenlikuidasi" class="form-control">
+              <input type="text" name="inputpersenlikuidasi" class="form-control" onchange="setNilaiLikuidasi()">
             </div>
             <div class="col-lg-1">
               <span class="labeljudulright">%</span>
@@ -121,7 +121,7 @@
               <button id="reactivity-delete">Hapus Agunan</button>
           </div>
         </div>
-      </div>
+      </div>      
     </div>
     <div class="col-lg-1 col-sm-12"></div> 
     <div class="col-lg-4 col-sm-12">
@@ -133,6 +133,86 @@
         <img id="path_foto_agunan" src="img\foto\default.jpg" style="justify-content: center; align-items: center;max-width:100%; max-height:400px;"/>
       </div>
     </div>
+  </div>
+  <div class="form-group row"> 
+    <div class="col-lg-2">
+      <br>
+    </div>
+    <div class="col-lg-3 col-sm-12"> 
+      <div class="bottomlinesolid">
+        <span class="judulOrange">Tab Hold Dana</span>
+      </div>
+    </div> 
+    <div class="col-lg-3 col-sm-12"> 
+      <div class="bottomlinesolid">
+        <span class="judulOrange">Titipan Tab Notariel</span>
+      </div>
+    </div> 
+    <div class="col-lg-3 col-sm-12"> 
+      <div class="bottomlinesolid">
+        <span class="judulOrange">Titipan Tab Premi Asuransi</span>
+      </div>
+    </div>        
+  </div>
+  <div class="form-group row"> 
+    <div class="col-lg-2">
+      <span class="labeljudulright">No.Rek. Tabungan</span>
+    </div>
+    <div class="col-lg-3 col-sm-12"> 
+      <div class="input-group mb-2 autocomplete">                                  
+        <input type="text" class="form-control" name="inputtabholddana" onchange="setHoldDana()" >
+        <div class="input-group-prepend">
+          <div class="input-group-text"><span class="input-group-addon">
+            <i class="fa fa-search"></i>
+            </span>
+          </div>
+        </div>
+      </div> 
+    </div> 
+    <div class="col-lg-3 col-sm-12"> 
+      <div class="input-group mb-2 autocomplete">                                  
+        <input type="text" class="form-control" name="inputtabnotariel" onchange="setNotariel()">
+        <div class="input-group-prepend">
+          <div class="input-group-text"><span class="input-group-addon">
+            <i class="fa fa-search"></i>
+            </span>
+          </div>
+        </div>
+      </div> 
+    </div> 
+    <div class="col-lg-3 col-sm-12"> 
+      <div class="input-group mb-2 autocomplete">                                  
+        <input type="text" class="form-control" name="inputtabasuransi" onchange="setAsuransi()">
+        <div class="input-group-prepend">
+          <div class="input-group-text"><span class="input-group-addon">
+            <i class="fa fa-search"></i>
+            </span>
+          </div>
+        </div>
+      </div> 
+    </div>        
+  </div>
+  <div class="form-group row"> 
+    <div class="col-lg-2">
+      <span class="labeljudulright">Perkiraan GL</span>
+    </div>
+    <div class="col-lg-3 col-sm-12"> 
+      <input type="text" name="inputperkiraanglholddana" class="form-control">
+    </div> 
+    <div class="col-lg-3 col-sm-12"> 
+      <input type="text" name="inputperkiraanglnotariel" class="form-control">
+    </div> 
+    <div class="col-lg-3 col-sm-12"> 
+      <input type="text" name="inputperkiraanglasuransi" class="form-control">
+    </div>        
+  </div>
+  <div class="form-group row"> 
+    <div class="col-lg-2">
+      <span class="labeljudulright">Jumlah</span>
+    </div>
+    <div class="col-lg-3 col-sm-12"> 
+      <input type="text" name="inputjumlahagunan" value="0" class="form-control">
+    </div> 
   </div>
 </div>
 
@@ -305,10 +385,171 @@ tableagunan.on("rowContext", function(e, row){
     alert("Row " + row.getIndex() + " Context Clicked!!!!")
 });
 
-//remove bottom row from table on button click
 document.getElementById("reactivity-delete").addEventListener("click", function(){
     tableagunan.deleteRow(selectedindex);
     resetAgunan();
 });
+
+function setHoldDana(){
+  if(document.getElementsByName("inputtabholddana")[0].value!=""){
+    document.getElementsByName("inputperkiraanglholddana")[0].value = "2040101";
+  }else{
+    document.getElementsByName("inputperkiraanglholddana")[0].value = "";
+  }  
+};
+function setNotariel(){
+  if(document.getElementsByName("inputtabnotariel")[0].value!=""){
+    document.getElementsByName("inputperkiraanglnotariel")[0].value = "2040101";
+  }else{
+    document.getElementsByName("inputperkiraanglnotariel")[0].value = "";
+  }  
+};
+function setAsuransi(){
+  if(document.getElementsByName("inputtabasuransi")[0].value!=""){
+    document.getElementsByName("inputperkiraanglasuransi")[0].value = "2040101";
+  }else{
+    document.getElementsByName("inputperkiraanglasuransi")[0].value = "";
+  }  
+};
+function setNilaiAgunanBI(){
+  if(document.getElementsByName("inputnilaiagunan")[0].value!=""){
+    document.getElementsByName("inputnilaiagunanbi")[0].value = document.getElementsByName("inputnilaiagunan")[0].value * 0.8;
+  }else{
+    document.getElementsByName("inputnilaiagunanbi")[0].value = "";
+  }  
+};
+function setNilaiLikuidasi(){
+  if(document.getElementsByName("inputpersenlikuidasi")[0].value!=""){
+    document.getElementsByName("inputnilailikuidasi")[0].value = document.getElementsByName("inputnilaiagunanbi")[0].value * (document.getElementsByName("inputpersenlikuidasi")[0].value/100);
+  }else{
+    document.getElementsByName("inputnilailikuidasi")[0].value = "";
+  }  
+};
+
+</script>
+
+<script>
+function autocomplete2(inp, arr, nama, alamat, tabungans) {
+  /*the autocomplete function takes two arguments,
+  the text field element and an array of possible autocompleted values:*/
+  var currentFocus;
+  /*execute a function when someone writes in the text field:*/
+  inp.addEventListener("input", function(e) {
+      var a, b, i, val = this.value;
+      /*close any already open lists of autocompleted values*/
+      closeAllLists();
+      if (!val) { return false;}
+      currentFocus = -1;
+      /*create a DIV element that will contain the items (values):*/
+      a = document.createElement("DIV");
+      a.setAttribute("id", this.id + "autocomplete-list");
+      a.setAttribute("class", "autocomplete-items");
+      /*append the DIV element as a child of the autocomplete container:*/
+      this.parentNode.appendChild(a);
+      /*for each item in the array...*/
+      for (i = 0; i < arr.length; i++) {
+        /*check if the item starts with the same letters as the text field value:*/
+        if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+          /*create a DIV element for each matching element:*/
+          b = document.createElement("DIV");
+          /*make the matching letters bold:*/
+          b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+          b.innerHTML += arr[i].substr(val.length) + ' - ' + nama[i];
+          /*insert a input field that will hold the current array item's value:*/
+          b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+          /*execute a function when someone clicks on the item value (DIV element):*/
+          b.addEventListener("click", function(e) {
+              /*insert the value for the autocomplete text field:*/
+              inp.value = this.getElementsByTagName("input")[0].value.trim();  
+              // tabungans.forEach(findIndex);
+              // function findIndex(value, index, array) {
+              //   if(value.NO_REKENING.trim()==inp.value.trim()){
+              //     inpnama.value=nama[index];
+              //     inpalamat.value=alamat[index]; 
+              //   } 
+              // }  
+              /*close the list of autocompleted values,
+              (or any other open lists of autocompleted values:*/
+              closeAllLists();
+          });
+          a.appendChild(b);
+        }
+      }
+  });
+  /*execute a function presses a key on the keyboard:*/
+  inp.addEventListener("keydown", function(e) {
+      var x = document.getElementById(this.id + "autocomplete-list");      
+      if (x) x = x.getElementsByTagName("div");
+      if (e.keyCode == 40) {
+        /*If the arrow DOWN key is pressed,
+        increase the currentFocus variable:*/
+        currentFocus++;
+        /*and and make the current item more visible:*/
+        addActive(x);
+      } else if (e.keyCode == 38) { //up
+        /*If the arrow UP key is pressed,
+        decrease the currentFocus variable:*/
+        currentFocus--;
+        /*and and make the current item more visible:*/
+        addActive(x);
+      } else if (e.keyCode == 13) {
+        /*If the ENTER key is pressed, prevent the form from being submitted,*/
+        e.preventDefault();
+        if (currentFocus > -1) {
+          /*and simulate a click on the "active" item:*/
+          if (x) x[currentFocus].click();
+          // inpnama.value=nama[currentFocus];
+          // inpalamat.value=alamat[currentFocus];
+        }
+      }
+  });
+  function addActive(x) {
+    /*a function to classify an item as "active":*/
+    if (!x) return false;
+    /*start by removing the "active" class on all items:*/
+    removeActive(x);
+    if (currentFocus >= x.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = (x.length - 1);
+    /*add class "autocomplete-active":*/
+    x[currentFocus].classList.add("autocomplete-active"); 
+  }
+  function removeActive(x) {
+    /*a function to remove the "active" class from all autocomplete items:*/
+    for (var i = 0; i < x.length; i++) {
+      x[i].classList.remove("autocomplete-active");
+    }
+  }
+  function closeAllLists(elmnt) {
+    /*close all autocomplete lists in the document,
+    except the one passed as an argument:*/
+    var x = document.getElementsByClassName("autocomplete-items");
+    for (var i = 0; i < x.length; i++) {
+      if (elmnt != x[i] && elmnt != inp) {
+        x[i].parentNode.removeChild(x[i]);
+      }
+    }
+  }
+  /*execute a function when someone clicks in the document:*/
+  document.addEventListener("click", function (e) {  
+    closeAllLists(e.target);
+  });
+}
+
+var tabungans = {!! json_encode($tabungans) !!};
+
+var rekening=[];
+var  nasabahnama=[];
+var nasabahalamat=[];
+tabungans.forEach(splitData);
+function splitData(value, index, array) {
+  rekening.push(value.NO_REKENING);
+  nasabahnama.push(value.nama_nasabah);
+  nasabahalamat.push(value.alamat);  
+}
+
+/*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
+autocomplete2(document.getElementsByName("inputtabholddana")[0], rekening, nasabahnama, nasabahalamat, tabungans);
+autocomplete2(document.getElementsByName("inputtabnotariel")[0], rekening, nasabahnama, nasabahalamat, tabungans);
+autocomplete2(document.getElementsByName("inputtabasuransi")[0], rekening, nasabahnama, nasabahalamat, tabungans);
 
 </script>

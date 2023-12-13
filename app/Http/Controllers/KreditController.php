@@ -7,6 +7,7 @@ use App\Kredit;
 use App\Kretrans;
 use App\Kodejeniskredit;
 use App\Nasabah;
+use App\Tabungan;
 use App\KodeGroup1Kredit;
 use App\KodeGroup2Kredit;
 use App\KodeGroup3Kredit;
@@ -79,10 +80,16 @@ class KreditController extends Controller
         $kodeperiodepembayaran = KodePeriodePembayaran::all()->sort();
         $jenisagunan = JenisAgunan::all()->sort();
         $nasabahs = Nasabah::select('nasabah_id','nama_nasabah','alamat')->get()->toArray();
+        $tabungans = Tabungan::select('tabung.NO_REKENING','nasabah.nama_nasabah','nasabah.alamat')
+                      ->leftJoin('nasabah', function($join) {
+                        $join->on('nasabah.nasabah_id', '=', 'tabung.NASABAH_ID');
+                        })
+                      ->get()->toArray();
         $kodejeniskredit=Kodejeniskredit::all();
 
       return view('admin/kredit', ['logos'=> $logos, '
       users'=> $users,'nasabahs'=> $nasabahs,
+      'tabungans' => $tabungans,
       'kodejeniskredit'=>$kodejeniskredit, 
       'kodegroup1kredit'=>$kodegroup1kredit, 
       'kodegroup2kredit'=>$kodegroup2kredit, 

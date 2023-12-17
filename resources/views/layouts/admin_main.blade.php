@@ -901,9 +901,66 @@
                               <p class="pl-4">Neraca Annual</p>
                             </a>
                           </li>
-
                         </ul>
-                      </li>                    
+                      </li>
+                      {{-- LABA RUGI --}}
+                      <li class="nav-item has-treeview <?php if(($menu=='de')){echo'menu-open';}?>">
+                        <a href="#" class="nav-link <?php if($menu=='de'){echo 'active';} ?>" >
+                          <i class="right fas fa-angle-left"></i>
+                          <p class="pl-3">Laba Rugi</p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                          <li class="nav-item">
+                            <a href="{{route('showfrmlabarugi')}}" class="nav-link">
+                              <p class="pl-4">Laba Rugi</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{{route('showfrmneracaharian')}}" class="nav-link">
+                              <p class="pl-4">Neraca Harian</p>
+                            </a>
+                          </li>
+                          {{-- <li class="nav-item">
+                            <a href="#" class="nav-link">
+                              <p class="pl-4">Neraca Administrative</p>
+                            </a>
+                          </li> --}}
+                          <li class="nav-item">
+                            <a href="{{route('showfrmneracakomparatif')}}" class="nav-link">
+                              <p class="pl-4">Neraca Komparatif</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{{route('showfrmneracaannual')}}" class="nav-link">
+                              <p class="pl-4">Neraca Annual</p>
+                            </a>
+                          </li>
+                        </ul>
+                      </li>
+                      {{-- ANTAR KANTIR DAN KONSOLIDAS --}}
+                      <li class="nav-item has-treeview <?php if(($menu=='de')){echo'menu-open';}?>">
+                        <a href="#" class="nav-link <?php if($menu=='de'){echo 'active';} ?>" >
+                          <i class="right fas fa-angle-left"></i>
+                          <p class="pl-3">Laporan Konsolidasi</p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                          <li class="nav-item">
+                            <a href="{{route('showfrmneracakonsol')}}" class="nav-link">
+                              <p class="pl-4">Neraca Konsolidasi</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{{route('frmlabarugikonsol')}}" class="nav-link">
+                              <p class="pl-4">Labarugi Konsolidasi </p>
+                            </a>
+                          </li>                        </ul>
+                      </li>
+                      {{-- REKAPITULASI JURNAL HARIAN --}}
+                      <li class="nav-item">
+                        <a href="{{route('showfrnrekapjurnalharian')}}" class="nav-link">
+                          <p class="pl-3">Rekapitulasi Jurnal Harian</p>
+                        </a>
+                      </li>
 
                     </ul>
                   </li>                              

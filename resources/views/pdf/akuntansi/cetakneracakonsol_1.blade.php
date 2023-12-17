@@ -25,7 +25,7 @@
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     
-        <title>NERACA ANNUAL</title>
+        <title>NERACA LABA RUGI KONSOL</title>
       </head>
       <body>
     <div class="container">
@@ -33,94 +33,116 @@
         <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
         <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/>
       </svg></button>
-      <a href="{{route('showfrmneracaannual')}}" class="btn btn-md btn-normal">
+      <a href="{{route('showfrmneracakonsol')}}" class="btn btn-md btn-normal">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-check" viewBox="0 0 16 16">
           <path d="M7.293 1.5a1 1 0 0 1 1.414 0L11 3.793V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v3.293l2.354 2.353a.5.5 0 0 1-.708.708L8 2.207l-5 5V13.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 2 13.5V8.207l-.646.647a.5.5 0 1 1-.708-.708L7.293 1.5Z"/>
           <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.707l.547.547 1.17-1.951a.5.5 0 1 1 .858.514Z"/>
         </svg>
       </a>
       {{-- TEKNIK INI SAMA DENGAN MENGGUNAKAN Request $request di Controller --}}
-      <a href="{{route('export_neraca_annual',['tgl_trans1'=>$tgl_trans1,'tgl_trans2'=>$tgl_trans2,'tgl_trans3'=>$tgl_trans3,'totaktiva1'=>$totaktiva1,'totpasiva1'=>$totpasiva1,'laba1'=>$laba1,'totaktiva2'=>$totaktiva2,'totaktiva2'=>$totpasiva2,'laba2'=>$laba2,'totaktiva3'=>$totaktiva3,'totpasiva3'=>$totpasiva3,'laba3'=>$laba3])}}">
-        <i class='fas fa-file-export'></i>
+      <a href="{{route('exportneracakonsol1',['tgl_trans'=>$tgl_trans])}}">
+        <i class='fas fa-file-export'>Export</i>
       </a>
-        <h4>NERACA ANNUAL</h4>
+        <h4>NERACA KONSOLIDASI</h4>
         @foreach($lembaga as $values)
         <br>{{$values->Value}}<br>
         @endforeach
-        <h5 style="font-size: 100%">periode {{date('d F Y')}}</h5>
+        <h5 style="font-size: 100%">periode {{date('d F Y',strtotime($tgl_trans))}}</h5>
 
         <table id="tbl1" class="table table-bordered" style="border-style: none">
+          @php($total=0)
+          @php($totalk00=0)
+          @php($totalk01=0)
+          @php($totalk02=0)
+          @php($totalk03=0)
+          @php($totalk04=0)
+          @php($konsol=0)
         <thead>
         <tr>
-            <th rowspan="2">AKTIVA </th>
-            <th rowspan="1" colspan="3" style="text-align: center">Periode</th>
-            <th rowspan="2">PASIVA</th>
-            <th rowspan="1" colspan="3" style="text-align: center">Periode</th>
-        </tr>
-        <tr>
-            {{-- <th></th> --}}
-            <th colspan="1">{{date('d-M-Y',strtotime($tgl_trans1))}}</th>
-            <th colspan="1">{{date('d-M-Y',strtotime($tgl_trans2))}}</th>
-            <th colspan="1">{{date('d-M-Y',strtotime($tgl_trans3))}}</th>
-            <th colspan="1">{{date('d-M-Y',strtotime($tgl_trans1))}}</th>
-            <th colspan="1">{{date('d-M-Y',strtotime($tgl_trans2))}}</th>
-            <th colspan="1">{{date('d-M-Y',strtotime($tgl_trans3))}}</th>
+            <th rowspan="2">Kode Perk </th>
+            <th rowspan="2">Nama Perkiraan </th>
+            <th rowspan="2">Bangil</th>
+            <th rowspan="2">Tanggulangin</th>
+            <th rowspan="2">Malang</th>
+            <th rowspan="2">Pasuruan</th>
+            <th rowspan="2">Purwosari</th>
+            <th rowspan="2">Konsolidasi</th>
         </tr>
         </thead>
         <tbody>
-          @foreach($rsneraca as $value)
-            <tr>
-                <td>{{ $value->aktiva}}</td>
-                <td>{{ number_format((float)$value->aktiva_bln1,2,".",",")}}</td>
-                <td>{{ number_format((float)$value->aktiva_bln2,2,".",",")}}</td>
-                <td>{{ number_format((float)$value->aktiva_bln3,2,".",",")}}</td>
-                <td>{{ $value->pasiva }}</td>
-                <td>{{ number_format((float)$value->pasiva_bln1,2,".",",")}}</td>
-                <td>{{ number_format((float)$value->pasiva_bln2,2,".",",")}}</td>
-                <td>{{ number_format((float)$value->pasiva_bln3,2,".",",")}}</td>
+          @foreach($rs as $value)
+            @if($value->KODE_PERK=='1' OR $value->KODE_PERK=='2' OR $value->KODE_PERK=='3')
 
+            @else
+            <tr>
+                <td>{{ $value->KODE_PERK}}</td>
+                <td>{{ $value->NAMA_PERK}}</td>
+                <td>{{ number_format((float)$value->K00,2,".",",")}}</td>
+                <td>{{ number_format((float)$value->K01,2,".",",")}}</td>
+                <td>{{ number_format((float)$value->K02,2,".",",")}}</td>
+                <td>{{ number_format((float)$value->K03,2,".",",")}}</td>
+                <td>{{ number_format((float)$value->K04,2,".",",")}}</td>
+                @php($total = $value->K00+$value->K01+$value->K02+$value->K03+$value->K04)
+                <td>{{ number_format((float)($total),2,".",",")}}</td>
+                @php($totalk00 += $value->K00)
+                @php($totalk01 += $value->K01)
+                @php($totalk02 += $value->K02)
+                @php($totalk03 += $value->K03)
+                @php($totalk04 += $value->K04)
+                @php($konsol += $total)
             </tr>
+            @endif
           @endforeach
-            <tr>
+            {{-- <tr>
               <td></td>
               <td></td>
-              <td></td>
-              <td></td>
-              <td>Laba Tahun Berjalan</td>
-              @if($laba1>0)
-                <td>{{number_format((float)$laba1,2,".",",")}}</td>
-              @elseif($laba1<0)
-                <td>({{number_format((float)($laba1*-1),2,".",",")}})</td>
+              @if($totalk00>0)
+                <td>{{number_format((float)$totalk00,2,".",",")}}</td>
+              @elseif($totalk00<0)
+                <td>({{number_format((float)($totalk00*-1),2,".",",")}})</td>
               @else
                 <td>{{number_format((float)0,2,".",",")}}</td>
               @endif
-              @if($laba2>0)
-                <td>{{number_format((float)$laba2,2,".",",")}}</td>
-              @elseif($laba2<0)
-                <td>({{number_format((float)($laba2*-1),2,".",",")}})</td>
+
+              @if($totalk01>0)
+                <td>{{number_format((float)$totalk01,2,".",",")}}</td>
+              @elseif($totalk01<0)
+                <td>({{number_format((float)($totalk01*-1),2,".",",")}})</td>
               @else
                 <td>{{number_format((float)0,2,".",",")}}</td>
               @endif
-              @if($laba3>0)
-                <td>{{number_format((float)$laba3,2,".",",")}}</td>
-              @elseif($laba3<0)
-                <td>({{number_format((float)($laba3*-1),2,".",",")}})</td>
-               @else
+
+              @if($totalk02>0)
+                <td>{{number_format((float)$totalk02,2,".",",")}}</td>
+              @elseif($totalk02<0)
+                <td>({{number_format((float)($totalk02*-1),2,".",",")}})</td>
+              @else
+                <td>{{number_format((float)0,2,".",",")}}</td>
+              @endif
+
+              @if($totalk03>0)
+                <td>{{number_format((float)$totalk03,2,".",",")}}</td>
+              @elseif($totalk03<0)
+                <td>({{number_format((float)($totalk03*-1),2,".",",")}})</td>
+              @else
+                <td>{{number_format((float)0,2,".",",")}}</td>
+              @endif
+              @if($totalk04>0)
+                <td>{{number_format((float)$totalk04,2,".",",")}}</td>
+              @elseif($totalk04<0)
+                <td>({{number_format((float)($totalk04*-1),2,".",",")}})</td>
+              @else
                  <td>{{number_format((float)0,2,".",",")}}</td>
-               @endif
-            </tr>
-            <tr>
-                <td>Total Aktiva</td>
-                <td>{{number_format((float)$totaktiva1,2,".",",")}}</td>
-                <td>{{number_format((float)$totaktiva2,2,".",",")}}</td>
-                <td>{{number_format((float)$totaktiva3,2,".",",")}}</td>
-
-                <td>Total Pasiva</td>
-                <td>{{number_format((float)$totaktiva1,2,".",",")}}</td>
-                <td>{{number_format((float)$totaktiva2,2,".",",")}}</td>
-                <td>{{number_format((float)$totaktiva3,2,".",",")}}</td>
-
-            </tr>
+              @endif
+              @if($konsol>0)
+               <td>{{number_format((float)$konsol,2,".",",")}}</td>
+              @elseif($konsol<0)
+               <td>({{number_format((float)($konsol*-1),2,".",",")}})</td>
+              @else
+                <td>{{number_format((float)0,2,".",",")}}</td>
+              @endif
+              
+            </tr> --}}
         </tbody>
     </table>
               {{-- TOTAL LABA ATHUN BERJALAN  --}}

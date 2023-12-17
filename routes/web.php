@@ -28,11 +28,8 @@ Auth::routes();
 //     return redirect(route('login'));
 // });
 
-Route::get('/','Auth\LoginController@LoginUser')->name('login');
+Route::get('/','Auth\LoginController@showLoginForm')->name('login');
 Route::post('/login','Auth\LoginController@AuthLoginUser')->name('authlogin');
-
-// Route::get('/','Auth\LoginController@LoginUser')->name('login');
-// Route::post('/','Auth\LoginController@AuthLoginUser')->name('authlogin');
 
 //Admin Page
 Auth::routes([
@@ -42,6 +39,9 @@ Auth::routes([
 Route::get('/home', 'HomeController@admin_index')->name('home')->middleware('verified');
 Route::get('/verify','Auth\RegisterController@verifyUser')->name('verify.user');
 
+/* Verifiy Customer User*/
+Route::get('/verifyuser','RegistercustomerController@verifyUser')->name('verify.cust');
+    
 /* Verifiy Customer User*/
 Route::get('/verifyuser','RegistercustomerController@verifyUser')->name('verify.cust');
 
@@ -361,6 +361,34 @@ Route::get('bo_ak_exportkomparatif','AkuntansiController@bo_ak_exportkomparatif'
 // Show Form Neraca ANNUAL
 Route::get('bo_ak_lp_showfrmneracaannual','AkuntansiController@bo_ak_lp_showfrmneracaannual')->name('showfrmneracaannual');
 Route::post('bo_ak_carineracaannual','AkuntansiController@bo_ak_carineracaannual');
+// Export neraca ANNUAL ke EXCEL
+ROute::get('bo_ak_exportneracaannual','AkuntansiController@bo_ak_exportneracaannual')->name('export_neraca_annual');
+// Show form Rekapitulasi Jurnal Harian
+Route::get('bo_ak_lp_frnrekapjurnalharian','AkuntansiController@bo_ak_frnrekapjurnalharian')->name('showfrnrekapjurnalharian');
+// Cari Rekapitulasi Jurnal Harian
+Route::post('bo_ak_carirekapjurnal','AkuntansiController@bo_ak_carirekapjurnal');
+// EXPORT REKAPITULASI JURNAL HARIAN 
+Route::get('exportrekapjurnalharian','AkuntansiController@exportrekapjurnalharian')->name('exportrekapjurnalharian');
+// SHOW FORM LABARUGI
+Route::get('bo_ak_lp_showfrmlabarugi','AkuntansiController@bo_ak_lp_showfrmlabarugi')->name('showfrmlabarugi');
+// Cari labarugi
+Route::post('bo_ak_carilabarugi','AkuntansiController@bo_ak_carilabarugi');
+// EXPORT LABARUGI
+Route::get('bo_ak_exportlabarugi','AkuntansiController@bo_ak_exportlabarugi')->name('exportlabarugi');
+// SHOW FORM NERACA KONSOLIDASI
+Route::get('bo_ak_lp_showfrmneracakons','AkuntansiController@bo_ak_lp_showfrmneracakons')->name('showfrmneracakonsol');
+// Cari Neraca Konsola
+Route::post('bo_ak_carineracakonsol','AkuntansiController@bo_ak_carineracakonsol');
+// Export Neraca Konsol 1
+Route::get('bo_ak_lp_neracakonsol1','AkuntansiController@bo_ak_lp_neracakonsol1')->name('exportneracakonsol1');
+// Show form Labarugi Konsolidasi
+Route::get('bo_ak_lp_labarugikonsol','AkuntansiController@bo_ak_lp_labarugikonsol')->name('frmlabarugikonsol');
+// Cari Laba rugi konsol
+Route::post('bo_ak_carilabakonsol','AkuntansiController@bo_ak_carilabakonsol');
+// Export Labarugi konsolidasi
+Route::get('bo_ak_lp_labarugikonsol1','AkuntansiController@bo_ak_lp_labarugikonsol1')->name('exportlabarugikonsol1');
+
+
 
 
 //TELLER TRANS DEPOSITO

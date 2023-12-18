@@ -27,43 +27,7 @@
     <div class="row">
       <div class="col-12">
         <div class="card card-warning card-outline">
-          <!-- form start -->
-          <form method="POST" action="/bo_kr_de_kredit/add" role="search">
-            @csrf
-            <div class="card-body">
-              <div class="row form-group">
-                <div class="col-lg-3 col-sm-12">
-                  <label for="idnasabah1">Id Nasabah</label>
-                </div>
-                <div class="col-lg-5 col-sm-12">
-                  <input type="text" class="form-control" id="idnasabah1" name="idnasabah1" placeholder="Masukkan ID Nasabah">
-                </div>
-              </div>
-              <div class="row form-group">
-                <div class="col-lg-3 col-sm-12">
-                  <label for="namanasabah1">Nama Nasabah</label>
-                </div>
-                <div class="col-lg-5 col-sm-12">
-                  <input type="text" class="form-control" id="namanasabah1" name="namanasabah1" data-action="getProfileNasabah.php" placeholder="Masukkan Nama Nasabah">
-                </div>
-              </div>
-              <div class="row form-group">
-                <div class="col-lg-3 col-sm-12">
-                  <label for="noktp1">No KTP</label>
-                </div>
-                <div class="col-lg-5 col-sm-12">
-                  <input type="text" class="form-control" id="noktp1" name="noktp1" placeholder="Masukkan No KTP">
-                </div>
-              </div>
-              <div class="row form-group">
-                <div class="col-3"></div>
-                <div class="col-3">
-                  <button type="submit" class="btn btn-warning"><i class="fa fa-search" style="color:white"></i></button>
-                </div>
-              </div>
-            </div>
-            <!-- /.card-body -->
-          </form>
+          
         </div>
         <div class="card">
           <div class="card-header">
@@ -76,48 +40,58 @@
           </div>
           <!-- /.card-header -->
           <div class="card-body">
-            <table id="example3" class="table table-bordered table-hover">
+            <table id='kreditTable' width='100%' class="table table-bordered table-hover">
               <thead>
                 <tr>
-                  <th>No</th>
-                  <th>Nama Nasabah</th>
-                  <th>Produk</th>
-                  <th>No Rekening</th>
-                  <th>Saldo Awal</th>
-                  <th>Saldo Saat Ini</th>
-                  <th>Action</th>
+                  <td>Nama Nasabah</td>
+                  <td>Produk</td>
+                  <td>No Rekening</td>
+                  <td>Saldo Awal</td>
+                  <td>Saldo Saat Ini</td>
+                  <td>Action</td>
                 </tr>
               </thead>
-              <tbody>
-
-                @foreach($kredits as $index => $kredit)
-                <tr>
-                  <td>{{ $index+1 }}</td>
-                  <td>{{ $kredit->nama_nasabah }}</td>
-                  <td>{{ strtoupper($kredit->DESKRIPSI_JENIS_KREDIT) }}</td>
-                  <td>{{ $kredit->NO_REKENING }}</td>
-                  <td>{{ $kredit->POKOK_SALDO_REALISASI }}</td>
-                  <td>{{ $kredit->POKOK_SALDO_AKHIR }}</td>
-                  <td>
-                    <a class="dropdown-toggle btn btn-block bg-gradient-primary btn-sm" data-toggle="dropdown" href="#">
-                      Action <span class="caret"></span>
-                    </a>
-                    <div class="dropdown-menu">
-                      <form method="post" action="/bo_cs_de_profil/kredit">
-                        @csrf
-                        <input type="hidden" name="jenisprofil" value="kredit" class="form-control">
-                        <input type="hidden" name="idkredit" value="{{ trim($kredit->NO_REKENING) }}" class="form-control">
-                        <input type="hidden" name="idnasabah" value="{{ trim($kredit->NASABAH_ID) }}" class="form-control">
-                        <button type="submit" tabindex="-1" class="dropdown-item">
-                          Detail Kredit
-                        </button>
-                      </form>
-                    </div>
-                  </td>
-                </tr>
-                @endforeach
-              </tbody>
             </table>
+
+            <!-- Script -->
+            <script type="text/javascript">
+            $(document).ready(function(){
+
+              // DataTable
+              $('#kreditTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{route('Getkredits')}}",
+                columns: [
+                    { data: 'nama_nasabah' },
+                    { data: 'DESKRIPSI_JENIS_KREDIT' },
+                    { data: 'NO_REKENING' },
+                    { data: 'POKOK_SALDO_REALISASI' },
+                    { data: 'POKOK_SALDO_AKHIR' },
+                    { title: "Action", 
+                      "render": function(data, type, row, meta) {
+                        console.log( 'in render function' );
+                        return '<a class="dropdown-toggle btn btn-block bg-gradient-primary btn-sm" data-toggle="dropdown" href="#">' +
+                                'Action <span class="caret"></span>' +
+                                '</a>' +
+                                '<div class="dropdown-menu">' +
+                                  '<form method="post" action="/bo_cs_de_profil/kredit">' +
+                                    '@csrf' +
+                                    '<input type="hidden" name="jenisprofil" value="kredit" class="form-control">' +
+                                    '<input type="hidden" name="idkredit" value="'+row['NO_REKENING']+'" class="form-control">' +                                    
+                                    '<button type="submit" tabindex="-1" class="dropdown-item">' +
+                                    ' Detail Kredit' +
+                                    '</button>' +
+                                  '</form>' +
+                                '</div>';
+                      }
+                    },
+                ]
+              });
+
+            });
+            </script>
+            
           </div>
           <!-- /.card-body -->
         </div>
@@ -154,6 +128,8 @@
                 <div class="tab-content">
                     @include('admin.kredit.master')
                     @include('admin.kredit.jadwal')
+                    @include('admin.kredit.lapbul')
+                    @include('admin.kredit.agunan')
                   </div>
                </div>
           <div class="modal-footer justify-content-between">
@@ -194,7 +170,7 @@ function autocomplete(inp, inpnama, inpalamat, arr, nama, alamat, nasabahs) {
           b = document.createElement("DIV");
           /*make the matching letters bold:*/
           b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
-          b.innerHTML += arr[i].substr(val.length);
+          b.innerHTML += arr[i].substr(val.length) + ' - ' + nama[i];
           /*insert a input field that will hold the current array item's value:*/
           b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
           /*execute a function when someone clicks on the item value (DIV element):*/
@@ -370,15 +346,19 @@ autocomplete(document.getElementsByName("inputnasabahid")[0], document.getElemen
       document.getElementsByName("inputtanggaljttempo")[0].value=tanggaljatuhtempo;
     }  
   }
-
+  var provisi = 0;
+  function hitungprovisi(){
+    provisi = parseInt(document.getElementsByName("inputprovisirp")[0].value);
+  }
   var pokok = 0;
   var bunga = 0;
+  
   function hitungbunga(){
     pokok = parseInt(document.getElementsByName("inputjumlahpinjaman")[0].value);    
     var sukubunga=(parseInt(document.getElementsByName("inputbungaperthn")[0].value) /12);
     document.getElementsByName("inputjumlahbungapinjaman")[0].value = parseInt(document.getElementsByName("inputjumlahpinjaman")[0].value) * parseInt(document.getElementsByName("inputjmlangsuran")[0].value) * sukubunga/100;
     document.getElementsByName("inputsukubunga")[0].value = sukubunga;
-    bunga = parseInt(document.getElementsByName("inputjumlahbungapinjaman")[0].value);
+    bunga = parseInt(document.getElementsByName("inputjumlahbungapinjaman")[0].value);    
     var nilaiakhir = parseFloat(document.getElementsByName("inputjumlahpinjaman")[0].value)+parseFloat(document.getElementsByName("inputjumlahbungapinjaman")[0].value);
     var nilaiawal = parseFloat(document.getElementsByName("inputjumlahpinjaman")[0].value);
     var pembagi = document.getElementsByName("inputjmlangsuran")[0].value/12;

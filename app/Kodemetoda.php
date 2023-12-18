@@ -8,7 +8,7 @@ class Kodemetoda extends Model
 {
     public $timestamp=false;
     protected $table='kodemetoda';
-    protected $primaryKey='kode_metoda';
+    protected $primaryKey='KODE_METODA';
     protected $keyType='string';
     public $incrementing=false;
 

@@ -2187,6 +2187,26 @@ $("#datatabungan").on('click','#klik',function(){
 
     });
 
+    // SCRIPT UNTUK MENAMBAHKAN BULAN PADA JKW DEPOSITO 
+    function myTime(){
+          let tgl = document.getElementById("etgl_registrasidepo").value;
+          let dt = new Date(tgl);
+          let months ="";
+          let no_of_months = document.getElementById("addjkw").value;
+          dt.setMonth(dt.getMonth() + Number(no_of_months));
+          let day =dt.getDate();
+          let month =(dt.getMonth()+1);
+          if(month.toString().length==1)
+          {
+            months = "0"+month.toString();
+          }else if(month.toString().length==2){
+            months = month.toString();
+          }
+          
+          let year =dt.getFullYear();
+          dt = year+"-"+months+"-"+day;
+          document.getElementById("addtgl_jt").value = dt;
+      }
 
 </script>
 <script>

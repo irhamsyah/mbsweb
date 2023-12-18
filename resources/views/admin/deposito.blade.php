@@ -554,7 +554,7 @@
                 </div>
                 <div class="col-lg-2 col-sm-12">
                   <label for="qq">QQ</label>
-                  <input type="text" id="inputqqadd" name="qq" class="form-control">
+                  <input type="text" id="inputqqadd" name="qq" class="form-control" required>
                 </div>
                 <div class="col-lg-4 col-sm-12">
                   <label for="inputnocif">Alamat</label>
@@ -610,12 +610,12 @@
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="jkw">JW</label>
-                  <input type="text" name="jkw" class="form-control" id="jkw" required>
+                  <input type="text" name="jkw" onchange="myTime();" class="form-control" id="addjkw" required>
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputDate2">Tgl JT</label>
                   <div class="input-group date" id="inputDate2" data-target-input="nearest">
-                    <input type="text" name="tgl_jt" class="form-control datetimepicker-input" data-target="#inputDate2" value="{{ date('Y-m-d') }}" readonly/>
+                    <input type="text" id="addtgl_jt" name="tgl_jt" class="form-control datetimepicker-input" data-target="#inputDate2" readonly/>
                       <div class="input-group-append" data-target="#inputDate2" data-toggle="datetimepicker">
                           <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                       </div>
@@ -718,7 +718,7 @@
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputjk">Sandi pihak terkait</label>
-                    <select class="form-control" name="kode_bi_hubungan">
+                    <select class="form-control" name="kode_bi_hubungan" required>
                       <option id="idbihubungan" selected></option>
                       @foreach($kodeketerkaitanlapbul as $value)
                       <option value="{{$value->SANDI}}">{{$value->SANDI.'-'.$value->DESKRIPSI_SANDI}}</option>
@@ -738,7 +738,7 @@
                 </div>
                 <div class="col-lg-3 col-sm-12">
                   <label for="metoda">Metoda</label>
-                    <select class="form-control" name="metoda">
+                    <select class="form-control" name="metoda" required>
                       <option id="metoda" selected></option>
                       @foreach($kodemetoda as $value)
                       <option value="{{$value->KODE_METODA}}">{{$value->KODE_METODA.'-'.$value->DESKRIPSI_METODA}}</option>

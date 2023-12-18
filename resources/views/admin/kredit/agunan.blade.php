@@ -125,7 +125,7 @@
     </div>
     <div class="col-lg-1 col-sm-12"></div> 
     <div class="col-lg-4 col-sm-12">
-      <input type="file" accept="image/jpeg, image/png, image/jpg" onchange="setImagePicked(event)">
+      <input type="file" name="agunanimage" accept="image/jpeg, image/png, image/jpg" onchange="setImagePicked(event)">
       <output></output>
       <br>
       <br>

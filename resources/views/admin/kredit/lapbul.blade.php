@@ -34,7 +34,7 @@
       <span class="labeljudulright">Tgl. Analisa</span>      
     </div>
     <div class="col-lg-3 col-sm-12">          
-      <input type="text" name="inputtglanalisa" class="form-control">
+      <input type="text" name="inputtglanalisa" class="form-control" required>
     </div>
   </div>
   <div class="form-group row">    

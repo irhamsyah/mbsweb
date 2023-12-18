@@ -391,6 +391,7 @@ function addTable(rows) {
 }
 function setMulaiAngsuran(){
   document.getElementsByName("inputmulaiangsuran")[0].value = document.getElementsByName("inputtanggalrealisasi")[0].value;
+  document.getElementsByName("inputtglanalisa")[0].value = document.getElementsByName("inputtanggalrealisasi")[0].value;
 }
 addTable(5);
 </script>

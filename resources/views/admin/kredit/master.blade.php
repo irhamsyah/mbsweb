@@ -128,7 +128,7 @@
         <div class="col-lg-12 col-sm-12">
           <label for="inputkodegorup4">Kode Group 4</label>
           <select class="form-control" name="inputkodegorup4" readonly>
-            <option value="{{ 'KODE_GROUP4' }}">{{ 'KODE_GROUP4'.' - '.'DESKRIPSI_GROUP4' }}</option>
+            <option value="{{ 'KODE_GROUP4' }}">{{ ' '.' - '.'KOSONG' }}</option>
           </select>
         </div>
         <div class="col-lg-12 col-sm-12">

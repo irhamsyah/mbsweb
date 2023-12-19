@@ -95,13 +95,13 @@
                       Action <span class="caret"></span>
                     </a>
                     <div class="dropdown-menu">
-                      <form action="/prof_tab_detail" method="post" style="margin-bottom: 0;">
+                      {{-- <form action="/prof_tab_detail" method="post" style="margin-bottom: 0;">
                           <button type="submit" tabindex="-1" class="dropdown-item">
                             Detail
                           </button>
                           <input type="hidden" name="inputIdTransaction" value="{{ $tabungans->NO_REKENING }}" class="form-control">
                           @csrf
-                      </form>
+                      </form> --}}
                       <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal-edit-tabungan"
                         data-no_rekening="{{ $tabungans->NO_REKENING}}"
                         data-hidden_jenis_tabungan="{{$tabungans->JENIS_TABUNGAN}}"

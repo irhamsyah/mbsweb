@@ -574,17 +574,17 @@
                         </a>
                       </li>
                       <li class="nav-item">
-                        <a href="/bo_cs_de_profil" class="nav-link <?php if($page == 'profil' or $page=='profilcari' or $page=='profildetail' or $page=='profilkredit'){echo 'active';}?>">
+                        <a href="/bo_kr_de_kredittrans" class="nav-link <?php if($page=='kredittrans'){echo 'active';}?>">
                           <p class="pl-3">Hapus Data Transaksi</p>
                         </a>
                       </li>
                       <li class="nav-item">
-                        <a href="/bo_cs_de_profil" class="nav-link <?php if($page == 'profil' or $page=='profilcari' or $page=='profildetail' or $page=='profilkredit'){echo 'active';}?>">
+                        <a href="#" class="nav-link <?php //if($page=='kredit' or $page=='kreditcari'){echo 'active';}?>">
                           <p class="pl-3">Validasi Transaksi</p>
                         </a>
                       </li>      
                       <li class="nav-item">
-                        <a href="/bo_cs_de_profil" class="nav-link <?php if($page == 'profil' or $page=='profilcari' or $page=='profildetail' or $page=='profilkredit'){echo 'active';}?>">
+                        <a href="#" class="nav-link <?php //if($page=='kredit' or $page=='kreditcari'){echo 'active';}?>">
                           <p class="pl-3">Hitung Denda</p>
                         </a>
                       </li>   
@@ -595,44 +595,44 @@
                       </a>
                       <ul class="nav nav-treeview">
                       <li class="nav-item">
-                        <a href="/bo_cs_rp_nasabah" class="nav-link <?php if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
+                        <a href="#" class="nav-link <?php //if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
                           <p class="pl-4">Hitung Tagihan</p>
                         </a>
                       </li>
                       <li class="nav-item">
-                        <a href="/bo_cs_rp_tabungan" class="nav-link <?php if($page=='tabungan' or $page=='tabungancari' or $page=='tabunganbuktisetortab'){echo 'active';}?>">
+                        <a href="#" class="nav-link <?php //if($page=='tabungan' or $page=='tabungancari' or $page=='tabunganbuktisetortab'){echo 'active';}?>">
                           <p class="pl-4">Browse Tagihan</p>
                         </a>
                       </li>
                       <li class="nav-item">
-                        <a href="/bo_cs_rp_deposito" class="nav-link <?php if($page=='deposito' or $page=='depositocari'){echo 'active';}?>">
+                        <a href="#" class="nav-link <?php //if($page=='deposito' or $page=='depositocari'){echo 'active';}?>">
                           <p class="pl-4">Dokumen Deposito</p>
                         </a>
                       </li>
                       <li class="nav-item">
-                        <a href="/bo_cs_rp_kredit" class="nav-link <?php if($page=='kredit' or $page=='kreditcari'){echo 'active';}?>">
+                        <a href="#" class="nav-link <?php //if($page=='kredit' or $page=='kreditcari'){echo 'active';}?>">
                           <p class="pl-4">Dokumen Kredit</p>
                         </a>
                       </li>
                       <li class="nav-item">
-                        <a href="/bo_cs_rp_umum" class="nav-link <?php if($page=='umum' or $page=='umumcari'){echo 'active';}?>">
+                        <a href="#" class="nav-link <?php //if($page=='umum' or $page=='umumcari'){echo 'active';}?>">
                           <p class="pl-4">Overbook Tagihan</p>
                         </a>
                       </li>
                       <li class="nav-item">
-                        <a href="/bo_cs_rp_umum" class="nav-link <?php if($page=='umum' or $page=='umumcari'){echo 'active';}?>">
+                        <a href="#" class="nav-link <?php //if($page=='umum' or $page=='umumcari'){echo 'active';}?>">
                           <p class="pl-4">Pencentakan Lembar Tagihan</p>
                         </a>
                       </li>
                       <li class="nav-item">
-                        <a href="/bo_cs_rp_umum" class="nav-link <?php if($page=='umum' or $page=='umumcari'){echo 'active';}?>">
+                        <a href="#" class="nav-link <?php //if($page=='umum' or $page=='umumcari'){echo 'active';}?>">
                           <p class="pl-4">Mutasi Rekening Koran</p>
                         </a>
                       </li>                      
                       </ul>
                     </li>  
                     <li class="nav-item">
-                        <a href="/bo_cs_de_nasabah" class="nav-link <?php if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
+                        <a href="#" class="nav-link <?php //if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
                           <p class="pl-3">Koreksi Bungan & Denda</p>
                         </a>
                       </li> 
@@ -643,17 +643,17 @@
                         </a>                                    
                       <ul class="nav nav-treeview">
                       <li class="nav-item">
-                        <a href="/bo_cs_rp_nasabah" class="nav-link <?php if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
+                        <a href="#" class="nav-link <?php //if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
                           <p class="pl-4">Entry Kunjungan</p>
                         </a>
                       </li>
                       <li class="nav-item">
-                        <a href="/bo_cs_rp_nasabah" class="nav-link <?php if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
+                        <a href="#" class="nav-link <?php //if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
                           <p class="pl-4">Pencetakan Riwayat Kunjungan</p>
                         </a>
                       </li>
                       <li class="nav-item">
-                        <a href="/bo_cs_rp_nasabah" class="nav-link <?php if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
+                        <a href="#" class="nav-link <?php //if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
                           <p class="pl-4">Pencetakan Laporan Kunjungan</p>
                         </a>
                       </li>
@@ -667,18 +667,13 @@
                       <p class="pl-2">ADMINISTRATOR</p>
                     </a>
                     <ul class="nav nav-treeview">
-                    <!-- <li class="nav-item">
-                      <a href="/bo_cs_ad_konfnasabah" class="nav-link <?php if($page=='konfnasabah'){echo 'active';}?>">
-                        <p class="pl-4">Konfigurasi Nasabah</p>
-                      </a>
-                    </li> -->
                     <li class="nav-item">
-                      <a href="/bo_cs_ad_agama" class="nav-link <?php if($page=='agama'){echo 'active';}?>">
+                      <a href="#" class="nav-link <?php //if($page=='agama'){echo 'active';}?>">
                         <p class="pl-4">Data Agama</p>
                       </a>
                     </li>
                     <li class="nav-item">
-                      <a href="/bo_cs_ad_golongan" class="nav-link <?php if($page=='golongan'){echo 'active';}?>">
+                      <a href="#" class="nav-link <?php //if($page=='golongan'){echo 'active';}?>">
                         <p class="pl-4">Data Golongan</p>
                       </a>
                     </li>
@@ -691,27 +686,27 @@
                     </a>
                     <ul class="nav nav-treeview">
                     <li class="nav-item">
-                      <a href="/bo_cs_rp_nasabah" class="nav-link <?php if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
+                      <a href="#" class="nav-link <?php //if($page=='nasabah' or $page=='nasabahcari'){echo 'active';}?>">
                         <p class="pl-4">Dokumen Nasabah</p>
                       </a>
                     </li>
                     <li class="nav-item">
-                      <a href="/bo_cs_rp_tabungan" class="nav-link <?php if($page=='tabungan' or $page=='tabungancari' or $page=='tabunganbuktisetortab'){echo 'active';}?>">
+                      <a href="#" class="nav-link <?php //if($page=='tabungan' or $page=='tabungancari' or $page=='tabunganbuktisetortab'){echo 'active';}?>">
                         <p class="pl-4">Dokumen Tabungan</p>
                       </a>
                     </li>
                     <li class="nav-item">
-                      <a href="/bo_cs_rp_deposito" class="nav-link <?php if($page=='deposito' or $page=='depositocari'){echo 'active';}?>">
+                      <a href="#" class="nav-link <?php //if($page=='deposito' or $page=='depositocari'){echo 'active';}?>">
                         <p class="pl-4">Dokumen Deposito</p>
                       </a>
                     </li>
                     <li class="nav-item">
-                      <a href="/bo_cs_rp_kredit" class="nav-link <?php if($page=='kredit' or $page=='kreditcari'){echo 'active';}?>">
+                      <a href="#" class="nav-link <?php //if($page=='kredit' or $page=='kreditcari'){echo 'active';}?>">
                         <p class="pl-4">Dokumen Kredit</p>
                       </a>
                     </li>
                     <li class="nav-item">
-                      <a href="/bo_cs_rp_umum" class="nav-link <?php if($page=='umum' or $page=='umumcari'){echo 'active';}?>">
+                      <a href="#" class="nav-link <?php //if($page=='umum' or $page=='umumcari'){echo 'active';}?>">
                         <p class="pl-4">Dokumen Umum & Inv</p>
                       </a>
                     </li>
@@ -901,9 +896,66 @@
                               <p class="pl-4">Neraca Annual</p>
                             </a>
                           </li>
-
                         </ul>
-                      </li>                    
+                      </li>
+                      {{-- LABA RUGI --}}
+                      <li class="nav-item has-treeview <?php if(($menu=='de')){echo'menu-open';}?>">
+                        <a href="#" class="nav-link <?php if($menu=='de'){echo 'active';} ?>" >
+                          <i class="right fas fa-angle-left"></i>
+                          <p class="pl-3">Laba Rugi</p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                          <li class="nav-item">
+                            <a href="{{route('showfrmlabarugi')}}" class="nav-link">
+                              <p class="pl-4">Laba Rugi</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{{route('showfrmneracaharian')}}" class="nav-link">
+                              <p class="pl-4">Neraca Harian</p>
+                            </a>
+                          </li>
+                          {{-- <li class="nav-item">
+                            <a href="#" class="nav-link">
+                              <p class="pl-4">Neraca Administrative</p>
+                            </a>
+                          </li> --}}
+                          <li class="nav-item">
+                            <a href="{{route('showfrmneracakomparatif')}}" class="nav-link">
+                              <p class="pl-4">Neraca Komparatif</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{{route('showfrmneracaannual')}}" class="nav-link">
+                              <p class="pl-4">Neraca Annual</p>
+                            </a>
+                          </li>
+                        </ul>
+                      </li>
+                      {{-- ANTAR KANTIR DAN KONSOLIDAS --}}
+                      <li class="nav-item has-treeview <?php if(($menu=='de')){echo'menu-open';}?>">
+                        <a href="#" class="nav-link <?php if($menu=='de'){echo 'active';} ?>" >
+                          <i class="right fas fa-angle-left"></i>
+                          <p class="pl-3">Laporan Konsolidasi</p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                          <li class="nav-item">
+                            <a href="{{route('showfrmneracakonsol')}}" class="nav-link">
+                              <p class="pl-4">Neraca Konsolidasi</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{{route('frmlabarugikonsol')}}" class="nav-link">
+                              <p class="pl-4">Labarugi Konsolidasi </p>
+                            </a>
+                          </li>                        </ul>
+                      </li>
+                      {{-- REKAPITULASI JURNAL HARIAN --}}
+                      <li class="nav-item">
+                        <a href="{{route('showfrnrekapjurnalharian')}}" class="nav-link">
+                          <p class="pl-3">Rekapitulasi Jurnal Harian</p>
+                        </a>
+                      </li>
 
                     </ul>
                   </li>                              
@@ -1956,13 +2008,13 @@ $("#datatabungan").on('click','#klik',function(){
 
     // DATATABLE
 $(document).ready(function () {
-    $('#datatabungan').DataTable();
+    $('#datatabungantrans').DataTable();
 });
 
 // Fungsi untuk menampilkan Data Tabungan pada Modal yg akan diinput ke Form TRANSAKSI
 $(document).ready(function(){
 // code to read selected table row cell data (values).
-$("#datatabungan").on('click','#klik',function(){
+$("#datatabungantrans").on('click','#klik',function(){
      // get the current row
      var currentRow=$(this).closest("tr"); 
      
@@ -2130,6 +2182,26 @@ $("#datatabungan").on('click','#klik',function(){
 
     });
 
+    // SCRIPT UNTUK MENAMBAHKAN BULAN PADA JKW DEPOSITO 
+    function myTime(){
+          let tgl = document.getElementById("etgl_registrasidepo").value;
+          let dt = new Date(tgl);
+          let months ="";
+          let no_of_months = document.getElementById("addjkw").value;
+          dt.setMonth(dt.getMonth() + Number(no_of_months));
+          let day =dt.getDate();
+          let month =(dt.getMonth()+1);
+          if(month.toString().length==1)
+          {
+            months = "0"+month.toString();
+          }else if(month.toString().length==2){
+            months = month.toString();
+          }
+          
+          let year =dt.getFullYear();
+          dt = year+"-"+months+"-"+day;
+          document.getElementById("addtgl_jt").value = dt;
+      }
 
 </script>
 <script>

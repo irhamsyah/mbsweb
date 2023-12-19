@@ -40,7 +40,7 @@
         </svg>
       </a>
       {{-- TEKNIK INI SAMA DENGAN MENGGUNAKAN Request $request di Controller --}}
-      <a href="{{route('export_neraca_lajur',['tgl_trans1'=>$tgl_trans1,'tgl_trans2'=>$tgl_trans2,'tgl_trans3'=>$tgl_trans3])}}">
+      <a href="{{route('export_neraca_annual',['tgl_trans1'=>$tgl_trans1,'tgl_trans2'=>$tgl_trans2,'tgl_trans3'=>$tgl_trans3,'totaktiva1'=>$totaktiva1,'totpasiva1'=>$totpasiva1,'laba1'=>$laba1,'totaktiva2'=>$totaktiva2,'totaktiva2'=>$totpasiva2,'laba2'=>$laba2,'totaktiva3'=>$totaktiva3,'totpasiva3'=>$totpasiva3,'laba3'=>$laba3])}}">
         <i class='fas fa-file-export'></i>
       </a>
         <h4>NERACA ANNUAL</h4>
@@ -53,9 +53,9 @@
         <thead>
         <tr>
             <th rowspan="2">AKTIVA </th>
-            <th rowspan="1" colspan="3" style="align-items: center">Periode</th>
+            <th rowspan="1" colspan="3" style="text-align: center">Periode</th>
             <th rowspan="2">PASIVA</th>
-            <th rowspan="1" colspan="3" style="align-items: center">Periode</th>
+            <th rowspan="1" colspan="3" style="text-align: center">Periode</th>
         </tr>
         <tr>
             {{-- <th></th> --}}

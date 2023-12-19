@@ -160,13 +160,14 @@ const roundOffTo = (num, factor = 1) => {
    return res;
 };
 var tglangsuran = [];
+var tglprovisi = []
 var angsuranpokok = [];
 var angsuranbunga = [];
+var angsuranprovisi = [];
 function setJadwalAngsuran(){
   if(document.getElementsByName("inputsatuanwaktuangsuran")[0].value=='B'){
     var parts =document.getElementsByName("inputmulaiangsuran")[0].value.split('/');
     var mydate = new Date(parts[2], parts[1] - 1, parts[0]); 
-    tglangsuran = [];
     for (var i = 0; i < jumlahangsuran; i++) {          
       mydate.setMonth(mydate.getMonth() + 1); 
       let yyyy = mydate.getFullYear();
@@ -177,15 +178,28 @@ function setJadwalAngsuran(){
       if (mm < 10) mm = '0' + mm;
 
       tglangsuran.push(dd + '/' + mm + '/' + yyyy);
+
+      var lastDay = new Date(mydate.getFullYear(), mydate.getMonth() + 1, 0);
+      yyyy = lastDay.getFullYear();
+      mm = lastDay.getMonth() + 1; // Months start at 0!
+      dd = lastDay.getDate();
+
+      if (dd < 10) dd = '0' + dd;
+      if (mm < 10) mm = '0' + mm;
+
+      tglprovisi.push(dd + '/' + mm + '/' + yyyy);
+
       if(i==(jumlahangsuran-1)){
         var angsuranakhir = pokok - (roundOffTo(pokok/jumlahangsuran,100)*(jumlahangsuran-1));
         angsuranpokok.push(angsuranakhir);
       }else{
         angsuranpokok.push(roundOffTo(pokok/jumlahangsuran,100));
-      }
-      
+      }      
       angsuranbunga.push(roundOffTo(bunga/jumlahangsuran,100));
+      angsuranprovisi.push(roundOffTo(provisi/jumlahangsuran,100));
     }
+    document.getElementsByName("inputangsuranbln")[0].value=angsuranpokok[1]+angsuranbunga[1];
+    document.getElementsByName("inputangsuranblnpersen")[0].value='';
   }  
 }
 function addTable(rows) {
@@ -254,9 +268,6 @@ function addTable(rows) {
   tableBody.appendChild(th9);
 
   for (var i = 0; i < rows.length; i++) {
-    var tr = document.createElement('TR');
-    tableBody.appendChild(tr);
-
     var input = document.createElement("input");
     input.setAttribute("type", "hidden");
     input.setAttribute("name", "tglangsuran[]");
@@ -274,6 +285,65 @@ function addTable(rows) {
     input3.setAttribute("name", "angsuranbunga[]");
     input3.setAttribute("value", angsuranbunga[i]);
     document.getElementById("myDynamicTable").appendChild(input3);
+
+    var input4= document.createElement("input");
+    input4.setAttribute("type", "hidden");
+    input4.setAttribute("name", "angsuranprovisi[]");
+    input4.setAttribute("value", angsuranprovisi[i]);
+    document.getElementById("myDynamicTable").appendChild(input4);
+
+    var input5= document.createElement("input");
+    input5.setAttribute("type", "hidden");
+    input5.setAttribute("name", "tglprovisi[]");
+    input5.setAttribute("value", tglprovisi[i]);
+    document.getElementById("myDynamicTable").appendChild(input5);
+
+    var tr = document.createElement('TR');
+    tableBody.appendChild(tr); 
+
+    for (var j = 0; j < 9; j++) {
+      var td = document.createElement('TD');
+      td.width = '75';
+      if(j==0){
+        td.appendChild(document.createTextNode(tglprovisi[i]));
+        tr.appendChild(td);
+      }
+      if(j==1){
+        td.appendChild(document.createTextNode(i+1));
+        tr.appendChild(td);
+      }
+      if(j==2){
+        td.appendChild(document.createTextNode('0'));
+        tr.appendChild(td);
+      }
+      if(j==3){
+        td.appendChild(document.createTextNode('0'));
+        tr.appendChild(td);
+      }
+      if(j==4){
+        td.appendChild(document.createTextNode('0'));
+        tr.appendChild(td);
+      }
+      if(j==5){
+        td.appendChild(document.createTextNode('0'));
+        tr.appendChild(td);
+      }
+      if(j==6){
+        td.appendChild(document.createTextNode(angsuranprovisi[i]));
+        tr.appendChild(td);
+      }
+      if(j==7){
+        td.appendChild(document.createTextNode('0'));
+        tr.appendChild(td);
+      }
+      if(j==8){
+        td.appendChild(document.createTextNode('0'));
+        tr.appendChild(td);
+      }
+    }
+
+    var tr = document.createElement('TR');
+    tableBody.appendChild(tr);
 
     for (var j = 0; j < 9; j++) {
       var td = document.createElement('TD');
@@ -316,10 +386,12 @@ function addTable(rows) {
       }
     }
   }
+  
   myTableDiv.appendChild(table);
 }
 function setMulaiAngsuran(){
   document.getElementsByName("inputmulaiangsuran")[0].value = document.getElementsByName("inputtanggalrealisasi")[0].value;
+  document.getElementsByName("inputtglanalisa")[0].value = document.getElementsByName("inputtanggalrealisasi")[0].value;
 }
 addTable(5);
 </script>

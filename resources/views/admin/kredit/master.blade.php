@@ -128,7 +128,7 @@
         <div class="col-lg-12 col-sm-12">
           <label for="inputkodegorup4">Kode Group 4</label>
           <select class="form-control" name="inputkodegorup4" readonly>
-            <option value="{{ $kredit->KODE_GROUP4 }}">{{ $kredit->KODE_GROUP4.' - '.$kredit->DESKRIPSI_GROUP4 }}</option>
+            <option value="{{ 'KODE_GROUP4' }}">{{ ' '.' - '.'KOSONG' }}</option>
           </select>
         </div>
         <div class="col-lg-12 col-sm-12">
@@ -198,7 +198,7 @@
         </div>
         <div class="col-lg-1 col-sm-12">
           <label for="inputjw">Jk Wktu</label>
-          <input type="text" name="inputjw" value="{{ $kredit->BI_JANGKA_WAKTU }}" readonly class="form-control">
+          <input type="text" name="inputjw" readonly class="form-control">
         </div>
         <div class="col-lg-1 col-sm-12">
           <label for="inputjwbln">.</label>
@@ -206,7 +206,7 @@
         </div>
         <div class="col-lg-2 col-sm-12">
           <label for="inputtanggaljttempo">Tanggal Jt Tempo</label>
-          <input type="text" name="inputtanggaljttempo" value="{{ $kredit->TGL_JATUH_TEMPO }}" readonly class="form-control">
+          <input type="text" name="inputtanggaljttempo" readonly class="form-control">
         </div>
       </div>
       <div class="row">
@@ -323,12 +323,12 @@
         </div>
         <div class="col-lg-5 col-sm-12">
           <label for="inputprovisirp">.</label>
-          <input type="text" name="inputprovisirp"  value="0" class="form-control">
+          <input type="text" name="inputprovisirp"  onchange="hitungprovisi()" value="0" class="form-control">
         </div>
         <div class="col-lg-3 col-sm-12">
           <label for="inputamortisasiprovisi">.</label>
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="inputamortisasiprovisi" <?php if($kredit->AMORTISASI_PROVISI=="1"){echo 'checked';}?>>
+            <input class="form-check-input" type="checkbox" name="inputamortisasiprovisi" <?php //if($kredit->AMORTISASI_PROVISI=="1"){echo 'checked';}?>>
             <label class="form-check-label" style="margin-right:30px;">Amortisasi</label>
           </div>
         </div>

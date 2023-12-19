@@ -467,9 +467,8 @@
                 </div>
                 <div class="col-lg-2 col-sm-8">
                   <label for="inputtipe">Tipe</label>
-                  <select class="form-control" name="type_tabungan">
-                    <option id="idSelect2" selected></option>
-                    <option value=1>Normal</option>
+                  <select class="form-control" name="type_tabungan" required>
+                    <option value=1 selected>Normal</option>
                     <option value=2>Kepala Instansi</option>
                     <option value=3>Juru Bayar</option>
                   </select>
@@ -485,7 +484,7 @@
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputDate1">Tgl hitung Bunga</label>
                   <div class="input-group date" id="inputDate2" data-target-input="nearest">
-                    <input type="text" name="tgl_bunga" class="form-control datetimepicker-input" data-target="#inputDate2"/>
+                    <input type="text" name="tgl_bunga" class="form-control datetimepicker-input" value="{{date('Y-m-d',strtotime(str_replace('/', '-', $tgllogin[0]->Value)))}}" data-target="#inputDate2"/>
                       <div class="input-group-append" data-target="#inputDate2" data-toggle="datetimepicker">
                           <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                       </div>
@@ -526,27 +525,36 @@
                     <div class="col-lg-2 col-sm-6">
                       <label for="inputjk">Gol. pihak lawan</label>
                         <select class="form-control" name="kode_bi_pemilik">
-                          <option id="idkodebi" selected></option>
                           @foreach($golonganpihaklawan as $value)
-                          <option value="{{$value->sandi}}">{{$value->sandi}}-{{$value->deskripsi_golongan}}</option>
+                          @if($value->sandi=='875')
+                          <option value="{{$value->sandi}}" selected>{{$value->sandi}}-{{$value->deskripsi_golongan}}</option>
+                          @else
+                          <option value="{{$value->sandi}}" selected>{{$value->sandi}}-{{$value->deskripsi_golongan}}</option>
+                          @endif
                           @endforeach
                         </select>
                       </div>
                       <div class="col-lg-2 col-sm-6">
                         <label for="inputjk">Metoda</label>
-                          <select class="form-control" name="kode_bi_metoda">
-                            <option selected="true" id="idmetoda" ></option>
+                          <select class="form-control" name="kode_bi_metoda" required>
                             @foreach($kodemetoda as $value)
+                            @if($value->DESKRIPSI_METODA=='Non Profit Sharing')
+                            <option selected="true" value="{{$value->KODE_METODA}}">{{$value->DESKRIPSI_METODA}}</option>
+                            @else
                             <option value="{{$value->KODE_METODA}}">{{$value->DESKRIPSI_METODA}}</option>
+                            @endif
                             @endforeach
                           </select>
                       </div>
                         <div class="col-lg-2 col-sm-6">
                           <label for="inputjk">Sandi pihak terkait</label>
                             <select class="form-control" name="kode_bi_hubungan">
-                              <option id="idbihubungan" selected></option>
                               @foreach($kodeketerkaitanlapbul as $value)
+                              @if($value->DESKRIPSI_SANDI=='Tidak Terkait')
+                              <option value="{{$value->SANDI}}" selected>{{$value->DESKRIPSI_SANDI}}</option>
+                              @else
                               <option value="{{$value->SANDI}}">{{$value->DESKRIPSI_SANDI}}</option>
+                              @endif
                               @endforeach
                             </select>
                         </div>

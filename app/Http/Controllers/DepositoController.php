@@ -104,8 +104,6 @@ class DepositoController extends Controller
 
       $this->validate($request,[
         'no_rekening'=>'required',
-        'qq'=>'required',
-
       ]);
       if ($request->no_rekening != '' && $request->jenis_deposito !='' && $request->jml_deposito !='' && $request->tgl_registrasi !='' && $request->inputstatus !='')
       {
@@ -135,10 +133,13 @@ class DepositoController extends Controller
         {
             $depositos->NO_ALTERNATIF = $request->no_rekening;
         }else{
-            $depositos->NO_ALTERNATIF = $request->qq;
+            $depositos->NO_ALTERNATIF = $request->no_bilyet;
         }
         $depositos->NASABAH_ID = $request->nasabah_id;
-        $depositos->QQ = $request->qq;
+        if(is_null($request->qq)==false||$request->qq<>"")
+        {
+            $depositos->QQ = $request->qq;
+        }
         $depositos->KODE_BI_PEMILIK = $request->kode_bi_pemilik;
         $depositos->KODE_BI_HUBUNGAN = $request->kode_bi_hubungan;
         $depositos->KODE_BI_METODA = $request->metoda;

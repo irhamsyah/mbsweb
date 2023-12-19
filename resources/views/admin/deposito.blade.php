@@ -554,7 +554,7 @@
                 </div>
                 <div class="col-lg-2 col-sm-12">
                   <label for="qq">QQ</label>
-                  <input type="text" id="inputqqadd" name="qq" class="form-control" required>
+                  <input type="text" id="inputqqadd" name="qq" class="form-control">
                 </div>
                 <div class="col-lg-4 col-sm-12">
                   <label for="inputnocif">Alamat</label>
@@ -665,7 +665,7 @@
                   <label for="aro">.</label>
                   <div class="row">
                     <div class="form-check">
-                      <input id="aro" type="checkbox" name="aro" class="form-check-input">
+                      <input id="aro" type="checkbox" name="aro" class="form-check-input" checked>
                       <label for="aro">ARO (Update Tagl Registrasi & SBI)</label>
                     </div>
                   </div>
@@ -709,7 +709,7 @@
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputjk">Gol. pihak lawan</label>
-                  <select class="form-control" name="kode_bi_pemilik">
+                  <select class="form-control" name="kode_bi_pemilik" required>
                     <option id="idkodebi" selected></option>
                     @foreach($golonganpihaklawan as $value)
                     <option value="{{$value->sandi}}">{{$value->sandi}}-{{$value->deskripsi_golongan}}</option>

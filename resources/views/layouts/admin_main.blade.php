@@ -2008,13 +2008,13 @@ $("#datatabungan").on('click','#klik',function(){
 
     // DATATABLE
 $(document).ready(function () {
-    $('#datatabungan').DataTable();
+    $('#datatabungantrans').DataTable();
 });
 
 // Fungsi untuk menampilkan Data Tabungan pada Modal yg akan diinput ke Form TRANSAKSI
 $(document).ready(function(){
 // code to read selected table row cell data (values).
-$("#datatabungan").on('click','#klik',function(){
+$("#datatabungantrans").on('click','#klik',function(){
      // get the current row
      var currentRow=$(this).closest("tr"); 
      

@@ -35,8 +35,8 @@
         </svg>
       </a>
 
-            <h4 class="text-center">Daftar Nasabah</h4>
-            <table id="tbl1" class="table table-bordered">
+          <h4 class="text-center">Daftar Nasabah</h4>
+          <table id="tbl1" class="table table-bordered">
             <thead>
             <tr>
                 <th>NO NASABAH </th>

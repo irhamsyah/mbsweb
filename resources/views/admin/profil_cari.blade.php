@@ -113,6 +113,7 @@
                             Detail Profil
                         </button>
                       </form>
+                      <a class="dropdown-item" href="{{ route('cetakprofilnasabah',['printprofilnasabah'=>trim($nasabah->nasabah_id)])}}" target="_blank" style="float: right;"> Print Profil</a>
                     </div>
                   </td>
                 </tr>

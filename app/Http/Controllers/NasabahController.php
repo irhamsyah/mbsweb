@@ -581,6 +581,56 @@ class NasabahController extends Controller
       return view('admin/profil_kredit', ['logos'=> $logos,'kredits'=> $kredits,'jenisprofil'=> $jenisprofil,'msgstatus'=> '']);
     }
 
+    public function bo_cs_de_profil_rppdf(Request $request)
+    {
+        $filternasabahid = request()->printprofilnasabah;
+        $sqlnas="SELECT
+        nasabah_id,nama_nasabah
+        FROM nasabah 
+        WHERE nasabah_id = '$filternasabahid'
+        ";
+        $profilnasabah=DB::select($sqlnas);
+        $sqltab="SELECT
+        a.nasabah_id as nasId,a.nama_nasabah as nasNama,b.NO_REKENING as tabNoRek,c.DESKRIPSI_JENIS_TABUNGAN as tabJenis,b.SALDO_AWAL as tabSaldoAwal,b.SALDO_AKHIR as tabSaldoAkhir
+        FROM nasabah a LEFT JOIN tabung b ON a.nasabah_id=b.NASABAH_ID LEFT JOIN kodejenistabungan c ON b.JENIS_TABUNGAN=c.KODE_JENIS_TABUNGAN
+        WHERE a.nasabah_id = '$filternasabahid' ORDER BY b.JENIS_TABUNGAN
+        ";
+        $profilnasabahtab=DB::select($sqltab);
+        $sqldep="SELECT
+        a.nasabah_id as nasId,a.nama_nasabah as nasNama,b.NO_REKENING as depNoRek,c.DESKRIPSI_JENIS_DEPOSITO as depJenis,b.SALDO_AWAL as depSaldoAwal,b.SALDO_AKHIR as depSaldoAkhir
+        FROM nasabah a LEFT JOIN deposito b ON a.nasabah_id=b.NASABAH_ID LEFT JOIN kodejenisdeposito c ON b.JENIS_DEPOSITO=c.KODE_JENIS_DEPOSITO
+        WHERE a.nasabah_id = '$filternasabahid' ORDER BY b.JENIS_DEPOSITO,b.NO_REKENING
+        ";
+        $profilnasabahdep=DB::select($sqldep);
+        $sqlkre="SELECT
+        a.nasabah_id as nasId,a.nama_nasabah as nasNama,b.NO_REKENING as kreNoRek,c.DESKRIPSI_JENIS_KREDIT as kreJenis,b.JML_PINJAMAN as kreSaldoAwal,b.SALDO_AKHIR as kreSaldoAkhir
+        FROM nasabah a LEFT JOIN kredit b ON a.nasabah_id=b.NASABAH_ID LEFT JOIN kodejeniskredit c ON b.JENIS_PINJAMAN=c.KODE_JENIS_KREDIT
+        WHERE a.nasabah_id = '$filternasabahid' ORDER BY b.JENIS_PINJAMAN,b.NO_REKENING
+        ";
+        $profilnasabahkre=DB::select($sqlkre);
+        $sqltabcount="SELECT
+        COUNT(b.JENIS_TABUNGAN) as countJenistab,c.DESKRIPSI_JENIS_TABUNGAN as tabJenis,SUM(b.SALDO_AWAL) as sumtabSaldoAwal,SUM(b.SALDO_AKHIR) as sumtabSaldoAkhir
+        FROM nasabah a LEFT JOIN tabung b ON a.nasabah_id=b.NASABAH_ID LEFT JOIN kodejenistabungan c ON b.JENIS_TABUNGAN=c.KODE_JENIS_TABUNGAN
+        WHERE a.nasabah_id = '$filternasabahid' GROUP BY b.JENIS_TABUNGAN ORDER BY b.JENIS_TABUNGAN
+        ";
+        $profilnasabahtabcount=DB::select($sqltabcount);
+        $sqldepcount="SELECT
+        COUNT(b.JENIS_DEPOSITO) as countJenisdep,c.DESKRIPSI_JENIS_DEPOSITO as depJenis,SUM(b.SALDO_AWAL) as sumdepSaldoAwal,SUM(b.SALDO_AKHIR) as sumdepSaldoAkhir
+        FROM nasabah a LEFT JOIN deposito b ON a.nasabah_id=b.NASABAH_ID LEFT JOIN kodejenisdeposito c ON b.JENIS_DEPOSITO=c.KODE_JENIS_DEPOSITO
+        WHERE a.nasabah_id = '$filternasabahid' GROUP BY b.JENIS_DEPOSITO ORDER BY b.JENIS_DEPOSITO,b.NO_REKENING
+        ";
+        $profilnasabahdepcount=DB::select($sqldepcount);
+        $sqlkrecount="SELECT
+        COUNT(b.JENIS_PINJAMAN) as countJeniskre,c.DESKRIPSI_JENIS_KREDIT as kreJenis,SUM(b.JML_PINJAMAN) as sumkreSaldoAwal,SUM(b.SALDO_AKHIR) as sumkreSaldoAkhir
+        FROM nasabah a LEFT JOIN kredit b ON a.nasabah_id=b.NASABAH_ID LEFT JOIN kodejeniskredit c ON b.JENIS_PINJAMAN=c.KODE_JENIS_KREDIT
+        WHERE a.nasabah_id = '$filternasabahid' GROUP BY b.JENIS_PINJAMAN ORDER BY b.JENIS_PINJAMAN,b.NO_REKENING
+        ";
+        $profilnasabahkrecount=DB::select($sqlkrecount);
+        // dd($profilnasabah);
+        return view('pdf.cetakprofilnasabah',['profilnasabah'=>$profilnasabah,'profilnasabahtab'=>$profilnasabahtab,'profilnasabahdep'=>$profilnasabahdep,'profilnasabahkre'=>$profilnasabahkre
+        ,'profilnasabahtabcount'=>$profilnasabahtabcount,'profilnasabahdepcount'=>$profilnasabahdepcount,'profilnasabahkrecount'=>$profilnasabahkrecount]);         
+    }
+
     public function bo_cs_de_spicemen_rppdf(Request $request)
     {
       $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_TAB'.'%'.'NAMA')->get();

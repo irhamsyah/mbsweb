@@ -626,7 +626,7 @@ class NasabahController extends Controller
         WHERE a.nasabah_id = '$filternasabahid' GROUP BY b.JENIS_PINJAMAN ORDER BY b.JENIS_PINJAMAN,b.NO_REKENING
         ";
         $profilnasabahkrecount=DB::select($sqlkrecount);
-        // dd($profilnasabah);
+        // dd($profilnasabahtab);
         return view('pdf.cetakprofilnasabah',['profilnasabah'=>$profilnasabah,'profilnasabahtab'=>$profilnasabahtab,'profilnasabahdep'=>$profilnasabahdep,'profilnasabahkre'=>$profilnasabahkre
         ,'profilnasabahtabcount'=>$profilnasabahtabcount,'profilnasabahdepcount'=>$profilnasabahdepcount,'profilnasabahkrecount'=>$profilnasabahkrecount]);         
     }

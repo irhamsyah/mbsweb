@@ -37,6 +37,10 @@ class TabunganController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
 
     public function bo_tb_de_tabungan()
     {
@@ -131,14 +135,14 @@ class TabunganController extends Controller
         $simpantabung->blokir = 0;
         $simpantabung->jkw = 0;
         $simpantabung->saldo_blokir = 0;
-        $simpantabung->kode_group1 = $request->kode_group1;
-        if(is_null($request->kode_group2)){
-            $simpantabung->kode_group2 = "";
-        }else{
-            $simpantabung->kode_group2 = $request->kode_group2;
-
+        if(is_null($request->kode_group1)==false)
+        {
+            $simpantabung->kode_group1 = $request->kode_group1;
         }
-        if(is_null($request->kode_group3)!=true){
+        if(is_null($request->kode_group2)==false){
+            $simpantabung->kode_group2 = $request->kode_group2;
+        }
+        if(is_null($request->kode_group3)==false){
             $simpantabung->kode_group3 = $request->kode_group3;
         }
         $simpantabung->kode_bi_pemilik = $request->kode_bi_pemilik;

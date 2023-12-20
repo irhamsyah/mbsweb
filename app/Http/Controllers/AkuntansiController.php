@@ -6,24 +6,35 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\User;
 use App\Logo;
-use App\Kodetranstabungan;
-use App\Kodecabang;
 use App\KodeJurnal;
 use App\Perkiraan;
-use App\Tabtran;
 use App\Trans_detail;
 use App\Trans_master;
 use App\Trans_master_buffer;
 use App\Trans_detail_buffer;
 use App\Exports\ReportdaftarperkiraanExport;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
-use Prophecy\Call\Call;
-use Symfony\Component\Console\Input\InputOption;
+use App\Exports\ReportjurnalExport;
+use App\Exports\ReportneracascontroExport;
+use App\Exports\ReportbukubesarExport;
+use App\Exports\ReportbukubesarallExport;
+use App\Exports\ReportbukubesarHelperExport;
+use App\Exports\ReportbukubesarHelperAllExport;
+use App\Exports\ReportNeracaKomparatifExport;
+use App\Exports\ReportNeracaAnnualExport;
+use App\Exports\ReportRekapJurnalHarianExport;
+use App\Exports\ReportlabarugiExport;
+use App\Exports\ReportNeracaKonsolExport;
+use App\Exports\ReportLabarugiKonsolExport;
 
 class AkuntansiController extends Controller
 {
-    // show form posting transaction
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+        // show form posting transaction
     public function bo_ak_tt_postingdatatransaksi()
     {   
         $users = User::all();
@@ -1013,7 +1024,7 @@ class AkuntansiController extends Controller
         ]);
         $users = User::all();
         $logos = Logo::all();
-        $sql = "SELECT * FROM (trans_master INNER JOIN trans_detail ON trans_master.trans_id=trans_detail.master_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk WHERE trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2'";
+        $sql = "SELECT * FROM (trans_master INNER JOIN trans_detail ON trans_master.trans_id=trans_detail.master_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk WHERE trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2' order by trans_detail.master_id,trans_detail.trans_id";
         $rs = DB::select($sql);
         return view('reports.akuntansi.frmrptjurnaltrans',['users' => $users,'logos' => $logos,'jurnal'=>$rs,'tgl_trans1'=>$request->tgl_trans1,'tgl_trans2'=>$request->tgl_trans2]);
     }
@@ -1026,9 +1037,828 @@ class AkuntansiController extends Controller
         $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
         $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
 
-        $sql = "SELECT * FROM (trans_master INNER JOIN trans_detail ON trans_master.trans_id=trans_detail.master_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk WHERE trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2' order by trans_master.trans_id,trans_detail.trans_id";
+        $sql = "SELECT * FROM (trans_master INNER JOIN trans_detail ON trans_master.trans_id=trans_detail.master_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk WHERE trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2' order by trans_detail.master_id, trans_detail.trans_id";
         $rs = DB::select($sql);
 
         return view('pdf.akuntansi.cetakjurnaltrans',['jurnal' => $rs,'lembaga'=>$lembaga,'ttd' =>$ttd]);          
     }
+    // export jurnal transactions
+    public function bo_ak_ex_jurnaltrans(Request $request)
+    {
+        $sql = "SELECT * FROM (trans_master INNER JOIN trans_detail ON trans_master.trans_id=trans_detail.master_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk WHERE trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2' order by trans_detail.master_id, trans_detail.trans_id";
+        $rs = DB::select($sql);
+        return (new ReportjurnalExport($rs))->download('jurnaltransaksi.xlsx');
+    }
+        // Show form buku besar  
+        public function bo_ak_lp_showfrmbukubesar()
+        {
+            $logos = Logo::all();
+            $users = User::all();
+            $perkiraan = Perkiraan::orderBy('kode_perk')->get();
+    
+            return view('reports.akuntansi.frmrptbukubesar',['perkiraan'=>$perkiraan, 'users'=>$users, 'logos'=>$logos]);
+        }
+    
+    // Cari transaksi buku besar
+    public function bo_ak_caribukubesar(Request $request)
+    {
+        // dd($request);
+        $tgl_trans1=date("Y-m-d",strtotime($request->tgl_trans1));
+        $tgl_trans2=date("Y-m-d",strtotime($request->tgl_trans2));
+        // Jika spesifik cari bukubesar perkiraan tertentu
+        if(is_null($request->kode_perk)==false AND $request->type=='D'){
+            $saldo_awal = DB::select("SELECT perkiraan.kode_perk,(IF(perkiraan.dk='D',perkiraan.saldo_awal+(SUM(debet)-SUM(kredit)),perkiraan.saldo_awal+(SUM(kredit)-SUM(debet)))) as SALDO_AWAL FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk where trans_detail.kode_perk='$request->kode_perk' AND  trans_master.tgl_trans<'$tgl_trans1'");
+            $sqlcari = DB::select("SELECT trans_master.tgl_trans,'Total Mutasi' as keterangan,SUM(debet) as debet,SUM(kredit) as kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id where kode_perk='$request->kode_perk' AND ( trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2') GROUP BY trans_master.tgl_trans");
+            $dk = Perkiraan::where('kode_perk',$request->kode_perk)->get();
+            $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+            $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+            return view('pdf.akuntansi.cetakbukubesar',['saldo_awal'=>$saldo_awal,'result'=>$sqlcari,'kode_perk'=>$request->kode_perk,'nama_perk'=>$request->nama_perk,'dk'=>$dk[0]->dk,'lembaga'=>$lembaga,'ttd'=>$ttd,'tgl1'=>$request->tgl_trans1,'tgl2'=>$request->tgl_trans2,'type'=>$request->type]);
+    
+        }
+        // pilihan Kode_perk dikosongkan
+        elseif(is_null($request->kode_perk)==true){
+            $sqlcari = DB::select("SELECT tblsldwal.SALDO_AWAL,trans_detail.kode_perk,perkiraan.nama_perk,tblsldwal.dk,trans_master.tgl_trans,'Total Mutasi' as keterangan,SUM(debet) as debet,SUM(kredit) as kredit FROM ((trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk) INNER JOIN (SELECT perkiraan.kode_perk,perkiraan.dk,(perkiraan.saldo_awal+IF(perkiraan.dk='D',(SUM(debet)-SUM(kredit)),(SUM(kredit)-SUM(debet)))) as SALDO_AWAL FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk where trans_master.tgl_trans<'$tgl_trans1' GROUP BY perkiraan.kode_perk) AS tblsldwal ON trans_detail.kode_perk=tblsldwal.kode_perk where ( trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2') GROUP BY trans_detail.kode_perk,trans_master.tgl_trans");
+            $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+            $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+            return view('pdf.akuntansi.cetakbukubesarall',['result'=>$sqlcari,'lembaga'=>$lembaga,'ttd'=>$ttd,'tgl1'=>$request->tgl_trans1,'tgl2'=>$request->tgl_trans2]);
+        }
+        // PENCARIAN KODE_PERK Type G
+        if($request->type=="G"){
+            $saldo_awal = DB::select("SELECT perkiraan.kode_perk,(perkiraan.saldo_awal+sldawal.SALDO) as SALDO_AWAL from perkiraan INNER JOIN (SELECT '$request->kode_perk' as kode_perk,(IF(perkiraan.dk='D',(SUM(debet)-SUM(kredit)),(SUM(kredit)-SUM(debet)))) as SALDO FROM (trans_detail INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk) INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<'$tgl_trans1' AND perkiraan.kode_perk like '$request->kode_perk%' GROUP BY '$request->kode_perk') as sldawal ON perkiraan.kode_perk=sldawal.kode_perk");
+            $sqlcari = DB::select("SELECT trans_master.tgl_trans,'Total Mutasi' as keterangan,SUM(debet) as debet,SUM(kredit) as kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id where kode_perk LIKE '$request->kode_perk%' AND ( trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2') GROUP BY trans_master.tgl_trans");
+            $dk = Perkiraan::where('kode_perk',$request->kode_perk)->get();
+            $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+            $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+            return view('pdf.akuntansi.cetakbukubesar',['saldo_awal'=>$saldo_awal,'result'=>$sqlcari,'kode_perk'=>$request->kode_perk,'nama_perk'=>$request->nama_perk,'dk'=>$dk[0]->dk,'lembaga'=>$lembaga,'ttd'=>$ttd,'tgl1'=>$request->tgl_trans1,'tgl2'=>$request->tgl_trans2,'type'=>$request->type]);
+        }
+    }
+    // Export Bukubesar 
+    public function export_buku_besar(Request $request)
+    {
+        // Jika spesifik cari bukubesar perkiraan tertentu type D 
+        $tgl_trans1=date("Y-m-d",strtotime($request->tgl_trans1));
+        $tgl_trans2=date("Y-m-d",strtotime($request->tgl_trans2));
+
+        if(is_null($request->kode_perk)==false AND $request->type=='D'){
+
+            $saldo_awal = DB::select("SELECT perkiraan.kode_perk,(IF(perkiraan.dk='D',perkiraan.saldo_awal+(SUM(debet)-SUM(kredit)),perkiraan.saldo_awal+(SUM(kredit)-SUM(debet)))) as SALDO_AWAL FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk where trans_detail.kode_perk='$request->kode_perk' AND  trans_master.tgl_trans<'$tgl_trans1'");
+            $dk = Perkiraan::where('kode_perk',$request->kode_perk)->get()->toArray();
+            $sqlcari = DB::select("SELECT trans_master.tgl_trans,'Total Mutasi' as keterangan,SUM(debet) as debet,SUM(kredit) as kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id where kode_perk='$request->kode_perk' AND ( trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2') GROUP BY trans_master.tgl_trans");
+            return (new ReportbukubesarExport($saldo_awal,$sqlcari,$request->kode_perk,$dk))->download('exportbukubesar.xlsx');
+    
+        }
+        // pilihan Kode_perk dikosongkan
+        elseif(is_null($request->kode_perk)==true){
+            $sqlcari = DB::select("SELECT tblsldwal.SALDO_AWAL,trans_detail.kode_perk,perkiraan.nama_perk,tblsldwal.dk,trans_master.tgl_trans,'Total Mutasi' as keterangan,SUM(debet) as debet,SUM(kredit) as kredit FROM ((trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk) INNER JOIN (SELECT perkiraan.kode_perk,perkiraan.dk,(perkiraan.saldo_awal+IF(perkiraan.dk='D',(SUM(debet)-SUM(kredit)),(SUM(kredit)-SUM(debet)))) as SALDO_AWAL FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk where trans_master.tgl_trans<'$tgl_trans1' GROUP BY perkiraan.kode_perk) AS tblsldwal ON trans_detail.kode_perk=tblsldwal.kode_perk where ( trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2') GROUP BY trans_detail.kode_perk,trans_master.tgl_trans");
+            // $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+            // $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+            return (new ReportbukubesarallExport($sqlcari))->download('exportbukubesarall.xlsx');
+        }
+        // PENCARIAN KODE_PERK Type G
+        if($request->type=="G"){
+            $saldo_awal = DB::select("SELECT perkiraan.kode_perk,(perkiraan.saldo_awal+sldawal.SALDO) as SALDO_AWAL from perkiraan INNER JOIN (SELECT '$request->kode_perk' as kode_perk,(IF(perkiraan.dk='D',(SUM(debet)-SUM(kredit)),(SUM(kredit)-SUM(debet)))) as SALDO FROM (trans_detail INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk) INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<'$tgl_trans1' AND perkiraan.kode_perk like '$request->kode_perk%' GROUP BY '$request->kode_perk') as sldawal ON perkiraan.kode_perk=sldawal.kode_perk");
+            $dk = Perkiraan::where('kode_perk',$request->kode_perk)->get()->toArray();
+            $sqlcari = DB::select("SELECT trans_master.tgl_trans,'Total Mutasi' as keterangan,SUM(debet) as debet,SUM(kredit) as kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id where kode_perk LIKE '$request->kode_perk%' AND ( trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2') GROUP BY trans_master.tgl_trans");
+            return (new ReportbukubesarExport($saldo_awal,$sqlcari,$request->kode_perk,$dk))->download('exportbukubesar.xlsx');
+
+        }
+    }
+    // show form pencarian buku besar pembantu
+    public function bo_ak_lp_showfrmbukubesarhelper()
+    {
+        $logos = Logo::all();
+        $users = User::all();
+        $perkiraan = Perkiraan::orderBy('kode_perk')->get();
+
+        return view('reports.akuntansi.frmrptbukubesarhelper',['perkiraan'=>$perkiraan, 'users'=>$users, 'logos'=>$logos]);
+    }
+    // Cari transaksi buku besar pembantu 
+    public function bo_ak_caribukubesarhelper(Request $request)
+    {
+        $tgl_trans1=date("Y-m-d",strtotime($request->tgl_trans1));
+        $tgl_trans2=date("Y-m-d",strtotime($request->tgl_trans2));
+        // Jika spesifik cari bukubesar perkiraan tertentu
+        if(is_null($request->kode_perk)==false AND $request->type=='D'){
+
+            $saldo_awal = DB::select("SELECT perkiraan.kode_perk,(IF(perkiraan.dk='D',perkiraan.saldo_awal+(SUM(debet)-SUM(kredit)),perkiraan.saldo_awal+(SUM(kredit)-SUM(debet)))) as SALDO_AWAL FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk where trans_detail.kode_perk='$request->kode_perk' AND  trans_master.tgl_trans<'$tgl_trans1'");
+
+            $sqlcari = DB::select("SELECT trans_master.tgl_trans,trans_master.kode_jurnal,trans_master.no_bukti,trans_detail.URAIAN,trans_detail.debet,trans_detail.kredit FROM trans_master INNER JOIN trans_detail ON trans_master.trans_id=trans_detail.master_id WHERE trans_detail.kode_perk LIKE '$request->kode_perk' AND (trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2')");
+            $dk = Perkiraan::where('kode_perk',$request->kode_perk)->get();
+            $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+            $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+            return view('pdf.akuntansi.cetakbukubesarhelper',['saldo_awal'=>$saldo_awal,'result'=>$sqlcari,'kode_perk'=>$request->kode_perk,'nama_perk'=>$request->nama_perk,'dk'=>$dk[0]->dk,'lembaga'=>$lembaga,'ttd'=>$ttd,'tgl1'=>$request->tgl_trans1,'tgl2'=>$request->tgl_trans2,'type'=>$request->type]);
+            
+        }
+        // pilihan Kode_perk dikosongkan
+        elseif(is_null($request->kode_perk)==true){
+            $sqlcari = DB::select("SELECT tblsldwal.SALDO_AWAL,trans_master.tgl_trans,trans_detail.kode_perk,perkiraan.nama_perk,perkiraan.dk,trans_master.kode_jurnal,trans_master.no_bukti,trans_detail.URAIAN,trans_detail.debet,trans_detail.kredit FROM ((trans_master INNER JOIN trans_detail ON trans_master.trans_id=trans_detail.master_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk) INNER JOIN (SELECT perkiraan.kode_perk,perkiraan.dk,(perkiraan.saldo_awal+IF(perkiraan.dk='D',(SUM(debet)-SUM(kredit)),(SUM(kredit)-SUM(debet)))) as SALDO_AWAL FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk where trans_master.tgl_trans<'$tgl_trans1' GROUP BY perkiraan.kode_perk) AS tblsldwal ON trans_detail.kode_perk=tblsldwal.kode_perk WHERE trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2' ORDER BY trans_detail.kode_perk,trans_master.tgl_trans,trans_master.trans_id");
+            // dd($sqlcari);
+            $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+            $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+            return view('pdf.akuntansi.cetakbukubesarhelperall',['result'=>$sqlcari,'lembaga'=>$lembaga,'ttd'=>$ttd,'tgl1'=>$request->tgl_trans1,'tgl2'=>$request->tgl_trans2]);
+        }
+        // PENCARIAN KODE_PERK Type G
+        elseif($request->type=="G"){
+            $saldo_awal = DB::select("SELECT perkiraan.kode_perk,(perkiraan.saldo_awal+sldawal.SALDO) as SALDO_AWAL from perkiraan INNER JOIN (SELECT '$request->kode_perk' as kode_perk,(IF(perkiraan.dk='D',(SUM(debet)-SUM(kredit)),(SUM(kredit)-SUM(debet)))) as SALDO FROM (trans_detail INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk) INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<'$tgl_trans1' AND perkiraan.kode_perk like '$request->kode_perk%' GROUP BY '$request->kode_perk') as sldawal ON perkiraan.kode_perk=sldawal.kode_perk");
+            $dk = Perkiraan::where('kode_perk',$request->kode_perk)->get();
+                    $sqlcari = DB::select("SELECT trans_master.tgl_trans,trans_master.kode_jurnal,trans_master.no_bukti,trans_detail.URAIAN,trans_detail.debet,trans_detail.kredit FROM trans_master INNER JOIN trans_detail ON trans_master.trans_id=trans_detail.master_id WHERE trans_detail.kode_perk LIKE '$request->kode_perk%' AND (trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2')");
+                    $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+                    $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+                    return view('pdf.akuntansi.cetakbukubesarhelper',['saldo_awal'=>$saldo_awal,'result'=>$sqlcari,'kode_perk'=>$request->kode_perk,'nama_perk'=>$request->nama_perk,'dk'=>$dk[0]->dk,'lembaga'=>$lembaga,'ttd'=>$ttd,'tgl1'=>$request->tgl_trans1,'tgl2'=>$request->tgl_trans2,'type'=>$request->type]);
+        }
+    }
+    // EXPORT BUKUBESAR PEMBANTU
+    public function export_buku_besar_helper(Request $request)
+    {
+        $tgl_trans1=date("Y-m-d",strtotime($request->tgl_trans1));
+        $tgl_trans2=date("Y-m-d",strtotime($request->tgl_trans2));
+
+        // Jika spesifik cari bukubesar perkiraan tertentu
+        if(is_null($request->kode_perk)==false AND $request->type=='D'){
+            $saldo_awal = DB::select("SELECT perkiraan.kode_perk,(IF(perkiraan.dk='D',perkiraan.saldo_awal+(SUM(debet)-SUM(kredit)),perkiraan.saldo_awal+(SUM(kredit)-SUM(debet)))) as SALDO_AWAL FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk where trans_detail.kode_perk='$request->kode_perk' AND  trans_master.tgl_trans<'$tgl_trans1'");
+            $sqlcari = DB::select("SELECT trans_master.tgl_trans,trans_master.kode_jurnal,trans_master.no_bukti,trans_detail.URAIAN,trans_detail.debet,trans_detail.kredit FROM trans_master INNER JOIN trans_detail ON trans_master.trans_id=trans_detail.master_id WHERE trans_detail.kode_perk='$request->kode_perk' AND (trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2')");
+            $dk = Perkiraan::where('kode_perk',$request->kode_perk)->get()->toArray();
+            return (new ReportbukubesarHelperExport($saldo_awal,$sqlcari,$request->kode_perk,$request->nama_perk,$dk))->download('exportbukubesarhelper.xlsx');
+        }
+        // pilihan Kode_perk dikosongkan
+        elseif(is_null($request->kode_perk)==true){
+            $sqlcari = DB::select("SELECT tblsldwal.SALDO_AWAL,trans_master.tgl_trans,trans_detail.kode_perk,perkiraan.nama_perk,perkiraan.dk,trans_master.kode_jurnal,trans_master.no_bukti,trans_detail.URAIAN,trans_detail.debet,trans_detail.kredit FROM ((trans_master INNER JOIN trans_detail ON trans_master.trans_id=trans_detail.master_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk) INNER JOIN (SELECT perkiraan.kode_perk,perkiraan.dk,(perkiraan.saldo_awal+IF(perkiraan.dk='D',(SUM(debet)-SUM(kredit)),(SUM(kredit)-SUM(debet)))) as SALDO_AWAL FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk where trans_master.tgl_trans<'$tgl_trans1' GROUP BY perkiraan.kode_perk) AS tblsldwal ON trans_detail.kode_perk=tblsldwal.kode_perk WHERE trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2' ORDER BY trans_detail.kode_perk,trans_master.tgl_trans,trans_master.trans_id");
+            // dd($sqlcari);
+            return (new ReportbukubesarHelperAllExport($sqlcari))->download('exportbukubesarpembantuall.xlsx');
+        }
+        // IFTYPE G 
+        elseif(is_null($request->kode_perk)==false AND $request->type=='G'){
+            $saldo_awal = DB::select("SELECT perkiraan.kode_perk,(perkiraan.saldo_awal+sldawal.SALDO) as SALDO_AWAL from perkiraan INNER JOIN (SELECT '$request->kode_perk' as kode_perk,(IF(perkiraan.dk='D',(SUM(debet)-SUM(kredit)),(SUM(kredit)-SUM(debet)))) as SALDO FROM (trans_detail INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk) INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<'$tgl_trans1' AND perkiraan.kode_perk like '$request->kode_perk%' GROUP BY '$request->kode_perk') as sldawal ON perkiraan.kode_perk=sldawal.kode_perk");
+            $sqlcari = DB::select("SELECT trans_master.tgl_trans,trans_master.kode_jurnal,trans_master.no_bukti,trans_detail.URAIAN,trans_detail.debet,trans_detail.kredit FROM trans_master INNER JOIN trans_detail ON trans_master.trans_id=trans_detail.master_id WHERE trans_detail.kode_perk LIKE '$request->kode_perk%' AND (trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2')");
+            $dk = Perkiraan::where('kode_perk',$request->kode_perk)->get()->toArray();
+            return (new ReportbukubesarHelperExport($saldo_awal,$sqlcari,$request->kode_perk,$request->nama_perk,$dk))->download('exportbukubesarhelper.xlsx');
+        }
+
+    }
+    // show form Trial Balance
+    public function bo_ak_lp_showfrmtrialbalance()
+    {
+        $logos = Logo::all();
+        $users = User::all();
+        $perkiraan = Perkiraan::orderBy('kode_perk')->get();
+
+        return view('reports.akuntansi.frmrpttrialbalance',['perkiraan'=>$perkiraan, 'users'=>$users, 'logos'=>$logos]);
+    }
+    // Proses cari trial balance
+    public function bo_ak_caritrial(Request $request)
+    {
+        set_time_limit(2000);
+        // BUAT REPORT PENDAPATAN,BIAYA,PAJAK
+        $pendapatan =0;$biaya =0;$pajak=0;
+        $sqlpend ="SELECT SUM(if(perkiraan.dk='D',(sldawal.saldoawal+IF(ISNULL(sldo.debet),0,sldo.debet)-IF(ISNULL(sldo.kredit),0,sldo.kredit)),(sldawal.saldoawal+IF(ISNULL(sldo.kredit),0,sldo.kredit)-IF(ISNULL(sldo.debet),0,sldo.debet)))) as saldo_akhir FROM (perkiraan LEFT JOIN ( SELECT perkiraan.kode_perk,(if(perkiraan.dk='D',(perkiraan.saldo_awal+sum(trans_detail.debet)-SUM(trans_detail.kredit)),(perkiraan.saldo_awal+sum(trans_detail.kredit)-SUM(trans_detail.debet)) )) as saldoawal FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk WHERE trans_master.tgl_trans<'$request->tgl_trans1' GROUP BY perkiraan.kode_perk) as sldawal ON perkiraan.kode_perk=sldawal.kode_perk) LEFT JOIN (SELECT trans_detail.kode_perk,SUM(trans_detail.debet) as debet, SUM(trans_detail.kredit) as kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2' GROUP BY trans_detail.kode_perk) as sldo ON perkiraan.kode_perk=sldo.kode_perk WHERE perkiraan.kode_perk like '4%' ORDER BY perkiraan.kode_perk";
+        $sqlby ="SELECT SUM(if(perkiraan.dk='D',(sldawal.saldoawal+IF(ISNULL(sldo.debet),0,sldo.debet)-IF(ISNULL(sldo.kredit),0,sldo.kredit)),(sldawal.saldoawal+IF(ISNULL(sldo.kredit),0,sldo.kredit)-IF(ISNULL(sldo.debet),0,sldo.debet)))) as saldo_akhir FROM (perkiraan LEFT JOIN ( SELECT perkiraan.kode_perk,(if(perkiraan.dk='D',(perkiraan.saldo_awal+sum(trans_detail.debet)-SUM(trans_detail.kredit)),(perkiraan.saldo_awal+sum(trans_detail.kredit)-SUM(trans_detail.debet)) )) as saldoawal FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk WHERE trans_master.tgl_trans<'$request->tgl_trans1' GROUP BY perkiraan.kode_perk) as sldawal ON perkiraan.kode_perk=sldawal.kode_perk) LEFT JOIN (SELECT trans_detail.kode_perk,SUM(trans_detail.debet) as debet, SUM(trans_detail.kredit) as kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2' GROUP BY trans_detail.kode_perk) as sldo ON perkiraan.kode_perk=sldo.kode_perk WHERE perkiraan.kode_perk like '5%' ORDER BY perkiraan.kode_perk";
+        $sqlpajak ="SELECT SUM(if(perkiraan.dk='D',(sldawal.saldoawal+IF(ISNULL(sldo.debet),0,sldo.debet)-IF(ISNULL(sldo.kredit),0,sldo.kredit)),(sldawal.saldoawal+IF(ISNULL(sldo.kredit),0,sldo.kredit)-IF(ISNULL(sldo.debet),0,sldo.debet)))) as saldo_akhir FROM (perkiraan LEFT JOIN ( SELECT perkiraan.kode_perk,(if(perkiraan.dk='D',(perkiraan.saldo_awal+sum(trans_detail.debet)-SUM(trans_detail.kredit)),(perkiraan.saldo_awal+sum(trans_detail.kredit)-SUM(trans_detail.debet)) )) as saldoawal FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk WHERE trans_master.tgl_trans<'$request->tgl_trans1' GROUP BY perkiraan.kode_perk) as sldawal ON perkiraan.kode_perk=sldawal.kode_perk) LEFT JOIN (SELECT trans_detail.kode_perk,SUM(trans_detail.debet) as debet, SUM(trans_detail.kredit) as kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2' GROUP BY trans_detail.kode_perk) as sldo ON perkiraan.kode_perk=sldo.kode_perk WHERE perkiraan.kode_perk like '6%' ORDER BY perkiraan.kode_perk";
+            $rspend = DB::select($sqlpend);
+            $pendapatan = $rspend[0]->saldo_akhir;
+            $rsbiaya = DB::select($sqlby);
+            $biaya = $rsbiaya[0]->saldo_akhir;
+            $rspajak = DB::select($sqlpajak);
+            $pajak = $rspajak[0]->saldo_akhir;
+        // ------------------------
+        if(isset($request->perkiraan_induk)==true){
+        // Update perkiraan NON Induk / Type D
+        DB::select("UPDATE perkiraan_copy1 SET saldo_awal=0,saldo_debet=0,saldo_kredit=0,saldo_akhir=0");
+        $sqlupd = "UPDATE perkiraan_copy1 INNER JOIN (SELECT perkiraan.kode_perk,perkiraan.nama_perk,perkiraan.kode_induk,perkiraan.type,perkiraan.dk,sldawal.saldoawal as saldoawal,sldo.debet as debet,sldo.kredit as kredit,if(perkiraan.dk='D',(sldawal.saldoawal+IF(ISNULL(sldo.debet),0,sldo.debet)-IF(ISNULL(sldo.kredit),0,sldo.kredit)),(sldawal.saldoawal+IF(ISNULL(sldo.kredit),0,sldo.kredit)-IF(ISNULL(sldo.debet),0,sldo.debet))) as saldo_akhir FROM (perkiraan LEFT JOIN ( SELECT perkiraan.kode_perk,(if(perkiraan.dk='D',(perkiraan.saldo_awal+sum(trans_detail.debet)-SUM(trans_detail.kredit)),(perkiraan.saldo_awal+sum(trans_detail.kredit)-SUM(trans_detail.debet)) )) as saldoawal FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk WHERE trans_master.tgl_trans<'$request->tgl_trans1' GROUP BY perkiraan.kode_perk) as sldawal ON perkiraan.kode_perk=sldawal.kode_perk) LEFT JOIN (SELECT trans_detail.kode_perk,SUM(trans_detail.debet) as debet, SUM(trans_detail.kredit) as kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2' GROUP BY trans_detail.kode_perk
+            ) as sldo ON perkiraan.kode_perk=sldo.kode_perk WHERE sldawal.saldoawal<>0 ORDER BY perkiraan.kode_perk
+            ) as pegangan ON perkiraan_copy1.kode_perk=pegangan.kode_perk SET perkiraan_copy1.saldo_awal=pegangan.saldoawal,perkiraan_copy1.saldo_kredit= IF(ISNULL(pegangan.kredit),0,pegangan.kredit),perkiraan_copy1.saldo_debet= IF(ISNULL(pegangan.debet),0,pegangan.debet),perkiraan_copy1.saldo_akhir=pegangan.saldo_akhir";
+            DB::select($sqlupd);
+            // UPDATE PERKIRAAN INDUK
+            $sqlinduk = "SELECT perkiraan.kode_perk,perkiraan.dk,perkiraan.saldo_awal FROM perkiraan WHERE perkiraan.type='G' ORDER BY perkiraan.kode_perk";
+                    $rs = DB::select($sqlinduk);
+                    // SQL PROSES HITUNG PERKIRAAN INDUK
+                    $saldo_awal=0;$saldo_debet=0;$saldo_kredit=0;$saldo_akhir=0;
+                    foreach ($rs as $values)
+                    {
+                        if($values->dk =='D')
+                        { 
+                            $sqlawal=DB::select("SELECT SUM(trans_detail.debet-trans_detail.kredit) as saldo_awal FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<'$request->tgl_trans1' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                            $sqldebet=DB::select("SELECT SUM(trans_detail.debet) as saldo_debet FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE (trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2') AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                            $sqlkredit=DB::select("SELECT SUM(trans_detail.kredit) as saldo_kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE (trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2') AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                            $saldo_awal=$values->saldo_awal+$sqlawal[0]->saldo_awal;
+                            $saldo_debet=is_null($sqldebet[0]->saldo_debet)? 0:$sqldebet[0]->saldo_debet;
+                            $saldo_kredit=is_null($sqlkredit[0]->saldo_kredit)? 0:$sqlkredit[0]->saldo_kredit;
+                            $saldo_akhir=$saldo_awal+$saldo_debet-$saldo_kredit;
+                            
+                        }else{
+                            $sqlawal=DB::select("SELECT SUM(trans_detail.kredit-trans_detail.debet) as saldo_awal FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<'$request->tgl_trans1' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                            $sqldebet=DB::select("SELECT SUM(trans_detail.debet) as saldo_debet FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE (trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2') AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                            $sqlkredit=DB::select("SELECT SUM(trans_detail.kredit) as saldo_kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE (trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2') AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                            
+                            $saldo_awal=$values->saldo_awal+$sqlawal[0]->saldo_awal;
+                            $saldo_debet=is_null($sqldebet[0]->saldo_debet)? 0:$sqldebet[0]->saldo_debet;
+                            $saldo_kredit=is_null($sqlkredit[0]->saldo_kredit)? 0:$sqlkredit[0]->saldo_kredit;
+                            $saldo_akhir=$saldo_awal+$saldo_kredit-$saldo_debet;
+
+                        }
+                        DB::select("update perkiraan_copy1 set saldo_awal=$saldo_awal,saldo_debet=$saldo_debet,saldo_kredit=$saldo_kredit,saldo_akhir=$saldo_akhir where kode_perk = '$values->kode_perk'");
+                    }
+                    }else{
+                        return redirect()->route('showfrmtrialbalance')->with('alert', 'Centang Kode Induk');
+                    }
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+            
+        $sqltampiltrial = "SELECT kode_alt,nama_perk,type,saldo_awal,saldo_debet,saldo_kredit,saldo_akhir from perkiraan_copy1 WHERE saldo_awal<>0 ORDER BY kode_perk";
+        $rstrial = DB::select($sqltampiltrial);
+        return view('pdf.akuntansi.cetaktrialbalance',['rstrial'=>$rstrial,'lembaga'=>$lembaga,'ttd'=>$ttd,'tgl_trans1'=>$request->tgl_trans1,'tgl_trans2'=>$request->tgl_trans2,'pendapatan'=>$pendapatan,'biaya'=>$biaya,'pajak'=>$pajak]);
+    }
+
+    // show form Rekapitulasi Perkiraan 
+    public function bo_ak_lp_showfrmrekapperk()
+    {
+        $logos = Logo::all();
+        $users = User::all();
+        $perkiraan = Perkiraan::orderBy('kode_perk')->get();
+
+        return view('reports.akuntansi.frmrptrekapperk',['perkiraan'=>$perkiraan, 'users'=>$users, 'logos'=>$logos]);
+    }
+    // Proses cari trial balance
+    public function bo_ak_carirekapperk(Request $request)
+    {
+        set_time_limit(2000);
+        // BUAT REPORT PENDAPATAN,BIAYA,PAJAK
+        // ------------------------
+        if(isset($request->perkiraan_induk)==true){
+        // Update perkiraan NON Induk / Type D
+        DB::select("UPDATE perkiraan_copy1 SET saldo_awal=0,saldo_debet=0,saldo_kredit=0,saldo_akhir=0");
+        $sqlupd = "UPDATE perkiraan_copy1 INNER JOIN (SELECT perkiraan.kode_perk,perkiraan.nama_perk,perkiraan.kode_induk,perkiraan.type,perkiraan.dk,sldawal.saldoawal as saldoawal,sldo.debet as debet,sldo.kredit as kredit,if(perkiraan.dk='D',(sldawal.saldoawal+IF(ISNULL(sldo.debet),0,sldo.debet)-IF(ISNULL(sldo.kredit),0,sldo.kredit)),(sldawal.saldoawal+IF(ISNULL(sldo.kredit),0,sldo.kredit)-IF(ISNULL(sldo.debet),0,sldo.debet))) as saldo_akhir FROM (perkiraan LEFT JOIN ( SELECT perkiraan.kode_perk,(if(perkiraan.dk='D',(perkiraan.saldo_awal+sum(trans_detail.debet)-SUM(trans_detail.kredit)),(perkiraan.saldo_awal+sum(trans_detail.kredit)-SUM(trans_detail.debet)) )) as saldoawal FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk WHERE trans_master.tgl_trans<'$request->tgl_trans1' GROUP BY perkiraan.kode_perk) as sldawal ON perkiraan.kode_perk=sldawal.kode_perk) LEFT JOIN (SELECT trans_detail.kode_perk,SUM(trans_detail.debet) as debet, SUM(trans_detail.kredit) as kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2' GROUP BY trans_detail.kode_perk
+            ) as sldo ON perkiraan.kode_perk=sldo.kode_perk WHERE sldawal.saldoawal<>0 ORDER BY perkiraan.kode_perk
+            ) as pegangan ON perkiraan_copy1.kode_perk=pegangan.kode_perk SET perkiraan_copy1.saldo_awal=pegangan.saldoawal,perkiraan_copy1.saldo_kredit= IF(ISNULL(pegangan.kredit),0,pegangan.kredit),perkiraan_copy1.saldo_debet= IF(ISNULL(pegangan.debet),0,pegangan.debet),perkiraan_copy1.saldo_akhir=pegangan.saldo_akhir";
+            DB::select($sqlupd);
+            // UPDATE PERKIRAAN INDUK
+            $sqlinduk = "SELECT perkiraan.kode_perk,perkiraan.dk,perkiraan.saldo_awal FROM perkiraan WHERE perkiraan.type='G' ORDER BY perkiraan.kode_perk";
+                    $rs = DB::select($sqlinduk);
+                    // SQL PROSES HITUNG PERKIRAAN INDUK
+                    $saldo_awal=0;$saldo_debet=0;$saldo_kredit=0;$saldo_akhir=0;
+                    foreach ($rs as $values)
+                    {
+                        if($values->dk =='D')
+                        { 
+                            $sqlawal=DB::select("SELECT SUM(trans_detail.debet-trans_detail.kredit) as saldo_awal FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<'$request->tgl_trans1' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                            $sqldebet=DB::select("SELECT SUM(trans_detail.debet) as saldo_debet FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE (trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2') AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                            $sqlkredit=DB::select("SELECT SUM(trans_detail.kredit) as saldo_kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE (trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2') AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                            $saldo_awal=$values->saldo_awal+$sqlawal[0]->saldo_awal;
+                            $saldo_debet=is_null($sqldebet[0]->saldo_debet)? 0:$sqldebet[0]->saldo_debet;
+                            $saldo_kredit=is_null($sqlkredit[0]->saldo_kredit)? 0:$sqlkredit[0]->saldo_kredit;
+                            $saldo_akhir=$saldo_awal+$saldo_debet-$saldo_kredit;
+                            
+                        }else{
+                            $sqlawal=DB::select("SELECT SUM(trans_detail.kredit-trans_detail.debet) as saldo_awal FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<'$request->tgl_trans1' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                            $sqldebet=DB::select("SELECT SUM(trans_detail.debet) as saldo_debet FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE (trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2') AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                            $sqlkredit=DB::select("SELECT SUM(trans_detail.kredit) as saldo_kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE (trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2') AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                            
+                            $saldo_awal=$values->saldo_awal+$sqlawal[0]->saldo_awal;
+                            $saldo_debet=is_null($sqldebet[0]->saldo_debet)? 0:$sqldebet[0]->saldo_debet;
+                            $saldo_kredit=is_null($sqlkredit[0]->saldo_kredit)? 0:$sqlkredit[0]->saldo_kredit;
+                            $saldo_akhir=$saldo_awal+$saldo_kredit-$saldo_debet;
+
+                        }
+                        DB::select("update perkiraan_copy1 set saldo_awal=$saldo_awal,saldo_debet=$saldo_debet,saldo_kredit=$saldo_kredit,saldo_akhir=$saldo_akhir where kode_perk = '$values->kode_perk'");
+                    }
+                    }else{
+                        return redirect()->route('showfrmtrialbalance')->with('alert', 'Centang Kode Induk');
+                    }
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+            
+        $sqltampiltrial = "SELECT kode_alt,nama_perk,type,saldo_awal,saldo_debet,saldo_kredit,saldo_akhir from perkiraan_copy1 WHERE saldo_awal<>0 ORDER BY kode_perk";
+        $rstrial = DB::select($sqltampiltrial);
+        return view('pdf.akuntansi.cetakrekapperk',['rstrial'=>$rstrial,'lembaga'=>$lembaga,'ttd'=>$ttd,'tgl_trans1'=>$request->tgl_trans1,'tgl_trans2'=>$request->tgl_trans2]);
+    }
+    // show form pencarian neraca
+    public function bo_ak_lp_showfrmneraca()
+    {
+        $logos = Logo::all();
+        $users = User::all();
+
+        return view('reports.akuntansi.frmrptneraca',['users'=>$users, 'logos'=>$logos]);
+    }
+    // CAri Neraca 
+    public function bo_ak_carineraca(Request $request)
+    {
+        $this->validate($request,[
+            'tgl_trans'=>'required'
+        ]);
+        $saldo_akhir=0;$totaktiva=0;$totpasiva=0;$totekuitas=0;
+        DB::select("update neraca set jumlah_aktiva=0,jumlah_pasiva=0");
+        $rs = Perkiraan::where('type','G')->OrderBy('kode_perk','asc')->get();
+                foreach($rs as $values)
+                {
+                // PROSES HITUNG SALDO_AKHIR SUATU PERKIRAAN DAN UPDATE KE TBL NERACA
+                    if(substr($values->kode_perk, 0, 1)=="1"){
+                        $sldak = DB::select("SELECT (sum(trans_detail.debet)-sum(trans_detail.kredit)) as saldo_akhir from trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<='$request->tgl_trans' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                        $saldo_akhir =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        DB::select("update neraca set jumlah_aktiva = $saldo_akhir where kode_perk_aktiva='$values->kode_perk'");
+                    // FILTER nilai saldo_akhi bukan 0
+                    if($values->kode_perk=="1"){
+                        $totaktiva =$saldo_akhir;
+                    }
+
+                        }elseif(substr($values->kode_perk, 0, 1)=="2"||substr($values->kode_perk, 0, 1)=="3"){
+                        $sldak = DB::select("SELECT (sum(trans_detail.kredit)-sum(trans_detail.debet)) as saldo_akhir from trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<='$request->tgl_trans' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                        $saldo_akhir =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        DB::select("update neraca set jumlah_pasiva = $saldo_akhir where kode_perk_pasiva='$values->kode_perk'");
+                        if($values->kode_perk=="2"){
+                            $totpasiva =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        }elseif($values->kode_perk=="3"){
+                            $totekuitas =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        }
+                        }
+                }
+               $laba=$totaktiva-$totpasiva-$totekuitas;
+               $rsneraca = DB::select("select * from neraca where jumlah_aktiva<>0 OR jumlah_pasiva<>0");
+               $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+               $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+       
+               return view('pdf.akuntansi.cetakneraca',['rsneraca'=>$rsneraca,'lembaga'=>$lembaga,'ttd'=>$ttd,'tgl_trans'=>$request->tgl_trans,'totaktiva'=>$totaktiva,'totpasiva'=>$totaktiva,'laba'=>$laba]);
+    }
+    // EXPORT NERACA SCONTRO
+    public function export_neraca_lajur(Request $request)
+    {
+        $saldo_akhir=0;$totaktiva=0;$totpasiva=0;$totekuitas=0;
+        DB::select("update neraca set jumlah_aktiva=0,jumlah_pasiva=0");
+        $rs = Perkiraan::where('type','G')->OrderBy('kode_perk','asc')->get();
+                foreach($rs as $values)
+                {
+                // PROSES HITUNG SALDO_AKHIR SUATU PERKIRAAN DAN UPDATE KE TBL NERACA
+                    if(substr($values->kode_perk, 0, 1)=="1"){
+                        $sldak = DB::select("SELECT (sum(trans_detail.debet)-sum(trans_detail.kredit)) as saldo_akhir from trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<='$request->tgl_trans' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                        $saldo_akhir =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        DB::select("update neraca set jumlah_aktiva = $saldo_akhir where kode_perk_aktiva='$values->kode_perk'");
+                    // FILTER nilai saldo_akhi bukan 0
+                    if($values->kode_perk=="1"){
+                        $totaktiva =$saldo_akhir;
+                    }
+
+                        }elseif(substr($values->kode_perk, 0, 1)=="2"||substr($values->kode_perk, 0, 1)=="3"){
+                        $sldak = DB::select("SELECT (sum(trans_detail.kredit)-sum(trans_detail.debet)) as saldo_akhir from trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<='$request->tgl_trans' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                        $saldo_akhir =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        DB::select("update neraca set jumlah_pasiva = $saldo_akhir where kode_perk_pasiva='$values->kode_perk'");
+                        if($values->kode_perk=="2"){
+                            $totpasiva =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        }elseif($values->kode_perk=="3"){
+                            $totekuitas =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        }
+                        }
+                }
+               $laba=$totaktiva-$totpasiva-$totekuitas;
+               $rsneraca = DB::select("select * from neraca where jumlah_aktiva<>0 OR jumlah_pasiva<>0");
+               return (new ReportneracascontroExport($rsneraca,$totaktiva,$laba))->download('neracascontro.xlsx');
+    }
+    // Show form REPORT NERACA HARIAN
+    public function bo_ak_lp_showfrmneracaharian()
+    {
+        $logos = Logo::all();
+        $users = User::all();
+        return view('reports.akuntansi.frmrptneracaharian',['users'=>$users, 'logos'=>$logos]);
+    }
+    // Proses Cari neraca harian
+    public function bo_ak_carineracaharian(Request $request)
+    {
+        $this->validate($request,[
+            'tgl_trans1'=>'required',
+            'tgl_trans2'=>'required'
+
+        ]);
+        $nama_perk = [];$saldo_akhir=[];$dk=[];$level=[];
+        $totaktiva=0;$totpasiva=0;$totekuitas=0;
+        $rs = Perkiraan::where('type','G')->OrderBy('kode_perk','asc')->get();
+                foreach($rs as $values)
+                {
+                    // PROSES HITUNG SALDO_AKHIR SUATU PERKIRAAN 
+                    if(substr($values->kode_perk, 0, 1)=="1"){
+                        $sldak = DB::select("SELECT IF(ISNULL((sum(trans_detail.debet)-sum(trans_detail.kredit))),0,(sum(trans_detail.debet)-sum(trans_detail.kredit))) as saldo_akhir from trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                        if($values->kode_perk=="1"){
+                            $totaktiva =$sldak[0]->saldo_akhir;
+                        }
+                    // FILTER nilai saldo_akhi bukan 0
+                    if(($sldak[0]->saldo_akhir)<>0){
+                        // PROSES SIMPAN DATA saldo_akhir DALAM ARRAY 
+                        array_push($saldo_akhir,$sldak[0]->saldo_akhir);
+                        // PROSES SIMPAN DATA nama_perk DALAM ARRAY 
+                        array_push($nama_perk,$values->nama_perk);
+                        // PROSES SIMPAN DATA nama_perk DALAM ARRAY 
+                        array_push($dk,$values->dk);
+                        // PROSES SIMPAN DATA level DALAM ARRAY 
+                        array_push($level,$values->level);
+                    }    
+                        }elseif(substr($values->kode_perk, 0, 1)=="2"||substr($values->kode_perk, 0, 1)=="3"){
+                        $sldak = DB::select("SELECT IF(ISNULL((sum(trans_detail.kredit)-sum(trans_detail.debet))),0,(sum(trans_detail.kredit)-sum(trans_detail.debet))) as saldo_akhir from trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans>='$request->tgl_trans1' AND trans_master.tgl_trans<='$request->tgl_trans2' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+
+
+                    // FILTER nilai saldo_akhi bukan 0
+                    if($values->kode_perk=="2"){
+                        $totpasiva =$sldak[0]->saldo_akhir;
+
+                        // PROSES SIMPAN DATA saldo_akhir DALAM ARRAY 
+                        array_push($saldo_akhir,$sldak[0]->saldo_akhir);
+                        // PROSES SIMPAN DATA nama_perk DALAM ARRAY 
+                        array_push($nama_perk,$values->nama_perk);
+                        // PROSES SIMPAN DATA nama_perk DALAM ARRAY 
+                        array_push($dk,$values->dk);
+                        // PROSES SIMPAN DATA level DALAM ARRAY 
+                        array_push($level,$values->level);
+                    }elseif($values->kode_perk=="3"){
+                        $totekuitas =$sldak[0]->saldo_akhir;
+
+                        // PROSES SIMPAN DATA saldo_akhir DALAM ARRAY 
+                        array_push($saldo_akhir,$sldak[0]->saldo_akhir);
+                        // PROSES SIMPAN DATA nama_perk DALAM ARRAY 
+                        array_push($nama_perk,$values->nama_perk);
+                        // PROSES SIMPAN DATA nama_perk DALAM ARRAY 
+                        array_push($dk,$values->dk);
+                        // PROSES SIMPAN DATA level DALAM ARRAY 
+                        array_push($level,$values->level);
+
+                    }elseif(($sldak[0]->saldo_akhir)<>0){
+                        // PROSES SIMPAN DATA saldo_akhir DALAM ARRAY 
+                        array_push($saldo_akhir,$sldak[0]->saldo_akhir);
+                        // PROSES SIMPAN DATA nama_perk DALAM ARRAY 
+                        array_push($nama_perk,$values->nama_perk);
+                        // PROSES SIMPAN DATA nama_perk DALAM ARRAY 
+                        array_push($dk,$values->dk);
+                        // PROSES SIMPAN DATA level DALAM ARRAY 
+                        array_push($level,$values->level);
+                        }    
+                    }
+               }
+               $laba=$totaktiva-$totpasiva-$totekuitas;
+
+               $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+               $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+       
+               return view('pdf.akuntansi.neraca_harian',['nama_perk'=>$nama_perk,'dk'=>$dk,'saldo_akhir'=>$saldo_akhir,'level'=>$level,'lembaga'=>$lembaga,'ttd'=>$ttd,'tgl_trans1'=>$request->tgl_trans1,'tgl_trans2'=>$request->tgl_trans2,'totaktiva'=>$totaktiva,'laba'=>$laba]);
+
+    }
+    // SHOW FORM NERACA KOMPARATIF 
+    public function showfrmneracakomparatif()
+    {
+        $users = User::all();
+        $logos = Logo::all();
+        return view('reports.akuntansi.frmrptneracakomparatif',['users'=>$users,'logos'=>$logos,'msgstatus'=>'']);
+    }
+    // Cari NERACA KOMPARATIF
+    public function bo_ak_carineracakomparatif(Request $request)
+    {
+        $this->validate($request,
+         [
+        'perkiraan_induk'=>'required',
+        ]);
+        set_time_limit(2000);
+        // BUAT REPORT PENDAPATAN,BIAYA,PAJAK
+        $tgl_trans1 = date('Y-m-d',strtotime($request->tgl_trans1));
+        $tgl_trans2 = date('Y-m-d',strtotime($request->tgl_trans2));
+        $pendapatan =0;$biaya =0;$pajak=0;
+        $sqlpend ="SELECT SUM(if(perkiraan.dk='D',(sldawal.saldoawal+IF(ISNULL(sldo.debet),0,sldo.debet)-IF(ISNULL(sldo.kredit),0,sldo.kredit)),(sldawal.saldoawal+IF(ISNULL(sldo.kredit),0,sldo.kredit)-IF(ISNULL(sldo.debet),0,sldo.debet)))) as saldo_akhir FROM (perkiraan LEFT JOIN ( SELECT perkiraan.kode_perk,(if(perkiraan.dk='D',(perkiraan.saldo_awal+sum(trans_detail.debet)-SUM(trans_detail.kredit)),(perkiraan.saldo_awal+sum(trans_detail.kredit)-SUM(trans_detail.debet)) )) as saldoawal FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk WHERE trans_master.tgl_trans<'$tgl_trans1' GROUP BY perkiraan.kode_perk) as sldawal ON perkiraan.kode_perk=sldawal.kode_perk) LEFT JOIN (SELECT trans_detail.kode_perk,SUM(trans_detail.debet) as debet, SUM(trans_detail.kredit) as kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2' GROUP BY trans_detail.kode_perk) as sldo ON perkiraan.kode_perk=sldo.kode_perk WHERE perkiraan.kode_perk like '4%' ORDER BY perkiraan.kode_perk";
+        $sqlby ="SELECT SUM(if(perkiraan.dk='D',(sldawal.saldoawal+IF(ISNULL(sldo.debet),0,sldo.debet)-IF(ISNULL(sldo.kredit),0,sldo.kredit)),(sldawal.saldoawal+IF(ISNULL(sldo.kredit),0,sldo.kredit)-IF(ISNULL(sldo.debet),0,sldo.debet)))) as saldo_akhir FROM (perkiraan LEFT JOIN ( SELECT perkiraan.kode_perk,(if(perkiraan.dk='D',(perkiraan.saldo_awal+sum(trans_detail.debet)-SUM(trans_detail.kredit)),(perkiraan.saldo_awal+sum(trans_detail.kredit)-SUM(trans_detail.debet)) )) as saldoawal FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk WHERE trans_master.tgl_trans<'$tgl_trans1' GROUP BY perkiraan.kode_perk) as sldawal ON perkiraan.kode_perk=sldawal.kode_perk) LEFT JOIN (SELECT trans_detail.kode_perk,SUM(trans_detail.debet) as debet, SUM(trans_detail.kredit) as kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2' GROUP BY trans_detail.kode_perk) as sldo ON perkiraan.kode_perk=sldo.kode_perk WHERE perkiraan.kode_perk like '5%' ORDER BY perkiraan.kode_perk";
+        $sqlpajak ="SELECT SUM(if(perkiraan.dk='D',(sldawal.saldoawal+IF(ISNULL(sldo.debet),0,sldo.debet)-IF(ISNULL(sldo.kredit),0,sldo.kredit)),(sldawal.saldoawal+IF(ISNULL(sldo.kredit),0,sldo.kredit)-IF(ISNULL(sldo.debet),0,sldo.debet)))) as saldo_akhir FROM (perkiraan LEFT JOIN ( SELECT perkiraan.kode_perk,(if(perkiraan.dk='D',(perkiraan.saldo_awal+sum(trans_detail.debet)-SUM(trans_detail.kredit)),(perkiraan.saldo_awal+sum(trans_detail.kredit)-SUM(trans_detail.debet)) )) as saldoawal FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk WHERE trans_master.tgl_trans<'$tgl_trans1' GROUP BY perkiraan.kode_perk) as sldawal ON perkiraan.kode_perk=sldawal.kode_perk) LEFT JOIN (SELECT trans_detail.kode_perk,SUM(trans_detail.debet) as debet, SUM(trans_detail.kredit) as kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2' GROUP BY trans_detail.kode_perk) as sldo ON perkiraan.kode_perk=sldo.kode_perk WHERE perkiraan.kode_perk like '6%' ORDER BY perkiraan.kode_perk";
+            $rspend = DB::select($sqlpend);
+            $pendapatan = $rspend[0]->saldo_akhir;
+            $rsbiaya = DB::select($sqlby);
+            $biaya = $rsbiaya[0]->saldo_akhir;
+            $rspajak = DB::select($sqlpajak);
+            $pajak = $rspajak[0]->saldo_akhir;
+        // ------------------------
+        if(isset($request->perkiraan_induk)==true){
+        // Update perkiraan NON Induk / Type D
+        DB::select("UPDATE perkiraan_copy1 SET saldo_awal=0,saldo_debet=0,saldo_kredit=0,saldo_akhir=0");
+        $sqlupd = "UPDATE perkiraan_copy1 INNER JOIN (SELECT perkiraan.kode_perk,perkiraan.nama_perk,perkiraan.kode_induk,perkiraan.type,perkiraan.dk,sldawal.saldoawal as saldoawal,sldo.debet as debet,sldo.kredit as kredit,if(perkiraan.dk='D',(sldawal.saldoawal+IF(ISNULL(sldo.debet),0,sldo.debet)-IF(ISNULL(sldo.kredit),0,sldo.kredit)),(sldawal.saldoawal+IF(ISNULL(sldo.kredit),0,sldo.kredit)-IF(ISNULL(sldo.debet),0,sldo.debet))) as saldo_akhir FROM (perkiraan LEFT JOIN ( SELECT perkiraan.kode_perk,(if(perkiraan.dk='D',(perkiraan.saldo_awal+sum(trans_detail.debet)-SUM(trans_detail.kredit)),(perkiraan.saldo_awal+sum(trans_detail.kredit)-SUM(trans_detail.debet)) )) as saldoawal FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk WHERE trans_master.tgl_trans<'$tgl_trans1' GROUP BY perkiraan.kode_perk) as sldawal ON perkiraan.kode_perk=sldawal.kode_perk) LEFT JOIN (SELECT trans_detail.kode_perk,SUM(trans_detail.debet) as debet, SUM(trans_detail.kredit) as kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2' GROUP BY trans_detail.kode_perk
+            ) as sldo ON perkiraan.kode_perk=sldo.kode_perk WHERE sldawal.saldoawal<>0 ORDER BY perkiraan.kode_perk
+            ) as pegangan ON perkiraan_copy1.kode_perk=pegangan.kode_perk SET perkiraan_copy1.saldo_awal=pegangan.saldoawal,perkiraan_copy1.saldo_kredit= IF(ISNULL(pegangan.kredit),0,pegangan.kredit),perkiraan_copy1.saldo_debet= IF(ISNULL(pegangan.debet),0,pegangan.debet),perkiraan_copy1.saldo_akhir=pegangan.saldo_akhir";
+            DB::select($sqlupd);
+            // UPDATE PERKIRAAN INDUK
+            $sqlinduk = "SELECT perkiraan.kode_perk,perkiraan.dk,perkiraan.saldo_awal FROM perkiraan WHERE perkiraan.type='G' ORDER BY perkiraan.kode_perk";
+                    $rs = DB::select($sqlinduk);
+                    // SQL PROSES HITUNG PERKIRAAN INDUK
+                    $saldo_awal=0;$saldo_debet=0;$saldo_kredit=0;$saldo_akhir=0;
+                    foreach ($rs as $values)
+                    {
+                        if($values->dk =='D')
+                        { 
+                            $sqlawal=DB::select("SELECT SUM(trans_detail.debet-trans_detail.kredit) as saldo_awal FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<'$tgl_trans1' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                            $sqldebet=DB::select("SELECT SUM(trans_detail.debet) as saldo_debet FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE (trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2') AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                            $sqlkredit=DB::select("SELECT SUM(trans_detail.kredit) as saldo_kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE (trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2') AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                            $saldo_awal=$values->saldo_awal+$sqlawal[0]->saldo_awal;
+                            $saldo_debet=is_null($sqldebet[0]->saldo_debet)? 0:$sqldebet[0]->saldo_debet;
+                            $saldo_kredit=is_null($sqlkredit[0]->saldo_kredit)? 0:$sqlkredit[0]->saldo_kredit;
+                            $saldo_akhir=$saldo_awal+$saldo_debet-$saldo_kredit;
+                            
+                        }else{
+                            $sqlawal=DB::select("SELECT SUM(trans_detail.kredit-trans_detail.debet) as saldo_awal FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<'$tgl_trans1' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                            $sqldebet=DB::select("SELECT SUM(trans_detail.debet) as saldo_debet FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE (trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2') AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                            $sqlkredit=DB::select("SELECT SUM(trans_detail.kredit) as saldo_kredit FROM trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE (trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2') AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                            
+                            $saldo_awal=$values->saldo_awal+$sqlawal[0]->saldo_awal;
+                            $saldo_debet=is_null($sqldebet[0]->saldo_debet)? 0:$sqldebet[0]->saldo_debet;
+                            $saldo_kredit=is_null($sqlkredit[0]->saldo_kredit)? 0:$sqlkredit[0]->saldo_kredit;
+                            $saldo_akhir=$saldo_awal+$saldo_kredit-$saldo_debet;
+
+                        }
+                        DB::select("update perkiraan_copy1 set saldo_awal=$saldo_awal,saldo_debet=$saldo_debet,saldo_kredit=$saldo_kredit,saldo_akhir=$saldo_akhir where kode_perk = '$values->kode_perk'");
+                    }
+                    }else{
+                        return redirect()->route('showfrmneracakomparatif')->with('alert', 'Centang Kode Induk');
+                    }
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+            
+        $sqltampiltrial = "SELECT kode_perk,kode_alt,nama_perk,type,saldo_awal,saldo_debet,saldo_kredit,saldo_akhir from perkiraan_copy1 WHERE saldo_awal<>0 ORDER BY kode_perk";
+        $rstrial = DB::select($sqltampiltrial);
+        $totdebetpend = DB::select("SELECT SUM(trans_detail.debet) debet FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk where trans_detail.kode_perk LIKE '4%' AND  (trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2')");
+        $totkreditpend = DB::select("SELECT SUM(trans_detail.kredit) kredit FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk where trans_detail.kode_perk LIKE '4%' AND  (trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2')");
+        $totdebetby = DB::select("SELECT SUM(trans_detail.debet) debet FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk where trans_detail.kode_perk LIKE '5%' AND  (trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2')");
+        $totkreditby = DB::select("SELECT SUM(trans_detail.kredit) kredit FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk where trans_detail.kode_perk LIKE '5%' AND  (trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2')");
+
+        return view('pdf.akuntansi.cetakneracakomparatif',['rstrial'=>$rstrial,'lembaga'=>$lembaga,'ttd'=>$ttd,'tgl_trans1'=>$tgl_trans1,'tgl_trans2'=>$tgl_trans2,'pendapatan'=>$pendapatan,'biaya'=>$biaya,'pajak'=>$pajak,'totdebetpend'=>$totdebetpend,'totkreditpend'=>$totkreditpend,'totdebetby'=>$totdebetby,'totkreditby'=>$totkreditby]);
+    }
+    // Export neraca komparatif
+    public function bo_ak_exportkomparatif(Request $request)
+    {
+        $tgl_trans1 = date('Y-m-d',strtotime($request->tgl_trans1));
+        $tgl_trans2 = date('Y-m-d',strtotime($request->tgl_trans2));
+
+        $sqltampiltrial = "SELECT kode_perk,kode_alt,nama_perk,type,saldo_awal,saldo_debet,saldo_kredit,saldo_akhir from perkiraan_copy1 WHERE saldo_awal<>0 ORDER BY kode_perk";
+        $rstrial = DB::select($sqltampiltrial);
+        $totdebetpend = DB::select("SELECT SUM(trans_detail.debet) debet FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk where trans_detail.kode_perk LIKE '4%' AND  (trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2')");
+        $totkreditpend = DB::select("SELECT SUM(trans_detail.kredit) kredit FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk where trans_detail.kode_perk LIKE '4%' AND  (trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2')");
+        $totdebetby = DB::select("SELECT SUM(trans_detail.debet) debet FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk where trans_detail.kode_perk LIKE '5%' AND  (trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2')");
+        $totkreditby = DB::select("SELECT SUM(trans_detail.kredit) kredit FROM (trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk where trans_detail.kode_perk LIKE '5%' AND  (trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2')");
+        return (new ReportNeracaKomparatifExport($rstrial,$totdebetpend,$totkreditpend,$totdebetby,$totkreditby,$tgl_trans1,$tgl_trans2))->download('exportneracakomparatif.xlsx');
+    }
+    // Show form NERACA ANNUAL 
+    public function bo_ak_lp_showfrmneracaannual()
+    {
+        $users = User::all();
+        $logos = Logo::all();
+        return view('reports.akuntansi.frmrptneracaannual',['users'=>$users,'logos'=>$logos,'msgstatus'=>'']);
+    }
+    // Cari Neraca Annual
+    public function bo_ak_carineracaannual(Request $request)
+    {
+        $this->validate($request,[
+            'perkiraan_induk'=>'required'
+        ]);
+        $tgl_trans1 = date('Y-m-d',strtotime($request->tgl_trans1));
+        $tgl_trans2 = date('Y-m-d',strtotime($request->tgl_trans2));
+        $tgl_trans3 = date('Y-m-d',strtotime($request->tgl_trans3));
+
+        $saldo_akhir=0;$totaktiva1=0;$totpasiva1=0;$totekuitas1=0;$laba1=0;
+        $totaktiva2=0;$totpasiva2=0;$totekuitas2=0;$laba2=0;
+        $totaktiva3=0;$totpasiva3=0;$totekuitas3=0;$laba3=0;
+        set_time_limit(2000);
+
+        DB::select("update neraca_annual set aktiva_bln1=0,aktiva_bln2=0,aktiva_bln3=0,pasiva_bln1=0,pasiva_bln2=0,pasiva_bln3=0");
+        // Perhitungan Tahap Pertama 1
+        $rs = Perkiraan::where('type','G')->OrderBy('kode_perk','asc')->get();
+                foreach($rs as $values)
+                {
+            // PROSES HITUNG SALDO_AKHIR SUATU PERKIRAAN DAN UPDATE KE TBL NERACA_ANNUAL
+                    if(substr($values->kode_perk, 0, 1)=="1"){
+                        $sldak = DB::select("SELECT (sum(trans_detail.debet)-sum(trans_detail.kredit)) as saldo_akhir from trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<='$tgl_trans1' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                        $saldo_akhir =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        DB::select("update neraca_annual set aktiva_bln1 = $saldo_akhir where kode_perk_aktiva='$values->kode_perk'");
+                    // FILTER nilai saldo_akhir bukan 0
+                    if($values->kode_perk=="1"){
+                        $totaktiva1 =$saldo_akhir;
+                    }
+
+                    }elseif(substr($values->kode_perk, 0, 1)=="2"||substr($values->kode_perk, 0, 1)=="3"){
+                        $sldak = DB::select("SELECT (sum(trans_detail.kredit)-sum(trans_detail.debet)) as saldo_akhir from trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<='$tgl_trans1' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                        $saldo_akhir =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        DB::select("update neraca_annual set pasiva_bln1 = $saldo_akhir where kode_perk_pasiva='$values->kode_perk'");
+                        if($values->kode_perk=="2"){
+                            $totpasiva1 =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        }elseif($values->kode_perk=="3"){
+                            $totekuitas1 =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        }
+                        }
+                }
+               $laba1=$totaktiva1-$totpasiva1-$totekuitas1;
+        // Perhitungan Tahap 2
+        $rs = Perkiraan::where('type','G')->OrderBy('kode_perk','asc')->get();
+                foreach($rs as $values)
+                {
+            // PROSES HITUNG SALDO_AKHIR SUATU PERKIRAAN DAN UPDATE KE TBL NERACA_ANNUAL
+                    if(substr($values->kode_perk, 0, 1)=="1"){
+                        $sldak = DB::select("SELECT (sum(trans_detail.debet)-sum(trans_detail.kredit)) as saldo_akhir from trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<='$tgl_trans2' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                        $saldo_akhir =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        DB::select("update neraca_annual set aktiva_bln2 = $saldo_akhir where kode_perk_aktiva='$values->kode_perk'");
+                    // FILTER nilai saldo_akhir bukan 0
+                    if($values->kode_perk=="1"){
+                        $totaktiva2 =$saldo_akhir;
+                    }
+
+                    }elseif(substr($values->kode_perk, 0, 1)=="2"||substr($values->kode_perk, 0, 1)=="3"){
+                        $sldak = DB::select("SELECT (sum(trans_detail.kredit)-sum(trans_detail.debet)) as saldo_akhir from trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<='$tgl_trans2' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                        $saldo_akhir =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        DB::select("update neraca_annual set pasiva_bln2 = $saldo_akhir where kode_perk_pasiva='$values->kode_perk'");
+                        if($values->kode_perk=="2"){
+                            $totpasiva2 =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        }elseif($values->kode_perk=="3"){
+                            $totekuitas2 =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        }
+                        }
+                }
+               $laba2=$totaktiva2-$totpasiva2-$totekuitas2;
+        // Perhitungan Tahap 3
+        $rs = Perkiraan::where('type','G')->OrderBy('kode_perk','asc')->get();
+                foreach($rs as $values)
+                {
+            // PROSES HITUNG SALDO_AKHIR SUATU PERKIRAAN DAN UPDATE KE TBL NERACA_ANNUAL
+                    if(substr($values->kode_perk, 0, 1)=="1"){
+                        $sldak = DB::select("SELECT (sum(trans_detail.debet)-sum(trans_detail.kredit)) as saldo_akhir from trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<='$tgl_trans3' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                        $saldo_akhir =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        DB::select("update neraca_annual set aktiva_bln3 = $saldo_akhir where kode_perk_aktiva='$values->kode_perk'");
+                    // FILTER nilai saldo_akhir bukan 0
+                    if($values->kode_perk=="1"){
+                        $totaktiva3 =$saldo_akhir;
+                    }
+
+                        }elseif(substr($values->kode_perk, 0, 1)=="2"||substr($values->kode_perk, 0, 1)=="3"){
+                        $sldak = DB::select("SELECT (sum(trans_detail.kredit)-sum(trans_detail.debet)) as saldo_akhir from trans_detail INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans<='$tgl_trans3' AND trans_detail.kode_perk LIKE '$values->kode_perk%'");
+                        $saldo_akhir =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        DB::select("update neraca_annual set pasiva_bln3 = $saldo_akhir where kode_perk_pasiva='$values->kode_perk'");
+                        if($values->kode_perk=="2"){
+                            $totpasiva3 =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        }elseif($values->kode_perk=="3"){
+                            $totekuitas3 =$sldak[0]->saldo_akhir+$values->saldo_awal;
+                        }
+                        }
+                }
+               $laba3=$totaktiva3-$totpasiva3-$totekuitas3;
+               $rsneraca = DB::select("select * from neraca_annual where aktiva_bln1<>0 OR pasiva_bln1<>0");
+                // -----------------------------------------------------
+               $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+               $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+       
+               return view('pdf.akuntansi.cetakneracaannual',['rsneraca'=>$rsneraca,'lembaga'=>$lembaga,'ttd'=>$ttd,'tgl_trans1'=>$tgl_trans1,'tgl_trans2'=>$tgl_trans2,'tgl_trans3'=>$tgl_trans3,'totaktiva1'=>$totaktiva1,'totpasiva1'=>$totaktiva1,'laba1'=>$laba1,'totaktiva2'=>$totaktiva2,'totpasiva2'=>$totaktiva2,'laba2'=>$laba2,'totaktiva3'=>$totaktiva3,'totpasiva3'=>$totaktiva3,'laba3'=>$laba3]);
+
+    }
+    // EXPORT NERACA ANNUAL
+    public function bo_ak_exportneracaannual(Request $request)
+    {
+        $result = DB::select("select * from neraca_annual where aktiva_bln1<>0 OR pasiva_bln1<>0");
+        return (new ReportNeracaAnnualExport($result,$request->tgl_trans1,$request->tgl_trans2,$request->tgl_trans3,$request->totaktiva1,$request->totpasiva1,$request->laba1,$request->totaktiva2,$request->totpasiva2,$request->laba2,$request->totaktiva3,$request->totpasiva3,$request->laba3))->download('exportneracaannual.xlsx');
+    }
+    // Show form rekapitulasi jurnal harian 
+    public function bo_ak_frnrekapjurnalharian()
+    {
+        $logos = Logo::all();
+        $users = User::all();
+        return view('reports.akuntansi.frmrptrekapjurnalharian',['users' => $users,'logos' => $logos,'msgstatus' =>'']);
+    }
+    // Cari rekapitulasi jurnal
+    public function bo_ak_carirekapjurnal(Request $request)
+    {
+        $this->validate($request,[
+            'tgl_trans1' => 'required',
+            'tgl_trans2' => 'required',
+        ]);
+        $tgl_trans1 =date('Y-m-d',strtotime($request->tgl_trans1));
+        $tgl_trans2 =date('Y-m-d',strtotime($request->tgl_trans2));
+
+        $result = DB::select("SELECT perkiraan.kode_perk,perkiraan.dk,trans_master.src,perkiraan.nama_perk,SUM(IF(trans_master.src='TL',trans_detail.debet,0)) as KAS_DEBET,SUM(IF(trans_master.src='TL',trans_detail.kredit,0)) as KAS_KREDIT,SUM(IF(trans_master.src='GL',trans_detail.debet,0)) as NONKAS_DEBET,SUM(IF(trans_master.src='GL',trans_detail.kredit,0)) as NONKAS_KREDIT FROM (perkiraan INNER JOIN trans_detail ON perkiraan.kode_perk=trans_detail.kode_perk) INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2' GROUP BY perkiraan.kode_perk,trans_master.src ORDER BY perkiraan.kode_perk");
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+
+        return view('pdf.akuntansi.cetakrekapjurnal',['tgl_trans1'=>$tgl_trans1,'tgl_trans2'=>$tgl_trans2,'result'=>$result,'lembaga'=>$lembaga,'ttd'=>$ttd]);
+    }
+    // EXPORT REKAP JURNAL HARIAN
+    public function exportrekapjurnalharian(Request $request)
+    {
+        $this->validate($request,[
+            'tgl_trans1' => 'required',
+            'tgl_trans2' => 'required',
+        ]);
+        $tgl_trans1 =date('Y-m-d',strtotime($request->tgl_trans1));
+        $tgl_trans2 =date('Y-m-d',strtotime($request->tgl_trans2));
+
+        $result = DB::select("SELECT perkiraan.kode_perk,perkiraan.dk,trans_master.src,perkiraan.nama_perk,SUM(IF(trans_master.src='TL',trans_detail.debet,0)) as KAS_DEBET,SUM(IF(trans_master.src='TL',trans_detail.kredit,0)) as KAS_KREDIT,SUM(IF(trans_master.src='GL',trans_detail.debet,0)) as NONKAS_DEBET,SUM(IF(trans_master.src='GL',trans_detail.kredit,0)) as NONKAS_KREDIT FROM (perkiraan INNER JOIN trans_detail ON perkiraan.kode_perk=trans_detail.kode_perk) INNER JOIN trans_master ON trans_detail.master_id=trans_master.trans_id WHERE trans_master.tgl_trans>='$tgl_trans1' AND trans_master.tgl_trans<='$tgl_trans2' GROUP BY perkiraan.kode_perk,trans_master.src ORDER BY perkiraan.kode_perk");
+
+        return (new ReportRekapJurnalHarianExport($result))->download('exportrekapjurhar.xlsx');
+    }
+    // show form cari labarugi 
+    public function bo_ak_lp_showfrmlabarugi()
+    {
+        $logos = Logo::all();
+        $users = User::all();
+
+        return view('reports.akuntansi.frmrptlabarugi',['logos' => $logos, 'users' => $users,'msgstatus' =>'']);
+    }
+    // Cari labarugi per tanggal
+    public function bo_ak_carilabarugi(Request $request)
+    {
+        set_time_limit(2000);
+
+        $tgl_trans = date('Y-m-d',strtotime($request->tgl_trans));
+        $days = date('d',strtotime($request->tgl_trans)) -1;
+        $tgl_awal = date('Y-m-d',strtotime("-$days days",strtotime($request->tgl_trans)));
+        $pendapatan =0;$biaya =0;
+        DB::select("update perkiraan_copy1 set saldo_awal=0,saldo_debet=0,saldo_kredit=0,saldo_akhir=0");
+        $rs = DB::select("SELECT * FROM perkiraan WHERE (kode_perk LIKE '4%' OR kode_perk LIKE '5%' OR kode_perk LIKE '6%') AND type='G' ORDER BY kode_perk");
+            foreach($rs as $values){
+
+                $saldo_awal=$values->saldo_awal;
+                $saldo = DB::select("select '$values->kode_perk' as kode_perk,SUM(IF(perkiraan.dk='D',(trans_detail.debet-trans_detail.kredit),(trans_detail.kredit-trans_detail.debet))) as saldo FROM (trans_detail INNER JOIN trans_master on trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk WHERE perkiraan.kode_perk LIKE '$values->kode_perk%' AND (trans_master.tgl_trans>='$tgl_awal' AND trans_master.tgl_trans<='$tgl_trans')");
+                $saldo=$saldo[0]->saldo;
+                if(is_null($saldo))
+                {
+                    $saldo=0;
+                }
+                if($values->dk=='K'){
+                $sldak = DB::select("select '$values->kode_perk' as kode_perk,SUM((trans_detail.kredit-trans_detail.debet)) as saldo FROM trans_detail INNER JOIN trans_master on trans_detail.master_id=trans_master.trans_id WHERE trans_detail.kode_perk LIKE '$values->kode_perk%' AND trans_master.tgl_trans<='$tgl_trans'");}
+                elseif($values->dk=='D'){
+                    $sldak = DB::select("select '$values->kode_perk' as kode_perk,SUM((trans_detail.debet-trans_detail.kredit)) as saldo FROM trans_detail INNER JOIN trans_master on trans_detail.master_id=trans_master.trans_id WHERE trans_detail.kode_perk LIKE '$values->kode_perk%' AND trans_master.tgl_trans<='$tgl_trans'");                }
+                $sldak = $sldak[0]->saldo;
+                if($values->kode_perk=='4')
+                {   
+                    $saldopend = $saldo;
+                    $pendapatan =$sldak + $saldo_awal;
+                }elseif($values->kode_perk=='5'){
+                    $saldobya = $saldo;
+                    $biaya =$sldak + $saldo_awal;
+                }
+                DB::select("update perkiraan_copy1 set saldo_awal= $saldo,saldo_akhir=($sldak + $saldo_awal) WHERE kode_perk=$values->kode_perk");
+                
+            }
+            $rslabarugi = DB::select("SELECT * FROM perkiraan_copy1 WHERE (kode_perk LIKE '4%' OR kode_perk LIKE '5%' OR kode_perk LIKE '6%') AND type='G' ORDER BY kode_perk");
+            $rstaksiran = DB::select("SELECT (perkiraan.saldo_awal+data1.saldo) as taksiran_pajak FROM perkiraan INNER JOIN (select '6' as kode_perk,SUM(IF(perkiraan.dk='D',(trans_detail.debet-trans_detail.kredit),(trans_detail.kredit-trans_detail.debet))) as saldo FROM (trans_detail INNER JOIN trans_master on trans_detail.master_id=trans_master.trans_id) INNER JOIN perkiraan ON trans_detail.kode_perk=perkiraan.kode_perk WHERE perkiraan.kode_perk LIKE '6%' AND trans_master.tgl_trans<='$tgl_trans') as data1 ON perkiraan.kode_perk=data1.kode_perk");
+            $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+            $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+    
+            return view('pdf.akuntansi.cetaklabarugi',['rslabarugi'=>$rslabarugi,'pajak'=>$rstaksiran[0]->taksiran_pajak,'pendapatan'=>$pendapatan,'biaya'=>$biaya,'tgl_awal'=>$tgl_awal,'tgl_trans'=>$tgl_trans,'saldopend'=>$saldopend,'saldobya'=>$saldobya,'lembaga'=>$lembaga,'ttd'=>$ttd]);
+    }
+    // export Laba Rugi
+    public function bo_ak_exportlabarugi()
+    {
+        $rslabarugi = DB::select("SELECT * FROM perkiraan_copy1 WHERE (kode_perk LIKE '4%' OR kode_perk LIKE '5%' OR kode_perk LIKE '6%') AND type='G' ORDER BY kode_perk");
+        return (new ReportlabarugiExport($rslabarugi))->download('labarugi.xlsx');
+    }
+    // show form neraca dan labarugi konsolidasi
+    public function bo_ak_lp_showfrmneracakons()
+    {
+        $users = User::all();
+        $logos = Logo::all();
+
+        return view('reports.akuntansi.frmneracakonsol',['users' => $users,'logos' => $logos,'msgstatus' =>'']);
+    }
+    // CARI NERACA DAN LABARUGI KONSOL
+    public function bo_ak_carineracakonsol(Request $request)
+    {
+        $this->validate($request,[
+            'tgl_trans'=>'required'
+        ]);
+        $tgl_trans = date('Y-m-d',strtotime($request->tgl_trans));
+        $rs = DB::select("SELECT * FROM glsql_konsolidasi WHERE (KODE_PERK LIKE '1%' OR KODE_PERK LIKE '2%' OR KODE_PERK LIKE '3%') AND TGL='$tgl_trans' AND NAMA_PERK<>'' GROUP BY KODE_PERK ORDER BY KODE_PERK");
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+
+        return view('pdf.akuntansi.cetakneracakonsol_1',['rs'=>$rs,'tgl_trans'=>$tgl_trans,'lembaga'=>$lembaga,'ttd'=>$ttd]);
+    }
+    // EXPORT NERACA KONSOLIDASI
+    public function bo_ak_lp_neracakonsol1(Request $request)
+    {
+        $tgl_trans = date('Y-m-d',strtotime($request->tgl_trans));
+        $rs = DB::select("SELECT * FROM glsql_konsolidasi WHERE (KODE_PERK LIKE '1%' OR KODE_PERK LIKE '2%' OR KODE_PERK LIKE '3%') AND TGL='$tgl_trans' AND NAMA_PERK<>'' GROUP BY KODE_PERK ORDER BY KODE_PERK");
+
+        return (new ReportNeracaKonsolExport($rs))->download('neracakonsol1.xlsx');
+    }
+    // Show form labarugi konsolidasi
+    public function bo_ak_lp_labarugikonsol()
+    {
+        $users = User::all();
+        $logos = Logo::all();
+
+        return view('reports.akuntansi.frmlabarugikonsol',['users' => $users,'logos' => $logos,'msgstatus' =>'']);
+    }
+    // Cari Labarugi konsolidasi
+    public function bo_ak_carilabakonsol(Request $request)
+    {
+        $this->validate($request,
+        [
+            'tgl_trans'=>'required'
+        ]);
+
+        $tgl_trans = date('Y-m-d',strtotime($request->tgl_trans));
+        $rs = DB::select("SELECT * FROM glsql_konsolidasi WHERE (KODE_PERK LIKE '4%' OR KODE_PERK LIKE '5%' OR KODE_PERK LIKE '6%') AND TGL='$tgl_trans' AND NAMA_PERK<>'' GROUP BY KODE_PERK ORDER BY KODE_PERK");
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_GL'.'%'.'N'.'%')->get();
+
+        return view('pdf.akuntansi.cetaklabarugikonsol_1',['rs'=>$rs,'tgl_trans'=>$tgl_trans,'lembaga'=>$lembaga,'ttd'=>$ttd]);
+    }
+    // EXPORT LABA RUGI KONSOL
+    public function bo_ak_lp_labarugikonsol1(Request $request)
+    {
+        $tgl_trans = date('Y-m-d',strtotime($request->tgl_trans));
+        $rs = DB::select("SELECT * FROM glsql_konsolidasi WHERE (KODE_PERK LIKE '4%' OR KODE_PERK LIKE '5%' OR KODE_PERK LIKE '6%') AND TGL='$tgl_trans' AND NAMA_PERK<>'' GROUP BY KODE_PERK ORDER BY KODE_PERK");
+
+        return (new ReportLabarugiKonsolExport($rs))->download('labarugikonsol1.xlsx');
+
+    }
+
 }

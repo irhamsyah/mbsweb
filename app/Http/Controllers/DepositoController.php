@@ -7,6 +7,8 @@ use App\KodeGroup3Deposito;
 use App\KodeJenisDeposito;
 use App\Kodecabang;
 use App\KodeTransDeposito;
+use App\Kodejenistabungan;
+use App\Kodetranstabungan;
 use App\Deposito;
 use App\Kodeketerkaitanlapbul;
 use App\Kodemetoda;
@@ -16,6 +18,7 @@ use App\Mysysid;
 use App\Nasabah;
 use App\User;
 use App\Tabungan;
+use App\Tabtran;
 use App\Deptran;
 use App\Tellertran;
 
@@ -39,7 +42,12 @@ class DepositoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-
+        // Mbalekno Kehalaman LOGIN jika Waktu expired
+        public function __construct()
+        {
+            $this->middleware('auth');
+        }
+    
     public function bo_dp_de_deposito()
     {
         $logos = Logo::all();
@@ -94,6 +102,9 @@ class DepositoController extends Controller
     {
       $logos = Logo::all();
 
+      $this->validate($request,[
+        'no_rekening'=>'required',
+      ]);
       if ($request->no_rekening != '' && $request->jenis_deposito !='' && $request->jml_deposito !='' && $request->tgl_registrasi !='' && $request->inputstatus !='')
       {
         if($request->aro=="on"){
@@ -118,9 +129,17 @@ class DepositoController extends Controller
         }
         $depositos = new Deposito;
         $depositos->NO_REKENING = $request->no_rekening;
-        $depositos->NO_ALTERNATIF = $request->no_bilyet;
+        if(is_null($request->no_bilyet)||$request->no_bilyet=="")
+        {
+            $depositos->NO_ALTERNATIF = $request->no_rekening;
+        }else{
+            $depositos->NO_ALTERNATIF = $request->no_bilyet;
+        }
         $depositos->NASABAH_ID = $request->nasabah_id;
-        $depositos->QQ = $request->qq;
+        if(is_null($request->qq)==false||$request->qq<>"")
+        {
+            $depositos->QQ = $request->qq;
+        }
         $depositos->KODE_BI_PEMILIK = $request->kode_bi_pemilik;
         $depositos->KODE_BI_HUBUNGAN = $request->kode_bi_hubungan;
         $depositos->KODE_BI_METODA = $request->metoda;
@@ -132,12 +151,24 @@ class DepositoController extends Controller
         $depositos->JKW = $request->jkw;
         $depositos->TGL_JT = $request->tgl_jt;
         $depositos->STATUS_AKTIF = $request->inputstatus;
-        $depositos->KODE_GROUP1 = $request->kode_group1;
-        $depositos->KODE_GROUP2 = $request->kode_group2;
-        $depositos->KODE_GROUP3 = $request->kode_group3;
-        $depositos->STATUS_BUNGA = $request->catatanaro;
+        if(is_null($request->kode_group1)==false){
+            $depositos->KODE_GROUP1 = $request->kode_group1;
+        }
+        if(is_null($request->kode_group2)==false){
+            $depositos->KODE_GROUP2 = $request->kode_group2;
+        }
+        if(is_null($request->kode_group3)==false){
+            $depositos->KODE_GROUP3 = $request->kode_group3;
+        }
+        if(is_null($request->catatanaro)==false){
+            $depositos->STATUS_BUNGA = $request->catatanaro;
+        }
+
         $depositos->ARO = $aro;
-        $depositos->NO_REK_TABUNGAN = $request->kerekeningtab;
+        if(is_null($request->kerekeningtab)==false){
+            $depositos->NO_REK_TABUNGAN = $request->kerekeningtab;
+        }
+
         $depositos->BUNGA_BERBUNGA = $bungaberbunga;
         $depositos->MASUK_TITIPAN = $masuktitipan;
         $depositos->KODE_CAB = $request->cab;

@@ -28,11 +28,8 @@ Auth::routes();
 //     return redirect(route('login'));
 // });
 
-Route::get('/','Auth\LoginController@LoginUser')->name('login');
+Route::get('/','Auth\LoginController@showLoginForm')->name('login');
 Route::post('/login','Auth\LoginController@AuthLoginUser')->name('authlogin');
-
-// Route::get('/','Auth\LoginController@LoginUser')->name('login');
-// Route::post('/','Auth\LoginController@AuthLoginUser')->name('authlogin');
 
 //Admin Page
 Auth::routes([
@@ -42,6 +39,9 @@ Auth::routes([
 Route::get('/home', 'HomeController@admin_index')->name('home')->middleware('verified');
 Route::get('/verify','Auth\RegisterController@verifyUser')->name('verify.user');
 
+/* Verifiy Customer User*/
+Route::get('/verifyuser','RegistercustomerController@verifyUser')->name('verify.cust');
+    
 /* Verifiy Customer User*/
 Route::get('/verifyuser','RegistercustomerController@verifyUser')->name('verify.cust');
 
@@ -115,6 +115,13 @@ Route::put('/bo_dp_de_deposito', 'DepositoController@bo_dp_de_deposito_edit');
 Route::delete('/bo_dp_de_deposito', 'DepositoController@bo_dp_de_deposito_destroy');
 Route::get('/bo_dp_de_deposito/printbukarekdeposito','DepositoController@bo_cs_de_bukarekdeposito_rppdf')->name('cetakbukarekdeposito');//print buka rekening deposito
 
+//BO KREDIT Data Entry KREDIT
+Route::get('/bo_kr_de_kredit', 'KreditController@bo_kr_de_kredit')->name('showkredit');
+Route::post('/bo_kr_de_kredit/add','KreditController@bo_kr_de_kredit_add');//add kredit
+Route::get('/bo_kr_de_kredit/getKredits','KreditController@getKredits')->name('Getkredits');
+Route::get('/bo_kr_de_kredittrans','KreditController@bo_kr_de_kredittrans')->name('Getkredittrans');
+Route::post('/bo_kr_de_kredittransdelete','KreditController@bo_kr_de_kredittransdelete')->name('Deletekredittrans');
+Route::get('/bo_kr_de_kredittransdelete/getKreditTransactions','KreditController@getKreditTransactions')->name('GetKreditTransaction');
 
 //Route Tabungan
 Route::get('/bo_tb_de_tabungan','TabunganController@bo_tb_de_tabungan')->name('showtabungan');
@@ -305,12 +312,83 @@ Route::get('bo_ak_lp_showfrnrptdaftarperkiraan','AkuntansiController@bo_ak_lp_sh
 Route::get('bo_pr_perkiraan','AkuntansiController@bo_pr_perkiraan')->name('pdfperkiraan');
 // export to excel daftar perkiraan
 Route::post('bo_ex_daftarperkiraan','AkuntansiController@bo_ex_daftarperkiraan');
-// Show form report translation jurnal
+// Show form report jurnal transaction
 Route::get('bo_ak_lp_showfrmrptjurnaltransaksi','AkuntansiController@showfrmrptjurnaltransaksi')->name('showfrmrptjurnaltransaksi');
 // cari jurnal transaksi
 Route::post('bo_ak_lp_carijurnal','AkuntansiController@bo_ak_lp_carijurnal');
 // cetak pdf jurnal transaksi
 Route::post('bo_ak_lp_cetakjurnal','AkuntansiController@bo_ak_lp_cetakjurnal');
+// export to excel jurnal transaksi
+Route::get('bo_ak_ex_jurnaltrans','AkuntansiController@bo_ak_ex_jurnaltrans')->name('exportjurnaltransaksi');
+// Show form pencarian buku besar 
+Route::get('bo_ak_lp_showfrmbukubesar','AkuntansiController@bo_ak_lp_showfrmbukubesar')->name('showfrmbukubesar');
+// Cari buku besar 
+Route::post('bo_ak_caribukubesar','AkuntansiController@bo_ak_caribukubesar');
+// EXPORT BUKU BESAR
+Route::get('export_buku_besar','AkuntansiController@export_buku_besar')->name('exportbukubesar');
+// Show form pencarian buku besar pembantu
+Route::get('bo_ak_lp_showfrmbukubesarhelper','AkuntansiController@bo_ak_lp_showfrmbukubesarhelper')->name('showfrmbukubesarhelper');
+// Cari buku besar pembantu
+Route::post('bo_ak_caribukubesarhelper','AkuntansiController@bo_ak_caribukubesarhelper');
+// Export buku besar ke EXCEL
+Route::get('export_buku_besar_helper','AkuntansiController@export_buku_besar_helper')->name('exportbukubesarhelper');
+
+
+// Show form pencarian Trial Balance/Trial Balance Komparatif
+Route::get('bo_ak_lp_showfrmtrialbalance','AkuntansiController@bo_ak_lp_showfrmtrialbalance')->name('showfrmtrialbalance');
+// cari trial balance/neraca /Trial Balance Komparatif
+Route::post('bo_ak_caritrial','AkuntansiController@bo_ak_caritrial');
+// SHow form pencarian rekapiyulasi perkiraan
+Route::get('bo_ak_lp_showfrmrekapperk','AkuntansiController@bo_ak_lp_showfrmrekapperk')->name('showfrmrekapperk');
+// Cari rekap perkiraan 
+Route::post('bo_ak_carirekapperk','AkuntansiController@bo_ak_carirekapperk');
+// Show form neraca SCONTRO
+Route::get('bo_ak_lp_showfrmneraca','AkuntansiController@bo_ak_lp_showfrmneraca')->name('showfrmneraca');
+// Cari Neraca SCONTRO
+Route::post('bo_ak_carineraca','AkuntansiController@bo_ak_carineraca');
+// Export neraca Scontro
+Route::get('export_neraca_lajur','AkuntansiController@export_neraca_lajur')->name('export_neraca_lajur');
+// Show form neraca harian
+Route::get('bo_ak_lp_showfrmneracaharian','AkuntansiController@bo_ak_lp_showfrmneracaharian')->name('showfrmneracaharian');
+// Cari /Proses neraca Harian
+Route::post('bo_ak_carineracaharian','AkuntansiController@bo_ak_carineracaharian');
+// Show Form Neraca Komparatif
+Route::get('bo_ak_lp_showfrmkomparatif','AkuntansiController@showfrmneracakomparatif')->name('showfrmneracakomparatif');
+// Cari Neraca Komparatif
+Route::post('bo_ak_carineracakomparatif','AkuntansiController@bo_ak_carineracakomparatif');
+// Export neraca komparatif ke excel
+Route::get('bo_ak_exportkomparatif','AkuntansiController@bo_ak_exportkomparatif')->name('exportneracakomparatif');
+// Show Form Neraca ANNUAL
+Route::get('bo_ak_lp_showfrmneracaannual','AkuntansiController@bo_ak_lp_showfrmneracaannual')->name('showfrmneracaannual');
+Route::post('bo_ak_carineracaannual','AkuntansiController@bo_ak_carineracaannual');
+// Export neraca ANNUAL ke EXCEL
+ROute::get('bo_ak_exportneracaannual','AkuntansiController@bo_ak_exportneracaannual')->name('export_neraca_annual');
+// Show form Rekapitulasi Jurnal Harian
+Route::get('bo_ak_lp_frnrekapjurnalharian','AkuntansiController@bo_ak_frnrekapjurnalharian')->name('showfrnrekapjurnalharian');
+// Cari Rekapitulasi Jurnal Harian
+Route::post('bo_ak_carirekapjurnal','AkuntansiController@bo_ak_carirekapjurnal');
+// EXPORT REKAPITULASI JURNAL HARIAN 
+Route::get('exportrekapjurnalharian','AkuntansiController@exportrekapjurnalharian')->name('exportrekapjurnalharian');
+// SHOW FORM LABARUGI
+Route::get('bo_ak_lp_showfrmlabarugi','AkuntansiController@bo_ak_lp_showfrmlabarugi')->name('showfrmlabarugi');
+// Cari labarugi
+Route::post('bo_ak_carilabarugi','AkuntansiController@bo_ak_carilabarugi');
+// EXPORT LABARUGI
+Route::get('bo_ak_exportlabarugi','AkuntansiController@bo_ak_exportlabarugi')->name('exportlabarugi');
+// SHOW FORM NERACA KONSOLIDASI
+Route::get('bo_ak_lp_showfrmneracakons','AkuntansiController@bo_ak_lp_showfrmneracakons')->name('showfrmneracakonsol');
+// Cari Neraca Konsola
+Route::post('bo_ak_carineracakonsol','AkuntansiController@bo_ak_carineracakonsol');
+// Export Neraca Konsol 1
+Route::get('bo_ak_lp_neracakonsol1','AkuntansiController@bo_ak_lp_neracakonsol1')->name('exportneracakonsol1');
+// Show form Labarugi Konsolidasi
+Route::get('bo_ak_lp_labarugikonsol','AkuntansiController@bo_ak_lp_labarugikonsol')->name('frmlabarugikonsol');
+// Cari Laba rugi konsol
+Route::post('bo_ak_carilabakonsol','AkuntansiController@bo_ak_carilabakonsol');
+// Export Labarugi konsolidasi
+Route::get('bo_ak_lp_labarugikonsol1','AkuntansiController@bo_ak_lp_labarugikonsol1')->name('exportlabarugikonsol1');
+
+
 
 
 //TELLER TRANS DEPOSITO

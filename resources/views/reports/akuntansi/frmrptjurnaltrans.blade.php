@@ -103,12 +103,15 @@
             <div class="form-group">
                 <form method="post" action="bo_ak_lp_cetakjurnal">
                     @csrf
-                    @if(isset($jurnal))
-                        <input type="text" hidden name="tgl_trans1" value="{{$tgl_trans1}}">
-                        <input type="text" hidden name="tgl_trans2" value="{{$tgl_trans2}}">
-                    @endif
                     <button class="btn btn-danger" style="float:right">Cetak</button>
+                    @if(isset($jurnal))
+                      <input type="text" hidden name="tgl_trans1" value="{{$tgl_trans1}}">
+                      <input type="text" hidden name="tgl_trans2" value="{{$tgl_trans2}}">
+                      <a href="{{route('exportjurnaltransaksi',['tgl_trans1'=>$tgl_trans1,'tgl_trans2'=>$tgl_trans2])}}" class="btn btn-primary" style="float: right;margin-right:10px">Export</a>
+                    @else
                     <a href="#" class="btn btn-primary" style="float: right;margin-right:10px">Export</a>
+                    @endif
+
                 </form>
             </div>
           </div>

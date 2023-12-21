@@ -416,7 +416,6 @@
                   <input id="inputtutup" disabled type="checkbox" name="tutup" class="form-check-input">
                   <label for="inputtutup">Tutup</label>
                 </div>
-
               </div>
             </div>
             <!--Baris ke 2 ADD tabungan ----->

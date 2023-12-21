@@ -453,10 +453,8 @@
                             <div class="input-group-append" data-toggle="modal" data-target="#ambildatanasabah">
                               <div class="input-group-text"><i class="fa fa-user"></i></div>
                           </div>
-
                           </div>
                         </div>
-
                 <div class="col-lg-2 col-sm-8">
                   <label for="inputnocif">Nama</label>
                   <input type="text" id="inputNamaNasabahadd" name="nama_nasabah" readonly class="form-control">
@@ -630,9 +628,7 @@
                   <th>Nasabah Id</th>
                   <th>Nama Nasabah</th>
                   <th>Alamat Nasabah</th>
-
                   <th>Action</th>
-
               </tr>
             </thead>
             <tbody>
@@ -641,17 +637,15 @@
                 <td>{{ $value->nasabah_id }}</td>
                 <td>{{ $value->nama_nasabah }}</td>
                 <td>{{ $value->alamat }}</td>
-
                 <td>
                   <a class="dropdown-toggle btn btn-block bg-gradient-primary btn-sm" data-toggle="dropdown" href="#">
                     Action <span class="caret"></span>
                   </a>
-                  <div class="dropdown-menu">
+                  <div class="dropdown-menu" data-dismiss="modal">
                     <a id="tes1" href="#" class="dropdown-item">
-                    pilih
-                  </a>
+                      pilih
+                    </a>
                   </div>
-
                 </td>
                 </tr>
                 @endforeach
@@ -661,7 +655,6 @@
       </div>
     </div>
   </div>
-  
 </div>
 <!-- /.content -->
 @endsection

@@ -23,7 +23,9 @@
 
 @section('content')
 <!-- Main content -->
+
 <div class="content-wrapper" style="margin-top:10px; max-height:800px !important;">
+  <h5 style="margin-left: 10px">Data Entry Deposito</h5>
   <div class="container-fluid">
     <div class="row">
       <div class="col-12">
@@ -808,17 +810,15 @@
                 <td>{{ $value->nasabah_id }}</td>
                 <td>{{ $value->nama_nasabah }}</td>
                 <td>{{ $value->alamat }}</td>
-
                 <td>
                   <a class="dropdown-toggle btn btn-block bg-gradient-primary btn-sm" data-toggle="dropdown" href="#">
                     Action <span class="caret"></span>
                   </a>
-                  <div class="dropdown-menu">
+                  <div class="dropdown-menu" data-dismiss="modal">
                     <a id="tes1" href="#" class="dropdown-item">
                     pilih
-                  </a>
+                    </a>
                   </div>
-
                 </td>
                 </tr>
                 @endforeach

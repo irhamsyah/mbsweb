@@ -104,7 +104,7 @@ class TabunganController extends Controller
                 ]);
 
                 return redirect()->back() ->with('alert', 'Data berhasil diupdate!');
-            }
+    }
 
     public function bo_tab_add_tabung(Request $request)
     {
@@ -3403,7 +3403,7 @@ return redirect()->back()->with('alert','SUDAH PERNAH DILAKUKAN PERHITUNGAN');
     }
     // EXPORT NOMINATIF PERJENI KE EXCEL
     public function nominatifperjeniseksport(Request $request)
-    {   
+    {
         $jenistab = substr($request->jenis_tabungan,0,2);
         $tgl_nom = $request->tgl_nominatif;
         $sql = "SELECT tabung.no_rekening,nasabah.nama_nasabah,nasabah.alamat,tabung.TGL_REGISTRASI,tabung.SUKU_BUNGA,saldo.SALDO_AKHIR,maxtgl.tgl_terakhir_trans FROM ((tabung INNER JOIN nasabah ON tabung.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT tabung.no_rekening,(tabung.SALDO_AWAL+SUM(if(tabtrans.MY_KODE_TRANS LIKE '1%' AND tabtrans.TGL_TRANS<='$tgl_nom',tabtrans.SALDO_TRANS,0))-SUM(if(tabtrans.MY_KODE_TRANS LIKE '2%' AND tabtrans.TGL_TRANS<='$tgl_nom',tabtrans.SALDO_TRANS,0))) as SALDO_AKHIR FROM tabung INNER JOIN tabtrans ON tabung.NO_REKENING=tabtrans.NO_REKENING WHERE tabung.STATUS_AKTIF=2 GROUP BY tabung.NO_REKENING) as saldo ON tabung.NO_REKENING=saldo.no_rekening) INNER JOIN(select NO_REKENING,MAX(tgl_trans) as tgl_terakhir_trans from tabtrans where (MY_KODE_TRANS=100 OR MY_KODE_TRANS=200) GROUP BY NO_REKENING) as maxtgl ON tabung.NO_REKENING=maxtgl.NO_REKENING WHERE tabung.STATUS_AKTIF=2 AND tabung.JENIS_TABUNGAN='$jenistab' AND tabung.TGL_MULAI<='$tgl_nom'";

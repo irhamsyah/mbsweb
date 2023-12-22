@@ -82,11 +82,7 @@
   {{-- Data Table --}}
   <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
   <script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
-<<<<<<< HEAD
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
-=======
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css"> 
->>>>>>> 4773d12ca3c0c2adf82ae23c74942ab52273a9ae
   {{-- ---------}}
 
   <!-- SweetAlert2 -->

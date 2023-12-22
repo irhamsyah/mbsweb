@@ -148,7 +148,7 @@
     </div>
     <!-- /.row -->
   </div>
-    {{-- MODAL EDIT DATA NELAYAN --}}
+    {{-- MODAL EDIT DATA perkiraan --}}
     <div class="modal fade" id="modal-edit-perkiraan">
         <div class="modal-dialog modal-xl">
           <form action="/bo_ak_de_updateperkiraan" method="post" enctype="multipart/form-data">
@@ -287,10 +287,11 @@
                   <a class="dropdown-toggle btn btn-block bg-gradient-primary btn-sm" data-toggle="dropdown" href="#">
                     Action <span class="caret"></span>
                   </a>
-                  <div class="dropdown-menu">
-                    <a id="tes1" href="#" class="dropdown-item">
-                    pilih
-                  </a>
+                  {{-- ini untuk klik data langsung tutup --}}
+                  <div class="dropdown-menu" data-dismiss="modal">
+                    <a id="tes1" href="#" class="dropdown-item" >
+                      pilih
+                    </a>
                   </div>
 
                 </td>

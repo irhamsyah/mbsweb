@@ -337,19 +337,42 @@ class KreditController extends Controller
 
       // Total records
       $totalRecords = Kredit::select('count(*) as allcount')->count();
-      $totalRecordswithFilter = Kredit::select('count(*) as allcount')->where('NO_REKENING', 'like', '%' .$searchValue . '%')->count();
+      $totalRecordswithFilter = Kredit::select('nasabah.*','NO_REKENING','JENIS_PINJAMAN','POKOK_SALDO_REALISASI','POKOK_SALDO_AKHIR','DESKRIPSI_JENIS_KREDIT','kredit.NASABAH_ID')
+                        ->leftJoin('kodejeniskredit', function($join) {
+                        $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
+                        })
+                        ->join('nasabah', function($join) {
+                            $join->on('kredit.NASABAH_ID', '=', 'nasabah.nasabah_id');
+                          })
+                        ->where(function ($query) use ($searchValue) {
+                          $query->where('NO_REKENING', 'like', '%' .$searchValue . '%')
+                          ->orWhere('nama_nasabah', 'like', '%' .$searchValue . '%')
+                          ->orWhere('DESKRIPSI_JENIS_KREDIT', 'like', '%' .$searchValue . '%');
+                          })
+                        ->where(function ($query) use ($searchValue) {
+                          $query->where('STATUS_AKTIF', '=', 2)
+                          ->orWhere('STATUS_AKTIF', '=', 3)
+                          ->orWhere('STATUS_AKTIF', '=', 1);
+                          })->count();
 
       // Fetch records
       $records = Kredit::select('nasabah.*','NO_REKENING','JENIS_PINJAMAN','POKOK_SALDO_REALISASI','POKOK_SALDO_AKHIR','DESKRIPSI_JENIS_KREDIT','kredit.NASABAH_ID')
           ->leftJoin('kodejeniskredit', function($join) {
           $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
           })
-          ->leftJoin('nasabah', function($join) {
+          ->join('nasabah', function($join) {
               $join->on('kredit.NASABAH_ID', '=', 'nasabah.nasabah_id');
             })
-          ->where('NO_REKENING', 'like', '%' .$searchValue . '%')
-          ->orWhere('nama_nasabah', 'like', '%' .$searchValue . '%')
-          ->orWhere('DESKRIPSI_JENIS_KREDIT', 'like', '%' .$searchValue . '%')
+          ->where(function ($query) use ($searchValue) {
+            $query->where('NO_REKENING', 'like', '%' .$searchValue . '%')
+            ->orWhere('nama_nasabah', 'like', '%' .$searchValue . '%')
+            ->orWhere('DESKRIPSI_JENIS_KREDIT', 'like', '%' .$searchValue . '%');
+            })
+          ->where(function ($query) use ($searchValue) {
+            $query->where('STATUS_AKTIF', '=', 2)
+            ->orWhere('STATUS_AKTIF', '=', 3)
+            ->orWhere('STATUS_AKTIF', '=', 1);
+            })          
           ->skip($start)
           ->take($rowperpage)
           ->orderBy($columnName,$columnSortOrder)
@@ -363,15 +386,18 @@ class KreditController extends Controller
         $norek = $record->NO_REKENING; 
         $saldorealisasi = $record->POKOK_SALDO_REALISASI; 
         $saldoakhir = $record->POKOK_SALDO_AKHIR; 
-
-        $data_arr[] = array(
-          "nama_nasabah" => $namanasabah,
-          "DESKRIPSI_JENIS_KREDIT" => $deskripsi,
-          "NO_REKENING" => $norek,
-          "POKOK_SALDO_REALISASI" => $saldorealisasi,
-          "POKOK_SALDO_AKHIR" => $saldoakhir
-        );
+        // if( $namanasabah!=""){
+          $data_arr[] = array(
+            "nama_nasabah" => $namanasabah,
+            "DESKRIPSI_JENIS_KREDIT" => $deskripsi,
+            "NO_REKENING" => $norek,
+            "POKOK_SALDO_REALISASI" => $saldorealisasi,
+            "POKOK_SALDO_AKHIR" => $saldoakhir
+          );
+        // }
       }
+
+      // $totalRecords = count($data_arr);
 
       $response = array(
         "draw" => intval($draw),

@@ -2540,6 +2540,7 @@ class TabunganController extends Controller
     {
         $tgl1 = date('Y-m-d',strtotime($request->tgl_awal));
         $tgl2 = date('Y-m-d',strtotime($request->tgl_akhir));
+        set_time_limit(2000);
 
         $cari = Tabtran::where('TGL_TRANS','>=',$tgl1)
         ->where('TGL_TRANS','<=',$tgl2)

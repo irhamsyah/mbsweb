@@ -260,6 +260,7 @@ Route::post('exporttoexceltabblokir',
 // TELLER
 Route::get('bo_tl_tt_setoranpenarikantabungan','TellertabunganController@bo_tl_tt_setoranpenarikantabungan')->name('setoranpenarikantabungan');
 Route::post('bo_tl_tt_simpantrstabungan','TellertabunganController@bo_tl_tt_simpantrstabungan');
+Route::get('bo_tl_tk_realisasikredit','TellerKreditController@bo_tl_tk_realisasikredit')->name('realisasikredit');
 // AKUNTANSI
 Route::get('bo_ak_tt_postingdatatransaksi','AkuntansiController@bo_ak_tt_postingdatatransaksi')->name('showformpostingdatatransaksi');
 // cari dan posting ke trans_master_buffer dan trans_detail_buffer

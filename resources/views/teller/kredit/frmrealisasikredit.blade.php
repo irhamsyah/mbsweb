@@ -37,7 +37,7 @@
         </div>         
         <div class="card card-warning card-outline">
           <!-- form start -->
-          <form autocomplete="off" method="POST" action="/bo_tl_tk_realisasikredit" role="search">
+          <form autocomplete="off" method="POST" action="/bo_tl_tk_realisasikredit/setrealisasi" role="search">
             @csrf
             <div class="card-body">                
                 <div class="form-group row">
@@ -221,8 +221,8 @@
                   <div class="col-lg-4 col-sm-8">
                     <select class="form-control" name="kode_transaksi2" id="kode_transaksi2">
                       @php($i=0)
-                      @while ($i<count($kodetranstab) )
-                      <option value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}">{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
+                      @while ($i<count($kodetranskredit) )
+                      <option value="{{$kodetranskredit[$i]->KODE_TRANS}}">{{$kodetranskredit[$i]->KODE_TRANS}}-{{$kodetranskredit[$i]->DESKRIPSI_TRANS}}</option>
                           @php($i++)
                       @endwhile
                     </select>
@@ -464,25 +464,25 @@
                 <div class="form-group row">                   
                   <div class="col-lg-2 col-sm-12"> 
                     <label for="inputnocif">Tgl Transaksi</label>
-                    <input type="text" class="form-control" name="tgl_transaksi">
+                    <input type="text" class="form-control" value='{{ $tanggaltransaksi }}' name="tgl_transaksi" id="tgl_transaksi">
                   </div> 
                   <div class="col-lg-2 col-sm-12"> 
                     <label for="inputnocif">No. Bukti</label>
-                    <input type="text" class="form-control" name="no_bukti">
+                    <input type="text" class="form-control" name="no_bukti" required>
                   </div> 
                   <div class="col-lg-2 col-sm-12"> 
                     <label for="inputnocif">Kode Transaksi</label>
                     <select class="form-control" name="kode_transaksi3" id="kode_transaksi3">
                       @php($i=0)
-                      @while ($i<count($kodetranstab) )
-                      <option value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}">{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
+                      @while ($i<count($kodetranskredit) )
+                      <option value="{{$kodetranskredit[$i]->KODE_TRANS}}">{{$kodetranskredit[$i]->KODE_TRANS}}-{{$kodetranskredit[$i]->DESKRIPSI_TRANS}}</option>
                           @php($i++)
                       @endwhile
                     </select>
                   </div> 
                   <div class="col-lg-1 col-sm-12"> 
                     <label for="inputnocif">Type</label>
-                    <input type="text" class="form-control" name="tipe_transaksi">
+                    <input type="text" value="T" class="form-control" name="tipe_transaksi">
                   </div> 
                   <div class="col-lg-2 col-sm-12"> 
                     <label for="inputnocif">Total Diterima</label>
@@ -514,7 +514,7 @@
                     <select class="form-control" name="kode_transaksi_realisasi" id="kode_transaksi_realisasi">
                       @php($i=0)
                       @while ($i<count($kodetranstab) )
-                      <option value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}">{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
+                      <option value="{{$kodetranstab[$i]->KODE_TRANS}}" <?php if($kodetranstab[$i]->KODE_TRANS=='08'){echo 'selected';}?>>{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
                           @php($i++)
                       @endwhile
                     </select>
@@ -528,7 +528,7 @@
                     <select class="form-control" name="kode_transaksi_biaya" id="kode_transaksi_biaya">
                       @php($i=0)
                       @while ($i<count($kodetranstab) )
-                      <option value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}">{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
+                      <option value="{{$kodetranstab[$i]->KODE_TRANS}}" <?php if($kodetranstab[$i]->KODE_TRANS=='04'){echo 'selected';}?>>{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
                           @php($i++)
                       @endwhile
                     </select>
@@ -556,11 +556,11 @@
                   </div> 
                   <div class="col-lg-3 col-sm-12"> 
                     <select class="form-control" name="kode_transaksi_lain2" id="kode_transaksi_lain2">
-                      @php($i=0)
+                      <!-- @php($i=0)
                       @while ($i<count($kodetranstab) )
                       <option value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}">{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
                           @php($i++)
-                      @endwhile
+                      @endwhile -->
                     </select>
                   </div> 
                   <div class="col-lg-6 col-sm-6">
@@ -620,7 +620,7 @@
                       <div class="col-lg-12 col-sm-6">
                         <label for="nasabahid">No Rekening Tabungan</label>
                         <div class="input-group date" data-target-input="nearest">
-                          <input id="no_rekening_channeling" type="text" name="no_rekening_channeling" class="form-control" required>
+                          <input id="no_rekening_channeling" type="text" name="no_rekening_channeling" class="form-control">
 
                           <div class="input-group-append" data-toggle="modal" data-target="#ambildatatabungan">
                             <div class="input-group-text"><i class="fa fa-search"></i></div>
@@ -642,7 +642,7 @@
                 </div>
                 <div class="modal-footer justify-content-between">
                   <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
-                  <button type="submit" class="btn btn-primary">Realisasi</button>
+                  <button name="btn_realisasi" type="submit" class="btn btn-outline-primary" disabled>Realisasi</button>
                 </div>
             </div>
             <!-- /.card-body -->
@@ -781,7 +781,9 @@ function splitData(value, index, array) {
   nasabahalamat.push(value.alamat);  
 }
 window.onload = function(e){ 
+
   autocomplete(document.getElementsByName("no_rekening_kredit")[0], rekening, nasabahnama, nasabahalamat, kredits);
+
 }
 
 function selectElement(id, valueToSelect) { 
@@ -793,14 +795,32 @@ function setKredit(index){
   document.getElementsByName("id_nasabah")[0].value=kredits[index].nasabah_id;
   document.getElementsByName("nama_nasabah")[0].value=kredits[index].nama_nasabah; 
   document.getElementsByName("jml_pinjaman")[0].value=kredits[index].JML_PINJAMAN;
-  document.getElementsByName("tgl_realisasi")[0].value=kredits[index].TGL_REALISASI;
+  var parts = kredits[index].TGL_REALISASI.split('-');
+  var mydate = parts[2] + '/' + parts[1] + '/' + parts[0];
+  document.getElementsByName("tgl_realisasi")[0].value=mydate;
   document.getElementsByName("jangka_waktu")[0].value=kredits[index].BI_JANGKA_WAKTU; 
   document.getElementsByName("jumlah_angsuran")[0].value=kredits[index].JML_ANGSURAN;
-  document.getElementsByName("jatuh_tempo")[0].value=kredits[index].TGL_JATUH_TEMPO;
+  parts = kredits[index].TGL_JATUH_TEMPO.split('-');
+  mydate = parts[2] + '/' + parts[1] + '/' + parts[0];
+  document.getElementsByName("jatuh_tempo")[0].value=mydate;
   document.getElementsByName("jumlah_bunga")[0].value=kredits[index].JML_BUNGA_PINJAMAN; 
   document.getElementsByName("persen_bunga")[0].value=kredits[index].SUKU_BUNGA_PER_TAHUN;
   selectElement('inputjeniskredit', kredits[index].JENIS_PINJAMAN);
-  selectElement('inputtipepinjaman', kredits[index].TYPE_PINJAMAN);  
+  selectElement('inputtipepinjaman', kredits[index].TYPE_PINJAMAN);    
+  document.getElementsByName("angsuran_pokok")[0].value=kredits[index].angsuran_pokok;
+  document.getElementsByName("angsuran_bunga")[0].value=kredits[index].angsuran_bunga;
+  document.getElementsByName("provisi")[0].value=kredits[index].PROVISI;
+  document.getElementsByName("administrasi")[0].value=kredits[index].ADM;
+  document.getElementsByName("total_diterima")[0].value=kredits[index].JML_PINJAMAN-kredits[index].PROVISI;
+  parts = document.getElementsByName("tgl_transaksi")[0].value.split('/');
+  const x = new Date(parts[2]+'-'+parts[1]+'-'+parts[0]);
+  const y = new Date(kredits[index].TGL_REALISASI);
+  if(y>x){
+    alert("Belum bisa realisasi kredit");
+  }else{
+    // alert("sudah bisa realisasi")
+    document.getElementsByName("btn_realisasi")[0].disabled=false;
+  }
 }
 
 </script>

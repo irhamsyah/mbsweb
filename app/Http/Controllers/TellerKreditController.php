@@ -16,6 +16,7 @@ use App\KodeTypeKredit;
 use App\Kodetranskredit;
 use App\Kretrans;
 use App\Mysysid;
+use App\Tabungan;
 use Illuminate\Support\Facades\Auth;
 
 class TellerKreditController extends Controller
@@ -45,7 +46,12 @@ class TellerKreditController extends Controller
             ->get();
         $tanggaltransaksi = Mysysid::select('Value')->where('KeyName','=','TANGGALHARIINI')->get();
         $tanggal = $tanggaltransaksi[0]->Value;
-        return view('teller/kredit/frmrealisasikredit',['kodetranskredit'=>$kodetranskredit,'tanggaltransaksi'=>$tanggal, 'kodetypekredit'=>$kodetypekredit,'kodejeniskredit'=>$kodejeniskredit,'kredits'=>$kredits, 'users'=>$users, 'logos'=>$logos,'tabungan'=>$tabungan,'kodetranstab'=>$kodetranstab,'kodecabang'=>$kodecabang,'msgstatus'=>'']);
+        $tabungans = Tabungan::select('tabung.NO_REKENING','nasabah.nama_nasabah','nasabah.alamat')
+                      ->leftJoin('nasabah', function($join) {
+                        $join->on('nasabah.nasabah_id', '=', 'tabung.NASABAH_ID');
+                        })
+                      ->get()->toArray();
+        return view('teller/kredit/frmrealisasikredit',['tabungans'=>$tabungans,'kodetranskredit'=>$kodetranskredit,'tanggaltransaksi'=>$tanggal, 'kodetypekredit'=>$kodetypekredit,'kodejeniskredit'=>$kodejeniskredit,'kredits'=>$kredits, 'users'=>$users, 'logos'=>$logos,'tabungan'=>$tabungan,'kodetranstab'=>$kodetranstab,'kodecabang'=>$kodecabang,'msgstatus'=>'']);
     }
     // SIMPAN DATA TRANSAKSI
     public function setrealisasi(Request $request)
@@ -71,6 +77,7 @@ class TellerKreditController extends Controller
             $newkretrans->MY_KODE_TRANS = '100';
             $newkretrans->KODE_TRANS = $request->input("kode_transaksi3");
             $newkretrans->KUITANSI =  $request->input("no_bukti");
+            $newkretrans->TOB =  $request->input("tipe_transaksi");
             $newkretrans->VALIDATED = 1;
             $newkretrans->save();
             
@@ -78,10 +85,16 @@ class TellerKreditController extends Controller
             $newtellertrans->modul = "KRE";
             $newtellertrans->tgl_trans = \DateTime::createFromFormat('d/m/Y', $request->input("tgl_transaksi"))->format('Y-m-d');
             $newtellertrans->NO_BUKTI =  $request->input("no_bukti");
-            $newtellertrans->uraian = "Realisasi Kredit Tunai : #". $request->input("no_rekening_kredit")."-".$request->input("nama_nasabah");
+            if($request->input("tipe_transaksi")=="T"){
+                $newtellertrans->uraian = "Realisasi Kredit Tunai : #". $request->input("no_rekening_kredit")."-".$request->input("nama_nasabah");
+            }
+            if($request->input("tipe_transaksi")=="O"){
+                $newtellertrans->uraian = "OB/PB Realisasi Kredit : #". $request->input("no_rekening_kredit")."-".$request->input("nama_nasabah")." Ke Tabungan: #".$request->input("rekening_overbook")."-".$request->input("nama_overbook");
+            }
+            
             $newtellertrans->my_kode_trans = "300";
             $newtellertrans->saldo_trans = $request->input("jml_pinjaman");
-            $newtellertrans->tob = "T";
+            $newtellertrans->tob = $request->input("tipe_transaksi");
             $newtellertrans->cab = "001";
             $newtellertrans->save();
 
@@ -92,7 +105,7 @@ class TellerKreditController extends Controller
             $newtellertrans2->uraian = "Provisi Realisasi Kredit : #". $request->input("no_rekening_kredit")."-".$request->input("nama_nasabah");
             $newtellertrans2->my_kode_trans = "200";
             $newtellertrans2->saldo_trans = $request->input("provisi");
-            $newtellertrans2->tob = "T";
+            $newtellertrans2->tob = $request->input("tipe_transaksi");
             $newtellertrans2->cab = "001";
             $newtellertrans2->save();
 
@@ -103,9 +116,45 @@ class TellerKreditController extends Controller
             $newtellertrans3->uraian = "Administrasi Realisasi Kredit : #". $request->input("no_rekening_kredit")."-".$request->input("nama_nasabah");
             $newtellertrans3->my_kode_trans = "200";
             $newtellertrans3->saldo_trans = $request->input("administrasi");
-            $newtellertrans3->tob = "T";
+            $newtellertrans3->tob = $request->input("tipe_transaksi");
             $newtellertrans3->cab = "001";
             $newtellertrans3->save();
+
+            if($request->input("tipe_transaksi")=="O"){
+                $newtabtrans = New Tabtran();
+                $newtabtrans->LINK_MODUL = "KRE";
+                $newtabtrans->TGL_TRANS = \DateTime::createFromFormat('d/m/Y', $request->input("tgl_transaksi"))->format('Y-m-d');
+                $newtabtrans->NO_REKENING = $request->input("rekening_overbook");
+                $newtabtrans->KODE_TRANS = "08";
+                $newtabtrans->SALDO_TRANS = $request->input("jml_pinjaman");
+                $newtabtrans->MY_KODE_TRANS = "185";
+                $newtabtrans->KUITANSI = $request->input("no_bukti");
+                $newtabtrans->TOB = $request->input("tipe_transaksi");
+                $newtabtrans->POSTED = 1;
+                $newtabtrans->VALIDATED = 1;
+                $newtabtrans->KETERANGAN = "Realisasi Kredit";
+                $newtabtrans->FLAG_CETAK = "N";
+                $newtabtrans->CAB = "001";
+                $newtabtrans->LINK_REKENING = $request->input("no_rekening_kredit");
+                $newtabtrans->save();
+
+                $newtabtrans2 = New Tabtran();
+                $newtabtrans2->LINK_MODUL = "KRE";
+                $newtabtrans2->TGL_TRANS = \DateTime::createFromFormat('d/m/Y', $request->input("tgl_transaksi"))->format('Y-m-d');
+                $newtabtrans2->NO_REKENING = $request->input("rekening_overbook");
+                $newtabtrans2->KODE_TRANS = "04";
+                $newtabtrans2->SALDO_TRANS = $request->input("provisi")+$request->input("administrasi");
+                $newtabtrans2->MY_KODE_TRANS = "295";
+                $newtabtrans2->KUITANSI = $request->input("no_bukti");
+                $newtabtrans2->TOB = $request->input("tipe_transaksi");
+                $newtabtrans2->POSTED = 1;
+                $newtabtrans2->VALIDATED = 1;
+                // $newtabtrans2->KETERANGAN = "Realisasi Kredit";
+                $newtabtrans2->FLAG_CETAK = "N";
+                $newtabtrans2->CAB = "001";
+                $newtabtrans2->LINK_REKENING = $request->input("no_rekening_kredit");
+                $newtabtrans2->save();
+            }
 
             DB::commit();
             return redirect()->back() ->with('alert', 'Realisasi kredit berhasil!');

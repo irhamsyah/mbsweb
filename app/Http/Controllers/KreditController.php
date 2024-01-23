@@ -381,7 +381,8 @@ class KreditController extends Controller
             $query->where('STATUS_AKTIF', '=', 2)
             ->orWhere('STATUS_AKTIF', '=', 3)
             ->orWhere('STATUS_AKTIF', '=', 1);
-            })          
+            })    
+          ->orderBy('NO_REKENING','DESC')      
           ->skip($start)
           ->take($rowperpage)
           ->orderBy($columnName,$columnSortOrder)

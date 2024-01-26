@@ -15,7 +15,7 @@
       <div class="col-12">
         <div class="card card-warning card-outline">
           <!-- form start -->
-          <form method="GET" action="/bo_tabungan_transaksi_cari" role="search">
+          <form method="GET" action="/bo_deposito_transaksi_cari" role="search">
           @csrf
             <div class="card-body">
               <div class="row form-group">
@@ -29,7 +29,7 @@
                       </div>
                       </div>
                   </div>
-              </div>
+                </div>
               </div>
               <div class="row form-group">
                 <div class="col-4" style="margin-left:450px">
@@ -43,7 +43,7 @@
         <!-- /.card -->
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">Data Yang Sudah Tercatat</h3>
+            <h3 class="card-title">Data Transaksi Deposito</h3>
           </div>
           <!-- /.card-header -->
           <div class="card-body">
@@ -52,49 +52,52 @@
               <tr>
                 <th>No</th>
                 <th>Trans_id</th>
+                <th>Tgl_trans</th>
                 <th>Kuitansi</th>
-                <th>TOB</th>
                 <th>No Rekening</th>
                 <th>Nama Nasabah</th>
                 <th>Jumlah</th>
-                <th>Kode Transaksi</th>
-                <th>My Kode Trans</th>
+                <th>Kode Trans</th>
+                <th>No Rek Tab</th>
                 <th>Action</th>
-
               </tr>
               </thead>
               @if(is_null(Auth::user())==false)
               @if(Auth::user()->privilege=='admin')
               <tbody>
               @php($index=0)
-              @foreach($tabtran as $values)
+              @foreach($deptrans as $values)
               @php($index++)
                 <tr>
                   <td>{{ $index}}</td>
-                  <td>{{ strtoupper($values->TABTRANS_ID) }}</td>
+                  <td>{{ strtoupper($values->DEPTRANS_ID) }}</td>
+                  <td>{{ $values->TGL_TRANS }}</td>
                   <td>{{ $values->KUITANSI }}</td>
-                  <td>{{ $values->TOB}}</td>
                   <td>{{ $values->NO_REKENING}}</td>
-                  <td>{{ $values->nasabah[0]->nama_nasabah}}</td>
+                  <td>{{ $values->nama_nasabah}}</td>
                   <td>{{ $values->SALDO_TRANS}}</td>
                   <td>{{ $values->KODE_TRANS}}</td>
-                  <td>{{ $values->MY_KODE_TRANS}}</td>
+                  <td>{{ $values->NO_REK_OB}}</td>
                   <td>
-                      <form action="/bo_tab_del_trs" method="post" style="margin-bottom: 0;">
-                          <input type="hidden" name="no_rekening" value="{{ $values->NO_REKENING }}" class="form-control">
+                      <form action="/bo_dep_del_trs" method="post" style="margin-bottom: 0;">
+                          <input type="hidden" name="no_rekening" value="{{ $values->NO_REKENING }}">
+                          <input type="hidden" name="deptrans_id" value="{{ $values->DEPTRANS_ID }}">
                           <input type="hidden" name="no_bukti" value="{{ $values->KUITANSI }}" class="form-control">
-                          <input type="hidden" name="tabtrans_id" value="{{ $values->TABTRANS_ID }}" class="form-control">
-
+                          <input type="hidden" name="no_rekening_tab" value="{{ $values->NO_REK_OB }}">
+                          <input type="hidden" name="bunga_berbunga" value="{{ $values->bunga_berbunga }}">
+                          <input type="hidden" name="masuk_titipan" value="{{ $values->masuk_titipan }}">
+                          <input type="hidden" name="saldo_trans" value="{{ $values->SALDO_TRANS }}">
+                          <input type="hidden" name="tgl_trans" value="{{ $values->TGL_TRANS }}">
+                          <input type="hidden" name="my_kode_trans" value="{{ $values->MY_KODE_TRANS }}">
                           @csrf
+                          <input type="hidden" name="_method" value="DELETE"/>
                           @if($values->POSTED==1)
                           <button type="submit" onclick="return confirm('Jadi Hapus Data Transaksi Yang Sudah Di POSTING ?')"class="btn btn-sm btn-danger" style="float: right;">
                           @else
                           <button type="submit" onclick="return confirm('Jadi Hapus Data Transaksi yang Belum di POSTING')"class="btn btn-sm btn-danger" style="float: right;">
-
                           @endif
                             <i class="fa fa-trash"></i>
                           </button>
-            
                       </form>
                   </td>
                 </tr>
@@ -104,7 +107,6 @@
               @else
               <h3>Sesi Anda Telah Habis, Silahkan Login Ulang</h3>
               @endif
-
             </table>
           </div>
           <!-- /.card-body -->

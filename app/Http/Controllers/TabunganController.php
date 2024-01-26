@@ -1914,18 +1914,22 @@ class TabunganController extends Controller
 
         return view('admin.tabungan.frmhapustransaksitabungan',['logos'=>$logos,'tgllogin'=>$tgllogin,'tabtran'=>$tabtran]);
     }
-
+    //hapus transaksi tabungan
     public function bo_tab_del_trs(Request $request)
     {
+        // dd($request);
         $deltabtrans=Tabtran::where(
             [
-                'KUITANSI'=>$request->no_bukti,
-                'NO_REKENING'=>$request->no_rekening
+                'TABTRANS_ID'=>$request->tabtrans_id,
             ])->delete();
         $deltellertrans=Tellertran::where(
             [
-                'NO_BUKTI'=>$request->no_bukti,
+                'modul_trans_id'=>$request->tabtrans_id,
             ])->delete();
+            $nilai = DB::select("SELECT SUM(IF(MY_KODE_TRANS like '1%',SALDO_TRANS,0)) as saldosetor,SUM(IF(MY_KODE_TRANS like '2%',SALDO_TRANS,0)) as saldotarik from tabtrans WHERE NO_REKENING='$request->no_rekening'");
+            $setor = (float)$nilai[0]->saldosetor;
+            $tarik = (float)$nilai[0]->saldotarik;
+            DB::select("Update tabung set saldo_setoran=$setor,saldo_penarikan=$tarik,saldo_akhir=($setor-$tarik) where no_rekening='$request->no_rekening'");
         return redirect()->route('bo_tb_de_frmhapustransaksi')->with('message','Transaksi dengan Kuitansi : '.$request->no_bukti.' berhasil di hapus');
     }
     public function bo_tabungan_transaksi_cari(Request $request)
@@ -2665,7 +2669,7 @@ return redirect()->back()->with('alert','SUDAH PERNAH DILAKUKAN PERHITUNGAN');
                 $sldtarik=DB::select("SELECT (SUM(if(MY_KODE_TRANS LIKE '2%' AND TGL_TRANS<'$tgl1',SALDO_TRANS,0))+SUM(if(MY_KODE_TRANS LIKE '2%' AND KUITANSI NOT LIKE 'SYS%' AND TGL_TRANS>='$tgl1' AND TGL_TRANS<='$tgl2',SALDO_TRANS,0))) as debet FROM tabtrans where (NO_REKENING='$norekpegangan[$i]') GROUP BY NO_REKENING")[0]->debet;
                 $sqlupdtbg="UPDATE tabung SET tabung.ADM_BLN_INI=tabung.ADM_PER_BLN,tabung.SALDO_NOMINATIF=$sldnomi,tabung.SALDO_SETORAN=$sldsetor,tabung.SALDO_PENARIKAN=$sldtarik where tabung.NO_REKENING='$norekpegangan[$i]'";
             }else{
-                $sldnomi=DB::select("SELECT (tabung.SALDO_AWAL+SUM(if(MY_KODE_TRANS LIKE '1%',SALDO_TRANS,0))-SUM(if(MY_KODE_TRANS LIKE '2%',SALDO_TRANS,0))) as debet FROM tabung inner join tabtrans on tabung.NO_REKENING=tabtrans.NO_REKENING where (tabung.NO_REKENING='$norekpegangan[$i]' AND tabtrans.TGL_TRANS<='$tgl2') GROUP BY tabung.NO_REKENING)")[0]->debet;
+                $sldnomi=DB::select("SELECT (tabung.SALDO_AWAL+SUM(if(MY_KODE_TRANS LIKE '1%',SALDO_TRANS,0))-SUM(if(MY_KODE_TRANS LIKE '2%',SALDO_TRANS,0))) as debet FROM tabung inner join tabtrans on tabung.NO_REKENING=tabtrans.NO_REKENING where (tabung.NO_REKENING='$norekpegangan[$i]' AND tabtrans.TGL_TRANS<='$tgl2') GROUP BY tabung.NO_REKENING")[0]->debet;
                 $sldsetor=DB::select("SELECT (SUM(if(MY_KODE_TRANS LIKE '1%' AND TGL_TRANS<='$tgl2',SALDO_TRANS,0))) as debet FROM tabtrans where (NO_REKENING='$norekpegangan[$i]') GROUP BY NO_REKENING")[0]->debet;
                 $sldtarik=DB::select("SELECT (SUM(if(MY_KODE_TRANS LIKE '2%' AND TGL_TRANS<='$tgl2',SALDO_TRANS,0))) as debet FROM tabtrans where (NO_REKENING='$norekpegangan[$i]') GROUP BY NO_REKENING")[0]->debet;
                 $sqlupdtbg="UPDATE tabung SET tabung.ADM_BLN_INI=tabung.ADM_PER_BLN,tabung.SALDO_NOMINATIF=$sldnomi,tabung.SALDO_SETORAN=$sldsetor,tabung.SALDO_PENARIKAN=$sldtarik where tabung.NO_REKENING='$norekpegangan[$i]'";

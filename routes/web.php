@@ -29,7 +29,7 @@ Auth::routes();
 // });
 
 Route::get('/','Auth\LoginController@showLoginForm')->name('login');
-Route::post('/login','Auth\LoginController@AuthLoginUser')->name('authlogin');
+// Route::post('/login','Auth\LoginController@AuthLoginUser')->name('authlogin');
 
 //Admin Page
 Auth::routes([
@@ -42,9 +42,6 @@ Route::get('/verify','Auth\RegisterController@verifyUser')->name('verify.user');
 /* Verifiy Customer User*/
 Route::get('/verifyuser','RegistercustomerController@verifyUser')->name('verify.cust');
     
-/* Verifiy Customer User*/
-Route::get('/verifyuser','RegistercustomerController@verifyUser')->name('verify.cust');
-
 //Route to admin pages
 //BO CS Data Entry Nasabah
 Route::get('/bo_cs_de_nasabah', 'NasabahController@bo_cs_de_nasabah');
@@ -107,13 +104,54 @@ Route::post('/bo_cs_rp_umum/cari','ReportController@bo_cs_rp_umum_cari');//searc
 Route::post('/bo_cs_rp_umum/printdokumenumum', 'ReportController@bo_cs_rp_umum_rp_umum');//print umum
 
 
-//BO DEPOSITO DP Data Entry Deposito
+//BO DEPOSITO DP Data Entry DEPOSITO
 Route::get('/bo_dp_de_deposito', 'DepositoController@bo_dp_de_deposito')->name('showdeposito');
 Route::post('/bo_dp_de_deposito/cari','DepositoController@bo_dp_de_deposito_cari');//search filter
 Route::post('/bo_dp_de_deposito', 'DepositoController@bo_dp_de_deposito_add');
 Route::put('/bo_dp_de_deposito', 'DepositoController@bo_dp_de_deposito_edit');
 Route::delete('/bo_dp_de_deposito', 'DepositoController@bo_dp_de_deposito_destroy');
 Route::get('/bo_dp_de_deposito/printbukarekdeposito','DepositoController@bo_cs_de_bukarekdeposito_rppdf')->name('cetakbukarekdeposito');//print buka rekening deposito
+// Muncul form Hapus Transaksi deposito
+Route::get('bo_dp_de_hpstrsdeposito','DepositoController@bo_dp_de_hpstrsdeposito')->name('frmhapustrsdeposito');
+// Hapus transaksi deposito
+Route::delete('bo_dep_del_trs','DepositoController@bo_dep_del_trs');
+// Show form perhitungan bunga
+Route::get('bo_dp_de_hitungbunga','DepositoController@bo_dp_de_hitungbunga')->name('showhitungbungadep');
+// Hitung bunga deposito
+Route::post('bo_tb_de_hitungbungadep','DepositoController@bo_tb_de_hitungbungadep');
+Route::get('bo_tb_de_hitungbungadep','DepositoController@bo_dp_de_hitungbunga');
+// SHOW FORM BROWSE BUNGA
+Route::get('bo_dp_de_browsebunga','DepositoController@bo_dp_de_browsebunga')->name('showbrowsebungadp');
+// Update bunga pajak deposito
+Route::post('bo_dep_update_bngpjk','DepositoController@bo_dep_update_bngpjk');
+// Export Bunga / Pajak Deposito
+Route::get('exportbngpjkdeposito','DepositoController@exportbngpjkdeposito');
+// Show form OVERBOOK Bunga Depos
+Route::get('bo_dp_de_overbookbunga','DepositoController@bo_dp_de_overbookbunga')->name('showformoverbookbunga');
+// Overbook bunga Deposito 
+Route::post('bo_dp_de_overbookbngdep','DepositoController@bo_dp_de_overbookbngdep');
+// ADMINISTRATOR DEPOSITO 
+Route::get('bo_dp_ad_produkdeposito','DepositoController@bo_dp_ad_produkdeposito')->name('showformprodukdeposito');
+// update jenis deposito
+Route::put('bo_dp_ad_produkdeposito','DepositoController@bo_dp_ad_produkdeposito_put');
+// add jenis deposito
+Route::post('bo_dp_ad_produkdeposito','DepositoController@bo_dp_ad_produkdeposito_add');
+// delete jenis deposito
+Route::delete('bo_dp_ad_produkdeposito','DepositoController@bo_dp_ad_produkdeposito_del');
+// Automatic Roll Over show form
+Route::get('bo_dp_de_autorollover','DepositoController@bo_dp_de_autorollover')->name('showformrollover');
+// proses ARO
+Route::post('bo_dp_de_autorollover','DepositoController@bo_dp_de_autorollover_upd');
+// SHOW FORM MANUAL ROLL OVER
+Route::get('bo_dp_de_manrollover','DepositoController@bo_dp_de_manrollover')->name('showformmanrollover');
+// SIMPAN PERUBAHAN MANUAL ROLL OVER 
+Route::put('bo_dp_de_manrollover','DepositoController@bo_dp_de_manrollover_upd');
+// SHOW FORM SEARCH LAPORAN DEPOSITO
+Route::get('bo_dp_rp_nominatifrinci','DepositoController@bo_dp_rp_nominatifrinci')->name('searchnomdep');
+// Proses pencarian nominatif
+Route::post('bo_dp_rp_nominatifrinci','DepositoController@bo_dp_rp_nominatifrinci_view');
+// Cetak PDF Nominatif Deposito
+Route::get('bo_dp_rp_cetaknomindep','DepositoController@cetaknomindepopdf')->name('cetaknomindep');
 
 //BO KREDIT Data Entry KREDIT
 Route::get('/bo_kr_de_kredit', 'KreditController@bo_kr_de_kredit')->name('showkredit');
@@ -234,7 +272,7 @@ Route::post('bo_adm_update_unblokir','TabunganController@bo_adm_update_unblokir'
 
 // Form Hapus Transaksi
 Route::get('bo_tb_de_frmhapustransaksi','TabunganController@bo_tb_de_frmhapustransaksi')->name('bo_tb_de_frmhapustransaksi');
-// del transaksi
+// delete transaksi
 Route::post('bo_tab_del_trs','TabunganController@bo_tab_del_trs');
 // cari transaksi per tgl
 Route::get('bo_tabungan_transaksi_cari','TabunganController@bo_tabungan_transaksi_cari');
@@ -407,3 +445,5 @@ Route::post('/bo_tl_td_pengambilanbungadeposito', 'TellerDepositoController@bo_t
 Route::get('/bo_tl_td_penutupandeposito', 'TellerDepositoController@bo_tl_td_penutupandeposito')->name('showpenutupandeposito');
 //Route::post('/bo_tl_td_penutupandeposito/cari','TellerDepositoController@bo_tl_td_penutupandeposito_cari');//search filter
 Route::post('/bo_tl_td_penutupandeposito', 'TellerDepositoController@bo_tl_td_penutupandeposito_add');
+// Cetak Tanda Terima Buka Deposito
+Route::get('bo_tl_td_cetakbukadep','TellerDepositoController@bo_tl_td_cetakbukadep')->name('cetakbukadep');

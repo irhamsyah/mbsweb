@@ -52,11 +52,9 @@
             <select name="privilege" class="form-control">
                 <option selected=""> Select Privilege</option>
                 <option value="admin">Admin</option>
-                <option value="ppi">PPI</option>
-                <option value="pku">PKU</option>
-                <option value="sdm">SDM</option>
-                <option value="view">VIEW</option>
-
+                <option value="teller">Teller</option>
+                <option value="kredit">Kredit</option>
+                <option value="deposito">Deposito</option>
             </select>
         </div> <!-- form-group end.// -->
         <div class="form-group input-group">

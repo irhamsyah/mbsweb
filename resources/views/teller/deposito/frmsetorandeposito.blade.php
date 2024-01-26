@@ -6,7 +6,6 @@
     alert(msg);
   }
 </script>
-
 @section('content')
 @if($msgstatus!=''){
   @if($msgstatus=='1'){
@@ -32,8 +31,16 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-12">
+        {{-- MUNCULKAN ERROR SAAT VALIDATE LARAVEL --}}
+        @if($errors->any())
+          @foreach($errors->all() as $error)
+          <div class="alert alert-danger" role="alert">
+            {{$error}}
+          </div>
+          @endforeach
+        @endif
         <div class="card-header">
-          <h3 class="card-title">Setoran Deposito</h3>
+          <h3 class="card-title">Pembukaan Deposito</h3>
         </div>
         <div class="card card-warning card-outline">
           <!-- form start -->
@@ -45,7 +52,7 @@
                         <div class="col-lg-2 col-sm-8">
                         <label for="inputDate1">Tanggal Transaksi</label>
                         <div class="input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                            <input type="text" name="tgl_trans" class="form-control datetimepicker-input" readonly value="<?php echo(date("Y-m-d")) ?>"/>
+                            <input type="text" name="tgl_trans" class="form-control datetimepicker-input" readonly value="{{$tgllogin}}"/>
                         </div>
                         </div>
                     </div>
@@ -56,7 +63,6 @@
                         <label for="norekeningdep">No Rekening</label>
                         <div class="input-group date" data-target-input="nearest">
                           <input id="putnorekening" type="text" name="no_rekening" readonly class="form-control" required>
-
                           <div class="input-group-append" data-toggle="modal" data-target="#ambildatadepositoteller">
                             <div class="input-group-text"><i class="fa fa-user"></i></div>
                         </div>
@@ -106,7 +112,7 @@
                         </div>
                       </div>
                       <div class="col-lg-1 col-sm-6">
-                        <label for="inputjkw">Jangka Waktu</label>
+                        <label for="inputjkw">Jangka Wkt</label>
                         <input type="text" id="putjkw" name="jkw" readonly class="form-control" required>
                       </div>
                       <div class="col-lg-1 col-sm-6">
@@ -147,7 +153,7 @@
                       <div class="col-lg-2 col-sm-6">
                         <label for="inputDate4">Tgl Transaksi</label>
                         <div class="input-group date" id="inputDate4" data-target-input="nearest">
-                            <input type="text" name="tgl_transaksi" class="form-control datetimepicker-input" data-target="#inputDate4" value="{{ date('Y-m-d') }}" readonly/>
+                            <input type="text" name="tgl_transaksi" class="form-control datetimepicker-input" data-target="#inputDate4" value="{{ $tgllogin }}" readonly/>
                             <div class="input-group-append" data-target="#inputDate4" data-toggle="datetimepicker">
                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                             </div>
@@ -194,14 +200,13 @@
                   </div>       
                   <div class="form-group">
                     <div class="row">
-                        <div class="col-lg-10">
-                        </div>
-                        <div class="col-lg-2">
-                            <button type="submit" class="btn btn-primary" style="float:right;margin-top:15px;"><i class="fa fa-check" aria-hidden="true"></i>  Simpan</button>
+                        {{-- <div class="col-lg-6"></div> --}}
+                        <div class="col-lg-6">
+                            <button type="submit" class="btn btn-primary" style="float:right;margin-top:15px"><i class="fa fa-check" aria-hidden="true"></i>  Simpan & Cetak</button>
                         </div>
                     </div>
                   </div>
-            </div>
+                </div>
             <!-- /.card-body -->
           </form>
         </div>
@@ -262,7 +267,7 @@
                           <a class="dropdown-toggle btn btn-block bg-gradient-primary btn-sm" data-toggle="dropdown" href="#">
                             Action <span class="caret"></span>
                           </a>
-                          <div class="dropdown-menu">
+                          <div class="dropdown-menu" data-dismiss="modal">
                             <a id="klikdeposito" href="#" class="dropdown-item">
                             pilih
                           </a>

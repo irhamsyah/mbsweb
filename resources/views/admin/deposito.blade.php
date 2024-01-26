@@ -96,7 +96,6 @@
                   @else
                     @php ($status='Tutup')
                   @endif
-
                 <tr>
                   <td>{{ $index+1 }}</td>
                   <td>{{ strtoupper($deposito->NO_REKENING) }}</td>
@@ -104,7 +103,7 @@
                   <td>{{ $deposito->alamat}}</td>
                   <td>{{ $deposito->TGL_REGISTRASI}}</td>
                   <td>{{ $deposito->TGL_JT}}</td>
-                  <td>{{ number_format($deposito->NILAI_DEPOSITO,2)}}</td>
+                  <td>{{ number_format($deposito->JML_DEPOSITO,2)}}</td>
                   <td>{{ number_format($deposito->SALDO_AKHIR,2) }}</td>
                   <td>{{ $deposito->NO_REK_TABUNGAN }}</td>
                   <td>
@@ -301,7 +300,7 @@
               <div class="row">
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputDate4">Tgl Registrasi</label>
-                  <input type="text" name="etgl_registrasi" id="etgl_registrasidepo" class="form-control" value="{{ date('Y-m-d') }}" placeholder="yyyy-mm-dd" required/>
+                  <input type="text" name="etgl_registrasi" id="etgl_registrasidepo" class="form-control" value="{{date('Y-m-d',strtotime(str_replace('/', '-', $tgllogin[0]->Value)))}}" placeholder="yyyy-mm-dd" required/>
                   <!-- <div class="input-group date" id="inputDate4" data-target-input="nearest">
                     <input type="text" name="etgl_registrasi" class="form-control datetimepicker-input" data-target="#inputDate4"/>
                       <div class="input-group-append" data-target="#inputDate4" data-toggle="datetimepicker">
@@ -350,7 +349,7 @@
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputDate6">Tgl Penampatan</label>
                   <div class="input-group date" id="inputDate6" data-target-input="nearest">
-                    <input type="text" name="etgl_penempatan" class="form-control datetimepicker-input" data-target="#inputDate6" value="{{ date('Y-m-d') }}" readonly/>
+                    <input type="text" name="etgl_penempatan" class="form-control datetimepicker-input" data-target="#inputDate6" value="{{date('Y-m-d',strtotime(str_replace('/', '-', $tgllogin[0]->Value)))}}" readonly/>
                       <div class="input-group-append" data-target="#inputDate6" data-toggle="datetimepicker">
                           <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                       </div>
@@ -580,8 +579,7 @@
                 <div class="col-lg-3 col-sm-'6'">
                   <label for="inputtipe">Tipe Bunga</label>
                   <select class="form-control" name="type_bunga" id="type_bunga">
-                    <option value="" selected></option>
-                    <option value=1>BUNGA REGULER</option>
+                    <option value=1 selected>BUNGA REGULER</option>
                     <option value=2>BUNGA SBI</option>
                   </select>
                 </div>
@@ -602,13 +600,7 @@
               <div class="row">
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputDate1">Tgl Registrasi</label>
-                  <input type="text" name="tgl_registrasi" id="tgl_registrasidepo" class="form-control" value="{{ date('Y-m-d') }}" placeholder="yyyy-mm-dd" required/>
-                  <!-- <div class="input-group date" id="inputDate1" data-target-input="nearest">
-                    <input type="text" name="tgl_registrasi" id="tgl_registrasidepo" class="form-control datetimepicker-input" data-target="#inputDate1"/>
-                      <div class="input-group-append" data-target="#inputDate1" data-toggle="datetimepicker">
-                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                      </div>
-                  </div> -->
+                  <input type="text" name="tgl_registrasi" id="tgl_registrasidepo" class="form-control" value="{{date('Y-m-d',strtotime(str_replace('/', '-', $tgllogin[0]->Value)))}}" placeholder="yyyy-mm-dd" required/>
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="jkw">JW</label>
@@ -651,15 +643,15 @@
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputDate3">Tgl Penampatan</label>
                   <div class="input-group date" id="inputDate3" data-target-input="nearest">
-                    <input type="text" name="tgl_penempatan" class="form-control datetimepicker-input" data-target="#inputDate3" value="{{ date('Y-m-d') }}" readonly/>
+                    <input type="text" name="tgl_penempatan" class="form-control datetimepicker-input" data-target="#inputDate3" value="{{date('Y-m-d',strtotime(str_replace('/', '-', $tgllogin[0]->Value)))}}" readonly/>
                       <div class="input-group-append" data-target="#inputDate3" data-toggle="datetimepicker">
-                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                          {{-- <div class="input-group-text"><i class="fa fa-calendar"></i></div> --}}
                       </div>
                   </div>
                 </div>
                 <div class="col-lg-1 col-sm-6">
                   <label for="tgl_valuta">Tgl Valuta</label>
-                  <input type="text" name="tgl_valuta" class="form-control" id="tgl_valuta" value="{{ date('d') }}" required readonly>
+                  <input type="text" name="tgl_valuta" class="form-control" id="tgl_valuta" value="{{date('d',strtotime(str_replace('/', '-', $tgllogin[0]->Value)))}}" required readonly>
                 </div>
               </div>
               <div class="row">
@@ -714,7 +706,11 @@
                   <select class="form-control" name="kode_bi_pemilik" required>
                     <option id="idkodebi" selected></option>
                     @foreach($golonganpihaklawan as $value)
+                    @if($value->sandi=='875')
+                    <option value="{{$value->sandi}}" selected>{{$value->sandi}}-{{$value->deskripsi_golongan}}</option>
+                    @else
                     <option value="{{$value->sandi}}">{{$value->sandi}}-{{$value->deskripsi_golongan}}</option>
+                    @endif
                     @endforeach
                   </select>
                 </div>
@@ -723,7 +719,11 @@
                     <select class="form-control" name="kode_bi_hubungan" required>
                       <option id="idbihubungan" selected></option>
                       @foreach($kodeketerkaitanlapbul as $value)
+                      @if($value->SANDI=='20')
+                      <option value="{{$value->SANDI}}" selected>{{$value->SANDI.'-'.$value->DESKRIPSI_SANDI}}</option>
+                      @else
                       <option value="{{$value->SANDI}}">{{$value->SANDI.'-'.$value->DESKRIPSI_SANDI}}</option>
+                      @endif
                       @endforeach
                     </select>
                 </div>
@@ -732,8 +732,7 @@
                 <div class="col-lg-3 col-sm-12">
                 <label for="tipe_deposito">Tipe Deposito</label>
                   <select class="form-control" id="tipe_deposito" name="tipe_deposito">
-                    <option value="" selected></option>
-                    <option value="1">Deposito</option>
+                    <option value="1" selected>Deposito</option>
                     <option value="2">AB-PASIVA</option>
                     <option value="3">AB-AKTIVA</option>
                   </select>
@@ -743,7 +742,12 @@
                     <select class="form-control" name="metoda" required>
                       <option id="metoda" selected></option>
                       @foreach($kodemetoda as $value)
+                      @if($value->KODE_METODA='2')
+                      <option value="{{$value->KODE_METODA}}" selected>{{$value->KODE_METODA.'-'.$value->DESKRIPSI_METODA}}</option>
+                      @else
                       <option value="{{$value->KODE_METODA}}">{{$value->KODE_METODA.'-'.$value->DESKRIPSI_METODA}}</option>
+
+                      @endif
                       @endforeach
                     </select>
                 </div>
@@ -799,9 +803,7 @@
                   <th>Nasabah Id</th>
                   <th>Nama Nasabah</th>
                   <th>Alamat Nasabah</th>
-
                   <th>Action</th>
-
               </tr>
             </thead>
             <tbody>
@@ -856,7 +858,7 @@
             <tbody>
                 @foreach($tabungan as $value)
                 <tr>
-                <td>{{ $value->NASABAH_ID }}</td>
+                <td>{{ $value->NO_REKENING }}</td>
                 <td>{{ $value->nama_nasabah }}</td>
                 <td>{{ $value->alamat }}</td>
                 <td>{{ $value->JENIS_TABUNGAN }}</td>

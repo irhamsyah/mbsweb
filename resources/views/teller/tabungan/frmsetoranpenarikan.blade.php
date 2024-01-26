@@ -166,7 +166,7 @@
                             Action <span class="caret"></span>
                           </a>
                           <div class="dropdown-menu">
-                            <a id="klik" href="#" class="dropdown-item">
+                            <a id="klik" href="#" class="dropdown-item" data-dismiss="modal">
                             pilih
                           </a>
                           </div>

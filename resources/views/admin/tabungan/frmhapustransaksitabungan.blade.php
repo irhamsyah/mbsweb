@@ -83,6 +83,7 @@
                       <form action="/bo_tab_del_trs" method="post" style="margin-bottom: 0;">
                           <input type="hidden" name="no_rekening" value="{{ $values->NO_REKENING }}" class="form-control">
                           <input type="hidden" name="no_bukti" value="{{ $values->KUITANSI }}" class="form-control">
+                          <input type="hidden" name="tabtrans_id" value="{{ $values->TABTRANS_ID }}" class="form-control">
 
                           @csrf
                           @if($values->POSTED==1)

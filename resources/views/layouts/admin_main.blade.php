@@ -272,7 +272,7 @@
                     </a>
                   </li>
                   </ul>
-                </li>
+                </li>                
                 <li class="nav-item has-treeview  <?php if($menu=='tl' AND $submenu=='td'){echo 'menu-open';}?>">
                   <a href="#" class="nav-link <?php if($menu=='tl' AND $submenu=='td'){echo 'active';}?>">
                     <i class="right fas fa-angle-left"></i>
@@ -294,6 +294,19 @@
                       <p class="pl-4">Penutupan Deposito</p>
                     </a>
                   </li>
+                  </ul>
+                </li>
+                <li class="nav-item has-treeview <?php if($menu=='tl' AND $submenu=='tk'){echo 'menu-open';}?>">
+                  <a href="#" class="nav-link <?php if($menu=='tl' AND $submenu=='tk'){echo 'active';}?>">
+                    <i class="right fas fa-angle-left"></i>
+                    <p class="pl-2">TRANSAKSI KREDIT</p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="/bo_tl_tk_realisasikredit" class="nav-link <?php if($page=='realisasikredit'){echo 'active';}?>">
+                      <p class="pl-4">Realisasi / Pencairan</p>
+                    </a>
+                  </li>        
                   </ul>
                 </li>
                 </ul>

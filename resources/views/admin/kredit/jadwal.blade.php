@@ -165,6 +165,11 @@ var angsuranpokok = [];
 var angsuranbunga = [];
 var angsuranprovisi = [];
 function setJadwalAngsuran(){
+  tglangsuran = [];
+  tglprovisi = []
+  angsuranpokok = [];
+  angsuranbunga = [];
+  angsuranprovisi = [];
   if(document.getElementsByName("inputsatuanwaktuangsuran")[0].value=='B'){
     var parts =document.getElementsByName("inputmulaiangsuran")[0].value.split('/');
     var mydate = new Date(parts[2], parts[1] - 1, parts[0]); 
@@ -300,47 +305,49 @@ function addTable(rows) {
 
     var tr = document.createElement('TR');
     tableBody.appendChild(tr); 
-
-    for (var j = 0; j < 9; j++) {
-      var td = document.createElement('TD');
-      td.width = '75';
-      if(j==0){
-        td.appendChild(document.createTextNode(tglprovisi[i]));
-        tr.appendChild(td);
-      }
-      if(j==1){
-        td.appendChild(document.createTextNode(i+1));
-        tr.appendChild(td);
-      }
-      if(j==2){
-        td.appendChild(document.createTextNode('0'));
-        tr.appendChild(td);
-      }
-      if(j==3){
-        td.appendChild(document.createTextNode('0'));
-        tr.appendChild(td);
-      }
-      if(j==4){
-        td.appendChild(document.createTextNode('0'));
-        tr.appendChild(td);
-      }
-      if(j==5){
-        td.appendChild(document.createTextNode('0'));
-        tr.appendChild(td);
-      }
-      if(j==6){
-        td.appendChild(document.createTextNode(angsuranprovisi[i]));
-        tr.appendChild(td);
-      }
-      if(j==7){
-        td.appendChild(document.createTextNode('0'));
-        tr.appendChild(td);
-      }
-      if(j==8){
-        td.appendChild(document.createTextNode('0'));
-        tr.appendChild(td);
+    if(document.getElementsByName("inputamortisasiprovisi")[0].checked==true){
+      for (var j = 0; j < 9; j++) {
+        var td = document.createElement('TD');
+        td.width = '75';
+        if(j==0){
+          td.appendChild(document.createTextNode(tglprovisi[i]));
+          tr.appendChild(td);
+        }
+        if(j==1){
+          td.appendChild(document.createTextNode(i+1));
+          tr.appendChild(td);
+        }
+        if(j==2){
+          td.appendChild(document.createTextNode('0'));
+          tr.appendChild(td);
+        }
+        if(j==3){
+          td.appendChild(document.createTextNode('0'));
+          tr.appendChild(td);
+        }
+        if(j==4){
+          td.appendChild(document.createTextNode('0'));
+          tr.appendChild(td);
+        }
+        if(j==5){
+          td.appendChild(document.createTextNode('0'));
+          tr.appendChild(td);
+        }
+        if(j==6){
+          td.appendChild(document.createTextNode(angsuranprovisi[i]));
+          tr.appendChild(td);
+        }
+        if(j==7){
+          td.appendChild(document.createTextNode('0'));
+          tr.appendChild(td);
+        }
+        if(j==8){
+          td.appendChild(document.createTextNode('0'));
+          tr.appendChild(td);
+        }
       }
     }
+    
 
     var tr = document.createElement('TR');
     tableBody.appendChild(tr);

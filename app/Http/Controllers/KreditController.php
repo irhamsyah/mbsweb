@@ -123,196 +123,205 @@ class KreditController extends Controller
 
     public function bo_kr_de_kredit_add(Request $request)
     {
-      $newkredit = new Kredit();
-      // data utama
-      $newkredit->JENIS_PINJAMAN =  $request->input("inputjeniskredit");
-      $newkredit->CAB =  $request->input("inputcabang");
-      $newkredit->NO_REKENING = $request->input("inputnorekening");
-      // dd($request->input("inputnorekening"));
-      if($request->input("inputnorekening")==''){
-        $newkredit->NO_PK_LAMA = $request->input("inputnopklama");
-        $inputtglpklama = \DateTime::createFromFormat('d/m/Y', $request->input("inputtglpklama"))->format('Y-m-d');
-        $newkredit->TGL_PK_LAMA = $inputtglpklama;
-        $newkredit->NO_PK_BARU = $request->input("inputnopkbaru");
-      }
-      // $newkredit->REVIEW_BUNGA = $request->input("inputreviewbunga");
-      $newkredit->STATUS_AKTIF = $request->input("inputstatus");
-      $newkredit->NASABAH_ID = $request->input("inputnasabahid");      
-      $newkredit->KODE_GROUP1 = $request->input("inputkodegorup1");
-      if($request->input("inputkodegorup2")!=''){
-        $newkredit->KODE_GROUP2 = $request->input("inputkodegorup2");
-      }
-      if($request->input("inputkodegorup2")!=''){
-        $newkredit->KODE_GROUP3 = $request->input("inputkodegorup3");
-      }
-      $newkredit->KODE_SUMBER_DANA = $request->input("inputsumberdana");
-      // data angsuran
-      $newkredit->TYPE_PINJAMAN = $request->input("inputtipepinjaman");
-      $inputtanggalpengajuan = \DateTime::createFromFormat('d/m/Y', $request->input("inputtanggalpengajuan"))->format('Y-m-d');
-      $newkredit->TGL_PENGAJUAN = $inputtanggalpengajuan;
-      $inputtanggalrealisasi = \DateTime::createFromFormat('d/m/Y', $request->input("inputtanggalrealisasi"))->format('Y-m-d');
-      $newkredit->TGL_REALISASI = $inputtanggalrealisasi;
-      $newkredit->JML_PINJAMAN = $request->input("inputjumlahpinjaman");
-      $newkredit->JML_BUNGA_PINJAMAN = $request->input("inputjumlahbungapinjaman");
-      $newkredit->JML_ANGSURAN = $request->input("inputjmlangsuran");
-      $newkredit->SATUAN_WAKTU_ANGSURAN = $request->input("inputsatuanwaktuangsuran");
-      // dd($request->input("inputjw"));
-      $newkredit->BI_JANGKA_WAKTU = $request->input("inputjw");
-      $newkredit->TGL_JATUH_TEMPO = \DateTime::createFromFormat('d/m/Y', $request->input("inputtanggaljttempo"))->format('Y-m-d');
-      $newkredit->SUKU_BUNGA_PER_TAHUN = $request->input("inputbungaperthn");
-      $newkredit->suku_bunga_eff_per_tahun = $request->input("inputbungaeffperthn");
-      $newkredit->SUKU_BUNGA_PER_ANGSURAN = $request->input("inputsukubunga");
-      $newkredit->BI_SUKU_BUNGA = $request->input("inputsukubunga");
-      $newkredit->ADM_PER_BLN = $request->input("inputbyadmin");
-      $newkredit->BUNGA_EFEKTIF_THN_INI = $request->input("inputbybonus");
-      $newkredit->FAKTOR_ANUITAS = $request->input("inputfaktoanuitas");
-      $newkredit->PERIODE_ANGSURAN_POKOK = $request->input("inputterminpokok");
-      $newkredit->PERIODE_ANGSURAN_BUNGA = $request->input("inputterminbunga");
-      $newkredit->GRACE_PERIOD_POKOK = $request->input("inputgppokok");
-      $newkredit->GRACE_PERIOD_BUNGA = $request->input("inputgpbunga");
-      $newkredit->JML_BUNGA_PINJAMAN = $request->input("inputjumlahbungapinjaman");
-      $newkredit->angsuran_total = $request->input("inputangsuranbln");
-      $newkredit->angsuran_pokok = $request->input("angsuranpokok")[1];
-      $newkredit->angsuran_bunga = $request->input("angsuranbunga")[1];
-      $newkredit->SUKU_BUNGA_EKIVALEN = $request->input("inputbungaekiv");
-      $newkredit->FEE_BUNGA_1_PER_TAHUN = $request->input("inputangsuranfee1");
-      $newkredit->FEE_BUNGA_2_PER_TAHUN = $request->input("inputangsuranfee2");
-      $newkredit->denda_per_hari = $request->input("inputdendaharian");
-      $newkredit->TAGIHAN_JT = $request->input("inputdendajtharian");
-      $newkredit->GRACE_PERIOD = $request->input("inputgphari");
-      $newkredit->ADM_PER_BLN = $request->input("inputbyadminpersen");
-      // biaya dan potongan pinjaman
-      $newkredit->PERSEN_PROVISI = $request->input("inputprovisi");
-      $newkredit->PROVISI = $request->input("inputprovisirp");
-      $newkredit->AMORTISASI_PROVISI = $request->input("inputbyadminpersen");
-      $newkredit->PERSEN_ADM = $request->input("inputadmfinal");
-      $newkredit->ADM = $request->input("inputadmfinalrp");
-      $newkredit->amortisasi_adm = $request->input("inputbyadminpersen");
-      $newkredit->PERSEN_BIAYA_TRANSAKSI = $request->input("inputbytrans");
-      $newkredit->biaya_transaksi = $request->input("inputbytransrp");
-      $newkredit->amortisasi_biaya_transaksi = $request->input("inputbyadminpersen");
-      $newkredit->PREMI = $request->input("inputpremi");
-      $newkredit->NOTARIEL = $request->input("inputnotariel");
-      $newkredit->MATERAI = $request->input("inputmaterai");
-      $newkredit->POKOK_MATERAI = $request->input("inputpkmaterai");
-      $newkredit->ANGSURAN_ADMIN = $request->input("inputlainlain");
-      $newkredit->JKW_PREMI = $request->input("inputangsuranpremi");
-      $newkredit->ANGSURAN_PREMI = $request->input("inputangsuranpremirp");
-      $newkredit->TOTAL_PREMI = $request->input("inputtotalpremi");
-      $newkredit->amortisasi_biaya_transaksi = $request->input("inputbyadminpersen");
-      $newkredit->PERSEKOT = $request->input("inputditanggung");
-      $newkredit->TGL_ANGSURAN = \DateTime::createFromFormat('d/m/Y', $request->input("inputmulaiangsuran"))->format('Y-m-d');
-      //form lapbul empty($var1)? $var2 : $var1;
-      $newkredit->PENJAMIN = empty($request->input("inputpenjamin"))? " " : $request->input("inputpenjamin");
-      $newkredit->ID_PENJAMIN = empty($request->input("inputidpenjamin"))? " " : $request->input("inputidpenjamin");
-      $newkredit->TGL_ANALISA = \DateTime::createFromFormat('d/m/Y', $request->input("inputtglanalisa"))->format('Y-m-d');
-      $newkredit->alamat_penjamin = empty($request->input("inputalamatpenjamin"))? " " : $request->input("inputalamatpenjamin");
-      $newkredit->PEKERJAAN_PENJAMIN = empty($request->input("inputpekerjaanpenjamin"))? " " : $request->input("inputpekerjaanpenjamin");
-      $newkredit->BI_SIFAT = $request->input("inputkodesifatkredit");
-      $newkredit->SID_SIFAT = $request->input("inputsidkodesifatkredit");
-      $newkredit->BI_JENIS_PENGGUNAAN = $request->input("inputkodejenispenggunaankredit");
-      $newkredit->SID_JENIS_PENGGUNAAN = $request->input("inputsidkodejenispenggunaan");
-      $newkredit->BI_GOL_DEBITUR = $request->input("inputkodegoldebitur");
-      $newkredit->BI_SEKTOR_EKONOMI = $request->input("inputkodesektorekonomikredit");
-      $newkredit->SID_SEKTOR_EKONOMI = $request->input("inputsidkodebidangusaha");
-      $newkredit->BI_GOL_PENJAMIN = $request->input("inputkodegolpenjaminkredit");
-      $newkredit->SID_GOL_PENJAMIN = $request->input("inputsidkodegolonganpenjamin");
-      $newkredit->KODE_ASURANSI = $request->input("inputkodeasuransikredit");
-      $newkredit->SID_JENISASURANSI = $request->input("inputsidkodejenisasuransi");
-      // jmlasuransi
-      // dijaminkan
-      $newkredit->SID_GOLKREDIT = $request->input("inputsidkodegolkredit");
-      $newkredit->KODE_METODA = $request->input("inputkodemetoda");
-      $newkredit->SID_JENISFASILITAS = $request->input("inputsidkodejenisfasilitas");
-      $newkredit->sumber_dana_pelunasan = $request->input("inputkodesumberpelunasan");
-      $newkredit->TUJUAN_PENGGUNAAN = empty($request->input("inputtujuanpenggunaan"))? " " : $request->input("inputtujuanpenggunaan");
-      $newkredit->kode_bi_hubungan = $request->input("inputkodeketerkaitanlapbul");
-      $newkredit->periode_pembayaran = $request->input("inputkodeperiodepembayaranpokok");
-      $newkredit->jenis_usaha = $request->input("inputkodejenisusaha");
-      $newkredit->periode_pembayaran_bunga = $request->input("inputkodeperiodepembayaranbunga"); 
-      $newkredit->STATUS_PASANGAN = empty($request->input("inputdatasuamiistri"))? " " : $request->input("inputdatasuamiistri");
-      $newkredit->NO_PENSIUN = empty($request->input("inputnopensiun"))? " " : $request->input("inputnopensiun");
-      $newkredit->NAMA_PASANGAN = empty($request->input("inputnamasuamiistri"))? " " : $request->input("inputnamasuamiistri");
-      // no kartu pensiun
-      $newkredit->ALAMAT_PASANGAN = empty($request->input("inputalamatsuamiistri"))? " " : $request->input("inputalamatsuamiistri");
-      $newkredit->JENIS_PENSIUN = empty($request->input("inputjenispensiun"))? " " : $request->input("inputjenispensiun");
-      $newkredit->PEKERJAAN_PASANGAN = empty($request->input("inputpekerjaansuamiistri"))? " " : $request->input("inputpekerjaansuamiistri");
-      // pkpinjaman
-      $newkredit->JENIS_CHANNELING = $request->input("inputkelompokgroup");
-      $newkredit->NO_REK_NOTARIEL = empty($request->input("inputtabnotariel"))? " " : $request->input("inputtabnotariel");
-      $newkredit->NO_REK_DEBET_TAB = empty($request->input("inputtabasuransi"))? " " : $request->input("inputtabasuransi");
-      $newkredit->NO_REK_DEBET = empty($request->input("inputtabholddana"))? " " : $request->input("inputtabholddana");
-      $newkredit->STATUS_AKTIF = 1;
-      $newkredit->FLAG_JADWAL = "TERKUNCI";
-      $newkredit->save();
-
-      // form agunan
-      if($request->input("jenisagunan")){
-        $length = count($request->input("jenisagunan"));
-        for ($i = 0; $i < $length; $i++) {
-          $newagunan = New Agunan();
-          if($request->file("agunanimage")){
-            $filename = time().'.'.$request->file("agunanimage")->getClientOriginalExtension();
-            $request->file("agunanimage")->move(public_path('img'), $filename);
-            $newagunan->path_agunan = $filename;
-          }
-
-          $newagunan->NO_AGUNAN = $request->input("noagunan")[$i];
-          $newagunan->agunan = $request->input("uraianagunan")[$i];
-          $newagunan->agunan_nilai = $request->input("nilaiagunan")[$i];
-          $newagunan->agunan_jenis = $request->input("jenisagunan")[$i];
-          $newagunan->agunan_ikatan_hukum = "1";
-          $newagunan->sid_kode_agunan = "02";
-          $newagunan->sid_agunan_ikatan_hukum = "03";
-          $newagunan->bi_agunan_nilai = $request->input("nilaiagunanbi")[$i];
-          $newagunan->BI_AGUNAN_YG_DIJAMINKAN = $request->input("persenlikuidasi")[$i];
-          $newagunan->NILAI_LIKUIDASI = $request->input("nilailikuidasi")[$i];
-          $newagunan->PEMILIK_AGUNAN = $request->input("pemilikagunan")[$i];
-          $newagunan->ALAMAT_AGUNAN = $request->input("alamatagunan")[$i];
-          $newagunan->BUKTI_AGUNAN = $request->input("buktiagunan")[$i];
-          if($request->input("jtempoagunan")[$i]){
-            $newagunan->TGL_JT_AGUNAN = \DateTime::createFromFormat('d/m/Y', $request->input("jtempoagunan")[$i])->format('Y-m-d');
-          }
-          $newagunan->KODE_AGUNAN = "5";
-          $newagunan->agunan_rincian = $request->input("rincianagunan")[$i];
-          if($request->input("inputnorekening")==''){
-            $newagunan->no_rekening = $request->input("inputnopkbaru");
-          }else{
-            $newagunan->no_rekening = $request->input("inputnorekening");
-          }        
-          $newagunan->id_agunan = $request->input("idagunan")[$i];
-          $newagunan->save();
+      try {
+        DB::beginTransaction();
+        $newkredit = new Kredit();
+        // data utama
+        $newkredit->JENIS_PINJAMAN =  $request->input("inputjeniskredit");
+        $newkredit->CAB =  $request->input("inputcabang");
+        $newkredit->NO_REKENING = $request->input("inputnorekening");
+        // dd($request->input("inputnorekening"));
+        if($request->input("inputnorekening")==''){
+          $newkredit->NO_PK_LAMA = $request->input("inputnopklama");
+          $inputtglpklama = \DateTime::createFromFormat('d/m/Y', $request->input("inputtglpklama"))->format('Y-m-d');
+          $newkredit->TGL_PK_LAMA = $inputtglpklama;
+          $newkredit->NO_PK_BARU = $request->input("inputnopkbaru");
         }
-      }
-      
-      // input jadwal kredit transaction
-      if($request->input("tglangsuran")) {
-        $length = count($request->input("tglangsuran"));
-        for ($i = 0; $i < $length; $i++) {
-          $newkretrans = New Kretrans();
-          $newkretrans->NO_REKENING = $request->input("inputnorekening");
-          $newkretrans->TGL_TRANS = \DateTime::createFromFormat('d/m/Y', $request->input("tglangsuran")[$i])->format('Y-m-d');
-          $newkretrans->POKOK_TRANS = $request->input("angsuranpokok")[$i];
-          $newkretrans->BUNGA_TRANS = $request->input("angsuranbunga")[$i];
-          $newkretrans->PROVISI_TRANS = 0;
-          $newkretrans->ANGSURAN_KE = $i+1;
-          $newkretrans->MY_KODE_TRANS = '200';
-          $newkretrans->VALIDATED = 1;
-          $newkretrans->save();
-
-          $newkretrans2 = New Kretrans();
-          $newkretrans2->NO_REKENING = $request->input("inputnorekening");
-          $newkretrans2->TGL_TRANS = \DateTime::createFromFormat('d/m/Y', $request->input("tglprovisi")[$i])->format('Y-m-d');
-          $newkretrans2->POKOK_TRANS = 0;
-          $newkretrans2->BUNGA_TRANS = 0;
-          $newkretrans2->PROVISI_TRANS = $request->input("angsuranprovisi")[$i];
-          $newkretrans2->ANGSURAN_KE = $i+1;
-          $newkretrans2->MY_KODE_TRANS = '225';
-          $newkretrans2->VALIDATED = 1;
-          $newkretrans2->save();
+        // $newkredit->REVIEW_BUNGA = $request->input("inputreviewbunga");
+        $newkredit->STATUS_AKTIF = $request->input("inputstatus");
+        $newkredit->NASABAH_ID = $request->input("inputnasabahid");      
+        $newkredit->KODE_GROUP1 = $request->input("inputkodegorup1");
+        if($request->input("inputkodegorup2")!=''){
+          $newkredit->KODE_GROUP2 = $request->input("inputkodegorup2");
         }
-      }
-      return redirect()->back()->with('msgstatus', '1');
+        if($request->input("inputkodegorup2")!=''){
+          $newkredit->KODE_GROUP3 = $request->input("inputkodegorup3");
+        }
+        $newkredit->KODE_SUMBER_DANA = $request->input("inputsumberdana");
+        // data angsuran
+        $newkredit->TYPE_PINJAMAN = $request->input("inputtipepinjaman");
+        $inputtanggalpengajuan = \DateTime::createFromFormat('d/m/Y', $request->input("inputtanggalpengajuan"))->format('Y-m-d');
+        $newkredit->TGL_PENGAJUAN = $inputtanggalpengajuan;
+        $inputtanggalrealisasi = \DateTime::createFromFormat('d/m/Y', $request->input("inputtanggalrealisasi"))->format('Y-m-d');
+        $newkredit->TGL_REALISASI = $inputtanggalrealisasi;
+        $newkredit->JML_PINJAMAN = $request->input("inputjumlahpinjaman");
+        $newkredit->JML_BUNGA_PINJAMAN = $request->input("inputjumlahbungapinjaman");
+        $newkredit->JML_ANGSURAN = $request->input("inputjmlangsuran");
+        $newkredit->SATUAN_WAKTU_ANGSURAN = $request->input("inputsatuanwaktuangsuran");
+        // dd($request->input("inputjw"));
+        $newkredit->BI_JANGKA_WAKTU = $request->input("inputjw");
+        $newkredit->TGL_JATUH_TEMPO = \DateTime::createFromFormat('d/m/Y', $request->input("inputtanggaljttempo"))->format('Y-m-d');
+        $newkredit->SUKU_BUNGA_PER_TAHUN = $request->input("inputbungaperthn");
+        $newkredit->suku_bunga_eff_per_tahun = $request->input("inputbungaeffperthn");
+        $newkredit->SUKU_BUNGA_PER_ANGSURAN = $request->input("inputsukubunga");
+        $newkredit->BI_SUKU_BUNGA = $request->input("inputsukubunga");
+        $newkredit->ADM_PER_BLN = $request->input("inputbyadmin");
+        $newkredit->BUNGA_EFEKTIF_THN_INI = $request->input("inputbybonus");
+        $newkredit->FAKTOR_ANUITAS = $request->input("inputfaktoanuitas");
+        $newkredit->PERIODE_ANGSURAN_POKOK = $request->input("inputterminpokok");
+        $newkredit->PERIODE_ANGSURAN_BUNGA = $request->input("inputterminbunga");
+        $newkredit->GRACE_PERIOD_POKOK = $request->input("inputgppokok");
+        $newkredit->GRACE_PERIOD_BUNGA = $request->input("inputgpbunga");
+        $newkredit->JML_BUNGA_PINJAMAN = $request->input("inputjumlahbungapinjaman");
+        $newkredit->angsuran_total = $request->input("inputangsuranbln");
+        $newkredit->angsuran_pokok = $request->input("angsuranpokok")[1];
+        $newkredit->angsuran_bunga = $request->input("angsuranbunga")[1];
+        $newkredit->SUKU_BUNGA_EKIVALEN = $request->input("inputbungaekiv");
+        $newkredit->FEE_BUNGA_1_PER_TAHUN = $request->input("inputangsuranfee1");
+        $newkredit->FEE_BUNGA_2_PER_TAHUN = $request->input("inputangsuranfee2");
+        $newkredit->denda_per_hari = $request->input("inputdendaharian");
+        $newkredit->TAGIHAN_JT = $request->input("inputdendajtharian");
+        $newkredit->GRACE_PERIOD = $request->input("inputgphari");
+        $newkredit->ADM_PER_BLN = $request->input("inputbyadminpersen");
+        // biaya dan potongan pinjaman
+        $newkredit->PERSEN_PROVISI = $request->input("inputprovisi");
+        $newkredit->PROVISI = $request->input("inputprovisirp");
+        $newkredit->AMORTISASI_PROVISI = $request->input("inputbyadminpersen");
+        $newkredit->PERSEN_ADM = $request->input("inputadmfinal");
+        $newkredit->ADM = $request->input("inputadmfinalrp");
+        $newkredit->amortisasi_adm = $request->input("inputbyadminpersen");
+        $newkredit->PERSEN_BIAYA_TRANSAKSI = $request->input("inputbytrans");
+        $newkredit->biaya_transaksi = $request->input("inputbytransrp");
+        $newkredit->amortisasi_biaya_transaksi = $request->input("inputbyadminpersen");
+        $newkredit->PREMI = $request->input("inputpremi");
+        $newkredit->NOTARIEL = $request->input("inputnotariel");
+        $newkredit->MATERAI = $request->input("inputmaterai");
+        $newkredit->POKOK_MATERAI = $request->input("inputpkmaterai");
+        $newkredit->ANGSURAN_ADMIN = $request->input("inputlainlain");
+        $newkredit->JKW_PREMI = $request->input("inputangsuranpremi");
+        $newkredit->ANGSURAN_PREMI = $request->input("inputangsuranpremirp");
+        $newkredit->TOTAL_PREMI = $request->input("inputtotalpremi");
+        $newkredit->amortisasi_biaya_transaksi = $request->input("inputbyadminpersen");
+        $newkredit->PERSEKOT = $request->input("inputditanggung");
+        $newkredit->TGL_ANGSURAN = \DateTime::createFromFormat('d/m/Y', $request->input("inputmulaiangsuran"))->format('Y-m-d');
+        //form lapbul empty($var1)? $var2 : $var1;
+        $newkredit->PENJAMIN = empty($request->input("inputpenjamin"))? " " : $request->input("inputpenjamin");
+        $newkredit->ID_PENJAMIN = empty($request->input("inputidpenjamin"))? " " : $request->input("inputidpenjamin");
+        $newkredit->TGL_ANALISA = \DateTime::createFromFormat('d/m/Y', $request->input("inputtglanalisa"))->format('Y-m-d');
+        $newkredit->alamat_penjamin = empty($request->input("inputalamatpenjamin"))? " " : $request->input("inputalamatpenjamin");
+        $newkredit->PEKERJAAN_PENJAMIN = empty($request->input("inputpekerjaanpenjamin"))? " " : $request->input("inputpekerjaanpenjamin");
+        $newkredit->BI_SIFAT = $request->input("inputkodesifatkredit");
+        $newkredit->SID_SIFAT = $request->input("inputsidkodesifatkredit");
+        $newkredit->BI_JENIS_PENGGUNAAN = $request->input("inputkodejenispenggunaankredit");
+        $newkredit->SID_JENIS_PENGGUNAAN = $request->input("inputsidkodejenispenggunaan");
+        $newkredit->BI_GOL_DEBITUR = $request->input("inputkodegoldebitur");
+        $newkredit->BI_SEKTOR_EKONOMI = $request->input("inputkodesektorekonomikredit");
+        $newkredit->SID_SEKTOR_EKONOMI = $request->input("inputsidkodebidangusaha");
+        $newkredit->BI_GOL_PENJAMIN = $request->input("inputkodegolpenjaminkredit");
+        $newkredit->SID_GOL_PENJAMIN = $request->input("inputsidkodegolonganpenjamin");
+        $newkredit->KODE_ASURANSI = $request->input("inputkodeasuransikredit");
+        $newkredit->SID_JENISASURANSI = $request->input("inputsidkodejenisasuransi");
+        // jmlasuransi
+        // dijaminkan
+        $newkredit->SID_GOLKREDIT = $request->input("inputsidkodegolkredit");
+        $newkredit->KODE_METODA = $request->input("inputkodemetoda");
+        $newkredit->SID_JENISFASILITAS = $request->input("inputsidkodejenisfasilitas");
+        $newkredit->sumber_dana_pelunasan = $request->input("inputkodesumberpelunasan");
+        $newkredit->TUJUAN_PENGGUNAAN = empty($request->input("inputtujuanpenggunaan"))? " " : $request->input("inputtujuanpenggunaan");
+        $newkredit->kode_bi_hubungan = $request->input("inputkodeketerkaitanlapbul");
+        $newkredit->periode_pembayaran = $request->input("inputkodeperiodepembayaranpokok");
+        $newkredit->jenis_usaha = $request->input("inputkodejenisusaha");
+        $newkredit->periode_pembayaran_bunga = $request->input("inputkodeperiodepembayaranbunga"); 
+        $newkredit->STATUS_PASANGAN = empty($request->input("inputdatasuamiistri"))? " " : $request->input("inputdatasuamiistri");
+        $newkredit->NO_PENSIUN = empty($request->input("inputnopensiun"))? " " : $request->input("inputnopensiun");
+        $newkredit->NAMA_PASANGAN = empty($request->input("inputnamasuamiistri"))? " " : $request->input("inputnamasuamiistri");
+        // no kartu pensiun
+        $newkredit->ALAMAT_PASANGAN = empty($request->input("inputalamatsuamiistri"))? " " : $request->input("inputalamatsuamiistri");
+        $newkredit->JENIS_PENSIUN = empty($request->input("inputjenispensiun"))? " " : $request->input("inputjenispensiun");
+        $newkredit->PEKERJAAN_PASANGAN = empty($request->input("inputpekerjaansuamiistri"))? " " : $request->input("inputpekerjaansuamiistri");
+        // pkpinjaman
+        $newkredit->JENIS_CHANNELING = $request->input("inputkelompokgroup");
+        $newkredit->NO_REK_NOTARIEL = empty($request->input("inputtabnotariel"))? " " : $request->input("inputtabnotariel");
+        $newkredit->NO_REK_DEBET_TAB = empty($request->input("inputtabasuransi"))? " " : $request->input("inputtabasuransi");
+        $newkredit->NO_REK_DEBET = empty($request->input("inputtabholddana"))? " " : $request->input("inputtabholddana");
+        $newkredit->STATUS_AKTIF = 1;
+        $newkredit->FLAG_JADWAL = "TERKUNCI";
+        $newkredit->save();
+
+        // form agunan
+        if($request->input("jenisagunan")){
+          $length = count($request->input("jenisagunan"));
+          for ($i = 0; $i < $length; $i++) {
+            $newagunan = New Agunan();
+            if($request->file("agunanimage")){
+              $filename = time().'.'.$request->file("agunanimage")->getClientOriginalExtension();
+              $request->file("agunanimage")->move(public_path('img'), $filename);
+              $newagunan->path_agunan = $filename;
+            }
+
+            $newagunan->NO_AGUNAN = $request->input("noagunan")[$i];
+            $newagunan->agunan = $request->input("uraianagunan")[$i];
+            $newagunan->agunan_nilai = $request->input("nilaiagunan")[$i];
+            $newagunan->agunan_jenis = $request->input("jenisagunan")[$i];
+            $newagunan->agunan_ikatan_hukum = "1";
+            $newagunan->sid_kode_agunan = "02";
+            $newagunan->sid_agunan_ikatan_hukum = "03";
+            $newagunan->bi_agunan_nilai = $request->input("nilaiagunanbi")[$i];
+            $newagunan->BI_AGUNAN_YG_DIJAMINKAN = $request->input("persenlikuidasi")[$i];
+            $newagunan->NILAI_LIKUIDASI = $request->input("nilailikuidasi")[$i];
+            $newagunan->PEMILIK_AGUNAN = $request->input("pemilikagunan")[$i];
+            $newagunan->ALAMAT_AGUNAN = $request->input("alamatagunan")[$i];
+            $newagunan->BUKTI_AGUNAN = $request->input("buktiagunan")[$i];
+            if($request->input("jtempoagunan")[$i]){
+              $newagunan->TGL_JT_AGUNAN = \DateTime::createFromFormat('d/m/Y', $request->input("jtempoagunan")[$i])->format('Y-m-d');
+            }
+            $newagunan->KODE_AGUNAN = "5";
+            $newagunan->agunan_rincian = $request->input("rincianagunan")[$i];
+            if($request->input("inputnorekening")==''){
+              $newagunan->no_rekening = $request->input("inputnopkbaru");
+            }else{
+              $newagunan->no_rekening = $request->input("inputnorekening");
+            }        
+            $newagunan->id_agunan = $request->input("idagunan")[$i];
+            $newagunan->save();
+          }
+        }
+        
+        // input jadwal kredit transaction
+        if($request->input("tglangsuran")) {
+          $length = count($request->input("tglangsuran"));
+          for ($i = 0; $i < $length; $i++) {
+            $newkretrans = New Kretrans();
+            $newkretrans->NO_REKENING = $request->input("inputnorekening");
+            $newkretrans->TGL_TRANS = \DateTime::createFromFormat('d/m/Y', $request->input("tglangsuran")[$i])->format('Y-m-d');
+            $newkretrans->POKOK_TRANS = $request->input("angsuranpokok")[$i];
+            $newkretrans->BUNGA_TRANS = $request->input("angsuranbunga")[$i];
+            $newkretrans->PROVISI_TRANS = 0;
+            $newkretrans->ANGSURAN_KE = $i+1;
+            $newkretrans->MY_KODE_TRANS = '200';
+            $newkretrans->VALIDATED = 1;
+            $newkretrans->save();
+            if($request->input("inputamortisasiprovisi")=="1") {
+              $newkretrans2 = New Kretrans();
+              $newkretrans2->NO_REKENING = $request->input("inputnorekening");
+              $newkretrans2->TGL_TRANS = \DateTime::createFromFormat('d/m/Y', $request->input("tglprovisi")[$i])->format('Y-m-d');
+              $newkretrans2->POKOK_TRANS = 0;
+              $newkretrans2->BUNGA_TRANS = 0;
+              $newkretrans2->PROVISI_TRANS = $request->input("angsuranprovisi")[$i];
+              $newkretrans2->ANGSURAN_KE = $i+1;
+              $newkretrans2->MY_KODE_TRANS = '225';
+              $newkretrans2->VALIDATED = 1;
+              $newkretrans2->save();
+            }
+          }
+        }
+          DB::commit();
+          return redirect()->back() ->with('alert', 'Tambah kredit berhasil!');
+      } catch (\PDOException $e) {
+          // Woopsy
+          DB::rollBack();
+          return redirect()->back() ->with('alert', 'Tambah kredit gagal!');
+      }    
     }
 
     /*
@@ -372,7 +381,8 @@ class KreditController extends Controller
             $query->where('STATUS_AKTIF', '=', 2)
             ->orWhere('STATUS_AKTIF', '=', 3)
             ->orWhere('STATUS_AKTIF', '=', 1);
-            })          
+            })    
+          ->orderBy('NO_REKENING','DESC')      
           ->skip($start)
           ->take($rowperpage)
           ->orderBy($columnName,$columnSortOrder)

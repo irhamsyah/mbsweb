@@ -342,7 +342,7 @@
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputibukandung">Restricted</label>
                   <select class="form-control" name="flag_restricted">
-                    <option selected id="erestricted"></option>
+                    <option selected id="idrestricted"></option>
                     <option value="UNRESTRICTED">UNRESTRICTED</option>
                     <option value="RESTRICTED">RESTRICTED</option>
                   </select>
@@ -563,8 +563,7 @@
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputibukandung">Restricted</label>
                   <select class="form-control" name="flag_restricted">
-                    <option id="restricted" selected></option>
-                    <option value="UNRESTRICTED">UNRESTRICTED</option>
+                    <option value="UNRESTRICTED" selected>UNRESTRICTED</option>
                     <option value="RESTRICTED">RESTRICTED</option>
                   </select>
                 </div>

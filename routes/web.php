@@ -261,6 +261,7 @@ Route::post('exporttoexceltabblokir',
 Route::get('bo_tl_tt_setoranpenarikantabungan','TellertabunganController@bo_tl_tt_setoranpenarikantabungan')->name('setoranpenarikantabungan');
 Route::post('bo_tl_tt_simpantrstabungan','TellertabunganController@bo_tl_tt_simpantrstabungan');
 Route::get('bo_tl_tk_realisasikredit','TellerKreditController@bo_tl_tk_realisasikredit')->name('realisasikredit');
+Route::get('bo_tl_tk_setoranangsuran','TellerKreditController@bo_tl_tk_setoranangsuran')->name('setoranangsuran');
 Route::post('bo_tl_tk_realisasikredit/setrealisasi','TellerKreditController@setrealisasi')->name('setrealisasi');
 // AKUNTANSI
 Route::get('bo_ak_tt_postingdatatransaksi','AkuntansiController@bo_ak_tt_postingdatatransaksi')->name('showformpostingdatatransaksi');

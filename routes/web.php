@@ -152,6 +152,56 @@ Route::get('bo_dp_rp_nominatifrinci','DepositoController@bo_dp_rp_nominatifrinci
 Route::post('bo_dp_rp_nominatifrinci','DepositoController@bo_dp_rp_nominatifrinci_view');
 // Cetak PDF Nominatif Deposito
 Route::get('bo_dp_rp_cetaknomindep','DepositoController@cetaknomindepopdf')->name('cetaknomindep');
+// export Deposito
+Route::post('nominatifdepeksport','DepositoController@nominatifdepeksport');
+// SHOW FORM SEARCH LAPORAN DEPOSITO GROUP
+Route::get('bo_dp_rp_nominatifgroup','DepositoController@bo_dp_rp_nominatifgroup')->name('searchnomdepgroup');
+// proses cari Nominatif
+Route::post('bo_dp_rp_nominatifgroup','DepositoController@bo_dp_rp_nominatifgroup_view');
+// Cetak PDF nominatif Group Deosito
+Route::get('bo_dp_rp_cetaknomingrpdep','DepositoController@cetaknomingroupdeppdf')->name('cetaknomingroupdep');
+Route::get('bo_dp_rp_cetaknomingrpdep2','DepositoController@cetaknomingroupdeppdf2')->name('cetaknomingroupdep2');
+// SHOW FORM NOMINATIF GROUP RINCI DEPOSITO
+Route::get('bo_dp_rp_nominatifgrouprinci','DepositoController@cetaknominatifgrouprinci')->name('cetaknomingrouprinci');
+Route::post('bo_dp_rp_nominatifgrouprinci','DepositoController@cetaknominatifgrouprinci_view')->name('cetaknomingrouprinci');
+// Cetak PDF nominatif grouprinci per Jenis_DEPOSITO
+Route::get('bo_dp_rp_cetaknominrincigrpjnsdep','DepositoController@cetaknomingroupdepjnsdep')->name('cetaknomingroupdepjnsdep');
+// EKSPORT TO EXCEL nominatif grouprinci Jenis_DEPOSITO 
+Route::post('nominatifdepgroupjeniseksport','DepositoController@nominatifdepgroupjeniseksport');
+// Cetak PDF nominatif grouprinci per JKW DEPOSITO
+Route::get('bo_dp_rp_cetaknomingroupdjkwdep','DepositoController@bo_dp_rp_cetaknomingroupdjkwdep')->name('cetaknomingroupdjkwdep');
+// EXPORT nominatif grouprinci per JKW DEPOSITO to excel
+Route::post('nominatifdepgroupjkweksport','DepositoController@nominatifdepgroupjkweksport');
+// Cetak PDF Nominatif group rinci per suku_bunga
+Route::get('bo_dp_rp_cetaknomingroupdepskbngdep','DepositoController@bo_dp_rp_cetaknomingroupdepskbngdep')->name('cetaknomingroupdepskbngdep');
+// EXPORT nominatif grouprinci per suku_bunga to excel
+Route::post('nominatifdepgroupskbngeksport','DepositoController@nominatifdepgroupskbngeksport');
+// Cetak PDF Nominatif group rinci per KODE_GROUP1
+Route::get('bo_dp_rp_cetaknomingroupdepkdgrp1dep','DepositoController@bo_dp_rp_cetaknomingroupdepkdgrp1dep')->name('cetaknomingroupdepKDGRP1dep');
+// EXPORT nominatif grouprinci per KODE_GROUP1 to excel
+Route::post('nominatifdepgroupKDGRP1eksport','DepositoController@nominatifdepgroupKDGRP1eksport');
+// Cetak PDF Nominatif group rinci per KODE_GROUP2
+Route::get('bo_dp_rp_cetaknomingroupdepkdgrp2dep','DepositoController@bo_dp_rp_cetaknomingroupdepkdgrp2dep')->name('cetaknomingroupdepKDGRP2dep');
+// EXPORT nominatif grouprinci per KODE_GROUP2 to excel
+Route::post('nominatifdepgroupKDGRP2eksport','DepositoController@nominatifdepgroupKDGRP2eksport');
+// Cetak PDF Nominatif group rinci per KODE_GROUP3
+Route::get('bo_dp_rp_cetaknomingroupdepkdgrp3dep','DepositoController@bo_dp_rp_cetaknomingroupdepkdgrp3dep')->name('cetaknomingroupdepKDGRP3dep');
+// EXPORT nominatif grouprinci per KODE_GROUP2 to excel
+Route::post('nominatifdepgroupKDGRP3eksport','DepositoController@nominatifdepgroupKDGRP3eksport');
+// Cetak PDF Nominatif group rinci per KELOMPOK_SALDO
+Route::get('bo_dp_rp_cetaknomingroupdepKELSALdep','DepositoController@bo_dp_rp_cetaknomingroupdepKELSALdep')->name('cetaknomingroupdepKELSALdep');
+// EXPORT nominatif grouprinci per KELOMPOK_SALDO to excel
+Route::post('nominatifdepgroupKELSALeksport','DepositoController@nominatifdepgroupKELSALeksport');
+// Munculkan FORM CETAK TRANSAKSI RINCI DEPOSITO
+Route::get('bo_dp_rp_transaksirinci','DepositoController@bo_dp_rp_transaksirinci')->name('dptransaksirinci');
+// Proses Cari transaksi DEPOSITO
+Route::post('bo_dp_rp_transaksirinci','DepositoController@bo_dp_rp_transaksirinci_view');
+// Cetak ke PDF Transaksi RINCI DEPOSITO
+Route::get('bo_dp_rp_pdftransaksideposito','DepositoController@bo_dp_rp_pdftransaksideposito')->name('cetaktransaksideposito');
+// EXPORT TO EXCEL TRANSAKSI DEPOSITO
+Route::post('exporttoexceltransaksidep','DepositoController@exporttoexceltransaksidep');
+// SHow from Mutasi BUnga Deposito
+Route::get('bo_dp_rp_mutasibunga','DepositoController@bo_dp_rp_mutasibunga')->name('mutasibungadep');
 
 //BO KREDIT Data Entry KREDIT
 Route::get('/bo_kr_de_kredit', 'KreditController@bo_kr_de_kredit')->name('showkredit');

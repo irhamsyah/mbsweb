@@ -18,5 +18,7 @@ class VerifyCsrfToken extends Middleware
         'bo_dep_update_bngpjk',
         'bo_tb_de_hitungbungadep',
         'bo_dp_rp_nominatifrinci',
+        'bo_dp_rp_nominatifgrouprinci',
+        'bo_dp_rp_transaksirinci',
     ];
 }

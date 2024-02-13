@@ -20,16 +20,21 @@ use App\Tellertran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 Use App\Exports\ReportDepbungapajakExport;
+Use App\Exports\ReportNominDepExport;
+Use App\Exports\ReportNominGroupDepExport;
+Use App\Exports\ReportNominGrpJnsDepExport;
+Use App\Exports\ReportNominGrpJkwDepExport;
+Use App\Exports\ReportNominGrpSkbngDepExport;
+Use App\Exports\ReportNominGrpKDGRP1DepExport;
+Use App\Exports\ReportNominGrpKDGRP2DepExport;
+Use App\Exports\ReportNominGrpKDGRP3DepExport;
+Use App\Exports\ReportNominGrpKELSALDepExport;
+Use App\Exports\ReportTransaksiDepExport;
 use App\KodeTransDeposito;
 use App\Kodetranstabungan;
 use App\Tabungan;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Floor;
-use PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Round;
-use Psy\Command\WhereamiCommand;
 use Barryvdh\DomPDF\Facade\Pdf;
-use function Symfony\Component\VarDumper\Dumper\esc;
 
 class DepositoController extends Controller
 { 
@@ -1247,7 +1252,7 @@ class DepositoController extends Controller
         );
         return redirect()->route('showformmanrollover')->with('alert','DATA DEPOSAN BERHASIL DIPERPANJANG');
     }
-    // REPORT NOMINATIF RINCI
+    // SHOW FORM SEARCH REPORT NOMINATIF RINCI
     public function bo_dp_rp_nominatifrinci()
     {
         $tgllogin=Mysysid::where('KeyName','=','TANGGALHARIINI')->get();
@@ -1261,22 +1266,311 @@ class DepositoController extends Controller
     // proses cetak nominatif deposito
     public function bo_dp_rp_nominatifrinci_view(Request $request)
     {
-        // dd($request);
+        $tgllogin=Mysysid::where('KeyName','=','TANGGALHARIINI')->get();
+        $tgllogin = date('Y-m-d',strtotime(str_replace('/', '-', $tgllogin[0]->Value)));
+        $d = date("d",strtotime($request->tgl_nominatif));
+        $tglawal=date("Y-m-d",strtotime("-".$d." days",strtotime($request->tgl_nominatif)));
+
+        $users = User::all();
+        $logos = Logo::all();
+        $nominatif = DB::select("SELECT deposito.NO_REKENING,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL,Y.JML_BUNGA,Y.JML_PAJAK FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) LEFT JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_nominatif' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) LEFT JOIN (SELECT NO_REKENING,SUM(IF(MY_KODE_TRANS='100' OR MY_KODE_TRANS LIKE'25%',SALDO_TRANS,0)) AS JML_BUNGA,SUM(IF(MY_KODE_TRANS LIKE '4%',SALDO_TRANS,0)) as JML_PAJAK FROM deptrans WHERE (TGL_TRANS>='$tglawal' AND TGL_TRANS<='$request->tgl_nominatif') GROUP BY NO_REKENING) AS Y ON deposito.NO_REKENING=Y.NO_REKENING WHERE X.NOMINAL>0");
+        return view('reports.deposito.frmnominatifdep',['users'=>$users,'logos'=>$logos,'tgllogin'=>$tgllogin,'nominatif'=>$nominatif,'tgl_input'=>$request->tgl_nominatif]);
+    }
+    // Cetak Nominatif Rinci ke PDF
+    public function cetaknomindepopdf(Request $request)
+    {
+        set_time_limit(2000);
+
+        $d = date("d",strtotime($request->tgl_input));
+        $tglawal=date("Y-m-d",strtotime("-".$d." days",strtotime($request->tgl_input)));
+        $nominatif = DB::select("SELECT deposito.NO_REKENING,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL,Y.JML_BUNGA,Y.JML_PAJAK FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_input' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) LEFT JOIN (SELECT NO_REKENING,SUM(IF(MY_KODE_TRANS='100' OR MY_KODE_TRANS LIKE'25%',SALDO_TRANS,0)) AS JML_BUNGA,SUM(IF(MY_KODE_TRANS LIKE '4%',SALDO_TRANS,0)) as JML_PAJAK FROM deptrans WHERE (TGL_TRANS>='$tglawal' AND TGL_TRANS<='$request->tgl_input') GROUP BY NO_REKENING) AS Y ON deposito.NO_REKENING=Y.NO_REKENING WHERE X.NOMINAL>0");
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_DEP%')->get();
+        $kota=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'NAMA_KOTA')->get();
+
+        $pdf = Pdf::loadview('pdf.deposito.nominatif_pdf',['nominatif'=>$nominatif,'lembaga'=>$lembaga,'ttd'=>$ttd,'kota'=>$kota,'tgl_input'=>$request->tgl_input])->setPaper('A4','landscape');
+        return $pdf->stream();
+    }
+    // EXPORT TO EXCEL NOMINATIF
+    public function nominatifdepeksport(Request $request)
+    {
+        $d = date("d",strtotime($request->tgl_nominatif));
+        $tglawal=date("Y-m-d",strtotime("-".$d." days",strtotime($request->tgl_nominatif)));
+        $nominatif = DB::select("SELECT deposito.*,nasabah.nasabah_id,nasabah.kota_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,kodegroup1deposito.DESKRIPSI_GROUP1,kodegroup2deposito.DESKRIPSI_GROUP2,kodegroup3deposito.DESKRIPSI_GROUP3,X.NOMINAL,Y.JML_BUNGA,Y.JML_PAJAK FROM (((((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_input' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) LEFT JOIN (SELECT NO_REKENING,SUM(IF(MY_KODE_TRANS='100' OR MY_KODE_TRANS LIKE'25%',SALDO_TRANS,0)) AS JML_BUNGA,SUM(IF(MY_KODE_TRANS LIKE '4%',SALDO_TRANS,0)) as JML_PAJAK FROM deptrans WHERE (TGL_TRANS>'$tglawal' AND TGL_TRANS<='$request->tgl_nominatif') GROUP BY NO_REKENING) AS Y ON deposito.NO_REKENING=Y.NO_REKENING) LEFT JOIN kodegroup1deposito ON deposito.KODE_GROUP1=kodegroup1deposito.KODE_GROUP1) LEFT JOIN kodegroup2deposito ON deposito.KODE_GROUP2=kodegroup2deposito.KODE_GROUP2) LEFT JOIN kodegroup3deposito ON deposito.KODE_GROUP3=kodegroup3deposito.KODE_GROUP3 WHERE X.NOMINAL>0");
+        return (new ReportNominDepExport($nominatif))->download('nominatifexcel.xlsx');
+    }
+    // Show FORM LAPORAN DEPOSITO GROUP
+    public function bo_dp_rp_nominatifgroup()
+    {
         $tgllogin=Mysysid::where('KeyName','=','TANGGALHARIINI')->get();
         $tgllogin = date('Y-m-d',strtotime(str_replace('/', '-', $tgllogin[0]->Value)));
         $users = User::all();
         $logos = Logo::all();
-        $nominatif = DB::select("SELECT deposito.NO_REKENING,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL,X.JML_BUNGA,X.JML_PAJAK FROM (deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) LEFT JOIN (SELECT NO_REKENING,SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0)) AS NOMINAL,SUM(IF(MY_KODE_TRANS='100' OR MY_KODE_TRANS LIKE'25%',SALDO_TRANS,0)) AS JML_BUNGA,SUM(IF(MY_KODE_TRANS LIKE '4%',SALDO_TRANS,0)) as JML_PAJAK  FROM deptrans WHERE TGL_TRANS<='$request->tgl_nominatif' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING");
-        return view('reports.deposito.frmnominatifdep', 
-         ['users'=>$users,'logos'=>$logos,'tgllogin'=>$tgllogin,'nominatif'=>$nominatif,'tgl_input'=>$request->tgl_nominatif]);
+        
+        return view('reports.deposito.frmnominatifgroup', 
+         ['users'=>$users,'logos'=>$logos,'tgllogin'=>$tgllogin]);
     }
-    // Cetak ke PDF
-    public function cetaknomindepopdf(Request $request)
+    // Proses tapil hasil pencarian 
+    public function bo_dp_rp_nominatifgroup_view(Request $request)
     {
-        $nominatif = DB::select("SELECT deposito.NO_REKENING,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL,X.JML_BUNGA,X.JML_PAJAK FROM (deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) LEFT JOIN (SELECT NO_REKENING,SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0)) AS NOMINAL,SUM(IF(MY_KODE_TRANS='100' OR MY_KODE_TRANS LIKE'25%',SALDO_TRANS,0)) AS JML_BUNGA,SUM(IF(MY_KODE_TRANS LIKE '4%',SALDO_TRANS,0)) as JML_PAJAK  FROM deptrans WHERE TGL_TRANS<='$request->tgl_input' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING");
-        $pdf = Pdf::loadview('pdf.deposito.nominatif_pdf',['nominatif'=>$nominatif])->setPaper('a4','landscape');
+        // dd($request);
+        $users = User::all();
+        $logos = Logo::all();
+        $tgllogin=Mysysid::where('KeyName','=','TANGGALHARIINI')->get();
+        $tgllogin = date('Y-m-d',strtotime(str_replace('/', '-', $tgllogin[0]->Value)));
+        $d = date("d",strtotime($request->tgl_nominatif));
+        $tglawal=date("Y-m-d",strtotime("-".$d." days",strtotime($request->tgl_nominatif)));
+
+        $nominatif = DB::select("SELECT deposito.NO_REKENING,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL,Y.JML_BUNGA,Y.JML_PAJAK FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_nominatif' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) LEFT JOIN (SELECT NO_REKENING,SUM(IF(MY_KODE_TRANS='100' OR MY_KODE_TRANS LIKE'25%',SALDO_TRANS,0)) AS JML_BUNGA,SUM(IF(MY_KODE_TRANS LIKE '4%',SALDO_TRANS,0)) as JML_PAJAK FROM deptrans WHERE (TGL_TRANS>='$tglawal' AND TGL_TRANS<='$request->tgl_nominatif') GROUP BY NO_REKENING) AS Y ON deposito.NO_REKENING=Y.NO_REKENING WHERE X.NOMINAL>0");
+        return view('reports.deposito.frmnominatifgroup',['users'=>$users,'logos'=>$logos,'tgllogin'=>$tgllogin,'nominatif'=>$nominatif,'tgl_input'=>$request->tgl_nominatif]);
+    }
+    // Cetak PDF Nominatif Group 
+    public function cetaknomingroupdeppdf(Request $request)
+    {
+        $d = date("d",strtotime($request->tgl_input));
+        $tglawal=date("Y-m-d",strtotime("-".$d." days",strtotime($request->tgl_input)));
+        $nominatif = DB::select("SELECT deposito.NO_REKENING,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL,Y.JML_BUNGA,Y.JML_PAJAK FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_input' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) LEFT JOIN (SELECT NO_REKENING,SUM(IF(MY_KODE_TRANS='100' OR MY_KODE_TRANS LIKE'25%',SALDO_TRANS,0)) AS JML_BUNGA,SUM(IF(MY_KODE_TRANS LIKE '4%',SALDO_TRANS,0)) as JML_PAJAK FROM deptrans WHERE (TGL_TRANS>='$tglawal' AND TGL_TRANS<='$request->tgl_input') GROUP BY NO_REKENING) AS Y ON deposito.NO_REKENING=Y.NO_REKENING WHERE X.NOMINAL>0");
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_DEP%')->get();
+        $kota=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'NAMA_KOTA')->get();
+
+        $pdf = Pdf::loadview('pdf.deposito.nominatifgroup_pdf',['nominatif'=>$nominatif,'lembaga'=>$lembaga,'ttd'=>$ttd,'kota'=>$kota,'tgl_input'=>$request->tgl_input])->setPaper('A4','portrait');
+        return $pdf->stream();
+    }
+    // EXPORT NOM GROUP DEPOSITO 
+    public function exportnominatifgroupdeposito(Request $request)
+    {
+        $d = date("d",strtotime($request->tgl_nominatif));
+        $tglawal=date("Y-m-d",strtotime("-".$d." days",strtotime($request->tgl_nominatif)));
+
+        $nominatif = DB::select("SELECT deposito.*,kodejenisdeposito.DESKRIPSI_JENIS_DEPOSITO,nasabah.nasabah_id,nasabah.tempatlahir,nasabah.tgllahir,nasabah.no_id,nasabah.npwp,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL,Y.JML_BUNGA,Y.JML_PAJAK FROM (((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_nominatif' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) LEFT JOIN (SELECT NO_REKENING,SUM(IF(MY_KODE_TRANS='100' OR MY_KODE_TRANS LIKE'25%',SALDO_TRANS,0)) AS JML_BUNGA,SUM(IF(MY_KODE_TRANS LIKE '4%',SALDO_TRANS,0)) as JML_PAJAK FROM deptrans WHERE (TGL_TRANS>'$tglawal' AND TGL_TRANS<='$request->tgl_nominatif') GROUP BY NO_REKENING) AS Y ON deposito.NO_REKENING=Y.NO_REKENING) INNER JOIN kodejenisdeposito ON deposito.JENIS_DEPOSITO=kodejenisdeposito.KODE_JENIS_DEPOSITO WHERE X.NOMINAL>0 ORDER BY deposito.JENIS_DEPOSITO,deposito.NO_REKENING");
+        return (new ReportNominGroupDepExport($nominatif))->download('nominatifgroupexcel.xlsx');
+    }
+    // cetak nomingroupdeposito 2 
+    public function cetaknomingroupdeppdf2(Request $request)
+    {
+        $d = date("d",strtotime($request->tgl_input));
+        $tglawal=date("Y-m-d",strtotime("-".$d." days",strtotime($request->tgl_input)));
+        $nominatif = DB::select("SELECT deposito.*,kodejenisdeposito.DESKRIPSI_JENIS_DEPOSITO,nasabah.nasabah_id,nasabah.tempatlahir,nasabah.tgllahir,nasabah.no_id,nasabah.npwp,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL,Y.JML_BUNGA,Y.JML_PAJAK FROM (((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_input' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) LEFT JOIN (SELECT NO_REKENING,SUM(IF(MY_KODE_TRANS='100' OR MY_KODE_TRANS LIKE'25%',SALDO_TRANS,0)) AS JML_BUNGA,SUM(IF(MY_KODE_TRANS LIKE '4%',SALDO_TRANS,0)) as JML_PAJAK FROM deptrans WHERE (TGL_TRANS>'$tglawal' AND TGL_TRANS<='$request->tgl_input') GROUP BY NO_REKENING) AS Y ON deposito.NO_REKENING=Y.NO_REKENING) INNER JOIN kodejenisdeposito ON deposito.JENIS_DEPOSITO=kodejenisdeposito.KODE_JENIS_DEPOSITO WHERE X.NOMINAL>0 ORDER BY deposito.JENIS_DEPOSITO,deposito.NO_REKENING");
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_DEP%')->get();
+        $kota=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'NAMA_KOTA')->get();
+
+        $pdf = Pdf::loadview('pdf.deposito.nominatifgroup_pdf2',['nominatif'=>$nominatif,'lembaga'=>$lembaga,'ttd'=>$ttd,'kota'=>$kota,'tgl_input'=>$request->tgl_input])->setPaper('A4','landscape');
+        return $pdf->stream();
+    }
+    // SHOW FORM NOMINATIF GROUP RINCI
+    public function cetaknominatifgrouprinci()
+    {
+        $tgllogin=Mysysid::where('KeyName','=','TANGGALHARIINI')->get();
+        $tgllogin = date('Y-m-d',strtotime(str_replace('/', '-', $tgllogin[0]->Value)));
+        $users = User::all();
+        $logos = Logo::all();
+        return view('reports.deposito.frmnominatifgrouprinci', 
+         ['users'=>$users,'logos'=>$logos,'tgllogin'=>$tgllogin,'rekap'=>'']);
+    }
+    // proses cari
+    public function cetaknominatifgrouprinci_view(Request $request)
+    {
+        // dd($request);
+        $users = User::all();
+        $logos = Logo::all();
+        $tgllogin=Mysysid::where('KeyName','=','TANGGALHARIINI')->get();
+
+        $nominatif=array();
+        if($request->rekap =='JENIS_DEPOSITO'){
+            $nominatif = DB::select("SELECT deposito.JENIS_DEPOSITO,kodejenisdeposito.DESKRIPSI_JENIS_DEPOSITO,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_nominatif' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodejenisdeposito ON deposito.JENIS_DEPOSITO=kodejenisdeposito.KODE_JENIS_DEPOSITO WHERE X.NOMINAL>0 ORDER BY deposito.JENIS_DEPOSITO,deposito.NO_REKENING");
+        }
+        elseif($request->rekap =='JKW')
+        {
+            $nominatif = DB::select("SELECT deposito.JKW,kodejenisdeposito.DESKRIPSI_JENIS_DEPOSITO,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_nominatif' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodejenisdeposito ON deposito.JENIS_DEPOSITO=kodejenisdeposito.KODE_JENIS_DEPOSITO WHERE X.NOMINAL>0 ORDER BY deposito.JENIS_DEPOSITO,deposito.NO_REKENING");
+        }
+        elseif($request->rekap =='SUKU_BUNGA')
+        {
+            $nominatif = DB::select("SELECT deposito.SUKU_BUNGA,kodejenisdeposito.DESKRIPSI_JENIS_DEPOSITO,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_nominatif' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodejenisdeposito ON deposito.JENIS_DEPOSITO=kodejenisdeposito.KODE_JENIS_DEPOSITO WHERE X.NOMINAL>0 ORDER BY deposito.JENIS_DEPOSITO,deposito.NO_REKENING");
+        }
+        elseif($request->rekap =='KELOMPOK_SALDO')
+        {
+            $nominatif = DB::select("SELECT X.NOMINAL,kodejenisdeposito.DESKRIPSI_JENIS_DEPOSITO,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_nominatif' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodejenisdeposito ON deposito.JENIS_DEPOSITO=kodejenisdeposito.KODE_JENIS_DEPOSITO WHERE X.NOMINAL>0 ORDER BY X.NOMINAL,deposito.NO_REKENING");
+        }
+        elseif($request->rekap =='KODE_GROUP1')
+        {
+            $nominatif = DB::select("SELECT deposito.KODE_GROUP1,kodegroup1deposito.DESKRIPSI_GROUP1,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_nominatif' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodegroup1deposito ON deposito.KODE_GROUP1=kodegroup1deposito.KODE_GROUP1 WHERE X.NOMINAL>0 ORDER BY deposito.KODE_GROUP1,deposito.NO_REKENING");
+
+        }
+        elseif($request->rekap =='KODE_GROUP2')
+        {
+            $nominatif = DB::select("SELECT deposito.KODE_GROUP2,kodegroup2deposito.DESKRIPSI_GROUP2,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_nominatif' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodegroup2deposito ON deposito.KODE_GROUP2=kodegroup2deposito.KODE_GROUP2 WHERE X.NOMINAL>0 ORDER BY deposito.KODE_GROUP2,deposito.NO_REKENING");
+        }
+        elseif($request->rekap =='KODE_GROUP3')
+        {
+            $nominatif = DB::select("SELECT deposito.KODE_GROUP3,kodegroup3deposito.DESKRIPSI_GROUP3,deposito.JENIS_DEPOSITO,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_nominatif' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodegroup3deposito ON deposito.KODE_GROUP3=kodegroup3deposito.KODE_GROUP3 WHERE X.NOMINAL>0 ORDER BY deposito.KODE_GROUP3,deposito.NO_REKENING");
+        }
+        return view('reports.deposito.frmnominatifgrouprinci',['users'=>$users,'logos'=>$logos,'tgllogin'=>$tgllogin,'nominatif'=>$nominatif,'tgl_input'=>$request->tgl_nominatif,'rekap'=>$request->rekap]);
+    }
+    // CETAK KE PDF NOMINATIF GROUP PERJENIS DEPOSITO
+    public function cetaknomingroupdepjnsdep(Request $request)
+    {
+        $nominatif = DB::select("SELECT deposito.JENIS_DEPOSITO,kodejenisdeposito.DESKRIPSI_JENIS_DEPOSITO,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_input' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodejenisdeposito ON deposito.JENIS_DEPOSITO=kodejenisdeposito.KODE_JENIS_DEPOSITO WHERE X.NOMINAL>0 ORDER BY deposito.JENIS_DEPOSITO,deposito.NO_REKENING");
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_DEP%')->get();
+        $kota=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'NAMA_KOTA')->get();
+        $pdf = Pdf::loadview('pdf.deposito.nominatifgroupjenis_pdf',['nominatif'=>$nominatif,'lembaga'=>$lembaga,'ttd'=>$ttd,'kota'=>$kota,'tgl_input'=>$request->tgl_input])->setPaper('A4','landscape');
         return $pdf->stream();
 
     }
+    public function nominatifdepgroupjeniseksport(Request $request)
+    {
+        $d = date("d",strtotime($request->tgl_nominatif));
+        $tglawal=date("Y-m-d",strtotime("-".$d." days",strtotime($request->tgl_nominatif)));
 
+        $nominatif = DB::select("SELECT deposito.JENIS_DEPOSITO,kodejenisdeposito.DESKRIPSI_JENIS_DEPOSITO,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,X.NOMINAL,deposito.KODE_BI_PEMILIK,deposito.KODE_GROUP1,deposito.KODE_GROUP2,deposito.KODE_GROUP3 FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_nominatif' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodejenisdeposito ON deposito.JENIS_DEPOSITO=kodejenisdeposito.KODE_JENIS_DEPOSITO  WHERE X.NOMINAL>0 ORDER BY deposito.JENIS_DEPOSITO,deposito.NO_REKENING");
+        return (new ReportNominGrpJnsDepExport($nominatif))->download('nominatifgroupjnsexcel.xlsx');
+
+    }
+    // Cetak PDF per JKW Depsoito
+    public function bo_dp_rp_cetaknomingroupdjkwdep(Request $request)
+    {
+        $nominatif = DB::select("SELECT deposito.JKW,deposito.JENIS_DEPOSITO,kodejenisdeposito.DESKRIPSI_JENIS_DEPOSITO,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_input' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodejenisdeposito ON deposito.JENIS_DEPOSITO=kodejenisdeposito.KODE_JENIS_DEPOSITO WHERE X.NOMINAL>0 ORDER BY deposito.JKW,deposito.NO_REKENING");
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_DEP%')->get();
+        $kota=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'NAMA_KOTA')->get();
+        $pdf = Pdf::loadview('pdf.deposito.nominatifgroupjkw_pdf',['nominatif'=>$nominatif,'lembaga'=>$lembaga,'ttd'=>$ttd,'kota'=>$kota,'tgl_input'=>$request->tgl_input])->setPaper('A4','landscape');
+        return $pdf->stream();
+    }
+    // export TO EXCEL nominatof group per JKW
+    public function nominatifdepgroupjkweksport(Request $request)
+    {
+        $nominatif = DB::select("SELECT deposito.JKW,deposito.JENIS_DEPOSITO,kodejenisdeposito.DESKRIPSI_JENIS_DEPOSITO,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,deposito.KODE_BI_PEMILIK,deposito.KODE_GROUP1,deposito.KODE_GROUP2,deposito.KODE_GROUP3,X.NOMINAL FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_nominatif' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodejenisdeposito ON deposito.JENIS_DEPOSITO=kodejenisdeposito.KODE_JENIS_DEPOSITO WHERE X.NOMINAL>0 ORDER BY deposito.JKW,deposito.NO_REKENING");
+        return (new ReportNominGrpJkwDepExport($nominatif))->download('nominatifgroupjkwexcel.xlsx');
+    }
+    // Cetak PDF Nominatif per Suku_bunga
+    public function bo_dp_rp_cetaknomingroupdepskbngdep(Request $request)
+    {
+        $nominatif = DB::select("SELECT deposito.SUKU_BUNGA,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_input' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodejenisdeposito ON deposito.JENIS_DEPOSITO=kodejenisdeposito.KODE_JENIS_DEPOSITO WHERE X.NOMINAL>0 ORDER BY deposito.SUKU_BUNGA,deposito.NO_REKENING");
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_DEP%')->get();
+        $kota=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'NAMA_KOTA')->get();
+        $pdf = Pdf::loadview('pdf.deposito.nominatifgroupskbng_pdf',['nominatif'=>$nominatif,'lembaga'=>$lembaga,'ttd'=>$ttd,'kota'=>$kota,'tgl_input'=>$request->tgl_input])->setPaper('A4','landscape');
+        return $pdf->stream();
+    }
+    // EXPORT TO EXCEL PER SUKU_BUNGA
+    public function nominatifdepgroupskbngeksport(Request $request)
+    {
+        $nominatif = DB::select("SELECT deposito.SUKU_BUNGA,deposito.JENIS_DEPOSITO,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,deposito.KODE_BI_PEMILIK,deposito.KODE_GROUP1,deposito.KODE_GROUP2,deposito.KODE_GROUP3,X.NOMINAL FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_nominatif' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodejenisdeposito ON deposito.JENIS_DEPOSITO=kodejenisdeposito.KODE_JENIS_DEPOSITO WHERE X.NOMINAL>0 ORDER BY deposito.JKW,deposito.NO_REKENING");
+        return (new ReportNominGrpSkbngDepExport($nominatif))->download('exceldepositoperskbng.xlsx');
+    }
+    // Cetak PDF Nominatif per KELOMPOK_SALDO
+    public function bo_dp_rp_cetaknomingroupdepKELSALdep(Request $request)
+    {
+        $nominatif = DB::select("SELECT deposito.SUKU_BUNGA,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_input' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodejenisdeposito ON deposito.JENIS_DEPOSITO=kodejenisdeposito.KODE_JENIS_DEPOSITO WHERE X.NOMINAL>0 ORDER BY X.NOMINAL,deposito.NO_REKENING");
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_DEP%')->get();
+        $kota=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'NAMA_KOTA')->get();
+        $pdf = Pdf::loadview('pdf.deposito.nominatifgroupKELSAL_pdf',['nominatif'=>$nominatif,'lembaga'=>$lembaga,'ttd'=>$ttd,'kota'=>$kota,'tgl_input'=>$request->tgl_input])->setPaper('A4','landscape');
+        return $pdf->stream();
+    }
+    // EXPORT TO EXCEL PER KELOMPOK_SALDO
+    public function nominatifdepgroupKELSALeksport(Request $request)
+    {
+        $nominatif = DB::select("SELECT X.NOMINAL,deposito.JENIS_DEPOSITO,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,deposito.KODE_BI_PEMILIK,deposito.KODE_GROUP1,deposito.KODE_GROUP2,deposito.KODE_GROUP3,X.NOMINAL FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_nominatif' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodejenisdeposito ON deposito.JENIS_DEPOSITO=kodejenisdeposito.KODE_JENIS_DEPOSITO WHERE X.NOMINAL>0 ORDER BY X.NOMINAL,deposito.NO_REKENING");
+        return (new ReportNominGrpKELSALDepExport($nominatif))->download('exceldepositoperskbng.xlsx');
+    }
+
+    // CETAK PDF PERGROUP KODE_GROUP1
+    public function bo_dp_rp_cetaknomingroupdepkdgrp1dep(Request $request)
+    {
+        $nominatif = DB::select("SELECT deposito.KODE_GROUP1,kodegroup1deposito.DESKRIPSI_GROUP1,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_input' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodegroup1deposito ON deposito.KODE_GROUP1=kodegroup1deposito.KODE_GROUP1 WHERE X.NOMINAL>0 ORDER BY deposito.KODE_GROUP1,deposito.NO_REKENING");
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_DEP%')->get();
+        $kota=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'NAMA_KOTA')->get();
+        $pdf = Pdf::loadview('pdf.deposito.nominatifgroupkdgrp1_pdf',['nominatif'=>$nominatif,'lembaga'=>$lembaga,'ttd'=>$ttd,'kota'=>$kota,'tgl_input'=>$request->tgl_input])->setPaper('A4','landscape');
+        return $pdf->stream();
+    }
+    // EXPORT EXCEL NOMINATOF PERGROUP KODE_GROUP1
+    public function nominatifdepgroupKDGRP1eksport(Request $request)
+    {
+        $nominatif = DB::select("SELECT deposito.KODE_GROUP1,kodegroup1deposito.DESKRIPSI_GROUP1,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,deposito.JENIS_DEPOSITO,deposito.KODE_BI_PEMILIK,deposito.KODE_GROUP1,deposito.KODE_GROUP2,deposito.KODE_GROUP3,X.NOMINAL FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_nominatif' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodegroup1deposito ON deposito.KODE_GROUP1=kodegroup1deposito.KODE_GROUP1 WHERE X.NOMINAL>0 ORDER BY deposito.KODE_GROUP1,deposito.NO_REKENING");
+        return (new ReportNominGrpKDGRP1DepExport($nominatif))->download('exceldepositoperKDGRP1.xlsx');
+    }
+    // CETAK PDF PERGROUP KODE_GROUP2
+    public function bo_dp_rp_cetaknomingroupdepkdgrp2dep(Request $request)
+    {
+        $nominatif = DB::select("SELECT deposito.KODE_GROUP2,kodegroup2deposito.DESKRIPSI_GROUP2,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_input' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodegroup2deposito ON deposito.KODE_GROUP2=kodegroup2deposito.KODE_GROUP2 WHERE X.NOMINAL>0 ORDER BY deposito.KODE_GROUP2,deposito.NO_REKENING");
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_DEP%')->get();
+        $kota=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'NAMA_KOTA')->get();
+        $pdf = Pdf::loadview('pdf.deposito.nominatifgroupkdgrp2_pdf',['nominatif'=>$nominatif,'lembaga'=>$lembaga,'ttd'=>$ttd,'kota'=>$kota,'tgl_input'=>$request->tgl_input])->setPaper('A4','landscape');
+        return $pdf->stream();
+    }
+    // EXPORT EXCEL NOMINATOF PERGROUP KODE_GROUP2
+    public function nominatifdepgroupKDGRP2eksport(Request $request)
+    {
+        $nominatif = DB::select("SELECT deposito.KODE_GROUP2,kodegroup2deposito.DESKRIPSI_GROUP2,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,deposito.JENIS_DEPOSITO,deposito.KODE_BI_PEMILIK,deposito.KODE_GROUP1,deposito.KODE_GROUP2,deposito.KODE_GROUP3,X.NOMINAL FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_nominatif' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodegroup2deposito ON deposito.KODE_GROUP2=kodegroup2deposito.KODE_GROUP2 WHERE X.NOMINAL>0 ORDER BY deposito.KODE_GROUP2,deposito.NO_REKENING");
+        return (new ReportNominGrpKDGRP2DepExport($nominatif))->download('exceldepositoperKDGRP2.xlsx');
+    }
+    // CETAK PDF PERGROUP KODE_GROUP3
+    public function bo_dp_rp_cetaknomingroupdepkdgrp3dep(Request $request)
+    {
+        $nominatif = DB::select("SELECT deposito.KODE_GROUP3,kodegroup3deposito.DESKRIPSI_GROUP3,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,X.NOMINAL FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_input' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodegroup3deposito ON deposito.KODE_GROUP3=kodegroup3deposito.KODE_GROUP3 WHERE X.NOMINAL>0 ORDER BY deposito.KODE_GROUP3,deposito.NO_REKENING");
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_DEP%')->get();
+        $kota=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'NAMA_KOTA')->get();
+        $pdf = Pdf::loadview('pdf.deposito.nominatifgroupkdgrp3_pdf',['nominatif'=>$nominatif,'lembaga'=>$lembaga,'ttd'=>$ttd,'kota'=>$kota,'tgl_input'=>$request->tgl_input])->setPaper('A4','landscape');
+        return $pdf->stream();
+    }
+    // EXPORT EXCEL NOMINATOF PERGROUP KODE_GROUP3
+    public function nominatifdepgroupKDGRP3eksport(Request $request)
+    {
+        $nominatif = DB::select("SELECT deposito.KODE_GROUP3,kodegroup3deposito.DESKRIPSI_GROUP3,deposito.NO_REKENING,nasabah.nasabah_id,nasabah.nama_nasabah,nasabah.alamat,deposito.JKW,deposito.TGL_REGISTRASI,deposito.TGL_MULAI,deposito.TGL_JT,deposito.SUKU_BUNGA,deposito.JENIS_DEPOSITO,deposito.KODE_BI_PEMILIK,deposito.KODE_GROUP1,deposito.KODE_GROUP2,deposito.KODE_GROUP3,X.NOMINAL FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$request->tgl_nominatif' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN kodegroup3deposito ON deposito.KODE_GROUP3=kodegroup3deposito.KODE_GROUP3 WHERE X.NOMINAL>0 ORDER BY deposito.KODE_GROUP3,deposito.NO_REKENING");
+        return (new ReportNominGrpKDGRP3DepExport($nominatif))->download('exceldepositoperKDGRP3.xlsx');
+    }
+    // SHOW FORM CARI REPORT TRANSAKSI
+    public function bo_dp_rp_transaksirinci()
+    {
+        $users = User::all();
+        $logos = Logo::all();
+        return view('reports.deposito.frmcetakrpttransaksi',['users' => $users, 'logos'=>$logos,'msgstatus'=>'']);
+    }
+    // PROSES CARI TRANSAKSI DEPOSITO
+    public function bo_dp_rp_transaksirinci_view(Request $request)
+    {
+        $tgltrs1 = date('Y-m-d',strtotime($request->tgl_trans1));
+        $tgltrs2 = date('Y-m-d',strtotime($request->tgl_trans2));
+        $users = User::all();
+        $logos = Logo::all();
+
+        $transaksi = DB::select("SELECT deposito.NO_REKENING,nasabah.nama_nasabah,X.NOMINAL,deposito.SUKU_BUNGA,deptrans.TGL_TRANS,deptrans.MY_KODE_TRANS,deptrans.KODE_TRANS,deptrans.KUITANSI,deptrans.SALDO_TRANS FROM ((deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$tgltrs2' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING) INNER JOIN deptrans ON deposito.NO_REKENING=deptrans.NO_REKENING WHERE deptrans.TGL_TRANS>='$tgltrs1' AND deptrans.TGL_TRANS<='$tgltrs2' ORDER BY deptrans.TGL_TRANS,deposito.NO_REKENING");
+        return view('reports.deposito.frmcetakrpttransaksi',['transaksi' => $transaksi,'tgltrs1'=>$tgltrs1,'tgltrs2'=>$tgltrs2,'users' => $users, 'logos'=>$logos,'msgstatus'=>'']);
+    }
+    // cetak ke PDF TRANSAKSI RINCI DEPOSITO
+    public function bo_dp_rp_pdftransaksideposito(Request $request)
+    {
+        $tgltrs1 = date('Y-m-d',strtotime($request->tgl_trans1));
+        $tgltrs2 = date('Y-m-d',strtotime($request->tgl_trans2));
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $transaksi = DB::select("SELECT deposito.no_rekening,nasabah.nama_nasabah,deposito.suku_bunga,Y.TGL_TRANS,Y.kode_trans,Y.terima_pokok,Y.ambil_bunga,Y.ambil_titipan,Y.ambil_pajak,Y.ambil_pokok,Y.kuitansi,Y.no_teller,Y.userid,Y.my_kode_trans,deposito.KODE_GROUP1,deposito.KODE_GROUP2,deposito.KODE_GROUP3,deposito.MASUK_TITIPAN,deposito.BUNGA_BERBUNGA,Y.tob,Y.no_rek_ob FROM (deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id ) INNER JOIN (SELECT DEPTRANS_ID,NO_REKENING,TGL_TRANS,SUM(IF(MY_KODE_TRANS LIKE '0',SALDO_TRANS,0)) as terima_pokok,SUM(IF(MY_KODE_TRANS LIKE '10%' OR MY_KODE_TRANS LIKE '20%',SALDO_TRANS,0)) as ambil_bunga,SUM(IF(MY_KODE_TRANS LIKE '27%',SALDO_TRANS,0)) as ambil_titipan,SUM(IF(MY_KODE_TRANS LIKE '4%',SALDO_TRANS,0)) as ambil_pajak,SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0)) as ambil_pokok,IF(MY_KODE_TRANS = '0' OR MY_KODE_TRANS = '100' OR MY_KODE_TRANS ='200' OR MY_KODE_TRANS ='300',KUITANSI,NULL) as kuitansi,no_teller,userapp as userid,IF(MY_KODE_TRANS = '0' OR MY_KODE_TRANS = '100' OR MY_KODE_TRANS ='200' OR MY_KODE_TRANS ='300',MY_KODE_TRANS,NULL) as my_kode_trans,no_rek_ob,tob,kode_trans FROM deptrans WHERE TGL_TRANS>='$tgltrs1' AND TGL_TRANS<='$tgltrs2' GROUP BY NO_REKENING,TGL_TRANS ORDER BY TGL_TRANS) AS Y ON deposito.NO_REKENING=Y.NO_REKENING");
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_DEP%')->get();
+        $kota=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'NAMA_KOTA')->get();
+        $pdf = Pdf::loadview('pdf.deposito.transaksi_pdf',['transaksi'=>$transaksi,'lembaga'=>$lembaga,'ttd'=>$ttd,'kota'=>$kota,'tgltrs1'=>$tgltrs1,'tgltrs2'=>$tgltrs2])->setPaper('A4','landscape');
+        return $pdf->stream();
+    }
+    // EXPORT TO EXCEL REPORT TRANaksi DEPOSITO
+    public function exporttoexceltransaksidep(Request $request)
+    {
+        $tgltrs1 = date('Y-m-d',strtotime($request->tgl_trans1));
+        $tgltrs2 = date('Y-m-d',strtotime($request->tgl_trans2));
+        $transaksi = DB::select("SELECT deposito.no_rekening,nasabah.nama_nasabah,deposito.suku_bunga,deposito.jml_deposito,Y.TGL_TRANS,Y.kode_trans,Y.terima_pokok,Y.ambil_bunga,Y.ambil_titipan,Y.ambil_pajak,Y.ambil_pokok,Y.kuitansi,Y.no_teller,Y.userid,Y.my_kode_trans,deposito.KODE_GROUP1,deposito.KODE_GROUP2,deposito.KODE_GROUP3,deposito.MASUK_TITIPAN,deposito.BUNGA_BERBUNGA,Y.tob,Y.no_rek_ob FROM (deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id ) INNER JOIN (SELECT DEPTRANS_ID,NO_REKENING,TGL_TRANS,SUM(IF(MY_KODE_TRANS LIKE '0',SALDO_TRANS,0)) as terima_pokok,SUM(IF(MY_KODE_TRANS LIKE '10%' OR MY_KODE_TRANS LIKE '20%',SALDO_TRANS,0)) as ambil_bunga,SUM(IF(MY_KODE_TRANS LIKE '27%',SALDO_TRANS,0)) as ambil_titipan,SUM(IF(MY_KODE_TRANS LIKE '4%',SALDO_TRANS,0)) as ambil_pajak,SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0)) as ambil_pokok,IF(MY_KODE_TRANS = '0' OR MY_KODE_TRANS = '100' OR MY_KODE_TRANS ='200' OR MY_KODE_TRANS ='300',KUITANSI,NULL) as kuitansi,no_teller,userapp as userid,IF(MY_KODE_TRANS = '0' OR MY_KODE_TRANS = '100' OR MY_KODE_TRANS ='200' OR MY_KODE_TRANS ='300',MY_KODE_TRANS,NULL) as my_kode_trans,no_rek_ob,tob,kode_trans FROM deptrans WHERE TGL_TRANS>='$tgltrs1' AND TGL_TRANS<='$tgltrs2' GROUP BY NO_REKENING,TGL_TRANS ORDER BY TGL_TRANS) AS Y ON deposito.NO_REKENING=Y.NO_REKENING");
+        return (new ReportTransaksiDepExport($transaksi))->download('transaksideposito.xlsx');
+    }
+    // Show form mutasi bunga
+    public function bo_dp_rp_mutasibunga()
+    {
+        $users = User::all();
+        $logos = Logo::all();
+        $nasabah = DB::select("select deposito.no_rekening,nasabah.nama_nasabah,nasabah.alamat,deposito.jml_deposito from deposito inner join nasabah on deposito.nasabah_id = nasabah.nasabah_id where deposito.status_aktif<>1");
+        return view('reports.deposito.frmmutasibunga',['users' => $users, 'logos'=>$logos,'nasabah'=>$nasabah,'msgstatus'=>'']);
+
+
+    }
 }

@@ -571,37 +571,55 @@
                     <p class="pl-2">PENCETAKAN LAPORAN</p>
                   </a>
                   <ul class="nav nav-treeview">
-                    <li class="nav-item has-treeview <?php if($menu=='dp' AND $submenu=='de'){echo 'menu-open';}?>">
+                    <li class="nav-item has-treeview <?php if($menu=='dp' AND $submenu=='rp'){echo 'menu-open';}?>">
                       <a href="#" class="nav-link">
                         <i class="right fas fa-angle-left"></i>
                         <p class="pl-4">Nominatif</p>
                       </a>
                       <ul class="nav nav-treeview">
-                        <li class="nav-item" <?php if($menu=='dp' AND $submenu=='de'){echo 'menu-open';}?>>
+                        <li class="nav-item" <?php if($menu=='dp' AND $submenu=='rp'){echo 'menu-open';}?>>
                           <a href="bo_dp_rp_nominatifrinci" class="nav-link <?php if($page=='nominatifrinci'){echo 'active';}?>">
                             <p class="pl-5">Nominatif Rinci</p>
                           </a>
                         </li>    
-                        <li class="nav-item" <?php if($menu=='dp' AND $submenu=='de'){echo 'menu-open';}?>>
-                          <a href="bo_dp_de_browsebunga" class="nav-link <?php if($menu=='dp' AND $submenu=='de'){echo 'menu-open';}?>">
-                            <p class="pl-5">Browse Bunga</p>
+                        <li class="nav-item" <?php if($menu=='dp' AND $submenu=='rp'){echo 'menu-open';}?>>
+                          <a href="bo_dp_rp_nominatifgroup" class="nav-link <?php if($page=='nominatifgroup'){echo 'active';}?>">
+                            <p class="pl-5">Nominatif Group</p>
                           </a>
                         </li>    
                         {{-- Overbook bunga --}}
                         <li class="nav-item" <?php if($menu=='dp' AND $submenu=='de'){echo 'menu-open';}?>>
-                          <a href="bo_dp_de_overbookbunga" class="nav-link <?php if($menu=='dp' AND $submenu=='de'){echo 'menu-open';}?>">
-                            <p class="pl-5">Overbook Bunga ke Titipan,Tabungan,Pokok</p>
+                          <a href="bo_dp_rp_nominatifgrouprinci" class="nav-link <?php if($page=='nominatifgrouprinci'){echo 'active';}?>">
+                            <p class="pl-5">Nominatif Group Rinci</p>
                           </a>
                         </li>    
-  
                       </ul>
                     </li>
-                  <li class="nav-item">
-                    <a href="/bo_dp_rp_tabungan" class="nav-link <?php if($page=='tabungan' or $page=='tabungancari' or $page=='tabunganbuktisetortab'){echo 'active';}?>">
-                      <p class="pl-4">Dokumen Tabungan</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
+                    <li class="nav-item has-treeview <?php if($menu=='dp' AND $submenu=='rp'){echo 'menu-open';}?>">
+                      <a href="#" class="nav-link">
+                        <i class="right fas fa-angle-left"></i>
+                        <p class="pl-4">Transaksi</p>
+                      </a>
+                      <ul class="nav nav-treeview">
+                        <li class="nav-item" <?php if($menu=='dp' AND $submenu=='rp'){echo 'menu-open';}?>>
+                          <a href="bo_dp_rp_transaksirinci" class="nav-link <?php if($page=='transaksirinci'){echo 'active';}?>">
+                            <p class="pl-5">Transaksi Rinci</p>
+                          </a>
+                        </li>    
+                        <li class="nav-item" <?php if($menu=='dp' AND $submenu=='rp'){echo 'menu-open';}?>>
+                          <a href="bo_dp_rp_mutasibunga" class="nav-link <?php if($page=='mutasibunga'){echo 'active';}?>">
+                            <p class="pl-5">Mutasi Bunga</p>
+                          </a>
+                        </li>    
+                        {{-- Overbook bunga --}}
+                        <li class="nav-item" <?php if($menu=='dp' AND $submenu=='de'){echo 'menu-open';}?>>
+                          <a href="bo_dp_rp_nominatifgrouprinci" class="nav-link <?php if($page=='nominatifgrouprinci'){echo 'active';}?>">
+                            <p class="pl-5">Nominatif Group Rinci</p>
+                          </a>
+                        </li>    
+                      </ul>
+                    </li>
+                    <li class="nav-item">
                     <a href="/bo_dp_rp_deposito" class="nav-link <?php if($page=='deposito' or $page=='depositocari'){echo 'active';}?>">
                       <p class="pl-4">Dokumen Deposito</p>
                     </a>
@@ -1057,14 +1075,6 @@
   </aside>
   
   @yield('content')
-
-  <footer class="main-footer">
-    <strong>Copyright &copy; 2023 <a href="#">MBS Web</a>.</strong>
-    All rights reserved.
-    <div class="float-right d-none d-sm-inline-block">
-      <b>Version</b> 1.0.0
-    </div>
-  </footer>
 
   <!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">
@@ -2351,6 +2361,15 @@ $(e.currentTarget).find('input[name="deskripsi_jenis_deposito"]').val(Deskripsi_
 
       });
 
+      // MEN NON AKTIFKAN tombol EXPORT DAN CETAK PDF DEPOSITO
+      function nonAktif()
+      {
+          const xbutton1 = document.getElementById("but1");
+          const xbutton2 = document.getElementById("but2");
+          xbutton1.disabled = true;
+          xbutton2.href = "javascript: void(0)";
+      }
+
 </script>
 <script>
   // Fungsi Membuat FORMAT RUPIAH pada INPUTAN BOX
@@ -2408,5 +2427,33 @@ return prefix == undefined ? rupiahh : rupiahh ? "Rp. " + rupiahh : "";
   }
 </script>
 
+<!-- Footer -->
+<footer class="text-center text-lg-start bg-body-tertiary text-muted">
+  <!-- Section: Social media -->
+  <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
+  </section>
+  <!-- Section: Social media -->
+  <!-- Section: Links  -->
+  <section class="">
+    <div class="container text-center text-md-start mt-5">
+      <!-- Grid row -->
+      <div class="row mt-3">
+        <!-- Grid column -->
+      </div>
+      <!-- Grid row -->
+    </div>
+  </section>
+  <!-- Section: Links  -->
+  <!-- Copyright -->
+  <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+  <strong>Copyright &copy; 2023 <a href="#">MBS Web</a>.</strong>
+  All rights reserved.
+  <div class="float-right d-none d-sm-inline-block">
+    <b>Version</b> 1.0.0
+  </div>
+  </div>
+  <!-- Copyright -->
+</footer>
 </body>
+
 </html>

@@ -77,12 +77,12 @@
                 <td>{{number_format(($values->ambil_bunga-$values->ambil_pajak),2,'.',',')}}</td>
                 <td>{{number_format($values->ambil_titipan,2,'.',',')}}</td>
                 <td>{{number_format($values->ambil_pokok,2,'.',',')}}</td>
-                @if(is_null($values->no_rek_ob)==false)
+                @if(strlen($values->no_rek_ob)>0 )
                     <td colspan="3">{{'OB ke Tab :'.$values->no_rek_ob}}</td>
-                @elseif(($values->MASUK_TITIPAN==1||$values->MASUK_TITIPAN==0)&&($values->BUNGA_BERBUNGA==1))
+                @elseif(($values->MASUK_TITIPAN==1 OR $values->MASUK_TITIPAN==0) AND ($values->BUNGA_BERBUNGA==1))
                     <td colspan="3">{{'OB ke Pokok'}}</td>
-                @elseif(($values->MASUK_TITIPAN==1)&&($values->BUNGA_BERBUNGA==0))
-                    <td colspan="3">{{'OB ke Titpan'}}</td>
+                @else
+                    <td colspan="3">{{'OB ke Titipan'}}</td>
                 @endif
                 <td style="text-align: center">{{$values->tob}}</td>
             </tr>

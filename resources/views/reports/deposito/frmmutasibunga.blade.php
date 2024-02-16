@@ -9,7 +9,7 @@
       <div class="col-12">
         <div class="card card-warning card-outline">
           <!-- form start -->
-          <form method="POST" action="bo_dp_rp_transaksirinci" role="search">
+          <form method="POST" action="bo_dp_rp_mutasibunga" role="search">
             @csrf
             <div class="card-body">
               <div class="row form-group">
@@ -32,10 +32,14 @@
                 </div>
                 <div class="row form-group">
                 <div class="col-lg-3 col-sm-6" style="margin-left: 400px">
-                  <label for="nasabahid">Nasabah / Anggota ID</label>
+                  <label for="nasabahid">No_rekening</label>
                   <div class="input-group date" data-target-input="nearest">
-                    <input type="text" id="editidnasabah" name="nasabah_id" class="form-control">
-                    <div class="input-group-append" data-toggle="modal" data-target="#ambildatanasabah">
+                    @if(isset($no_rekening))
+                    <input type="text" id="pilihnasabah" name="no_rekening" class="form-control" value="{{$no_rekening}}">
+                    @else
+                    <input type="text" id="pilihnasabah" name="no_rekening" class="form-control">
+                    @endif
+                    <div class="input-group-append" data-toggle="modal" data-target="#ambildeposito">
                       <div class="input-group-text"><i class="fa fa-user"></i></div>
                   </div>
                   </div>
@@ -43,20 +47,88 @@
               </div>    
             </div>
             <!-- /.card-body -->
+            <div class="row form-group" style="margin-top: -10px">
+              <div class="col-1"></div>
+              <div class="mx-auto col-md-3 col-sm-12">
+                <button type="submit" class="btn btn-warning" style="margin-left:40px ">Proses &nbsp;&nbsp;&nbsp;<i class="fa fa-search" style="color:white"></i></button>
+              </div>
+            </div>    
           </form>
+          {{-- TAMPILKAN TOMBOL CETAK DAN EXPROT --}}
+          @if(isset($transaksi))
+          <form method="POST" action="exporttoexcelmutasibngdep" role="search" style="margin-top:-20px;margin-left:180px">
+            @csrf
+            <input type="text" name="no_rekening" value="{{$no_rekening}}" hidden>
+            <input type="text" name="tgl_trans1" value="{{$tgltrs1}}" hidden>
+            <input type="text" name="tgl_trans2" value="{{$tgltrs2}}" hidden>
+
+          <div class="row form-group">
+            <div class="mx-auto col-md-5 col-sm-12">
+              <button type="submit" class="btn btn-success">Export&nbsp;&nbsp;&nbsp;<i class="fa fa-pencil" style="color:white"></i></button>
+              <a href="{{ route('cetakmutasibungadep',['tgl_trans1'=>$tgltrs1,'tgl_trans2'=>$tgltrs2,'no_rekening'=>$no_rekening])}}" class="btn btn-md btn-danger"> Cetak PDF</a>
+            </div>
+          </div>
+        </form>
         </div>
+        <div class="card">
+          <div class="card-body">
+            <table id="example1" class="display" width="100">
+                <thead>
+                <tr>
+                  <th>No_Rekening</th>
+                  <th>Tgl_trans</th>
+                  <th>Terima_Pokok</th>
+                  <th>Ambil_Bunga</th>
+                  <th>Ambil_Titipan</th>
+                  <th>Ambil_Pajak</th>
+                  <th>Ambil_Pokok</th>
+                </tr>
+                </thead>
+                @if(is_null(Auth::user())==false)
+                @if(Auth::user()->privilege=='admin')
+                <tbody>
+                @foreach($transaksi as $values)
+                  <tr>
+                    <td>{{ $values->NO_REKENING}}</td>
+                    <td>{{ $values->TGL_TRANS}}</td>
+                    <td>{{ $values->terima_pokok}}</td>
+                    <td>{{ $values->ambil_bunga}}</td>
+                    <td>{{ $values->ambil_titipan}}</td>
+                    <td>{{ $values->ambil_pajak}}</td>
+                    <td>{{ $values->ambil_pokok}}</td>
+                  </tr>
+                @endforeach
+                </tbody>
+                  @endif
+                @else
+                <h3>Sesi Anda Telah Habis, Silahkan Login Ulang</h3>
+                @endif
+  
+              </table>
+          </div>
+        </div>
+        @endif
+        {{-- AKHIR TAMPILIN TOMBOL CETAK --}}
+        </div>
+      </div>
+      <!-- /.col -->
+    </div>
+    <!-- /.row -->
+  </div>
+  
+</div>
   {{-- MODAL TAMPIL TABEL NASABAH --}}
-  <div class="modal fade bs-modal-nas" id="ambildatanasabah" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal fade bs-modal-nas" id="ambildeposito" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="ambildatanasabah">Data Nasabah</h5>
+      <div class="modal-content" style="width:700px">
+        <div class="modal-header" >
+          <h5 class="modal-title" id="ambildeposito">Data Nasabah</h5>
           {{-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button> --}}
         </div>
         <div class="modal-body">
-          <table id="nasabahdata" class="display" width="100%">
+          <table id="norekdepos" class="display" width="100%">
             <thead>
               <tr>
                   <th>No_rekening</th>
@@ -72,13 +144,13 @@
                 <td>{{ $value->no_rekening }}</td>
                 <td>{{ $value->nama_nasabah }}</td>
                 <td>{{ $value->alamat }}</td>
-                <td>{{ $value->jml_deposito }}</td>
+                <td>{{ number_format($value->jml_deposito,2,".",",") }}</td>
                 <td>
                   <a class="dropdown-toggle btn btn-block bg-gradient-primary btn-sm" data-toggle="dropdown" href="#">
                     Action <span class="caret"></span>
                   </a>
                   <div class="dropdown-menu" data-dismiss="modal">
-                    <a id="tes1" href="#" class="dropdown-item">
+                    <a id="pil1" href="#" class="dropdown-item">
                       pilih
                     </a>
                   </div>
@@ -91,12 +163,5 @@
       </div>
     </div>
   </div>
-      </div>
-      <!-- /.col -->
-    </div>
-    <!-- /.row -->
-  </div>
-  
-</div>
 <!-- /.content -->
 @endsection

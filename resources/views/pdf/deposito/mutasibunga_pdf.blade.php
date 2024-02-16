@@ -73,13 +73,13 @@
             <tr>
                 <td>{{++$index}}</td>
                 <td>{{$values->TGL_TRANS}}</td>
-                @if(is_null($values->no_rek_ob)==false)
+            @if(is_null($values->no_rek_ob)==false)
                 <td colspan="4">{{'OB Bunga ke tab : '.$values->no_rek_ob}}</td>
-                @elseif($values->MASUK_TITIPAN == 1 AND $values->BUNGA_BERBUNGA == 1)
+            @elseif($values->MASUK_TITIPAN == 1 AND $values->BUNGA_BERBUNGA == 1)
                 <td colspan="4">{{'OB Bunga ke titipan : '.$values->no_rek_ob}}</td>
-                @elseif($values->MASUK_TITIPAN == 1 AND $values->BUNGA_BERBUNGA == 0)
+            @elseif($values->MASUK_TITIPAN == 1 AND $values->BUNGA_BERBUNGA == 0)
                 <td colspan="4">{{'OB Bunga ke titipan : '.$values->no_rek_ob}}</td>
-                @endif
+            @endif
                 <td colspan="4">{{number_format($values->setor,2,".",",")}}</td>
                 <td colspan="4">{{number_format($values->ambil,2,".",",")}}</td>
                 @php($totsaldo=$totsaldo+$values->setor-$values->ambil)

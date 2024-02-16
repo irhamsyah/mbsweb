@@ -1549,7 +1549,7 @@ class DepositoController extends Controller
         $tgltrs1 = date('Y-m-d',strtotime($request->tgl_trans1));
         $tgltrs2 = date('Y-m-d',strtotime($request->tgl_trans2));
         $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
-        $transaksi = DB::select("SELECT deposito.no_rekening,nasabah.nama_nasabah,deposito.suku_bunga,Y.TGL_TRANS,Y.kode_trans,Y.terima_pokok,Y.ambil_bunga,Y.ambil_titipan,Y.ambil_pajak,Y.ambil_pokok,Y.kuitansi,Y.no_teller,Y.userid,Y.my_kode_trans,deposito.KODE_GROUP1,deposito.KODE_GROUP2,deposito.KODE_GROUP3,deposito.MASUK_TITIPAN,deposito.BUNGA_BERBUNGA,Y.tob,Y.no_rek_ob FROM (deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id ) INNER JOIN (SELECT DEPTRANS_ID,NO_REKENING,TGL_TRANS,SUM(IF(MY_KODE_TRANS LIKE '0',SALDO_TRANS,0)) as terima_pokok,SUM(IF(MY_KODE_TRANS LIKE '10%' OR MY_KODE_TRANS LIKE '20%',SALDO_TRANS,0)) as ambil_bunga,SUM(IF(MY_KODE_TRANS LIKE '27%',SALDO_TRANS,0)) as ambil_titipan,SUM(IF(MY_KODE_TRANS LIKE '4%',SALDO_TRANS,0)) as ambil_pajak,SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0)) as ambil_pokok,IF(MY_KODE_TRANS = '0' OR MY_KODE_TRANS = '100' OR MY_KODE_TRANS ='200' OR MY_KODE_TRANS ='300',KUITANSI,NULL) as kuitansi,no_teller,userapp as userid,IF(MY_KODE_TRANS = '0' OR MY_KODE_TRANS = '100' OR MY_KODE_TRANS ='200' OR MY_KODE_TRANS ='300',MY_KODE_TRANS,NULL) as my_kode_trans,no_rek_ob,tob,kode_trans FROM deptrans WHERE TGL_TRANS>='$tgltrs1' AND TGL_TRANS<='$tgltrs2' GROUP BY NO_REKENING,TGL_TRANS ORDER BY TGL_TRANS) AS Y ON deposito.NO_REKENING=Y.NO_REKENING");
+        $transaksi = DB::select("SELECT deposito.no_rekening,nasabah.nama_nasabah,deposito.suku_bunga,Y.TGL_TRANS,Y.kode_trans,Y.terima_pokok,Y.ambil_bunga,Y.ambil_titipan,Y.ambil_pajak,Y.ambil_pokok,Y.kuitansi,Y.no_teller,Y.userid,Y.my_kode_trans,deposito.KODE_GROUP1,deposito.KODE_GROUP2,deposito.KODE_GROUP3,deposito.MASUK_TITIPAN,deposito.BUNGA_BERBUNGA,Y.tob,Y.no_rek_ob FROM (deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id ) INNER JOIN (SELECT DEPTRANS_ID,NO_REKENING,TGL_TRANS,SUM(IF(MY_KODE_TRANS LIKE '0',SALDO_TRANS,0)) as terima_pokok,SUM(IF(MY_KODE_TRANS LIKE '10%' OR MY_KODE_TRANS LIKE '20%' OR MY_KODE_TRANS LIKE '25%',SALDO_TRANS,0)) as ambil_bunga,SUM(IF(MY_KODE_TRANS LIKE '27%',SALDO_TRANS,0)) as ambil_titipan,SUM(IF(MY_KODE_TRANS LIKE '4%',SALDO_TRANS,0)) as ambil_pajak,SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0)) as ambil_pokok,IF(MY_KODE_TRANS = '0' OR MY_KODE_TRANS = '100' OR MY_KODE_TRANS ='200' OR MY_KODE_TRANS ='300',KUITANSI,NULL) as kuitansi,no_teller,userapp as userid,IF(MY_KODE_TRANS = '0' OR MY_KODE_TRANS = '100' OR MY_KODE_TRANS ='200' OR MY_KODE_TRANS ='300',MY_KODE_TRANS,NULL) as my_kode_trans,no_rek_ob,tob,kode_trans FROM deptrans WHERE TGL_TRANS>='$tgltrs1' AND TGL_TRANS<='$tgltrs2' GROUP BY NO_REKENING,TGL_TRANS ORDER BY TGL_TRANS) AS Y ON deposito.NO_REKENING=Y.NO_REKENING");
         $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_DEP%')->get();
         $kota=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'NAMA_KOTA')->get();
         $pdf = Pdf::loadview('pdf.deposito.transaksi_pdf',['transaksi'=>$transaksi,'lembaga'=>$lembaga,'ttd'=>$ttd,'kota'=>$kota,'tgltrs1'=>$tgltrs1,'tgltrs2'=>$tgltrs2])->setPaper('A4','landscape');
@@ -1560,7 +1560,7 @@ class DepositoController extends Controller
     {
         $tgltrs1 = date('Y-m-d',strtotime($request->tgl_trans1));
         $tgltrs2 = date('Y-m-d',strtotime($request->tgl_trans2));
-        $transaksi = DB::select("SELECT deposito.no_rekening,nasabah.nama_nasabah,deposito.suku_bunga,deposito.jml_deposito,Y.TGL_TRANS,Y.kode_trans,Y.terima_pokok,Y.ambil_bunga,Y.ambil_titipan,Y.ambil_pajak,Y.ambil_pokok,Y.kuitansi,Y.no_teller,Y.userid,Y.my_kode_trans,deposito.KODE_GROUP1,deposito.KODE_GROUP2,deposito.KODE_GROUP3,deposito.MASUK_TITIPAN,deposito.BUNGA_BERBUNGA,Y.tob,Y.no_rek_ob FROM (deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id ) INNER JOIN (SELECT DEPTRANS_ID,NO_REKENING,TGL_TRANS,SUM(IF(MY_KODE_TRANS LIKE '0',SALDO_TRANS,0)) as terima_pokok,SUM(IF(MY_KODE_TRANS LIKE '10%' OR MY_KODE_TRANS LIKE '20%',SALDO_TRANS,0)) as ambil_bunga,SUM(IF(MY_KODE_TRANS LIKE '27%',SALDO_TRANS,0)) as ambil_titipan,SUM(IF(MY_KODE_TRANS LIKE '4%',SALDO_TRANS,0)) as ambil_pajak,SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0)) as ambil_pokok,IF(MY_KODE_TRANS = '0' OR MY_KODE_TRANS = '100' OR MY_KODE_TRANS ='200' OR MY_KODE_TRANS ='300',KUITANSI,NULL) as kuitansi,no_teller,userapp as userid,IF(MY_KODE_TRANS = '0' OR MY_KODE_TRANS = '100' OR MY_KODE_TRANS ='200' OR MY_KODE_TRANS ='300',MY_KODE_TRANS,NULL) as my_kode_trans,no_rek_ob,tob,kode_trans FROM deptrans WHERE TGL_TRANS>='$tgltrs1' AND TGL_TRANS<='$tgltrs2' GROUP BY NO_REKENING,TGL_TRANS ORDER BY TGL_TRANS) AS Y ON deposito.NO_REKENING=Y.NO_REKENING");
+        $transaksi = DB::select("SELECT deposito.no_rekening,nasabah.nama_nasabah,deposito.suku_bunga,deposito.jml_deposito,Y.TGL_TRANS,Y.kode_trans,Y.terima_pokok,Y.ambil_bunga,Y.ambil_titipan,Y.ambil_pajak,Y.ambil_pokok,Y.kuitansi,Y.no_teller,Y.userid,Y.my_kode_trans,deposito.KODE_GROUP1,deposito.KODE_GROUP2,deposito.KODE_GROUP3,deposito.MASUK_TITIPAN,deposito.BUNGA_BERBUNGA,Y.tob,Y.no_rek_ob FROM (deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id ) INNER JOIN (SELECT DEPTRANS_ID,NO_REKENING,TGL_TRANS,SUM(IF(MY_KODE_TRANS LIKE '0',SALDO_TRANS,0)) as terima_pokok,SUM(IF(MY_KODE_TRANS LIKE '10%' OR MY_KODE_TRANS LIKE '20%' OR MY_KODE_TRANS LIKE '25%',SALDO_TRANS,0)) as ambil_bunga,SUM(IF(MY_KODE_TRANS LIKE '27%',SALDO_TRANS,0)) as ambil_titipan,SUM(IF(MY_KODE_TRANS LIKE '4%',SALDO_TRANS,0)) as ambil_pajak,SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0)) as ambil_pokok,IF(MY_KODE_TRANS = '0' OR MY_KODE_TRANS = '100' OR MY_KODE_TRANS ='200' OR MY_KODE_TRANS ='300',KUITANSI,NULL) as kuitansi,no_teller,userapp as userid,IF(MY_KODE_TRANS = '0' OR MY_KODE_TRANS = '100' OR MY_KODE_TRANS ='200' OR MY_KODE_TRANS ='300',MY_KODE_TRANS,NULL) as my_kode_trans,no_rek_ob,tob,kode_trans FROM deptrans WHERE TGL_TRANS>='$tgltrs1' AND TGL_TRANS<='$tgltrs2' GROUP BY NO_REKENING,TGL_TRANS ORDER BY TGL_TRANS) AS Y ON deposito.NO_REKENING=Y.NO_REKENING");
         return (new ReportTransaksiDepExport($transaksi))->download('transaksideposito.xlsx');
     }
     // Show form mutasi bunga
@@ -1570,7 +1570,37 @@ class DepositoController extends Controller
         $logos = Logo::all();
         $nasabah = DB::select("select deposito.no_rekening,nasabah.nama_nasabah,nasabah.alamat,deposito.jml_deposito from deposito inner join nasabah on deposito.nasabah_id = nasabah.nasabah_id where deposito.status_aktif<>1");
         return view('reports.deposito.frmmutasibunga',['users' => $users, 'logos'=>$logos,'nasabah'=>$nasabah,'msgstatus'=>'']);
+    }
 
+    public function bo_dp_rp_mutasibunga_view(Request $request)
+    {
+        $tgltrs1 = date('Y-m-d',strtotime($request->tgl_trans1));
+        $tgltrs2 = date('Y-m-d',strtotime($request->tgl_trans2));
+        $users = User::all();
+        $logos = Logo::all();
+
+        $nasabah = DB::select("select deposito.no_rekening,nasabah.nama_nasabah,nasabah.alamat,deposito.jml_deposito from deposito inner join nasabah on deposito.nasabah_id = nasabah.nasabah_id where deposito.status_aktif<>1");
+
+        $profnas = DB::select("SELECT deposito.NO_REKENING,nasabah.nama_nasabah,X.NOMINAL,deposito.TGL_REGISTRASI,deposito.TGL_JT,deposito.JKW FROM (deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$tgltrs2' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING WHERE deposito.NO_REKENING='$request->no_rekening'");
+
+        $transaksi = DB::select("SELECT DEPTRANS_ID,NO_REKENING,TGL_TRANS,IF(MY_KODE_TRANS LIKE '0',SALDO_TRANS,0) as terima_pokok,IF(MY_KODE_TRANS LIKE '10%' OR MY_KODE_TRANS LIKE '20%',SALDO_TRANS,0) as ambil_bunga,IF(MY_KODE_TRANS LIKE '27%',SALDO_TRANS,0) as ambil_titipan,IF(MY_KODE_TRANS LIKE '4%',SALDO_TRANS,0) as ambil_pajak,IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0) as ambil_pokok,KUITANSI,IF(MY_KODE_TRANS = '0' OR MY_KODE_TRANS = '100' OR MY_KODE_TRANS ='200' OR MY_KODE_TRANS ='300',MY_KODE_TRANS,NULL) as my_kode_trans,no_rek_ob,tob FROM deptrans WHERE NO_REKENING='$request->no_rekening' AND TGL_TRANS>='$tgltrs1' AND TGL_TRANS<='$tgltrs2' AND MY_KODE_TRANS<>1 ORDER BY DEPTRANS_ID");
+        return view('reports.deposito.frmmutasibunga',['transaksi' => $transaksi,'nasabah'=>$nasabah,'profnas'=>$profnas,'tgltrs1'=>$tgltrs1,'tgltrs2'=>$tgltrs2,'users' => $users,'logos'=>$logos,'no_rekening'=>$request->no_rekening,'msgstatus'=>'']);
+    }
+    // CETAK TO PDF MUTASI BUNGA
+    public function bo_dp_rp_cetakmutasibungadep(Request $request)
+    {
+        $tgltrs1 = date('Y-m-d',strtotime($request->tgl_trans1));
+        $tgltrs2 = date('Y-m-d',strtotime($request->tgl_trans2));
+
+        $profnas = DB::select("SELECT deposito.NO_REKENING,nasabah.nama_nasabah,X.NOMINAL,deposito.TGL_REGISTRASI,deposito.TGL_JT,deposito.JKW FROM (deposito INNER JOIN nasabah ON deposito.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT NO_REKENING,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS LIKE '3%',SALDO_TRANS,0))) AS NOMINAL FROM deptrans WHERE TGL_TRANS<='$tgltrs2' GROUP BY NO_REKENING) X ON deposito.NO_REKENING=X.NO_REKENING WHERE deposito.NO_REKENING='$request->no_rekening'");
+
+        $transaksi = DB::select("SELECT DEPTRANS_ID,deptrans.NO_REKENING,TGL_TRANS,deposito.MASUK_TITIPAN,deposito.BUNGA_BERBUNGA,IF(MY_KODE_TRANS LIKE '0',SALDO_TRANS,0) as terima_pokok,IF(MY_KODE_TRANS LIKE '10%' OR MY_KODE_TRANS LIKE '20%' OR MY_KODE_TRANS LIKE '25%' OR MY_KODE_TRANS LIKE '45%' OR MY_KODE_TRANS='400',SALDO_TRANS,0) as setor,IF(MY_KODE_TRANS LIKE '27%' OR MY_KODE_TRANS LIKE '4%' OR MY_KODE_TRANS LIKE '3%' OR MY_KODE_TRANS LIKE '25%' OR MY_KODE_TRANS ='200',SALDO_TRANS,0) as ambil,KUITANSI,IF(MY_KODE_TRANS = '0' OR MY_KODE_TRANS = '100' OR MY_KODE_TRANS ='200' OR MY_KODE_TRANS ='300',MY_KODE_TRANS,NULL) as my_kode_trans,no_rek_ob,tob FROM deposito INNER JOIN deptrans ON deposito.NO_REKENING=deptrans.NO_REKENING WHERE deptrans.NO_REKENING='$request->no_rekening' AND TGL_TRANS>='$tgltrs1' AND TGL_TRANS<='$tgltrs2' AND MY_KODE_TRANS<>1 ORDER BY DEPTRANS_ID");
+        $lembaga=DB::table('mysysid')->select('KeyName','Value')->where('KeyName','like','NAMA_LEMBAGA'.'%')->get();
+        $ttd=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'like','TTD_DEP%')->get();
+        $kota=DB::table('mysysid')->select('KeyName','Value')->where('KeyName', 'NAMA_KOTA')->get();
+        $pdf = Pdf::loadview('pdf.deposito.mutasibunga_pdf',['transaksi'=>$transaksi,'profnas'=>$profnas,'lembaga'=>$lembaga,'ttd'=>$ttd,'kota'=>$kota,'tgltrs1'=>$tgltrs1,'tgltrs2'=>$tgltrs2])->setPaper('A4','portrait');
+        return $pdf->stream();
 
     }
+    
 }

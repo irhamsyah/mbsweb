@@ -202,6 +202,10 @@ Route::get('bo_dp_rp_pdftransaksideposito','DepositoController@bo_dp_rp_pdftrans
 Route::post('exporttoexceltransaksidep','DepositoController@exporttoexceltransaksidep');
 // SHow from Mutasi BUnga Deposito
 Route::get('bo_dp_rp_mutasibunga','DepositoController@bo_dp_rp_mutasibunga')->name('mutasibungadep');
+// Prose cari mutasibunga
+Route::post('bo_dp_rp_mutasibunga','DepositoController@bo_dp_rp_mutasibunga_view');
+// Cetak Mutasi Bunga Deposito PDF
+Route::get('bo_dp_rp_cetakmutasibungadep','DepositoController@bo_dp_rp_cetakmutasibungadep')->name('cetakmutasibungadep');
 
 //BO KREDIT Data Entry KREDIT
 Route::get('/bo_kr_de_kredit', 'KreditController@bo_kr_de_kredit')->name('showkredit');

@@ -1170,6 +1170,7 @@ $(document).ready(function(){
      document.getElementById("editalamatnasabah").value=col3;
 
   });
+
   $("#nasabahdataget").on('click','#selectednasabah',function(){
      // get the current row
      var currentRow=$(this).closest("tr"); 
@@ -1317,6 +1318,16 @@ $(document).ready(function(){
     // alert(tglregis);
     $("#etgl_valuta").val(tglvaluta[2]);
   });
+  // ambil rekening deposito trus tampil dmenu 
+  $("#norekdepos").on('click','#pil1',function(){
+     // get the current row
+     var currentRow=$(this).closest("tr"); 
+     
+     var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+    //  var data=col1+"\n"+col2+"\n"+col3;
+     document.getElementById("pilihnasabah").value=col1;
+  });
+
   //***********end page deposito************************************/
 });
 // Menampilkan data nasabah di input text nasabah_id dengan DATATABEL
@@ -1324,6 +1335,11 @@ $(document).ready(function () {
     $('#nasabahdata').DataTable();
     $('#rektabungandata').DataTable();
 });
+// DATA TABLE untuk table deposito pada menu Cetak Riwayat Bunga Deposito
+$(document).ready(function () {
+    $('#norekdepos').DataTable();
+});
+
 // ------------------------------------
   $(function () {
     //validate form add nasabah

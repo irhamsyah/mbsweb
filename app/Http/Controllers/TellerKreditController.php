@@ -63,7 +63,9 @@ class TellerKreditController extends Controller
                 ->update([
                     'STATUS_AKTIF' => 2,
                     'POKOK_SALDO_REALISASI' => $request->input("jml_pinjaman"),
-                    'POKOK_SALDO_AKHIR' => $request->input("total_diterima")
+                    'POKOK_SALDO_AKHIR' => $request->input("jml_pinjaman"),
+                    'BUNGA_SALDO_REALISASI' => $request->input("jumlah_bunga"),
+                    'BUNGA_SALDO_AKHIR' => $request->input("jumlah_bunga")
                 ]);
 
             $newkretrans = New Kretrans();
@@ -174,6 +176,18 @@ class TellerKreditController extends Controller
         $kodetranskredit=Kodetranskredit::all();
         $kodetypekredit = KodeTypeKredit::all()->sort();
         $tabungan = DB::select("SELECT tabung.NO_REKENING,nasabah.nama_nasabah,nasabah.alamat,tabung.JENIS_TABUNGAN,kodejenistabungan.DESKRIPSI_JENIS_TABUNGAN,IF(tabtran.saldo_akhir IS NULL,0,tabtran.saldo_akhir) AS saldo_akhir,tabung.SALDO_BLOKIR FROM ((tabung INNER JOIN nasabah ON tabung.NASABAH_ID=nasabah.nasabah_id) INNER JOIN kodejenistabungan ON tabung.JENIS_TABUNGAN=kodejenistabungan.KODE_JENIS_TABUNGAN) LEFT JOIN (SELECT tabung.NO_REKENING, (tabung.SALDO_AWAL+SUM(if(MY_KODE_TRANS LIKE '1%',SALDO_TRANS,0))-SUM(if(MY_KODE_TRANS LIKE '2%',SALDO_TRANS,0))) as saldo_akhir FROM tabung INNER JOIN tabtrans on tabung.NO_REKENING=tabtrans.NO_REKENING GROUP BY tabung.NO_REKENING) as tabtran ON tabung.NO_REKENING=tabtran.NO_REKENING WHERE tabung.STATUS_AKTIF=2");
+        $angsuran = Kretrans::select('kretrans.*')
+                    ->where(function ($query){
+                        $query->where('MY_KODE_TRANS', '=', 200);
+                        })  
+                    ->orderBy('NO_REKENING','DESC')
+                    ->get();
+        $cicilan = Kretrans::select('kretrans.*')
+                    ->where(function ($query){
+                        $query->where('MY_KODE_TRANS', '=', 300);
+                        })  
+                    ->orderBy('NO_REKENING','DESC')
+                    ->get();
         $kredits = Kredit::select('nasabah.*','kredit.*')
           ->leftJoin('kodejeniskredit', function($join) {
           $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
@@ -182,18 +196,96 @@ class TellerKreditController extends Controller
               $join->on('kredit.NASABAH_ID', '=', 'nasabah.nasabah_id');
             })
           ->where(function ($query){
-            $query->where('STATUS_AKTIF', '=', 1);
+            $query->where('STATUS_AKTIF', '=', 2);
             // ->orWhere('STATUS_AKTIF', '=', 3)
             // ->orWhere('STATUS_AKTIF', '=', 2);
             })  
+            ->orderBy('NO_REKENING','DESC')
             ->get();
         $tanggaltransaksi = Mysysid::select('Value')->where('KeyName','=','TANGGALHARIINI')->get();
+        // echo json_decode($tanggaltransaksi, true)[0]["Value"];
+        $a_date = \DateTime::createFromFormat('d/m/Y', json_decode($tanggaltransaksi, true)[0]["Value"])->format('Y-m-d');
+        $tglakhirbulan = date("t/m/Y", strtotime($a_date));
         $tanggal = $tanggaltransaksi[0]->Value;
         $tabungans = Tabungan::select('tabung.NO_REKENING','nasabah.nama_nasabah','nasabah.alamat')
                       ->leftJoin('nasabah', function($join) {
                         $join->on('nasabah.nasabah_id', '=', 'tabung.NASABAH_ID');
                         })
                       ->get()->toArray();
-        return view('teller/kredit/frmsetoranangsuran',['tabungans'=>$tabungans,'kodetranskredit'=>$kodetranskredit,'tanggaltransaksi'=>$tanggal, 'kodetypekredit'=>$kodetypekredit,'kodejeniskredit'=>$kodejeniskredit,'kredits'=>$kredits, 'users'=>$users, 'logos'=>$logos,'tabungan'=>$tabungan,'kodetranstab'=>$kodetranstab,'kodecabang'=>$kodecabang,'msgstatus'=>'']);
+        return view('teller/kredit/frmsetoranangsuran',['tglakhirbulan'=>$tglakhirbulan,'tabungans'=>$tabungans,'kodetranskredit'=>$kodetranskredit,'tanggaltransaksi'=>$tanggal, 'kodetypekredit'=>$kodetypekredit,'kodejeniskredit'=>$kodejeniskredit,'kredits'=>$kredits, 'users'=>$users, 'logos'=>$logos,'tabungan'=>$tabungan,'kodetranstab'=>$kodetranstab,'kodecabang'=>$kodecabang,'msgstatus'=>'']);
+    }
+
+    public function saveAngsuran(Request $request)
+    {          
+        try {
+            DB::beginTransaction();
+            // database queries here
+            Kredit::where('NO_REKENING',$request->input("no_rekening_kredit"))
+                ->update([
+                    'STATUS_AKTIF' => 2,
+                    'POKOK_SALDO_AKHIR' => $request->input("jml_pinjaman"),
+                    'BUNGA_SALDO_AKHIR' => $request->input("jumlah_bunga"),
+                    'POKOK_SALDO_SETORAN' => $request->input("pokok_pembayaran"),
+                    'POKOK_TUNGGAKAN_AKHIR' => 0 - $request->input("pokok_pembayaran"),
+                    'BUNGA_SALDO_SETORAN' => $request->input("bunga_pembayaran"),
+                    'BUNGA_TUNGGAKAN_AKHIR' => 0 - $request->input("bunga_pembayaran"),
+                ]);
+                
+            $newkretrans = New Kretrans();
+            $newkretrans->NO_REKENING = $request->input("no_rekening_kredit");
+            $newkretrans->TGL_TRANS = \DateTime::createFromFormat('d/m/Y', $request->input("tgl_trans"))->format('Y-m-d');
+            $newkretrans->POKOK_TRANS = $request->input("pokok_pembayaran");
+            $newkretrans->ANGSURAN_KE = 0;
+            $newkretrans->BUNGA_TRANS = $request->input("bunga_pembayaran");
+            // $newkretrans->PROVISI_TRANS = $request->input("provisi");
+            // $newkretrans->ADM_TRANS = $request->input("administrasi");
+            $newkretrans->MY_KODE_TRANS = '300';
+            $newkretrans->KODE_TRANS = $request->input("kode_transkredit");
+            $newkretrans->KUITANSI =  $request->input("kwitansi");
+            $newkretrans->KETERANGAN =  $request->input("keterangan");
+            $newkretrans->TOB =  $request->input("tob");
+            $newkretrans->VALIDATED = 1;
+            $newkretrans->save();
+            DB::commit();
+            $out['message']= "Bayar angsuran kredit berhasil!";
+            $out['status']=1;
+            return $out;
+            
+        } catch (\PDOException $e) {
+            // Woopsy
+            DB::rollBack();
+            $out['message']= "Bayar angsuran kredit gagal!";
+            $out['status']=0;
+            return $out;
+            
+        }   
+    }
+
+    public function getAngsuran(Request $request){
+        $norek = $request->input("norek");
+        // dd($norek);
+        $angsuran = Kretrans::select('kretrans.*')
+                    ->where(function ($query){
+                        $query->where('MY_KODE_TRANS', '=', 200);
+                        })
+                    ->where('kretrans.NO_REKENING', '=', $norek) 
+                    ->orderBy('ANGSURAN_KE')
+                    ->get();
+         return $angsuran;           
+
+    }
+
+    public function getCicilan(Request $request){
+        $norek = $request->input("norek");
+        // dd($norek);
+        $angsuran = Kretrans::select('kretrans.*')
+                    ->where(function ($query){
+                        $query->where('MY_KODE_TRANS', '=', 300);
+                        })
+                    ->where('kretrans.NO_REKENING', '=', $norek) 
+                    ->orderBy('CICILAN_KE')
+                    ->get();
+         return $angsuran;           
+
     }
 }

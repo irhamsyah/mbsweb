@@ -27,6 +27,8 @@
 }
 @endif
 
+<meta name="csrf-token" content="{{ csrf_token() }}" >
+
 <!-- Main content -->
 <div class="content-wrapper" style="margin-top:10px; max-height:800px !important;">
   <div class="container-fluid">
@@ -38,7 +40,7 @@
         <div class="card card-warning card-outline">
               
           <!-- form start -->
-          <form autocomplete="off" method="POST" action="/bo_tl_tk_realisasikredit/setrealisasi" role="search">
+          <form autocomplete="off" method="POST" action="/bo_tl_tk_realisasikredit/saveAngsuran" role="search">
             @csrf
             <div class="card-body"> 
                 <div class="form-group" >
@@ -90,7 +92,7 @@
                           <div class="col-lg-1 col-sm-8"></div>
                           <div class="col-lg-2 col-sm-8">
                             <label for="inputnocif">Jml Kredit</label>
-                            <input type="text" name="jml_pinjaman" class="form-control" id="jml_pinjaman">
+                            <input type="text" name="jml_pinjaman" value="0" class="form-control" id="jml_pinjaman">
                           </div>  
                           <div class="col-lg-2 col-sm-8">
                             <input class="form-check-input" style="margin-left:0px;" type="checkbox" name="channeling_check" <?php // if($kredit->STATUS_AKTIF=="1"){echo 'checked';}?>>
@@ -109,17 +111,17 @@
                           </div>
                           <div class="col-lg-3 col-sm-6">
                               <label for="inputnasabahid" hidden>Nama</label>
-                              <input type="text" id="nama_nasabah" name="nama_nasabah" readonly class="form-control" >
+                              <input type="text" id="nama_nasabah2" name="nama_nasabah2" readonly class="form-control" >
                           </div>  
                           <div class="col-lg-2 col-sm-8">
-                            <input type="text" id="nama_nasabah" name="nama_nasabah" readonly class="form-control" >
+                            <input type="text" id="flag_jadwal" name="flag_jadwal" readonly class="form-control" >
                           </div>
                           <div class="col-lg-3 col-sm-12"> 
                             <label for="nasabahid">Kode Trans. Tabungan Setoran Pokok</label>
-                            <select class="form-control" name="kode_transaksi_hold_dana" id="kode_transaksi_hold_dana">
+                            <select class="form-control" name="kode_transtab_setoran_pokok" id="kode_transtab_setoran_pokok">
                               @php($i=0)
                               @while ($i<count($kodetranstab) )
-                              <option value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}">{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
+                              <option value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}" <?php if($kodetranstab[$i]->KODE_TRANS=='21'){echo 'selected';}?>>{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
                                   @php($i++)
                               @endwhile
                             </select>
@@ -145,27 +147,27 @@
                           </div> 
                           <div class="col-lg-2 col-sm-6">
                               <label for="inputnasabahid" >Pokok</label>
-                              <input type="text" id="nama_nasabah" name="nama_nasabah" readonly class="form-control" >
+                              <input type="text" id="baki_debet_pokok" value="0" name="baki_debet_pokok" readonly class="form-control" >
                           </div> 
                           <div class="col-lg-1 col-sm-6"></div>
                           <div class="col-lg-2 col-sm-6">
                               <label for="inputnasabahid" >Bunga</label>
-                              <input type="text" id="nama_nasabah" name="nama_nasabah" readonly class="form-control" >
+                              <input type="text" id="baki_debet_bunga" value="0" name="baki_debet_bunga" readonly class="form-control" >
                           </div>  
                           <div class="col-lg-5"> 
                             <div class="row">
                               <div class="col-lg-6 col-sm-6">
                                 <label for="nasabahid">No. Rekening Tabungan</label>
                                 <div class="input-group mb-2 autocomplete">
-                                  <input id="rekening_overbook" type="text" name="rekening_overbook" class="form-control">
+                                  <input id="rekening_transtab_setoran_pokok" type="text" name="rekening_transtab_setoran_pokok" class="form-control">
                                     <div class="input-group-text"><i class="fa fa-search"></i></div>
                                 </div>
                               </div>  
                               <div class="col-lg-6 col-sm-6">
                                 <label for="inputDate1">.</label>
                                 <div class="row">
-                                  <div class="col-lg-12 input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                                      <input type="text" name="tgl_realisasi" id="tgl_realisasi" class="form-control datetimepicker-input" required>
+                                  <div class="col-lg-12 input-group  " id="inputDate1" data-target-input="nearest">
+                                      <input type="text" name="nama_transtab_setoran_pokok" id="nama_transtab_setoran_pokok" class="form-control datetimepicker-input" required>
                                   </div>
                                 </div>
                               </div>  
@@ -178,29 +180,29 @@
                         </div>
                         <div class="col-lg-3 col-sm-12"> 
                           <div class="bottomlinesolid">
-                            <span class="judulOrange">Total Tagihan s.d Tanggal :</span>
+                            <span class="judulOrange" name="label_total_tagihan">Total Tagihan s.d Tanggal :</span>
                           </div>
                         </div> 
                       </div>
                       <div class="row">
                           <div class="col-lg-2 col-sm-12">
                             <label for="inputDate1">Tgl Realisasi</label>
-                            <div class="input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                                <input type="text" name="tgl_realisasi" id="tgl_realisasi" class="form-control datetimepicker-input" required>
+                            <div class="input-group" id="inputDate1" data-target-input="nearest">
+                                <input type="text" name="tgl_realisasi" id="tgl_realisasi" value='{{ $tanggaltransaksi }}' class="form-control datetimepicker-input" required>
                             </div>
                             <label for="inputDate1">Tgl Akhir Bulan</label>
-                            <div class="input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                                <input type="text" name="tgl_realisasi" id="tgl_realisasi" class="form-control datetimepicker-input" required>
+                            <div class="input-group" id="inputDate1" data-target-input="nearest">
+                                <input type="text" name="tgl_akhir_bulan" id="tgl_akhir_bulan" value='{{ $tglakhirbulan }}' class="form-control datetimepicker-input" required>
                             </div>
                           </div> 
                           <div class="col-lg-2 col-sm-6">
                               <label for="inputnasabahid" >.</label>
-                              <input type="text" id="nama_nasabah" name="nama_nasabah" readonly class="form-control" >
+                              <input type="text" id="pokok_total" value="0" name="pokok_total" readonly class="form-control" >
                           </div> 
                           <div class="col-lg-1 col-sm-6"></div>
                           <div class="col-lg-2 col-sm-6">
                               <label for="inputnasabahid" >.</label>
-                              <input type="text" id="nama_nasabah" name="nama_nasabah" readonly class="form-control" >
+                              <input type="text" id="bunga_total" value="0" name="bunga_total" readonly class="form-control" >
                           </div>                                                       
                       </div>    
                       <div class="form-group row"> 
@@ -216,26 +218,26 @@
                       <div class="row">
                           <div class="col-lg-2 col-sm-6">
                             <label for="inputDate1">Periode Angs.</label>
-                            <div class="input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                                <input type="text" name="tgl_realisasi" id="tgl_realisasi" class="form-control datetimepicker-input" required>
+                            <div class="input-group  " id="inputDate1" data-target-input="nearest">
+                                <input type="text" name="periode_angs" id="periode_angs" class="form-control datetimepicker-input" required>
                             </div>
                             <label for="inputDate1">Jml. Angs.</label>
-                            <div class="input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                                <input type="text" name="tgl_realisasi" id="tgl_realisasi" class="form-control datetimepicker-input" required>
+                            <div class="input-group  " id="inputDate1" data-target-input="nearest">
+                                <input type="text" name="jml_angs" id="jml_angs" class="form-control datetimepicker-input" required>
                             </div>
                           </div> 
                           <div class="col-lg-2 col-sm-6">
                               <label for="inputnasabahid" >Pokok</label>
-                              <input type="text" id="nama_nasabah" name="nama_nasabah" readonly class="form-control" >
+                              <input type="text" id="pokok_tunggakan" value="0" name="pokok_tunggakan" readonly class="form-control" >
                           </div> 
                           <div class="col-lg-1 col-sm-6"></div>
                           <div class="col-lg-2 col-sm-6">
                               <label for="inputnasabahid" >Bunga</label>
-                              <input type="text" id="nama_nasabah" name="nama_nasabah" readonly class="form-control" >
+                              <input type="text" id="bunga_tunggakan" value="0" name="bunga_tunggakan" readonly class="form-control" >
                           </div>   
                           <div class="col-lg-3 col-sm-12"> 
                             <label for="nasabahid">Kode Trans. Tabungan Setoran Bunga</label>
-                            <select class="form-control" name="kode_transaksi_hold_dana" id="kode_transaksi_hold_dana">
+                            <select class="form-control" name="kode_transtab_setoran_bunga" id="kode_transtab_setoran_bunga">
                               @php($i=0)
                               @while ($i<count($kodetranstab) )
                               <option value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}">{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
@@ -258,37 +260,37 @@
                           <div class="col-lg-2 col-sm-6">
                             <label for="inputDate1">Bunga Hari Mengendap</label>
                             <div class="row">
-                              <div class="col-lg-6 input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                                  <input type="text" name="tgl_realisasi" id="tgl_realisasi" class="form-control datetimepicker-input" required>
+                              <div class="col-lg-6 input-group  " id="inputDate1" data-target-input="nearest">
+                                  <input type="text" name="bunga_hari_mengendap1" value="0" id="bunga_hari_mengendap1" class="form-control datetimepicker-input" required>
                               </div>
-                              <div class="col-lg-6 input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                                  <input type="text" name="tgl_realisasi" id="tgl_realisasi" class="form-control datetimepicker-input" required>
+                              <div class="col-lg-6 input-group  " id="inputDate1" data-target-input="nearest">
+                                  <input type="text" name="bunga_hari_mengendap2" value="0" id="bunga_hari_mengendap2" class="form-control datetimepicker-input" required>
                               </div>
                             </div>
                           </div> 
                           <div class="col-lg-2 col-sm-6">
                               <label for="inputnasabahid" >Pokok</label>
-                              <input type="text" id="nama_nasabah" name="nama_nasabah" readonly class="form-control" >
+                              <input type="text" id="pokok_saldo_akhir" value="0" name="pokok_saldo_akhir" readonly class="form-control" >
                           </div> 
                           <div class="col-lg-1 col-sm-6"></div>
                           <div class="col-lg-2 col-sm-6">
                               <label for="inputnasabahid" >Bunga</label>
-                              <input type="text" id="nama_nasabah" name="nama_nasabah" readonly class="form-control" >
+                              <input type="text" id="bunga_saldo_akhir" value="0" name="bunga_saldo_akhir" readonly class="form-control" >
                           </div> 
                           <div class="col-lg-5">
                             <div class="row">
                               <div class="col-lg-6 col-sm-6">
                                 <label for="nasabahid">No. Rekening Tabungan</label>
                                 <div class="input-group mb-2 autocomplete">
-                                  <input id="rekening_overbook" type="text" name="rekening_overbook" class="form-control">
+                                  <input id="rekening_transtab_setoran_bunga" type="text" name="rekening_transtab_setoran_bunga" class="form-control">
                                     <div class="input-group-text"><i class="fa fa-search"></i></div>
                                 </div>
                               </div> 
                               <div class="col-lg-6 col-sm-6">
                                 <label for="inputDate1">.</label>
                                 <div class="row">
-                                  <div class="col-lg-12 input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                                      <input type="text" name="tgl_realisasi" id="tgl_realisasi" class="form-control datetimepicker-input" required>
+                                  <div class="col-lg-12 input-group  " id="inputDate1" data-target-input="nearest">
+                                      <input type="text" name="nama_transtab_setoran_bunga" id="nama_transtab_setoran_bunga" class="form-control datetimepicker-input" required>
                                   </div>
                                 </div>
                               </div> 
@@ -313,8 +315,8 @@
                   <div class="col-lg-2 col-sm-6">
                     <label for="inputDate1">Kolektibilitas</label>
                     <div class="row">
-                      <div class="col-lg-6 input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                          <input type="text" name="tgl_realisasi" id="tgl_realisasi" class="form-control datetimepicker-input" required>
+                      <div class="col-lg-6 input-group  " id="inputDate1" data-target-input="nearest">
+                          <input type="text" name="kolektibilitas" id="kolektibilitas" class="form-control datetimepicker-input" required>
                       </div>
                     </div>
                   </div> 
@@ -322,14 +324,14 @@
                   <div class="col-lg-3 col-sm-6">
                     <label for="inputDate1">Sisa Bunga Akrual</label>
                     <div class="row">
-                      <div class="col-lg-6 input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                          <input type="text" name="tgl_realisasi" id="tgl_realisasi" class="form-control datetimepicker-input" required>
+                      <div class="col-lg-6 input-group  " id="inputDate1" data-target-input="nearest">
+                          <input type="text" name="sisa_bunga_akrual" value="0" id="sisa_bunga_akrual" class="form-control datetimepicker-input" required>
                       </div>
                     </div>
                   </div> 
                   <div class="col-lg-3 col-sm-12"> 
                     <label for="nasabahid">Kode Trans. Tabungan</label>
-                    <select class="form-control" name="kode_transaksi_hold_dana" id="kode_transaksi_hold_dana">
+                    <select class="form-control" name="kode_transtab_overbooking_bonus" id="kode_transtab_overbooking_bonus">
                       @php($i=0)
                       @while ($i<count($kodetranstab) )
                       <option value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}">{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
@@ -340,8 +342,8 @@
                   <div class="col-lg-2 col-sm-6">
                     <label for="inputDate1">Bonus</label>
                     <div class="row">
-                      <div class="col-lg-12 input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                          <input type="text" name="tgl_realisasi" id="tgl_realisasi" class="form-control datetimepicker-input" required>
+                      <div class="col-lg-12 input-group  " id="inputDate1" data-target-input="nearest">
+                          <input type="text" name="overbooking_bonus" value="0" id="overbooking_bonus" class="form-control datetimepicker-input" required>
                       </div>
                     </div>
                   </div> 
@@ -350,8 +352,8 @@
                   <div class="col-lg-3 col-sm-6">
                     <label for="inputDate1">Bunga akrual</label>
                     <div class="row">
-                      <div class="col-lg-6 input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                          <input type="text" name="tgl_realisasi" id="tgl_realisasi" class="form-control datetimepicker-input" required>
+                      <div class="col-lg-6 input-group  " id="inputDate1" data-target-input="nearest">
+                          <input type="text" name="bunga_akrual" value="0" id="bunga_akrual" class="form-control datetimepicker-input" required>
                       </div>
                     </div>
                   </div> 
@@ -361,15 +363,15 @@
                       <div class="col-lg-6 col-sm-6">
                         <label for="nasabahid">No. Rekening Tabungan</label>
                         <div class="input-group mb-2 autocomplete">
-                          <input id="rekening_overbook" type="text" name="rekening_overbook" class="form-control">
+                          <input id="rekening_transtab_overbooking_bonus" type="text" name="rekening_transtab_overbooking_bonus" class="form-control">
                             <div class="input-group-text"><i class="fa fa-search"></i></div>
                         </div>
                       </div> 
                       <div class="col-lg-6 col-sm-6">
                         <label for="inputDate1">.</label>
                         <div class="row">
-                          <div class="col-lg-12 input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                              <input type="text" name="tgl_realisasi" id="tgl_realisasi" class="form-control datetimepicker-input" required>
+                          <div class="col-lg-12 input-group  " id="inputDate1" data-target-input="nearest">
+                              <input type="text" name="nama_transtab_overbooking_bonus" id="nama_transtab_overbooking_bonus" class="form-control datetimepicker-input" required>
                           </div>
                         </div>
                       </div> 
@@ -380,11 +382,11 @@
                   <div class="col-lg-4 col-sm-6">
                     <label for="inputDate1">Base Denda</label>
                     <div class="row">
-                      <div class="col-lg-8 input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                          <input type="text" name="tgl_realisasi" id="tgl_realisasi" class="form-control datetimepicker-input" required>
+                      <div class="col-lg-8 input-group  " id="inputDate1" data-target-input="nearest">
+                          <input type="text" name="base_denda" id="base_denda" class="form-control datetimepicker-input" required>
                       </div>
-                      <div class="col-lg-3 input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                          <input type="text" name="tgl_realisasi" id="tgl_realisasi" class="form-control datetimepicker-input" required>
+                      <div class="col-lg-3 input-group  " id="inputDate1" data-target-input="nearest">
+                          <input type="text" name="base_denda_persen" value="0" id="base_denda_persen" class="form-control datetimepicker-input" required>
                       </div>
                     </div>
                   </div> 
@@ -392,8 +394,8 @@
                   <div class="col-lg-3 col-sm-6">
                     <label for="inputDate1">Denda Bonus</label>
                     <div class="row">
-                      <div class="col-lg-6 input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                          <input type="text" name="tgl_realisasi" id="tgl_realisasi" class="form-control datetimepicker-input" required>
+                      <div class="col-lg-6 input-group  " id="inputDate1" data-target-input="nearest">
+                          <input type="text" name="denda_bonus" value="0" id="denda_bonus" class="form-control datetimepicker-input" required>
                       </div>
                     </div>
                   </div>                 
@@ -401,21 +403,21 @@
                 <div class="form-group row">
                   <div class="col-lg-1 col-sm-6">
                       <label for="inputnasabahid" >.</label>
-                      <input type="text" id="nama_nasabah" name="nama_nasabah" readonly class="form-control" >
+                      <input type="text" id="tob" name="tob" readonly class="form-control" value="O" >
                   </div>   
                   <div class="col-lg-3 col-sm-12"> 
                     <label for="nasabahid">Kode Trans.</label>
-                    <select class="form-control" name="kode_transaksi_hold_dana" id="kode_transaksi_hold_dana">
-                      @php($i=0)
-                      @while ($i<count($kodetranstab) )
-                      <option value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}">{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
+                    <select class="form-control" name="kode_transkredit" id="kode_transkredit">
+                     @php($i=0)
+                      @while ($i<count($kodetranskredit) )
+                      <option value="{{$kodetranskredit[$i]->KODE_TRANS}}" <?php if($kodetranskredit[$i]->KODE_TRANS=='003'){echo 'selected';}?>>{{$kodetranskredit[$i]->KODE_TRANS}}-{{$kodetranskredit[$i]->DESKRIPSI_TRANS}}</option>
                           @php($i++)
                       @endwhile
                     </select>
                   </div>
                   <div class="col-lg-3 col-sm-12"> 
                     <label for="nasabahid">Kode Trans. Tabungan Wajib</label>
-                    <select class="form-control" name="kode_transaksi_hold_dana" id="kode_transaksi_hold_dana">
+                    <select class="form-control" name="kode_transtab_wajib" id="kode_transtab_wajib">
                       @php($i=0)
                       @while ($i<count($kodetranstab) )
                       <option value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}">{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
@@ -427,19 +429,19 @@
                 <div class="form-group row">
                   <div class="col-lg-1 col-sm-6">
                       <label for="inputnasabahid" >Cicilan ke</label>
-                      <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control" >
+                      <input type="text" id="cicilan_ke" value="0" name="cicilan_ke" onchange="setCicilan()" class="form-control" >
                   </div> 
                   <div class="col-lg-2 col-sm-6">
                       <label for="inputnasabahid" >Tgl Tagihan</label>
-                      <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control" >
+                      <input type="text" id="tgl_tagihan" name="tgl_tagihan" class="form-control" >
                   </div> 
                   <div class="col-lg-2 col-sm-6">
                       <label for="inputnasabahid" >Tgl Trans</label>
-                      <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control" >
+                      <input type="text" id="tgl_trans" name="tgl_trans" value='{{ $tanggaltransaksi }}' class="form-control" >
                   </div> 
                   <div class="col-lg-2 col-sm-12"> 
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="channeling" <?php // if($kredit->STATUS_AKTIF=="1"){echo 'checked';}?>>
+                        <input class="form-check-input" type="checkbox" name="check_pelunasan" <?php // if($kredit->STATUS_AKTIF=="1"){echo 'checked';}?>>
                         <label class="form-check-label" style="margin-right:30px;">Pelunasan</label>
                     </div>      
                   </div> 
@@ -454,28 +456,28 @@
                     <div class="row">
                       <div class="col-lg-6 col-sm-6">
                           <label for="inputnasabahid" >Pokok</label>
-                          <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control" >
+                          <input type="text" id="pokok_pembayaran" value="0" name="pokok_pembayaran" class="form-control" >
                       </div> 
                       <div class="col-lg-6 col-sm-6">
                           <label for="inputnasabahid" >Bunga</label>
-                          <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control" >
+                          <input type="text" id="bunga_pembayaran" value="0" name="bunga_pembayaran" class="form-control" >
                       </div> 
                     </div>
                   </div>
                   <div class="col-lg-2 col-sm-6">
                       <label for="inputnasabahid" >Denda</label>
-                      <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control" >
+                      <input type="text" id="denda_pembayaran" value="0" name="denda_pembayaran" class="form-control" >
                   </div> 
                   <div class="col-lg-2 col-sm-6">
                       <label for="inputnasabahid" >Tab. Wajib</label>
-                      <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control" >
+                      <input type="text" id="tab_wajib" name="tab_wajib" value="0" class="form-control" >
                   </div>
                   <div class="col-lg-3 col-sm-12"> 
                     <label for="nasabahid">Kode Trans. Tabungan</label>
-                    <select class="form-control" name="kode_transaksi_hold_dana" id="kode_transaksi_hold_dana">
+                    <select class="form-control" name="kode_transtab_overbooking" id="kode_transtab_overbooking">
                       @php($i=0)
                       @while ($i<count($kodetranstab) )
-                      <option value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}">{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
+                      <option value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}" <?php if($kodetranstab[$i]->KODE_TRANS=='08'){echo 'selected';}?>>{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
                           @php($i++)
                       @endwhile
                     </select>
@@ -486,21 +488,21 @@
                     <div class="row">
                       <div class="col-lg-6 col-sm-6">
                           <label for="inputnasabahid" >Disc.</label>
-                          <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control" >
+                          <input type="text" id="disc_pokok" value="0" name="disc_pokok" class="form-control" >
                       </div> 
                       <div class="col-lg-6 col-sm-6">
                           <label for="inputnasabahid" >Disc.</label>
-                          <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control" >
+                          <input type="text" id="disc_bunga" value="0" name="disc_bunga" class="form-control" >
                       </div> 
                     </div>
                   </div>
                     <div class="col-lg-2 col-sm-6">
                         <label for="inputnasabahid" >Disc.</label>
-                        <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control" >
+                        <input type="text" id="disc_denda" value="0" name="disc_denda" class="form-control" >
                     </div> 
                     <div class="col-lg-2 col-sm-6">
                         <label for="inputnasabahid" >Adm.</label>
-                        <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control" >
+                        <input type="text" id="biaya_admin" value="0" name="biaya_admin" class="form-control" >
                     </div>
                     <div class="col-lg-5"> 
                       <div class="row">
@@ -514,8 +516,8 @@
                         <div class="col-lg-6 col-sm-6">
                           <label for="inputDate1">.</label>
                           <div class="row">
-                            <div class="col-lg-12 input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                                <input type="text" name="tgl_realisasi" id="tgl_realisasi" class="form-control datetimepicker-input" required>
+                            <div class="col-lg-12 input-group  " id="inputDate1" data-target-input="nearest">
+                                <input type="text" name="nama_overbook" id="nama_overbook" class="form-control datetimepicker-input" required>
                             </div>
                           </div>
                         </div>  
@@ -527,7 +529,7 @@
                     <div class="row">
                       <div class="col-lg-6 col-sm-6">
                           <label for="inputnasabahid" >Sisa Provisi</label>
-                          <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control" >
+                          <input type="text" id="sisa_provisi" value="0" name="sisa_provisi" class="form-control" >
                       </div> 
                       <div class="col-lg-6 col-sm-6">
                           
@@ -539,13 +541,13 @@
                     </div> 
                     <div class="col-lg-2 col-sm-6">
                         <label for="inputnasabahid" >Administrasi Lain</label>
-                        <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control" >
+                        <input type="text" id="admin_lain" value="0" name="admin_lain" class="form-control" >
                     </div>
                     <div class="col-lg-2 col-sm-6">
                       <label for="inputDate1">.</label>
                       <div class="row">
-                        <div class="col-lg-12 input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                            <input type="text" name="tgl_realisasi" id="tgl_realisasi" class="form-control datetimepicker-input" required>
+                        <div class="col-lg-12 input-group  " id="inputDate1" data-target-input="nearest">
+                            <input type="text" name="nama_overbook" id="nama_overbook" class="form-control datetimepicker-input" required>
                         </div>
                       </div>
                     </div> 
@@ -555,7 +557,7 @@
                     <div class="row">
                       <div class="col-lg-6 col-sm-6">
                           <label for="inputnasabahid" >Sisa ByAdmin</label>
-                          <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control" >
+                          <input type="text" id="sisa_byadmin" value="0" name="sisa_byadmin" class="form-control" >
                       </div> 
                       <div class="col-lg-6 col-sm-6">
                           
@@ -567,7 +569,7 @@
                     </div> 
                     <div class="col-lg-2 col-sm-6">
                         <label for="inputnasabahid" >Jumlah Setoran</label>
-                        <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control" >
+                        <input type="text" id="jumlah_setoran" value="0" name="jumlah_setoran" class="form-control" >
                     </div>
                 </div>
                 <div class="form-group row">
@@ -575,7 +577,7 @@
                     <div class="row">
                       <div class="col-lg-6 col-sm-6">
                           <label for="inputnasabahid" >Sisa ByTrans</label>
-                          <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control" >
+                          <input type="text" id="sisa_bytrans" value="0" name="sisa_bytrans" class="form-control" >
                       </div> 
                       <div class="col-lg-6 col-sm-6">
                           
@@ -587,7 +589,7 @@
                     </div> 
                     <div class="col-lg-2 col-sm-6">
                         <label for="inputnasabahid" >Jumlah Uang</label>
-                        <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control" >
+                        <input type="text" id="jumlah_uang" value="0" name="jumlah_uang" class="form-control" onchange="hitungKembalian()">
                     </div>
                 </div>
                 <div class="form-group row">
@@ -595,7 +597,7 @@
                     <div class="row">
                       <div class="col-lg-6 col-sm-6">
                           <label for="inputnasabahid" >Kwitansi</label>
-                          <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control" >
+                          <input type="text" id="kwitansi" name="kwitansi" class="form-control" >
                       </div> 
                       <div class="col-lg-6 col-sm-6">
                           
@@ -607,7 +609,7 @@
                     </div> 
                     <div class="col-lg-2 col-sm-6">
                         <label for="inputnasabahid" >Kembali</label>
-                        <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control" >
+                        <input type="text" id="kembali" value="0" name="kembali" class="form-control" >
                     </div>
                 </div>
                 <div class="form-group row">
@@ -615,7 +617,7 @@
                     <div class="row">
                       <div class="col-lg-12 col-sm-6">
                           <label for="inputnasabahid" >Keterangan</label>
-                          <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control" >
+                          <input type="text" id="keterangan" name="keterangan" class="form-control" >
                       </div>
                     </div>                    
                 </div>                                   
@@ -628,8 +630,11 @@
               </div>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Cetak Kwitansi</button>
-              <button type="submit" class="btn btn-primary">Simpan</button>
+              <button name="btn_cetak" type="button" class="btn btn-primary" disabled>Cetak Kwitansi</button>
+              <div class="justify-right">
+                <button name="btn_save" type="button" class="btn btn-primary" onclick="save_angsuran();">Simpan</button>
+                <button name="btn_reset" type="button" class="btn btn-primary" onclick="window.location.reload();">Reset</button>
+              </div>
             </div>
           </form>
         </div>
@@ -786,15 +791,98 @@ function setTOB(){
   }
   // alert(document.getElementsByName("kode_transaksi3")[0].value);
 }
+function save_angsuran(){
+  $.ajaxSetup({
+      beforeSend: function(xhr,type){
+        if(!type.crossDomain){
+          xhr.setRequestHeader('X-CSRF_TOKEN',$('meta[name="csrf-token"]').attr('content'))
+        }
+      }
+  });
+  $.post("bo_tl_tk_setoranangsuran/saveAngsuran", function(data){
+    alert(data['message']);
+    if(data['status']==1){
+      document.getElementsByName("btn_cetak")[0].disabled=false;
+      document.getElementsByName("btn_save")[0].disabled=true;
+    }
+  });
+}
+function setCicilan(){
+  // alert(kredit_index);
+  data_cicilan = [];
+  total_tagihan_pokok = 0;
+  total_tagihan_bunga = 0;
+  $.get("bo_tl_tk_setoranangsuran/getCicilan?norek="+document.getElementsByName("no_rekening_kredit")[0].value, function(data){
+    data_cicilan = data;
+  });
+  $.get("bo_tl_tk_setoranangsuran/getAngsuran?norek="+document.getElementsByName("no_rekening_kredit")[0].value, function(data){
+    for(i=0;i<data.length;i++){
+      parts = data[i]["TGL_TRANS"].split('-');
+      tgl_trans = parts[2] + "/" + parts[1]  + "/" +  parts[0];
+      // alert(tgl_trans);
+      if(document.getElementsByName("cicilan_ke")[0].value==data[i]["ANGSURAN_KE"]){
+        document.getElementsByName("tgl_tagihan")[0].value = tgl_trans;
+        document.getElementsByName("label_total_tagihan")[0].innerHTML = "Total Tagihan s.d Tanggal : " + tgl_trans;
+        var date = new Date(data[i]["TGL_TRANS"]), y = date.getFullYear(), m = date.getMonth();
+        var lastDay = new Date(y, m + 1, 0);
+        let yyyy = lastDay.getFullYear();
+        let mm = lastDay.getMonth() + 1; // Months start at 0!
+        let dd = lastDay.getDate();
 
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+        document.getElementsByName("tgl_akhir_bulan")[0].value = dd + '/' + mm + '/' + yyyy;
+        // alert(dd + '/' + mm + '/' + yyyy);
+      }
+      if(i<document.getElementsByName("cicilan_ke")[0].value){
+        if(data_cicilan[i]){
+          total_tagihan_pokok = total_tagihan_pokok + Number(data[i]["POKOK_TRANS"]) - Number(data_cicilan[i]["POKOK_TRANS"]);
+          total_tagihan_bunga = total_tagihan_bunga + Number(data[i]["BUNGA_TRANS"]) - Number(data_cicilan[i]["BUNGA_TRANS"]);        
+      
+        }else{
+          total_tagihan_pokok = total_tagihan_pokok + Number(data[i]["POKOK_TRANS"]);
+          total_tagihan_bunga = total_tagihan_bunga + Number(data[i]["BUNGA_TRANS"]);              
+        }
+      }
+      
+    }
+    
+    document.getElementsByName("pokok_total")[0].value = total_tagihan_pokok;
+    document.getElementsByName("bunga_total")[0].value = total_tagihan_bunga;
+    document.getElementsByName("pokok_pembayaran")[0].value = total_tagihan_pokok;
+    document.getElementsByName("bunga_pembayaran")[0].value = total_tagihan_bunga;
+    document.getElementsByName("jumlah_setoran")[0].value = total_tagihan_pokok + total_tagihan_bunga;
+    document.getElementsByName("pokok_saldo_akhir")[0].value = Number(document.getElementsByName("baki_debet_pokok")[0].value) - total_tagihan_pokok;
+    document.getElementsByName("bunga_saldo_akhir")[0].value = Number(document.getElementsByName("baki_debet_bunga")[0].value) - total_tagihan_bunga;
+    
+  });
+}
+function hitungKembalian(){
+  document.getElementsByName("kembali")[0].value = document.getElementsByName("jumlah_setoran")[0].value - document.getElementsByName("jumlah_uang")[0].value;
+}
+var kredit_index = 0;
 function setKredit(index){
+  kredit_index = index;
+  // alert(kredit_index);
   document.getElementsByName("id_nasabah")[0].value=kredits[index].nasabah_id;
   document.getElementsByName("nama_nasabah")[0].value=kredits[index].nama_nasabah; 
   document.getElementsByName("jml_pinjaman")[0].value=kredits[index].JML_PINJAMAN;
+  document.getElementsByName("flag_jadwal")[0].value=kredits[index].FLAG_JADWAL;
+  document.getElementsByName("baki_debet_pokok")[0].value=kredits[index].POKOK_SALDO_AKHIR;
+  document.getElementsByName("baki_debet_bunga")[0].value=kredits[index].BUNGA_SALDO_AKHIR;
   var parts = kredits[index].TGL_REALISASI.split('-');
   var mydate = parts[2] + '/' + parts[1] + '/' + parts[0];
   document.getElementsByName("tgl_realisasi")[0].value=mydate;
-  document.getElementsByName("jangka_waktu")[0].value=kredits[index].BI_JANGKA_WAKTU; 
+  document.getElementsByName("periode_angs")[0].value=kredits[index].SATUAN_WAKTU_ANGSURAN;
+  document.getElementsByName("jml_angs")[0].value=kredits[index].BI_JANGKA_WAKTU; 
+  // document.getElementsByName("bunga_hari_mengendap1")[0].value="30";
+  document.getElementsByName("kolektibilitas")[0].value=kredits[index].KOLEKTIBILITAS; 
+  document.getElementsByName("pokok_saldo_akhir")[0].value=kredits[index].POKOK_SALDO_AKHIR;
+  document.getElementsByName("bunga_saldo_akhir")[0].value=kredits[index].BUNGA_SALDO_AKHIR;
+  
+
+
+
   document.getElementsByName("jumlah_angsuran")[0].value=kredits[index].JML_ANGSURAN;
   parts = kredits[index].TGL_JATUH_TEMPO.split('-');
   mydate = parts[2] + '/' + parts[1] + '/' + parts[0];

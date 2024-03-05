@@ -20,5 +20,11 @@ class VerifyCsrfToken extends Middleware
         'bo_dp_rp_nominatifrinci',
         'bo_dp_rp_nominatifgrouprinci',
         'bo_dp_rp_transaksirinci',
+        'bo_dp_rp_mutasibunga',
+        'exporttoexcelmutasibngdep',
+        'bo_dp_rp_obbungaketitipan',
+        'bo_dp_rp_bungapajakdep',
+        'bo_dp_rp_frmjadwaldeposito',
+        'bo_tl_td_pengambilanbungadeposito',
     ];
 }

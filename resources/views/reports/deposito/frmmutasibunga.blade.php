@@ -30,9 +30,9 @@
                     </div>                  
                  </div>
                 </div>
-                <div class="row form-group">
-                <div class="col-lg-3 col-sm-6" style="margin-left: 400px">
-                  <label for="nasabahid">No_rekening</label>
+                <div class="row form-group" style="margin-top: -10px">
+                  <div class="mx-auto col-md-3 col-sm-12">
+                    <label for="nasabahid">No_rekening</label>
                   <div class="input-group date" data-target-input="nearest">
                     @if(isset($no_rekening))
                     <input type="text" id="pilihnasabah" name="no_rekening" class="form-control" value="{{$no_rekening}}">
@@ -47,7 +47,7 @@
               </div>    
             </div>
             <!-- /.card-body -->
-            <div class="row form-group" style="margin-top: -10px">
+            <div class="row form-group" style="margin-top: -20px">
               <div class="col-1"></div>
               <div class="mx-auto col-md-3 col-sm-12">
                 <button type="submit" class="btn btn-warning" style="margin-left:40px ">Proses &nbsp;&nbsp;&nbsp;<i class="fa fa-search" style="color:white"></i></button>
@@ -77,11 +77,10 @@
                 <tr>
                   <th>No_Rekening</th>
                   <th>Tgl_trans</th>
-                  <th>Terima_Pokok</th>
-                  <th>Ambil_Bunga</th>
-                  <th>Ambil_Titipan</th>
-                  <th>Ambil_Pajak</th>
-                  <th>Ambil_Pokok</th>
+                  <th>Titipan_awal</th>
+                  <th>Saldo_trans</th>
+                  <th>Setor</th>
+                  <th>Ambil</th>
                 </tr>
                 </thead>
                 @if(is_null(Auth::user())==false)
@@ -91,11 +90,10 @@
                   <tr>
                     <td>{{ $values->NO_REKENING}}</td>
                     <td>{{ $values->TGL_TRANS}}</td>
-                    <td>{{ $values->terima_pokok}}</td>
-                    <td>{{ $values->ambil_bunga}}</td>
-                    <td>{{ $values->ambil_titipan}}</td>
-                    <td>{{ $values->ambil_pajak}}</td>
-                    <td>{{ $values->ambil_pokok}}</td>
+                    <td>{{ $values->TITIPAN_AWAL}}</td>
+                    <td>{{ $values->SALDO_TRANS}}</td>
+                    <td>{{ $values->setor}}</td>
+                    <td>{{ $values->ambil}}</td>
                   </tr>
                 @endforeach
                 </tbody>

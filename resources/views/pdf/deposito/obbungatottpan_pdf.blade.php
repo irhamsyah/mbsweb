@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Cetak Transaksi</title>
+    <title>Cetak Transaksi Bunga ke Titipan</title>
     {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> --}}
     <style>
         #tbl1,thead,th,td {
@@ -34,37 +34,23 @@
     @foreach($lembaga as $values)
     <br>{{$values->Value}}<br>
     @endforeach
-    <p>Daftar Riwayat Bunga Deposito </p>
-    <table>
-        <tr>
-            <td style="border-style: none">Nama : </td>
-            <td style="border-style: none">{{$profnas[0]->nama_nasabah}}</td>
-            <td style="border-style: none">TglRegistrasi : </td>
-            <td style="border-style: none">{{date('d',strtotime($profnas[0]->TGL_REGISTRASI))."/".date('m',strtotime($profnas[0]->TGL_REGISTRASI))."/".date('Y',strtotime($profnas[0]->TGL_REGISTRASI))}}</td>
-        </tr>
-        <tr>
-            <td style="border-style: none">No.Rekening : </td>
-            <td style="border-style: none">{{$profnas[0]->NO_REKENING}}</td>
-            <td style="border-style: none">Jangka Waktu : </td>
-            <td style="border-style: none">{{$profnas[0]->JKW}}</td>
-        </tr>
-        <tr>
-            <td style="border-style: none">Jumlah Deposito : </td>
-            <td style="border-style: none">{{number_format($profnas[0]->NOMINAL,2,",",".")}}</td>
-            <td style="border-style: none">Tgl Jatuh Tempo : </td>
-            <td style="border-style: none">{{date('d',strtotime($profnas[0]->TGL_JT))."/".date('m',strtotime($profnas[0]->TGL_JT))."/".date('Y',strtotime($profnas[0]->TGL_JT))}}</td>
-        </tr>
+    <p>Transaksi Overbooking Bunga Deposito Ke Titpan</p>
+    <p>Periode : {{date('d F Y',strtotime($tgltrs1))}} s/d {{date('d F Y',strtotime($tgltrs2))}}</p>
 
-    </table>
-    <table id="tbl1" class="table table-bordered" >
+    <table id="tbl1" class="table table-bordered">
         <thead>
             <tr>
-                <th>No</th>
-                <th>Tgl Transaksi</th>
-                <th colspan="4">Keterangan</th>
-                <th colspan="4">Setoran</th>
-                <th colspan="4">Ambil</th>
-                <th colspan="4">Saldo</th>
+                <th rowspan="2">No</th>
+                <th rowspan="2">No Rekening</th>
+                <th rowspan="2">Nama Nasabah</th>
+                <th rowspan="2">Tgl Trans</th>
+                <th rowspan="2">Kuitansi</th>
+                <th colspan="3">Overbook Bunga Deposito</th>
+            </tr>
+            <tr>
+                <th>Bunga</th>
+                <th>Pajak</th>
+                <th>Titipan Netto</th>
             </tr>
         </thead>
         <tbody>
@@ -72,24 +58,20 @@
         @foreach($transaksi as $index => $values)
             <tr>
                 <td>{{++$index}}</td>
+                <td>{{$values->no_rekening}}</td>
+                <td>{{$values->nama_nasabah}}</td>
                 <td>{{$values->TGL_TRANS}}</td>
-            @if(is_null($values->no_rek_ob)==false)
-                <td colspan="4">{{'OB Bunga ke tab : '.$values->no_rek_ob}}</td>
-            @elseif($values->MASUK_TITIPAN == 1 AND $values->BUNGA_BERBUNGA == 1)
-                <td colspan="4">{{'OB Bunga ke titipan : '.$values->no_rek_ob}}</td>
-            @elseif($values->MASUK_TITIPAN == 1 AND $values->BUNGA_BERBUNGA == 0)
-                <td colspan="4">{{'OB Bunga ke titipan : '.$values->no_rek_ob}}</td>
-            @endif
-                <td colspan="4">{{number_format($values->setor,2,".",",")}}</td>
-                <td colspan="4">{{number_format($values->ambil,2,".",",")}}</td>
-                @php($totsaldo=$totsaldo+$values->setor-$values->ambil)
-                <td colspan="4">{{number_format($totsaldo,2,".",",")}}</td>
+                <td>{{$values->kuitansi}}</td>
+                <td>{{number_format($values->ob_bunga,2,".",",")}}</td>
+                <td>{{number_format($values->ob_pajak,2,".",",")}}</td>
+                @php($totsaldo=$totsaldo+$values->ob_bunga-$values->ob_pajak)
+                <td>{{number_format($totsaldo,2,".",",")}}</td>
             </tr>
         @endforeach
         </tbody>
     </table>
     <div class="row" style="margin-left:750px;margin-top:10px;font-size:9pt">{{$kota[0]->Value.','.date('d F Y')}}</div>
-    <table style="margin-left:100px">
+    <table style="margin-left:50px">
         <tr>
             <td style="width: 150px;padding-left:15px;border-style:none">
                 Mengetahui

@@ -422,6 +422,11 @@
                     <a href="/bo_tl_tk_realisasikredit" class="nav-link <?php if($page=='realisasikredit'){echo 'active';}?>">
                       <p class="pl-4">Realisasi / Pencairan</p>
                     </a>
+                  </li>   
+                  <li class="nav-item">
+                    <a href="/bo_tl_tk_setoranangsuran" class="nav-link <?php if($page=='setoranangsuran'){echo 'active';}?>">
+                      <p class="pl-4">Setoran Angsuran</p>
+                    </a>
                   </li>        
                   </ul>
                 </li>

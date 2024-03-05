@@ -383,9 +383,9 @@
                     {{-- Batas tree view --}}
 
                   </ul>
-                </li>
-                <li class="nav-item has-treeview menu-close">
-                  <a href="/adm_transaction" class="nav-link">
+                </li>                
+                <li class="nav-item has-treeview  <?php if($menu=='tl' AND $submenu=='td'){echo 'menu-open';}?>">
+                  <a href="#" class="nav-link <?php if($menu=='tl' AND $submenu=='td'){echo 'active';}?>">
                     <i class="right fas fa-angle-left"></i>
                     <p class="pl-2">ADMINISTRATOR</p>
                   </a>
@@ -412,10 +412,38 @@
                     </li>
                   </ul>
                 </li>
-                <li class="nav-item has-treeview menu-close">
-                  <a href="/adm_transaction" class="nav-link">
+                <li class="nav-item has-treeview <?php if($menu=='tl' AND $submenu=='tk'){echo 'menu-open';}?>">
+                  <a href="#" class="nav-link <?php if($menu=='tl' AND $submenu=='tk'){echo 'active';}?>">
                     <i class="right fas fa-angle-left"></i>
-                    <p class="pl-2">PENCETAKAN LAPORAN</p>
+                    <p class="pl-2">TRANSAKSI KREDIT</p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="/bo_tl_tk_realisasikredit" class="nav-link <?php if($page=='realisasikredit'){echo 'active';}?>">
+                      <p class="pl-4">Realisasi / Pencairan</p>
+                    </a>
+                  </li>        
+                  </ul>
+                </li>
+                </ul>
+              </li>
+              <li class="nav-item has-treeview menu-close <?php if($menu=='tb'){echo 'menu-open';}?>">
+                <a href="#" class="nav-link <?php if($menu=='tb'){echo 'active';}?>">
+                  <i class="right fas fa-angle-left"></i>
+                  <p class="pl-1">TABUNGAN</p>
+                </a>
+                {{-- Menu Tree Tabungan --}}
+              <ul class="nav nav-treeview"> 
+
+              <li class="nav-item has-treeview <?php if($menu=='tb' AND $submenu=='de'){echo 'menu-open';}?>">
+                <a href="#" class="nav-link <?php if($menu=='tb' AND $submenu=='de'){echo 'active';}?>">
+                  <i class="right fas fa-angle-left"></i>
+                  <p class="pl-2">DATA ENTRY</p>
+                </a>
+                <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="/bo_tb_de_tabungan" class="nav-link <?php if($page=='tabungan' or $page=='tabungancari'){echo 'active';}?>">
+                    <p class="pl-3">Rekening Tabungan</p>
                   </a>
                   <ul class="nav nav-treeview">
                     <li class="nav-item has-treeview menu-close">

@@ -328,7 +328,8 @@
         <div class="col-lg-3 col-sm-12">
           <label for="inputamortisasiprovisi">.</label>
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="inputamortisasiprovisi" <?php //if($kredit->AMORTISASI_PROVISI=="1"){echo 'checked';}?>>
+            <input type="hidden" name="inputamortisasiprovisi" value="0"/>
+            <input class="form-check-input" type="checkbox" value="1" name="inputamortisasiprovisi" <?php //if($kredit->AMORTISASI_PROVISI=="1"){echo 'checked';}?>>
             <label class="form-check-label" style="margin-right:30px;">Amortisasi</label>
           </div>
         </div>

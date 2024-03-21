@@ -26,5 +26,10 @@ class VerifyCsrfToken extends Middleware
         'bo_dp_rp_bungapajakdep',
         'bo_dp_rp_frmjadwaldeposito',
         'bo_tl_td_pengambilanbungadeposito',
+        'bo_dep_del_trs',
+        'bo_dp_de_overbookbngdep',
+        'bo_tl_td_penutupandeposito',
+        'bo_tl_td_setorandeposito',
+        'bo_dp_de_deposito',
     ];
 }

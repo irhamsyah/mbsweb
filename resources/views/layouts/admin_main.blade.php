@@ -1268,55 +1268,73 @@ $(document).ready(function(){
      // get the current row
      var currentRow=$(this).closest("tr"); 
      
-     var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
-     var col2=currentRow.find("td:eq(1)").text(); // get current row 2nd TD
-     var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
-     var col4=currentRow.find("td:eq(3)").text(); // get current row 4th TD
-     var col5=currentRow.find("td:eq(4)").text(); // get current row 5th TD
-     var col6=currentRow.find("td:eq(5)").text(); // get current row 6th TD
-     var col7=currentRow.find("td:eq(6)").text(); // get current row 7th TD
-     var col8=currentRow.find("td:eq(7)").text(); // get current row 8th TD
-     var col9=currentRow.find("td:eq(8)").text(); // get current row 9th TD
-     var col10=currentRow.find("td:eq(9)").text(); // get current row 10th TD
-     var col11=currentRow.find("td:eq(10)").text(); // get current row 11th TD
-     var col12=currentRow.find("td:eq(11)").text(); // get current row 12th TD
-     var col13=currentRow.find("td:eq(12)").text(); // get current row 13th TD
-     var totalditerima=col4-col5;
+     var col1=currentRow.find("td:eq(0)").text(); // get NO_REKENING value
+     var col2=currentRow.find("td:eq(1)").text(); // get nama_nasabah
+     var col3=currentRow.find("td:eq(2)").text(); // get alamat
+     var col4=currentRow.find("td:eq(3)").text(); // get TGL_REGISTRASI
+     var col5=currentRow.find("td:eq(4)").text(); // get TGL_JT
+     var col6=currentRow.find("td:eq(5)").text(); // get JML_DEPOSITO
+     var col7=currentRow.find("td:eq(6)").text(); // get JKW
+     var col8=currentRow.find("td:eq(7)").text(); // get PERSEN_PPH
+     var col9=currentRow.find("td:eq(8)").text(); // get SUKU_BUNGA
+     var col10=currentRow.find("td:eq(9)").text(); // get NO_ALTERNATIF
+     var col11=currentRow.find("td:eq(10)").text(); // get KODE_BI_PEMILIK
     //  var data=col1+"\n"+col2+"\n"+col3;
-    if(col4==0){
-      alert('BUNGA 0 TIDAK DAPAT DIAMBIL HANYA BISA DIAMBIL DARI TITIPAN');
-      document.getElementById("putnorekening").value=col1;
+     document.getElementById("putnorekening").value=col1;
      document.getElementById("putnamanasabah").value=col2;
-     document.getElementById("putjmldeposito").value=col6;
-     document.getElementById("inputsukubunga").value=col11;
-     document.getElementById("inputbungaakrual").value=0;
-     document.getElementById("inputsisabungaakrual").value=0;
-     document.getElementById("inputbungablnini").value=col4;
-     document.getElementById("inputpajakblnini").value=col5;
-     document.getElementById("inputbunganetto").value=totalditerima;
-     document.getElementById("inputtitipandiambil").value=col7;
-     document.getElementById("inputtotaltitipanbunga").value=col7;
-     document.getElementById("putpinalti").value=col14;
-     document.getElementById("puttotalterima").value=totalditerima;
+     document.getElementById("putalamat").value=col3;
+     document.getElementById("puttglregistrasi").value=col4;
+     document.getElementById("puttgljt").value=col5;
+     document.getElementById("putnominal").value=col6;
+     document.getElementById("putjumlahsetoran").value=col6;
+     document.getElementById("putjkw").value=col7;
+     document.getElementById("putpph").value=col8;
+     document.getElementById("putbunga").value=col9;
+     document.getElementById("putalternatif").value=col10;
+     document.getElementById("putkodepemilik").value=col11;
+
+  });
+
+  // PENUTUPAN DEPOSITO
+  $("#clsdepositoteller").on('click','#klikdepositottp',function(){
+     // get the current row
+     var currentRow=$(this).closest("tr"); 
+
+     var col1=currentRow.find("td:eq(0)").text(); // get No_rekening value
+     var col2=currentRow.find("td:eq(1)").text(); // get No_alternatif value
+     var col3=currentRow.find("td:eq(2)").text(); // get Nama_nasabah
+     var col4=currentRow.find("td:eq(3)").text(); // get Alamat
+     var col5=currentRow.find("td:eq(4)").text(); // get Bunga
+     var col6=currentRow.find("td:eq(5)").text(); // get PPh
+     var col7=currentRow.find("td:eq(6)").text(); // get Jml_deposito
+     var col8=currentRow.find("td:eq(7)").text(); // get Bunga_bln_ini
+     var col9=currentRow.find("td:eq(8)").text(); // get Saldo_titipan
+     var col10=currentRow.find("td:eq(9)").text(); // get JKW
+     var col11=currentRow.find("td:eq(10)").text(); // get kode_bi_pemilik
+     var col12=currentRow.find("td:eq(11)").text(); // get tgl_registrasi
+     var col13=currentRow.find("td:eq(12)").text(); // get tgl_JT
+
+    //  var data=col1+"\n"+col2+"\n"+col3;
+    if(col8>0){
+      alert('Rekening ini masih memiliki saldo bunga/titipan yang belum diambil,prosedur tidak dapat dilanjut');
 
     }else{
       document.getElementById("putnorekening").value=col1;
-     document.getElementById("putnamanasabah").value=col2;
-     document.getElementById("putjmldeposito").value=col6;
-     document.getElementById("inputsukubunga").value=col11;
-     document.getElementById("inputbungaakrual").value=0;
-     document.getElementById("inputsisabungaakrual").value=0;
-     document.getElementById("inputbungablnini").value=col4;
-     document.getElementById("inputpajakblnini").value=col5;
-     document.getElementById("inputbunganetto").value=totalditerima;
-     document.getElementById("inputtitipandiambil").value=col7;
-     document.getElementById("inputtotaltitipanbunga").value=col7;
-     document.getElementById("putpinalti").value=col14;
-     document.getElementById("puttotalterima").value=totalditerima;
-
+      document.getElementById("putalternatif").value=col2;
+      document.getElementById("putnamanasabah").value=col3;
+      document.getElementById("putkodepemilik").value=col11;
+      document.getElementById("putalamat").value=col4;
+      document.getElementById("puttglregistrasi").value=col12;
+      document.getElementById("puttgljt").value=col13;
+      document.getElementById("putjkw").value=col10;
+      document.getElementById("putbunga").value=col5;
+      document.getElementById("putpph").value=col6;
+      document.getElementById("putnominal").value=col7;
+      document.getElementById("puttotalterima").value=col7;
     }
-
   });
+
+  
   $("#datatabunganteller").on('click','#kliktabungan',function(){
      // get the current row
      var currentRow=$(this).closest("tr"); 
@@ -1420,7 +1438,12 @@ $(document).ready(function () {
     $('#nasabahdata').DataTable();
     $('#rektabungandata').DataTable();
     $('#datadepositoteller').DataTable();
+
 });
+$(document).ready(function () {
+    $('#clsdepositoteller').DataTable();
+  });
+
 // DATA TABLE untuk table deposito pada menu Cetak Riwayat Bunga Deposito
 $(document).ready(function () {
     $('#norekdepos').DataTable();
@@ -2489,6 +2512,13 @@ $(e.currentTarget).find('input[name="deskripsi_jenis_deposito"]').val(Deskripsi_
       {
         var conceptName = $('#putkodetrans').find(":selected").val();
         document.getElementById('inputtypetrans').value =conceptName;
+        if(document.getElementById('inputtypetrans').value.substr(4,1)=='T')
+        {
+          document.getElementById('123').style.visibility="hidden";
+        }else{
+          document.getElementById('123').style.visibility="visible";
+        }
+
       }
       // FUNGSU HITUNG BUNGA BULAN INI + SISA TITIPAN DEPOSITO
       function totbungatitipan()
@@ -2505,6 +2535,23 @@ $(e.currentTarget).find('input[name="deskripsi_jenis_deposito"]').val(Deskripsi_
           alert('TIDAK BOLEH MELEBIHI SALDO TITIPAN');
         }else{
           totbungatitipan();
+        }
+      }
+      // AMBIL NILAI KODE_TRANS PADA FORM PENUTUPAN DEPOSITO
+      function ambil(){
+        if(document.getElementById('putkodetrans').value.substr(4,1)=='T')
+        {
+          alert('KODE TRANSAKSI JIKA TUNAI TIDAK BOLEH DI OVERBOOK LEWAT TABUNGAN');
+        }
+      }
+      // TARUH T OR OB DI FORM PENUTUPAN DEPOSITO
+      function ambilkodetrans(){
+        document.getElementById('textkodetrans').value =document.getElementById('putkodetrans').value.substr(4,1);
+        if(document.getElementById('putkodetrans').value.substr(4,1)=='T')
+        {
+          document.getElementById('123').style.visibility="hidden";
+        }else{
+          document.getElementById('123').style.visibility="visible";
         }
       }
   </script>

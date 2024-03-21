@@ -2821,6 +2821,50 @@
             "install-path": "../nesbot/carbon"
         },
         {
+            "name": "nggit/php-terbilang",
+            "version": "v1.0",
+            "version_normalized": "1.0.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nggit/php-terbilang.git",
+                "reference": "802eb87e7c62ae46d6a53ab0d57340d156ea87cf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nggit/php-terbilang/zipball/802eb87e7c62ae46d6a53ab0d57340d156ea87cf",
+                "reference": "802eb87e7c62ae46d6a53ab0d57340d156ea87cf",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "time": "2021-04-18T13:20:06+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Nggit\\PHPTerbilang\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "nggit",
+                    "email": "contact@anggit.com"
+                }
+            ],
+            "description": "Pustaka PHP Terbilang Dengan Kemampuan Hingga 108 Digit",
+            "homepage": "https://github.com/nggit/php-terbilang",
+            "support": {
+                "issues": "https://github.com/nggit/php-terbilang/issues",
+                "source": "https://github.com/nggit/php-terbilang/tree/v1.0"
+            },
+            "install-path": "../nggit/php-terbilang"
+        },
+        {
             "name": "nikic/php-parser",
             "version": "v4.6.0",
             "version_normalized": "4.6.0.0",

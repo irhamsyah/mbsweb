@@ -557,7 +557,7 @@ Route::get('bo_ak_lp_labarugikonsol1', 'AkuntansiController@bo_ak_lp_labarugikon
 //TELLER TRANS DEPOSITO
 //SETORAN DEPOSITO
 Route::get('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito')->name('showsetorandeposito');
-//Route::post('/bo_tl_td_setorandeposito/cari','TellerDepositoController@bo_tl_td_setorandeposito_cari');//search filter
+// Simpan deposito teller
 Route::post('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito_add');
 // Route::put('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito_edit');
 // Route::delete('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito_destroy');
@@ -566,9 +566,24 @@ Route::get('/bo_tl_td_setorandeposito/printbukarekdeposito', 'TellerDepositoCont
 Route::get('/bo_tl_td_pengambilanbungadeposito', 'TellerDepositoController@bo_tl_td_pengambilanbungadeposito')->name('showpengambilanbungadeposito');
 //Route::post('/bo_tl_td_pengambilanbungadeposito/cari','TellerDepositoController@bo_tl_td_pengambilanbungadeposito_cari');//search filter
 Route::post('/bo_tl_td_pengambilanbungadeposito', 'TellerDepositoController@bo_tl_td_pengambilanbungadeposito_add');
-//PENUTUPAN BUNGA DEPOSITO
+// Cetak Tanda Terima Pengambilan Deposito
+Route::get('bo_tl_rp_cetakkuitansi', 'TellerDepositoController@cetakkuitansi')->name('cetakkuitansi');
+// Cetak Validasi Pengambilan Deposito
+Route::get('bo_tl_rp_cetakvalidasi', 'TellerDepositoController@cetakvalidasi')->name('cetakvalidasi');
+// Cetak Kuitansi Tutup Deposito
+Route::get('bo_tl_rp_cetakkuitansicls', 'TellerDepositoController@bo_tl_rp_cetakkuitansicls')->name('cetakkuitansicls');
+// Cetak Validasi Close Deposito
+Route::get('bo_tl_rp_cetakvalidasiclsdep', 'TellerDepositoController@bo_tl_rp_cetakvalidasiclsdep')->name('cetakvalidasiclsdep');
+
+
+
+
+
+
+//PENUTUPAN DEPOSITO
+//--show form TUTUP DEPOSITO 
 Route::get('/bo_tl_td_penutupandeposito', 'TellerDepositoController@bo_tl_td_penutupandeposito')->name('showpenutupandeposito');
-//Route::post('/bo_tl_td_penutupandeposito/cari','TellerDepositoController@bo_tl_td_penutupandeposito_cari');//search filter
+// SIMPAN TRANSAKSI TUTUP DEPOSITO
 Route::post('/bo_tl_td_penutupandeposito', 'TellerDepositoController@bo_tl_td_penutupandeposito_add');
 // Cetak Tanda Terima Buka Deposito
 Route::get('bo_tl_td_cetakbukadep', 'TellerDepositoController@bo_tl_td_cetakbukadep')->name('cetakbukadep');

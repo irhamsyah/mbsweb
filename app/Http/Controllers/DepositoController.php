@@ -330,16 +330,22 @@ class DepositoController extends Controller
     // Hapus transaksi deposito
     public function bo_dep_del_trs(Request $request)
     {
-        // dd($request);
-        if ($request->bunga_berbunga == '0' and $request->masuk_titipan == '1' and $request->no_bukti == 'SYS-BNG') {
+        // HAPUS TRANSAKSI YG OVB LEWAT MENU OVERBOOK BUNGA
+        if ($request->bunga_berbunga == '0' && $request->masuk_titipan == '1' && is_null($request->no_rekening_tab) && $request->no_bukti == 'SYS-BNG') {
             Deptran::where('DEPTRANS_ID', $request->deptrans_id)->delete();
-            Deptran::where('NO_REKENING', $request->no_rekening)
-                ->where('KUITANSI', $request->no_bukti)
-                ->where('TGL_TRANS', date('Y-m-d', strtotime($request->tgl_trans)))
-                ->delete();
-            $tptambah = DB::select("SELECT SUM(SALDO_TRANS) as titipan_tambah FROM deptrans WHERE MY_KODE_TRANS='100' AND NO_REKENING='$request->no_rekening'")[0]->titipan_tambah;
-            $tpambil = DB::select("SELECT SUM(SALDO_TRANS) as titipan_ambil FROM deptrans WHERE MY_KODE_TRANS='475' AND NO_REKENING='$request->no_rekening'")[0]->titipan_ambil;
-            $tpakhir = $tptambah - $tpambil;
+            $tptambah = 0;
+            $tpambil = 0;
+            $tpakhir = 0;
+            if ($request->my_kode_trans == '100') {
+                $tptambah = DB::select("SELECT SUM(SALDO_TRANS) as titipan_tambah FROM deptrans WHERE NO_REKENING='$request->no_rekening' AND (MY_KODE_TRANS='100')")[0]->titipan_tambah;
+                // hitung titipan ambil
+                $tpambil = DB::select("SELECT SUM(SALDO_TRANS) as titipan_ambil FROM deptrans WHERE (MY_KODE_TRANS='275' OR MY_KODE_TRANS='277' OR MY_KODE_TRANS='475') AND NO_REKENING='$request->no_rekening'")[0]->titipan_ambil;
+                $tpakhir = $tptambah - $tpambil;
+            } elseif ($request->my_kode_trans == '275' || $request->my_kode_trans == '277' || $request->my_kode_trans == '475') {
+                $tpambil = DB::select("SELECT SUM(SALDO_TRANS) as titipan_ambil FROM deptrans WHERE (MY_KODE_TRANS='275' OR MY_KODE_TRANS='277' OR MY_KODE_TRANS='475') AND NO_REKENING='$request->no_rekening'")[0]->titipan_ambil;
+                $tptambah = DB::select("SELECT SUM(SALDO_TRANS) as titipan_tambah FROM deptrans WHERE NO_REKENING='$request->no_rekening' AND (MY_KODE_TRANS='100')")[0]->titipan_tambah;
+                $tpakhir = $tptambah - $tpambil;
+            }
             Deposito::where('NO_REKENING', $request->no_rekening)->update(
                 [
                     'TITIPAN_TAMBAH' => $tptambah,
@@ -348,37 +354,71 @@ class DepositoController extends Controller
                     'BUNGA_YMH' => 0
                 ]
             );
-        } elseif (is_null($request->no_rekening_tab) == false) {
+        }
+        // DELETE TRANSAKSI AMBIL BUNGA DEPOSITO / TUTUP DEPOSITO LEWAT TELLER
+        // -TANPA REK TABUNGAN
+        elseif (is_null($request->no_rekening_tab) && substr($request->no_bukti, 0, 3) <> 'SYS') {
+            // hapus transaksi deposito
+            // dd($request->saldo_trans);
             Deptran::where('DEPTRANS_ID', $request->deptrans_id)->delete();
-            Deptran::where('NO_REKENING', $request->no_rekening)
-                ->where('NO_REK_OB', $request->no_rekening_tab)
-                ->where('TGL_TRANS', date('Y-m-d', strtotime($request->tgl_trans)))
-                ->delete();
-            Deposito::where('NO_REKENING', $request->no_rekening)->update(
-                [
-                    'BUNGA_YMH' => 0
-                ]
-            );
+            Tellertran::where('modul_trans_id', $request->deptrans_id)->delete();
+            if ($request->my_kode_trans == '300') {
+                $upd = DB::select("SELECT no_rekening,SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0)) as saldo_setoran,SUM(IF(MY_KODE_TRANS=300,SALDO_TRANS,0)) as saldo_penarikan,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS=300,SALDO_TRANS,0))) AS saldo_akhir FROM deptrans WHERE NO_REKENING='$request->no_rekening' GROUP BY no_rekening");
+                $setor = (float)$upd[0]->saldo_setoran;
+                $penarikan = (float)$upd[0]->saldo_penarikan;
+                $sldak = (float)$upd[0]->saldo_akhir;
+                DB::select("UPDATE deposito SET SALDO_SETORAN=$setor,SALDO_PENARIKAN=$penarikan,SALDO_AKHIR=$sldak,STATUS_AKTIF='2' where NO_REKENING='$request->no_rekening'");
+            }
+        }
+        // LEWAT REK TABUNGAN DI PROSES LEWAT TELLER 
+        elseif (is_null($request->no_rekening_tab) == false && substr($request->no_bukti, 0, 3) <> 'SYS') {
+            // dd($request->deptrans_id);
+            Deptran::where('DEPTRANS_ID', $request->deptrans_id)->delete();
+            Tabtran::where('LINK_ID', $request->deptrans_id)->delete();
+            Tellertran::where('modul_trans_id', $request->deptrans_id)->delete();
+
+            if ($request->my_kode_trans == '300') {
+                // UPDATE DEPOSITO
+                $upd = DB::select("SELECT no_rekening,SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0)) as saldo_setoran,SUM(IF(MY_KODE_TRANS=300,SALDO_TRANS,0)) as saldo_penarikan,(SUM(IF(MY_KODE_TRANS=0 OR MY_KODE_TRANS=1,SALDO_TRANS,0))-SUM(IF(MY_KODE_TRANS=300,SALDO_TRANS,0))) AS saldo_akhir FROM deptrans WHERE NO_REKENING='$request->no_rekening' GROUP BY no_rekening");
+                $setor = (float)$upd[0]->saldo_setoran;
+                $penarikan = (float)$upd[0]->saldo_penarikan;
+                $sldak = (float)$upd[0]->saldo_akhir;
+                DB::select("UPDATE deposito SET SALDO_SETORAN=$setor,SALDO_PENARIKAN=$penarikan,SALDO_AKHIR=$sldak,STATUS_AKTIF='2' where NO_REKENING='$request->no_rekening'");
+                // UPDATE TABUNGNA 
+                $sldawal = DB::select("SELECT saldo_awal from tabung where no_rekening='$request->no_rekening_tab'")[0]->saldo_awal;
+                $sldsetor = DB::select("SELECT sum(saldo_trans) as saldo_trans FROM tabtrans where NO_REKENING = '$request->no_rekening_tab' AND MY_KODE_TRANS LIKE '1%'")[0]->saldo_trans;
+                $sldtarik = DB::select("SELECT sum(saldo_trans) as saldo_trans FROM tabtrans where NO_REKENING = '$request->no_rekening_tab' AND MY_KODE_TRANS LIKE '2%'")[0]->saldo_trans;
+                $saldoakhir = $sldawal + $sldsetor - $sldtarik;
+                Tabungan::where('NO_REKENING', $request->no_rekening_tab)->update([
+                    'SALDO_SETORAN' => $sldsetor,
+                    'SALDO_PENARIKAN' => $sldtarik,
+                    'SALDO_AKHIR' => $saldoakhir
+                ]);
+            }
+        }
+        // LEWAT REK TABUNGAN DI PROSES LEWAT MENU OVERBOOK BUNGA
+        elseif (is_null($request->no_rekening_tab) == false && substr($request->no_bukti, 0, 3) == 'SYS') {
+            // dd($request);
+            Deptran::where('NO_REKENING', $request->no_rekening)->delete();
             $link_id = DB::select("select tabtrans_id from tabtrans where link_rekening = '$request->no_rekening' AND tgl_trans='" . date('Y-m-d', strtotime($request->tgl_trans)) . "'")[0]->tabtrans_id;
             Tabtran::where('MY_KODE_TRANS', 175)
                 ->where('LINK_REKENING', $request->no_rekening)
                 ->where('TGL_TRANS', $request->tgl_trans)
                 ->delete();
             Tellertran::where('modul_trans_id', $link_id)->delete();
+            $sldawal = DB::select("SELECT saldo_awal from tabung where no_rekening='$request->no_rekening_tab'")[0]->saldo_awal;
             $sldsetor = DB::select("SELECT sum(saldo_trans) as saldo_trans FROM tabtrans where NO_REKENING = '$request->no_rekening_tab' AND MY_KODE_TRANS LIKE '1%'")[0]->saldo_trans;
             $sldtarik = DB::select("SELECT sum(saldo_trans) as saldo_trans FROM tabtrans where NO_REKENING = '$request->no_rekening_tab' AND MY_KODE_TRANS LIKE '2%'")[0]->saldo_trans;
-            $saldoakhir = $sldsetor - $sldtarik;
+            $saldoakhir = $sldawal + $sldsetor - $sldtarik;
             Tabungan::where('NO_REKENING', $request->no_rekening_tab)->update([
                 'SALDO_SETORAN' => $sldsetor,
                 'SALDO_PENARIKAN' => $sldtarik,
                 'SALDO_AKHIR' => $saldoakhir
             ]);
         }
+        // HAPUS TRANSAKASI BUNGA BERBUNGA YANG OB LEWAT MENU OVERBOOOK BUNGA
         if ($request->bunga_berbunga == '1' and ($request->masuk_titipan == '1' or $request->masuk_titipan == '0') and substr($request->no_bukti, 0, 3) == 'SYS') {
-            Deptran::where('NO_REKENING', $request->no_rekening)
-                ->where('KUITANSI', 'LIKE', 'SYS%')
-                ->where('TGL_TRANS', date('Y-m-d', strtotime($request->tgl_trans)))
-                ->delete();
+            Deptran::where('DEPTRANS_ID', $request->deptrans_id)->delete();
             $saldodep = DB::select("SELECT SUM(SALDO_TRANS) as saldo_trans FROM deptrans WHERE NO_REKENING='$request->no_rekening' AND (MY_KODE_TRANS='0' OR MY_KODE_TRANS='1')
             ")[0]->saldo_trans;
             $titipan = DB::select("SELECT SUM(SALDO_TRANS) as saldo_trans FROM deptrans WHERE NO_REKENING='$request->no_rekening' AND (MY_KODE_TRANS='100')
@@ -388,8 +428,7 @@ class DepositoController extends Controller
                 'SALDO_SETORAN' => $saldodep,
                 'SALDO_AKHIR' => $saldodep,
                 'TITIPAN_TAMBAH' => $titipan,
-                'TITIPAN_AMBIL' => $titipan,
-                'BUNGA_YMH' => 0
+                'TITIPAN_AMBIL' => $titipan
             ]);
         }
 
@@ -607,16 +646,18 @@ class DepositoController extends Controller
         $tgllogin = date('Y-m-d', strtotime(str_replace('/', '-', $tgllogin[0]->Value)));
         return view('admin.deposito.frmoverbookbungadep', ['users' => $users, 'logos' => $logos, 'kodetransdep' => $kodetransdep, 'kodetranstab' => $kodetranstab, 'tgllogin' => $tgllogin, 'msgstatus' => '']);
     }
-    // proses simpan data overbook deposito
+    // proses simpan data proses overbook deposito
     public function bo_dp_de_overbookbngdep(Request $request)
     {
+        // dd($request);
         if ($request->yatidak == 'Tidak') {
             $cek = DB::select("select tgl_trans from deptrans where tgl_trans='$request->tgl_trans' AND kuitansi like 'SYS%'");
 
             $data = DB::select("select deposito.*,nasabah.nama_nasabah as nama from deposito inner join nasabah on deposito.nasabah_id=nasabah.nasabah_id where deposito.tgl_valuta<= " . (int)date('d', strtotime($request->tgl_trans)) . " AND deposito.bunga_bln_ini>0 AND deposito.status_aktif=2");
             // dd($data);
             foreach ($data as $values) {
-                if ($values->MASUK_TITIPAN == 1 && $values->BUNGA_BERBUNGA == 0) {
+                // dd(strlen($values->NO_REK_TABUNGAN));
+                if ($values->MASUK_TITIPAN == 1 && $values->BUNGA_BERBUNGA == 0 && strlen($values->NO_REK_TABUNGAN) == 0) {
                     $x = strlen($request->kode_trs_titipan) - 1;
                     $y = strlen($request->kode_trs_titipan);
                     $simpantrstitip = new Deptran();

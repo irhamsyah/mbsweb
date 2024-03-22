@@ -74,7 +74,8 @@
                 <div class="row">
                   <div class="col-lg-2 col-sm-6">
                     <label for="inputkuitansi">Kuitansi</label>
-                    <input type="text" name="kuitansi" class="form-control" id="kuitansi" required>
+                    <input type="text" name="kuitansi" class="form-control" id="kuitansi" required
+                      onclick="bandingkan()" onchange=" bandingkan()">
                   </div>
                   <div class="col-lg-3 col-sm-6">
                     <label for="inputkodetransdep">Kode Transaksi</label>
@@ -114,7 +115,8 @@
                 <div class="row">
                   <div class="col-lg-2 col-sm-6">
                     <label for="inputbungablnini">Bunga</label>
-                    <input readonly id="inputbungablnini" type="text" name="bunga_bln_ini" class="form-control">
+                    <input readonly id="inputbungablnini" type="text" name="bunga_bln_ini" class="form-control"
+                      value="0">
                   </div>
                   <div class="col-lg-2 col-sm-6">
                     <label for="inputpajak">Pajak</label>
@@ -140,7 +142,7 @@
                     <label for="inputtitipandiambil">Jml Titipan yang diambil</label>
                     <input id="inputtitipandiambil" type="text" name="titipan_ambil" class="form-control" value="0"
                       onclick="bandingkan()" onchange=" bandingkan()">
-                    <label for="crot">*Tekan Tab</label>
+                    <label for="crot">*Wajib Tekan Tab Untuk Melihat Total</label>
                   </div>
                   <div class="col-lg-4 col-sm-6">
                     <label for="inputtotalbungadiambil">Total Bunga yang diambil (Bunga bln ini + Titipan)</label>
@@ -152,7 +154,7 @@
               <div class="bottomlinesolid">
                 <span class="judulOrange">Overbooking Ke Tabungan</span>
               </div>
-              <div class="form-group">
+              <div class="form-group" id="123">
                 <div class="row">
                   <div class="col-lg-3 col-sm-6">
                     <label for="inputkodetranstab">Kode Transaksi Tabungan</label>
@@ -214,17 +216,52 @@
               </div>
               <div class="form-group">
                 <div class="row">
-                  <div class="col-lg-10">
-                  </div>
+                  {{-- <div class="col-lg-10">
+                  </div> --}}
                   <div class="col-lg-2">
-                    <button type="submit" class="btn btn-primary" style="float:right;margin-top:15px;"><i
+                    <button type="submit" class="btn btn-primary" style="float:left;margin-top:15px;"><i
                         class="fa fa-check" aria-hidden="true"></i> Simpan</button>
                   </div>
+                  @if(isset($nama_nasabah))
+                  <div class="col-lg-2">
+                    <a href="{{ route('cetakkuitansi',['no_rekening' => $no_rekening,
+                      'kuitansi' => $kuitansi,
+                      'nama_nasabah' => $nama_nasabah,
+                      'jml_deposito' => $jml_deposito,
+                      'tob' => $tob,
+                      'total_bunga_diambil' => $total_bunga_diambil,
+                      'bunga_bln_ini' => $bunga_bln_ini,
+                      'pajak_bln_ini' => $pajak_bln_ini,
+                      'titipan_ambil' => $titipan_ambil,
+                      'no_rekening_tab'=>$no_rekening_tab,
+                      'tgl_trans' => $tgl_trans])}}" class="btn btn-md btn-danger"
+                      style="float:left;margin-top:15px;"><i class="fa fa-print" aria-hidden="true"></i> Cetak
+                    </a>
+                  </div>
+                  <div class="col-lg-2">
+                    <a href="{{ route('cetakvalidasi',['no_rekening' => $no_rekening,
+                      'kuitansi' => $kuitansi,
+                      'nama_nasabah' => $nama_nasabah,
+                      'jml_deposito' => $jml_deposito,
+                      'tob' => $tob,
+                      'total_bunga_diambil' => $total_bunga_diambil,
+                      'bunga_bln_ini' => $bunga_bln_ini,
+                      'pajak_bln_ini' => $pajak_bln_ini,
+                      'titipan_ambil' => $titipan_ambil,
+                      'no_rekening_tab'=>$no_rekening_tab,
+                      'kode_trans'=>$kode_trans,
+                      'total_bunga_diambil'=>$total_bunga_diambil,
+                      'tgl_trans' => $tgl_trans])}}" class="btn btn-md btn-danger"
+                      style="float:left;margin-top:15px;"><i class="fa fa-book" aria-hidden="true"></i> Validasi
+                    </a>
+                  </div>
+                  @endif
                 </div>
               </div>
             </div>
             <!-- /.card-body -->
           </form>
+
         </div>
         <!-- /.card -->
         <div class="card">

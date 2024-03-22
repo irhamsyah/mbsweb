@@ -31,5 +31,6 @@ class VerifyCsrfToken extends Middleware
         'bo_tl_td_penutupandeposito',
         'bo_tl_td_setorandeposito',
         'bo_dp_de_deposito',
+        'logout'
     ];
 }

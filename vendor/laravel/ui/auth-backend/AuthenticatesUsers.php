@@ -9,6 +9,7 @@ use Illuminate\Validation\ValidationException;
 
 trait AuthenticatesUsers
 {
+
     use RedirectsUsers, ThrottlesLogins;
 
     /**

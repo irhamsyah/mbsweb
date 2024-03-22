@@ -9,12 +9,12 @@ class Tellertran extends Model
     //return $this->belongsToMany('App\Tabtran', 'KUNCIPUNYA TELLERTRANS','KUNCIPUNYA TABTRANS');
     public function tabtran()
     {
-        return $this->belongsToMany('App\Tabtran', 'modul_trans_id','TABTRANS_ID');
+        return $this->belongsToMany('App\Tabtran', 'modul_trans_id', 'TABTRANS_ID');
     }
-    protected $primaryKey='trans_id';
-    public $timestamps=false;
+    protected $primaryKey = 'trans_id';
+    public $timestamps = false;
     protected $table = 'tellertrans';
-    protected $fillable=[
+    protected $fillable = [
         'trans_id',
         'modul',
         'tgl_trans',
@@ -33,7 +33,5 @@ class Tellertran extends Model
         'cab',
         'USERAPP',
         'flag'
-
     ];
- 
 }

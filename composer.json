@@ -19,6 +19,7 @@
         "laravel/ui": "^2.1",
         "laravelcollective/html": "^6.4",
         "maatwebsite/excel": "^3.1",
+        "nggit/php-terbilang": "^1.0",
         "tuta/terbilang": "dev-master"
     },
     "require-dev": {

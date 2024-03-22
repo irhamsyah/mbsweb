@@ -33,42 +33,30 @@
             </span>
             @enderror
 
-        </div> <!-- form-group// -->
+        </div>
         <div class="form-group input-group">
             <div class="input-group-prepend">
-                <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
+                <span class="input-group-text"> <i class="fa fa-user"></i> </span>
             </div>
-            <input name="email" class="form-control" placeholder="Email address" type="email" value="{{ old('email') }}" required autocomplete="email">
-            @error('email')
+            <input name="username" class="form-control" placeholder="User Name" type="text" value="{{ old('username') }}" required autocomplete="username">
+            @error('username')
             <span class="invalid-feedback" role="alert">
                 <strong>{{ $message }}</strong>
             </span>
             @enderror
-
-        </div> <!-- form-group// -->
-        {{-- <div class="form-group input-group">
-            <div class="input-group-prepend">
-                <span class="input-group-text"> <i class="fa fa-phone"></i> </span>
-            </div>
-            <select class="custom-select" style="max-width: 120px;">
-                <option selected="">+971</option>
-                <option value="1">+972</option>
-                <option value="2">+198</option>
-                <option value="3">+701</option>
-            </select>
-            <input name="" class="form-control" placeholder="Phone number" type="text">
-        </div> <!-- form-group// -->
+        </div> 
         <div class="form-group input-group">
             <div class="input-group-prepend">
                 <span class="input-group-text"> <i class="fa fa-building"></i> </span>
             </div>
-            <select class="form-control">
-                <option selected=""> Select job type</option>
-                <option>Designer</option>
-                <option>Manager</option>
-                <option>Accaunting</option>
+            <select name="privilege" class="form-control">
+                <option selected=""> Select Privilege</option>
+                <option value="admin">Admin</option>
+                <option value="teller">Teller</option>
+                <option value="kredit">Kredit</option>
+                <option value="deposito">Deposito</option>
             </select>
-        </div> <!-- form-group end.// --> --}}
+        </div> <!-- form-group end.// -->
         <div class="form-group input-group">
             <div class="input-group-prepend">
                 <span class="input-group-text"> <i class="fa fa-lock"></i> </span>

@@ -44,7 +44,7 @@
                     <div class="col-lg-2 col-sm-8">
                       <label for="inputDate1">Tanggal Transaksi</label>
                       <div class="input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                          <input type="text" name="tgl_trans" class="form-control datetimepicker-input" readonly value="<?php echo(date("Y-m-d")) ?>"/>
+                          <input type="text" name="tgl_trans" class="form-control datetimepicker-input" readonly value="{{date('Y-m-d',strtotime($tglharini))}}"/>
                       </div>
                     </div>
                   </div>
@@ -139,7 +139,7 @@
                   <h5 class="modal-title" id="ambildatatabungan">Data Tabungan</h5>
                 </div>
                 <div class="modal-body">
-                  <table id="datatabungan" class="display" width="100%">
+                  <table id="datatabungantrans" class="display" width="100%">
                     <thead>
                       <tr>
                           <th>No_Rekening</th>
@@ -166,7 +166,7 @@
                             Action <span class="caret"></span>
                           </a>
                           <div class="dropdown-menu">
-                            <a id="klik" href="#" class="dropdown-item">
+                            <a id="klik" href="#" class="dropdown-item" data-dismiss="modal">
                             pilih
                           </a>
                           </div>

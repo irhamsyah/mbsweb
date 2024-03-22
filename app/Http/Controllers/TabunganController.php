@@ -37,6 +37,10 @@ class TabunganController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
 
     public function bo_tb_de_tabungan()
     {
@@ -100,7 +104,7 @@ class TabunganController extends Controller
                 ]);
 
                 return redirect()->back() ->with('alert', 'Data berhasil diupdate!');
-            }
+    }
 
     public function bo_tab_add_tabung(Request $request)
     {
@@ -131,14 +135,14 @@ class TabunganController extends Controller
         $simpantabung->blokir = 0;
         $simpantabung->jkw = 0;
         $simpantabung->saldo_blokir = 0;
-        $simpantabung->kode_group1 = $request->kode_group1;
-        if(is_null($request->kode_group2)){
-            $simpantabung->kode_group2 = "";
-        }else{
-            $simpantabung->kode_group2 = $request->kode_group2;
-
+        if(is_null($request->kode_group1)==false)
+        {
+            $simpantabung->kode_group1 = $request->kode_group1;
         }
-        if(is_null($request->kode_group3)!=true){
+        if(is_null($request->kode_group2)==false){
+            $simpantabung->kode_group2 = $request->kode_group2;
+        }
+        if(is_null($request->kode_group3)==false){
             $simpantabung->kode_group3 = $request->kode_group3;
         }
         $simpantabung->kode_bi_pemilik = $request->kode_bi_pemilik;
@@ -1910,18 +1914,22 @@ class TabunganController extends Controller
 
         return view('admin.tabungan.frmhapustransaksitabungan',['logos'=>$logos,'tgllogin'=>$tgllogin,'tabtran'=>$tabtran]);
     }
-
+    //hapus transaksi tabungan
     public function bo_tab_del_trs(Request $request)
     {
+        // dd($request);
         $deltabtrans=Tabtran::where(
             [
-                'KUITANSI'=>$request->no_bukti,
-                'NO_REKENING'=>$request->no_rekening
+                'TABTRANS_ID'=>$request->tabtrans_id,
             ])->delete();
         $deltellertrans=Tellertran::where(
             [
-                'NO_BUKTI'=>$request->no_bukti,
+                'modul_trans_id'=>$request->tabtrans_id,
             ])->delete();
+            $nilai = DB::select("SELECT SUM(IF(MY_KODE_TRANS like '1%',SALDO_TRANS,0)) as saldosetor,SUM(IF(MY_KODE_TRANS like '2%',SALDO_TRANS,0)) as saldotarik from tabtrans WHERE NO_REKENING='$request->no_rekening'");
+            $setor = (float)$nilai[0]->saldosetor;
+            $tarik = (float)$nilai[0]->saldotarik;
+            DB::select("Update tabung set saldo_setoran=$setor,saldo_penarikan=$tarik,saldo_akhir=($setor-$tarik) where no_rekening='$request->no_rekening'");
         return redirect()->route('bo_tb_de_frmhapustransaksi')->with('message','Transaksi dengan Kuitansi : '.$request->no_bukti.' berhasil di hapus');
     }
     public function bo_tabungan_transaksi_cari(Request $request)
@@ -2536,6 +2544,7 @@ class TabunganController extends Controller
     {
         $tgl1 = date('Y-m-d',strtotime($request->tgl_awal));
         $tgl2 = date('Y-m-d',strtotime($request->tgl_akhir));
+        set_time_limit(2000);
 
         $cari = Tabtran::where('TGL_TRANS','>=',$tgl1)
         ->where('TGL_TRANS','<=',$tgl2)
@@ -2660,7 +2669,7 @@ return redirect()->back()->with('alert','SUDAH PERNAH DILAKUKAN PERHITUNGAN');
                 $sldtarik=DB::select("SELECT (SUM(if(MY_KODE_TRANS LIKE '2%' AND TGL_TRANS<'$tgl1',SALDO_TRANS,0))+SUM(if(MY_KODE_TRANS LIKE '2%' AND KUITANSI NOT LIKE 'SYS%' AND TGL_TRANS>='$tgl1' AND TGL_TRANS<='$tgl2',SALDO_TRANS,0))) as debet FROM tabtrans where (NO_REKENING='$norekpegangan[$i]') GROUP BY NO_REKENING")[0]->debet;
                 $sqlupdtbg="UPDATE tabung SET tabung.ADM_BLN_INI=tabung.ADM_PER_BLN,tabung.SALDO_NOMINATIF=$sldnomi,tabung.SALDO_SETORAN=$sldsetor,tabung.SALDO_PENARIKAN=$sldtarik where tabung.NO_REKENING='$norekpegangan[$i]'";
             }else{
-                $sldnomi=DB::select("SELECT (tabung.SALDO_AWAL+SUM(if(MY_KODE_TRANS LIKE '1%',SALDO_TRANS,0))-SUM(if(MY_KODE_TRANS LIKE '2%',SALDO_TRANS,0))) as debet FROM tabung inner join tabtrans on tabung.NO_REKENING=tabtrans.NO_REKENING where (tabung.NO_REKENING='$norekpegangan[$i]' AND tabtrans.TGL_TRANS<='$tgl2') GROUP BY tabung.NO_REKENING)")[0]->debet;
+                $sldnomi=DB::select("SELECT (tabung.SALDO_AWAL+SUM(if(MY_KODE_TRANS LIKE '1%',SALDO_TRANS,0))-SUM(if(MY_KODE_TRANS LIKE '2%',SALDO_TRANS,0))) as debet FROM tabung inner join tabtrans on tabung.NO_REKENING=tabtrans.NO_REKENING where (tabung.NO_REKENING='$norekpegangan[$i]' AND tabtrans.TGL_TRANS<='$tgl2') GROUP BY tabung.NO_REKENING")[0]->debet;
                 $sldsetor=DB::select("SELECT (SUM(if(MY_KODE_TRANS LIKE '1%' AND TGL_TRANS<='$tgl2',SALDO_TRANS,0))) as debet FROM tabtrans where (NO_REKENING='$norekpegangan[$i]') GROUP BY NO_REKENING")[0]->debet;
                 $sldtarik=DB::select("SELECT (SUM(if(MY_KODE_TRANS LIKE '2%' AND TGL_TRANS<='$tgl2',SALDO_TRANS,0))) as debet FROM tabtrans where (NO_REKENING='$norekpegangan[$i]') GROUP BY NO_REKENING")[0]->debet;
                 $sqlupdtbg="UPDATE tabung SET tabung.ADM_BLN_INI=tabung.ADM_PER_BLN,tabung.SALDO_NOMINATIF=$sldnomi,tabung.SALDO_SETORAN=$sldsetor,tabung.SALDO_PENARIKAN=$sldtarik where tabung.NO_REKENING='$norekpegangan[$i]'";
@@ -3399,7 +3408,7 @@ return redirect()->back()->with('alert','SUDAH PERNAH DILAKUKAN PERHITUNGAN');
     }
     // EXPORT NOMINATIF PERJENI KE EXCEL
     public function nominatifperjeniseksport(Request $request)
-    {   
+    {
         $jenistab = substr($request->jenis_tabungan,0,2);
         $tgl_nom = $request->tgl_nominatif;
         $sql = "SELECT tabung.no_rekening,nasabah.nama_nasabah,nasabah.alamat,tabung.TGL_REGISTRASI,tabung.SUKU_BUNGA,saldo.SALDO_AKHIR,maxtgl.tgl_terakhir_trans FROM ((tabung INNER JOIN nasabah ON tabung.NASABAH_ID=nasabah.nasabah_id) INNER JOIN (SELECT tabung.no_rekening,(tabung.SALDO_AWAL+SUM(if(tabtrans.MY_KODE_TRANS LIKE '1%' AND tabtrans.TGL_TRANS<='$tgl_nom',tabtrans.SALDO_TRANS,0))-SUM(if(tabtrans.MY_KODE_TRANS LIKE '2%' AND tabtrans.TGL_TRANS<='$tgl_nom',tabtrans.SALDO_TRANS,0))) as SALDO_AKHIR FROM tabung INNER JOIN tabtrans ON tabung.NO_REKENING=tabtrans.NO_REKENING WHERE tabung.STATUS_AKTIF=2 GROUP BY tabung.NO_REKENING) as saldo ON tabung.NO_REKENING=saldo.no_rekening) INNER JOIN(select NO_REKENING,MAX(tgl_trans) as tgl_terakhir_trans from tabtrans where (MY_KODE_TRANS=100 OR MY_KODE_TRANS=200) GROUP BY NO_REKENING) as maxtgl ON tabung.NO_REKENING=maxtgl.NO_REKENING WHERE tabung.STATUS_AKTIF=2 AND tabung.JENIS_TABUNGAN='$jenistab' AND tabung.TGL_MULAI<='$tgl_nom'";

@@ -40,17 +40,25 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    public function LoginUser(){
+    public function showLoginForm()
+    {
         $Kodecabangs = Kodecabang::all();
-
-        return view('auth/login', ['Kodecabangs'=> $Kodecabangs]);
-        // dd($request);
+        return view('auth.login',['Kodecabangs'=> $Kodecabangs]);
     }
 
-    public function AuthLoginUser(Request $request){
-        $Kodecabangs = Kodecabang::all();
-        //dd(request()->kodecabang);
-
-        return view('auth/login', ['Kodecabangs'=> $Kodecabangs]);
+    public function username()
+    {
+        return 'username';
     }
+
+    // public function LoginUser(){
+
+    //     $Kodecabangs = Kodecabang::all();
+    //     return view('auth/login', ['Kodecabangs'=> $Kodecabangs]);
+    // }
+
+    // public function AuthLoginUser(Request $request){
+    //     $Kodecabangs = Kodecabang::all();
+    //     return view('auth/login', ['Kodecabangs'=> $Kodecabangs]);
+    // }
 }

@@ -59,7 +59,7 @@
         <!-- /.card -->
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">Data Nasabah yang sudah tercatat</h3>
+            <h3 class="card-title">Data Nasabah yang sudah tercatat </h3>
           </div>
           <!-- /.card-header -->
           <div class="card-body">
@@ -113,6 +113,7 @@
                             Detail Profil
                         </button>
                       </form>
+                      <a class="dropdown-item" href="{{ route('cetakprofilnasabah',['printprofilnasabah'=>trim($nasabah->nasabah_id)])}}" target="_blank" style="float: right;"> Print Profil</a>
                     </div>
                   </td>
                 </tr>

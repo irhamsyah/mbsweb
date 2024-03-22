@@ -123,6 +123,7 @@ class ComposerStaticInit00e2b37b581c27ce0b8b3205b5af7ca6
         'N' => 
         array (
             'NunoMaduro\\Collision\\' => 21,
+            'Nggit\\PHPTerbilang\\' => 19,
         ),
         'M' => 
         array (
@@ -406,6 +407,10 @@ class ComposerStaticInit00e2b37b581c27ce0b8b3205b5af7ca6
         array (
             0 => __DIR__ . '/..' . '/nunomaduro/collision/src',
         ),
+        'Nggit\\PHPTerbilang\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nggit/php-terbilang/src',
+        ),
         'MyCLabs\\Enum\\' => 
         array (
             0 => __DIR__ . '/..' . '/myclabs/php-enum/src',
@@ -586,12 +591,35 @@ class ComposerStaticInit00e2b37b581c27ce0b8b3205b5af7ca6
     );
 
     public static $classMap = array (
+        'App\\Agunan' => __DIR__ . '/../..' . '/app/Agunan.php',
         'App\\BidangUsaha' => __DIR__ . '/../..' . '/app/BidangUsaha.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Deposito' => __DIR__ . '/../..' . '/app/Deposito.php',
         'App\\Deptran' => __DIR__ . '/../..' . '/app/Deptran.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
+        'App\\Exports\\ReportBungaPajakDepExport' => __DIR__ . '/../..' . '/app/Exports/ReportBungaPajakDepExport.php',
+        'App\\Exports\\ReportDepbungapajakExport' => __DIR__ . '/../..' . '/app/Exports/ReportDepbungapajakExport.php',
+        'App\\Exports\\ReportDepositoBlokirExport' => __DIR__ . '/../..' . '/app/Exports/ReportDepositoBlokirExport.php',
+        'App\\Exports\\ReportDepositoJTExport' => __DIR__ . '/../..' . '/app/Exports/ReportDepositoJTExport.php',
+        'App\\Exports\\ReportDepositoblmAktifExport' => __DIR__ . '/../..' . '/app/Exports/ReportDepositoblmAktifExport.php',
+        'App\\Exports\\ReportJadwalBayarBungaExport' => __DIR__ . '/../..' . '/app/Exports/ReportJadwalBayarBungaExport.php',
+        'App\\Exports\\ReportLabarugiKonsolExport' => __DIR__ . '/../..' . '/app/Exports/ReportLabarugiKonsolExport.php',
+        'App\\Exports\\ReportMutasiBngDepExport' => __DIR__ . '/../..' . '/app/Exports/ReportMutasiBngDepExport.php',
+        'App\\Exports\\ReportNeracaAnnualExport' => __DIR__ . '/../..' . '/app/Exports/ReportNeracaAnnualExport.php',
         'App\\Exports\\ReportNeracaKomparatifExport' => __DIR__ . '/../..' . '/app/Exports/ReportNeracaKomparatifExport.php',
+        'App\\Exports\\ReportNeracaKonsolExport' => __DIR__ . '/../..' . '/app/Exports/ReportNeracaKonsolExport.php',
+        'App\\Exports\\ReportNominDepExport' => __DIR__ . '/../..' . '/app/Exports/ReportNominDepExport.php',
+        'App\\Exports\\ReportNominGroupDepExport' => __DIR__ . '/../..' . '/app/Exports/ReportNominGroupDepExport.php',
+        'App\\Exports\\ReportNominGrpJkwDepExport' => __DIR__ . '/../..' . '/app/Exports/ReportNominGrpJkwDepExport.php',
+        'App\\Exports\\ReportNominGrpJnsDepExport' => __DIR__ . '/../..' . '/app/Exports/ReportNominGrpJnsDepExport.php',
+        'App\\Exports\\ReportNominGrpKDGRP1DepExport' => __DIR__ . '/../..' . '/app/Exports/ReportNominGrpKDGRP1DepExport.php',
+        'App\\Exports\\ReportNominGrpKDGRP2DepExport' => __DIR__ . '/../..' . '/app/Exports/ReportNominGrpKDGRP2DepExport.php',
+        'App\\Exports\\ReportNominGrpKDGRP3DepExport' => __DIR__ . '/../..' . '/app/Exports/ReportNominGrpKDGRP3DepExport.php',
+        'App\\Exports\\ReportNominGrpKELSALDepExport' => __DIR__ . '/../..' . '/app/Exports/ReportNominGrpKELSALDepExport.php',
+        'App\\Exports\\ReportNominGrpSkbngDepExport' => __DIR__ . '/../..' . '/app/Exports/ReportNominGrpSkbngDepExport.php',
+        'App\\Exports\\ReportOBBungaToTitpanExport' => __DIR__ . '/../..' . '/app/Exports/ReportOBBungaToTitpanExport.php',
+        'App\\Exports\\ReportRekapJurnalHarianExport' => __DIR__ . '/../..' . '/app/Exports/ReportRekapJurnalHarianExport.php',
+        'App\\Exports\\ReportTransaksiDepExport' => __DIR__ . '/../..' . '/app/Exports/ReportTransaksiDepExport.php',
         'App\\Exports\\ReportbukubesarExport' => __DIR__ . '/../..' . '/app/Exports/ReportbukubesarExport.php',
         'App\\Exports\\ReportbukubesarHelperAllExport' => __DIR__ . '/../..' . '/app/Exports/ReportbukubesarHelperAllExport.php',
         'App\\Exports\\ReportbukubesarHelperExport' => __DIR__ . '/../..' . '/app/Exports/ReportbukubesarHelperExport.php',
@@ -599,6 +627,7 @@ class ComposerStaticInit00e2b37b581c27ce0b8b3205b5af7ca6
         'App\\Exports\\ReportbungapajakExport' => __DIR__ . '/../..' . '/app/Exports/ReportbungapajakExport.php',
         'App\\Exports\\ReportdaftarperkiraanExport' => __DIR__ . '/../..' . '/app/Exports/ReportdaftarperkiraanExport.php',
         'App\\Exports\\ReportjurnalExport' => __DIR__ . '/../..' . '/app/Exports/ReportjurnalExport.php',
+        'App\\Exports\\ReportlabarugiExport' => __DIR__ . '/../..' . '/app/Exports/ReportlabarugiExport.php',
         'App\\Exports\\ReportnasabahExport' => __DIR__ . '/../..' . '/app/Exports/ReportnasabahExport.php',
         'App\\Exports\\ReportnasabahamplopExport' => __DIR__ . '/../..' . '/app/Exports/ReportnasabahamplopExport.php',
         'App\\Exports\\ReportneracascontroExport' => __DIR__ . '/../..' . '/app/Exports/ReportneracascontroExport.php',
@@ -3603,6 +3632,7 @@ class ComposerStaticInit00e2b37b581c27ce0b8b3205b5af7ca6
         'Monolog\\Utils' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Utils.php',
         'MyCLabs\\Enum\\Enum' => __DIR__ . '/..' . '/myclabs/php-enum/src/Enum.php',
         'MyCLabs\\Enum\\PHPUnit\\Comparator' => __DIR__ . '/..' . '/myclabs/php-enum/src/PHPUnit/Comparator.php',
+        'Nggit\\PHPTerbilang\\Terbilang' => __DIR__ . '/..' . '/nggit/php-terbilang/src/Terbilang.php',
         'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer 2.php',
         'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider' => __DIR__ . '/..' . '/nunomaduro/collision/src/Adapters/Laravel/CollisionServiceProvider.php',
         'NunoMaduro\\Collision\\Adapters\\Laravel\\Commands\\TestCommand' => __DIR__ . '/..' . '/nunomaduro/collision/src/Adapters/Laravel/Commands/TestCommand.php',

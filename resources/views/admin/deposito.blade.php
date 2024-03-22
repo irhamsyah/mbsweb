@@ -2,24 +2,31 @@
 
 @section('content')
 
-@if($msgstatus!=''){
-  @if($msgstatus=='1'){
-    @php $statusmsg='success'; $titlemsg='Successfully'; @endphp;
-  }
-  @else{
-    @php $statusmsg='error'; $titlemsg='Error!'; @endphp;
-  }
-  @endif
-    
-  <script>
-    Swal.fire(
+{{-- @if($msgstatus!=''){
+@if($msgstatus=='1'){
+@php $statusmsg='success'; $titlemsg='Successfully'; @endphp;
+}
+@else{
+@php $statusmsg='error'; $titlemsg='Error!'; @endphp;
+}
+@endif
+
+<script>
+  Swal.fire(
       '{{ $titlemsg }}',
       '{{ $msgview }}',
       '{{ $statusmsg }}'
     )
-  </script>
+</script>
 }
-@endif
+@endif --}}
+<script>
+  var msg = '{{Session::get('alert')}}';
+  var exist = '{{Session::has('alert')}}';
+  if(exist){
+    alert(msg);
+  }
+</script>
 
 @section('content')
 <!-- Main content -->
@@ -32,28 +39,31 @@
         <div class="card card-warning card-outline">
           <!-- form for Search Exsisting Saving Customer -->
           <form method="POST" action="/bo_dp_de_deposito/cari" role="search">
-          @csrf
+            @csrf
             <div class="card-body">
               <div class="row form-group">
                 <div class="col-lg-3 col-sm-12">
-                  <label for="idnasabah1">NO_REKENING</label> 
-                </div>             
+                  <label for="idnasabah1">NO_REKENING</label>
+                </div>
                 <div class="col-lg-5 col-sm-12">
-                  <input type="text" class="form-control" id="idnasabah1" name="norekcari" placeholder="Masukkan No Rek Deposito">
+                  <input type="text" class="form-control" id="idnasabah1" name="norekcari"
+                    placeholder="Masukkan No Rek Deposito">
                 </div>
               </div>
               <div class="row form-group">
                 <div class="col-lg-3 col-sm-12">
                   <label for="namanasabah1">NAMA NASABAH</label>
-                </div>             
+                </div>
                 <div class="col-lg-5 col-sm-12">
-                  <input type="text" class="form-control" id="namanasabah1" name="namanasabahcari" placeholder="Masukkan Nama Deposito">
+                  <input type="text" class="form-control" id="namanasabah1" name="namanasabahcari"
+                    placeholder="Masukkan Nama Deposito">
                 </div>
               </div>
               <div class="row form-group">
                 <div class="col-3"></div>
                 <div class="col-3">
-                  <button type="submit" class="btn btn-warning"><i class="fa fa-search" style="color:white"></i></button>
+                  <button type="submit" class="btn btn-warning"><i class="fa fa-search"
+                      style="color:white"></i></button>
                 </div>
               </div>
             </div>
@@ -64,7 +74,8 @@
         <div class="card">
           <div class="card-header">
             <div class="col-lg-3 col-sm-3" style="float:right;">
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-add-deposito" style="float: right;">
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-add-deposito"
+                style="float: right;">
                 <i class="fa fa-plus"></i>
               </button>
             </div>
@@ -74,28 +85,28 @@
           <div class="card-body">
             <table id="example1" class="table table-bordered table-hover">
               <thead>
-              <tr>
-                <th>No</th>
-                <th>No Rekening</th>
-                <th>Nama Nasabah</th>
-                <th>Alamat</th>
-                <th>Tgl Registrasi</th>
-                <th>Tgl JT</th>
-                <th>Jml Deposito</th>
-                <th>Saldo Akhir</th>
-                <th>No Rek Tabungan</th>
-                <th>Action</th>
-              </tr>
+                <tr>
+                  <th>No</th>
+                  <th>No Rekening</th>
+                  <th>Nama Nasabah</th>
+                  <th>Alamat</th>
+                  <th>Tgl Registrasi</th>
+                  <th>Tgl JT</th>
+                  <th>Jml Deposito</th>
+                  <th>Saldo Akhir</th>
+                  <th>No Rek Tabungan</th>
+                  <th>Action</th>
+                </tr>
               </thead>
               <tbody>
-              @foreach($depositos as $index => $deposito)
-                  @if($deposito->STATUS_AKTIF==2)
-                    @php ($status='Aktif')
-                  @elseif($deposito->STATUS_AKTIF==1)
-                    @php ($status='Baru')
-                  @else
-                    @php ($status='Tutup')
-                  @endif
+                @foreach($depositos as $index => $deposito)
+                @if($deposito->STATUS_AKTIF==2)
+                @php ($status='Aktif')
+                @elseif($deposito->STATUS_AKTIF==1)
+                @php ($status='Baru')
+                @else
+                @php ($status='Tutup')
+                @endif
                 <tr>
                   <td>{{ $index+1 }}</td>
                   <td>{{ strtoupper($deposito->NO_REKENING) }}</td>
@@ -111,65 +122,52 @@
                       Action <span class="caret"></span>
                     </a>
                     <div class="dropdown-menu">
-                      <a href="#" tabindex="-1" class="dropdown-item" data-toggle="modal" data-target="#modal-edit-deposito"
-                        data-no_rekening="{{ $deposito->NO_REKENING }}"
+                      <a href="#" tabindex="-1" class="dropdown-item" data-toggle="modal"
+                        data-target="#modal-edit-deposito" data-no_rekening="{{ $deposito->NO_REKENING }}"
                         data-no_rekeninghash="{{ md5($deposito->NO_REKENING.'Bast90') }}"
                         data-no_alternatif="{{ $deposito->NO_ALTERNATIF }}"
-                        data-nasabah_id="{{ $deposito->NASABAH_ID }}"
-                        data-qq="{{ $deposito->QQ }}"
+                        data-nasabah_id="{{ $deposito->NASABAH_ID }}" data-qq="{{ $deposito->QQ }}"
                         data-kode_bi_pemilik="{{ $deposito->KODE_BI_PEMILIK }}"
                         data-kode_bi_hubungan="{{ $deposito->KODE_BI_HUBUNGAN }}"
                         data-kode_bi_metoda="{{ $deposito->KODE_BI_METODA }}"
                         data-jenis_deposito="{{ $deposito->JENIS_DEPOSITO }}"
-                        data-jml_deposito="{{ $deposito->JML_DEPOSITO }}"
-                        data-suku_bunga="{{ $deposito->SUKU_BUNGA }}"
+                        data-jml_deposito="{{ $deposito->JML_DEPOSITO }}" data-suku_bunga="{{ $deposito->SUKU_BUNGA }}"
                         data-persen_pph="{{ $deposito->PERSEN_PPH }}"
-                        data-tgl_registrasi="{{ $deposito->TGL_REGISTRASI }}"
-                        data-jkw="{{ $deposito->JKW }}"
-                        data-tgl_jt="{{ $deposito->TGL_JT }}"
-                        data-status_aktif="{{ $deposito->STATUS_AKTIF }}"
-                        data-kode_group1="{{ $deposito->KODE_GROUP1 }}"
-                        data-kode_group2="{{ $deposito->KODE_GROUP2 }}"
+                        data-tgl_registrasi="{{ $deposito->TGL_REGISTRASI }}" data-jkw="{{ $deposito->JKW }}"
+                        data-tgl_jt="{{ $deposito->TGL_JT }}" data-status_aktif="{{ $deposito->STATUS_AKTIF }}"
+                        data-kode_group1="{{ $deposito->KODE_GROUP1 }}" data-kode_group2="{{ $deposito->KODE_GROUP2 }}"
                         data-kode_group3="{{ $deposito->KODE_GROUP3 }}"
-                        data-status_bunga="{{ $deposito->STATUS_BUNGA }}"
-                        data-aro="{{ $deposito->ARO }}"
+                        data-status_bunga="{{ $deposito->STATUS_BUNGA }}" data-aro="{{ $deposito->ARO }}"
                         data-no_rek_tabungan="{{ $deposito->NO_REK_TABUNGAN }}"
                         data-bunga_berbunga="{{ $deposito->BUNGA_BERBUNGA }}"
-                        data-masuk_titipan="{{ $deposito->MASUK_TITIPAN }}"
-                        data-abp="{{ $deposito->ABP }}"
+                        data-masuk_titipan="{{ $deposito->MASUK_TITIPAN }}" data-abp="{{ $deposito->ABP }}"
                         data-type_suku_bunga="{{ $deposito->TYPE_SUKU_BUNGA }}"
-                        data-tgl_valuta="{{ $deposito->TGL_VALUTA }}"
-                        data-provisi="{{ $deposito->PROVISI }}"
-                        data-adm="{{ $deposito->ADM }}"
-                        data-tgl_mulai="{{ $deposito->TGL_MULAI }}"
-                        data-blokir="{{ $deposito->BLOKIR }}"
-                        data-akad="{{ $deposito->AKAD }}"
-                        data-gol_nasabah="{{ $deposito->gol_nasabah }}"
-                        data-keterangan="{{ $deposito->KETERANGAN }}"
-                        data-cab="{{ $deposito->KODE_CAB }}"
-                        data-nama_nasabah="{{ $deposito->nama_nasabah }}"
-                        data-alamat="{{ $deposito->alamat }}"
-                        >
-                          Detail & Edit
+                        data-tgl_valuta="{{ $deposito->TGL_VALUTA }}" data-provisi="{{ $deposito->PROVISI }}"
+                        data-adm="{{ $deposito->ADM }}" data-tgl_mulai="{{ $deposito->TGL_MULAI }}"
+                        data-blokir="{{ $deposito->BLOKIR }}" data-akad="{{ $deposito->AKAD }}"
+                        data-gol_nasabah="{{ $deposito->gol_nasabah }}" data-keterangan="{{ $deposito->KETERANGAN }}"
+                        data-cab="{{ $deposito->KODE_CAB }}" data-nama_nasabah="{{ $deposito->nama_nasabah }}"
+                        data-alamat="{{ $deposito->alamat }}">
+                        Detail & Edit
                       </a>
                     </div>
                   </td>
                 </tr>
-              @endforeach
+                @endforeach
               </tbody>
               <tfoot>
-              <tr>
-                <th>No</th>
-                <th>No Rekening</th>
-                <th>Nama Nasabah</th>
-                <th>Alamat</th>
-                <th>Tgl Registrasi</th>
-                <th>Tgl JT</th>
-                <th>Jml Deposito</th>
-                <th>Saldo Akhir</th>
-                <th>No Rekening</th>
-                <th>Action</th>
-              </tr>
+                <tr>
+                  <th>No</th>
+                  <th>No Rekening</th>
+                  <th>Nama Nasabah</th>
+                  <th>Alamat</th>
+                  <th>Tgl Registrasi</th>
+                  <th>Tgl JT</th>
+                  <th>Jml Deposito</th>
+                  <th>Saldo Akhir</th>
+                  <th>No Rekening</th>
+                  <th>Action</th>
+                </tr>
               </tfoot>
             </table>
           </div>
@@ -208,25 +206,30 @@
                   </div>
                 </div>
                 <div class="col-lg-3 col-sm-6">
-                    <label for="einputnasabahid">Cabang</label>
-                    @foreach($kodecabang as $value)
-                    <input type="text" name="ecab" readonly class="form-control" value="{{$value->kode_cab}}">{{$value->nama_cab}}
-                    @endforeach
-                  </div>
+                  <label for="einputnasabahid">Cabang</label>
+                  @foreach($kodecabang as $value)
+                  <input type="text" name="ecab" readonly class="form-control"
+                    value="{{$value->kode_cab}}">{{$value->nama_cab}}
+                  @endforeach
+                </div>
               </div>
-              
+
             </div>
             <div class="form-group">
               <div class="row">
                 <div class="col-lg-3 col-sm-6">
-                    <label for="einputjenisdeposito">Jenis Deposito</label>
-                    <select class="form-control" name="ejenis_deposito" id="elistjenisdeposito" required>
-                      <option value="" selected></option>
-                      @foreach($kodejenisdeposito as $value)
-                      <option value="{{ $value->KODE_JENIS_DEPOSITO}}" data-ebunga="{{$value->SUKU_BUNGA_DEFAULT}}" data-epph="{{$value->PPH_DEFAULT}}" data-ejkw="{{$value->JKW_DEFAULT}}" data-eflagdep="{{$value->FLAG_DEPOSITO}}" data-etypesukubunga="{{$value->TYPE_SUKU_BUNGA}}" data-eprovisi="{{$value->PROSEN_PROVISI}}" data-eadm="{{$value->PROSEN_ADM}}">{{ $value->KODE_JENIS_DEPOSITO.'-'.$value->DESKRIPSI_JENIS_DEPOSITO}}</option>
-                      @endforeach
-                    </select>
-                  </div>
+                  <label for="einputjenisdeposito">Jenis Deposito</label>
+                  <select class="form-control" name="ejenis_deposito" id="elistjenisdeposito" required>
+                    <option value="" selected></option>
+                    @foreach($kodejenisdeposito as $value)
+                    <option value="{{ $value->KODE_JENIS_DEPOSITO}}" data-ebunga="{{$value->SUKU_BUNGA_DEFAULT}}"
+                      data-epph="{{$value->PPH_DEFAULT}}" data-ejkw="{{$value->JKW_DEFAULT}}"
+                      data-eflagdep="{{$value->FLAG_DEPOSITO}}" data-etypesukubunga="{{$value->TYPE_SUKU_BUNGA}}"
+                      data-eprovisi="{{$value->PROSEN_PROVISI}}" data-eadm="{{$value->PROSEN_ADM}}">{{
+                      $value->KODE_JENIS_DEPOSITO.'-'.$value->DESKRIPSI_JENIS_DEPOSITO}}</option>
+                    @endforeach
+                  </select>
+                </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="enorek">No.Rekening</label>
                   <input id="enorek" type="text" name="eno_rekening" class="form-control" readonly required>
@@ -289,9 +292,9 @@
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="epersen_pph">PPH per Bulan (%)</label>
-                  <input type="text" name="epersen_pph"  class="form-control" id="epersen_pph">
+                  <input type="text" name="epersen_pph" class="form-control" id="epersen_pph">
                 </div>
-              </div>            
+              </div>
             </div>
             <div class="bottomlinesolid">
               <span class="judulOrange">Overbooking Bunga Deposito</span>
@@ -300,7 +303,9 @@
               <div class="row">
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputDate4">Tgl Registrasi</label>
-                  <input type="text" name="etgl_registrasi" id="etgl_registrasidepo" class="form-control" value="{{date('Y-m-d',strtotime(str_replace('/', '-', $tgllogin[0]->Value)))}}" placeholder="yyyy-mm-dd" required/>
+                  <input type="text" name="etgl_registrasi" id="etgl_registrasidepo" class="form-control"
+                    value="{{date('Y-m-d',strtotime(str_replace('/', '-', $tgllogin[0]->Value)))}}"
+                    placeholder="yyyy-mm-dd" required />
                   <!-- <div class="input-group date" id="inputDate4" data-target-input="nearest">
                     <input type="text" name="etgl_registrasi" class="form-control datetimepicker-input" data-target="#inputDate4"/>
                       <div class="input-group-append" data-target="#inputDate4" data-toggle="datetimepicker">
@@ -315,10 +320,11 @@
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputDate5">Tgl JT</label>
                   <div class="input-group date" id="inputDate5" data-target-input="nearest">
-                    <input type="text" name="etgl_jt" class="form-control datetimepicker-input" data-target="#inputDate5" value="{{ date('Y-m-d') }}" readonly/>
-                      <div class="input-group-append" data-target="#inputDate5" data-toggle="datetimepicker">
-                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                      </div>
+                    <input type="text" name="etgl_jt" class="form-control datetimepicker-input"
+                      data-target="#inputDate5" value="{{ date('Y-m-d') }}" readonly />
+                    <div class="input-group-append" data-target="#inputDate5" data-toggle="datetimepicker">
+                      <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -339,7 +345,8 @@
                 <div class="col-lg-3 col-sm-6">
                   <label for="editkerekeningtab">Ke Rekening Tab</label>
                   <div class="input-group date" data-target-input="nearest">
-                    <input id="editkerekeningtab" type="text" name="ekerekeningtab" readonly class="form-control" required>
+                    <input id="editkerekeningtab" type="text" name="ekerekeningtab" readonly class="form-control"
+                      required>
 
                     <div class="input-group-append" data-toggle="modal" data-target="#ambildatarektab">
                       <div class="input-group-text"><i class="fa fa-user"></i></div>
@@ -349,15 +356,18 @@
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputDate6">Tgl Penampatan</label>
                   <div class="input-group date" id="inputDate6" data-target-input="nearest">
-                    <input type="text" name="etgl_penempatan" class="form-control datetimepicker-input" data-target="#inputDate6" value="{{date('Y-m-d',strtotime(str_replace('/', '-', $tgllogin[0]->Value)))}}" readonly/>
-                      <div class="input-group-append" data-target="#inputDate6" data-toggle="datetimepicker">
-                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                      </div>
+                    <input type="text" name="etgl_penempatan" class="form-control datetimepicker-input"
+                      data-target="#inputDate6"
+                      value="{{date('Y-m-d',strtotime(str_replace('/', '-', $tgllogin[0]->Value)))}}" readonly />
+                    <div class="input-group-append" data-target="#inputDate6" data-toggle="datetimepicker">
+                      <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
                   </div>
                 </div>
                 <div class="col-lg-1 col-sm-6">
                   <label for="etgl_valuta">Tgl Valuta</label>
-                  <input type="text" name="etgl_valuta" class="form-control" id="etgl_valuta" value="{{ date('d') }}" required readonly>
+                  <input type="text" name="etgl_valuta" class="form-control" id="etgl_valuta" value="{{ date('d') }}"
+                    required readonly>
                 </div>
               </div>
               <div class="row">
@@ -381,29 +391,32 @@
             <div class="form-group">
               <div class="row">
                 <div class="col-lg-2 col-sm-6">
-                <label for="eidkodegroup1">Kode Group 1</label>
+                  <label for="eidkodegroup1">Kode Group 1</label>
                   <select class="form-control" name="ekode_group1">
                     <option id="eidkodegroup1" selected></option>
                     @foreach($kodegroup1deposito as $value)
-                    <option value="{{$value->KODE_GROUP1}}">{{$value->KODE_GROUP1.'-'.$value->DESKRIPSI_GROUP1}}</option>
+                    <option value="{{$value->KODE_GROUP1}}">{{$value->KODE_GROUP1.'-'.$value->DESKRIPSI_GROUP1}}
+                    </option>
                     @endforeach
                   </select>
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="eidkodegroup2">Kode Group 2</label>
-                    <select class="form-control" name="ekode_group2">
-                      <option id="eidkodegroup2" selected></option>
-                      @foreach($kodegroup2deposito as $value)
-                      <option value="{{$value->KODE_GROUP2}}">{{$value->KODE_GROUP2.'-'.$value->DESKRIPSI_GROUP2}}</option>
-                      @endforeach
-                    </select>
+                  <select class="form-control" name="ekode_group2">
+                    <option id="eidkodegroup2" selected></option>
+                    @foreach($kodegroup2deposito as $value)
+                    <option value="{{$value->KODE_GROUP2}}">{{$value->KODE_GROUP2.'-'.$value->DESKRIPSI_GROUP2}}
+                    </option>
+                    @endforeach
+                  </select>
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="eidkodegroup3">Kode Group 3</label>
                   <select class="form-control" name="ekode_group3">
                     <option id="eidkodegroup3" selected></option>
                     @foreach($kodegroup3deposito as $value)
-                    <option value="{{$value->KODE_GROUP3}}">{{$value->KODE_GROUP3.'-'.$value->DESKRIPSI_GROUP3}}</option>
+                    <option value="{{$value->KODE_GROUP3}}">{{$value->KODE_GROUP3.'-'.$value->DESKRIPSI_GROUP3}}
+                    </option>
                     @endforeach
                   </select>
                 </div>
@@ -418,17 +431,17 @@
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="eidbihubungan">Sandi pihak terkait</label>
-                    <select class="form-control" name="ekode_bi_hubungan">
-                      <option id="eidbihubungan" selected></option>
-                      @foreach($kodeketerkaitanlapbul as $value)
-                      <option value="{{$value->SANDI}}">{{$value->SANDI.'-'.$value->DESKRIPSI_SANDI}}</option>
-                      @endforeach
-                    </select>
+                  <select class="form-control" name="ekode_bi_hubungan">
+                    <option id="eidbihubungan" selected></option>
+                    @foreach($kodeketerkaitanlapbul as $value)
+                    <option value="{{$value->SANDI}}">{{$value->SANDI.'-'.$value->DESKRIPSI_SANDI}}</option>
+                    @endforeach
+                  </select>
                 </div>
-              </div>   
+              </div>
               <div class="row">
                 <div class="col-lg-3 col-sm-12">
-                <label for="etipe_deposito">Tipe Deposito</label>
+                  <label for="etipe_deposito">Tipe Deposito</label>
                   <select class="form-control" id="etipe_deposito" name="etipe_deposito">
                     <option value="" selected></option>
                     <option value="1">Deposito</option>
@@ -438,18 +451,19 @@
                 </div>
                 <div class="col-lg-3 col-sm-12">
                   <label for="emetoda">Metoda</label>
-                    <select class="form-control" name="emetoda">
-                      <option id="emetoda" selected></option>
-                      @foreach($kodemetoda as $value)
-                      <option value="{{$value->KODE_METODA}}">{{$value->KODE_METODA.'-'.$value->DESKRIPSI_METODA}}</option>
-                      @endforeach
-                    </select>
+                  <select class="form-control" name="emetoda">
+                    <option id="emetoda" selected></option>
+                    @foreach($kodemetoda as $value)
+                    <option value="{{$value->KODE_METODA}}">{{$value->KODE_METODA.'-'.$value->DESKRIPSI_METODA}}
+                    </option>
+                    @endforeach
+                  </select>
                 </div>
                 <div class="col-lg-6 col-sm-12">
                   <label for="eketerangan">Keterangan</label>
                   <input type="text" name="eketerangan" class="form-control" id="eketerangan">
                 </div>
-              </div>          
+              </div>
             </div>
             <div class="bottomlinesolid">
               <span class="judulOrange">Antar Bank Aktiva</span>
@@ -459,15 +473,17 @@
               <div class="row">
                 <div class="col-lg-3 col-sm-6">
                   <label for="eprovisi">Provisi</label>
-                  <input type="text" name="eprovisi" class="form-control" value="{{ number_format(0,2) }}" id="eprovisi" readonly>
+                  <input type="text" name="eprovisi" class="form-control" value="{{ number_format(0,2) }}" id="eprovisi"
+                    readonly>
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="eadministrasi">Administrasi</label>
-                  <input type="text" name="eadministrasi" class="form-control" value="{{ number_format(0,2) }}" id="eadministrasi" readonly>
-                  <input type="hidden" name="eno_rekeningHashedit"  class="form-control"/>
-                  <input type="hidden" name="_method" value="PUT"/>
+                  <input type="text" name="eadministrasi" class="form-control" value="{{ number_format(0,2) }}"
+                    id="eadministrasi" readonly>
+                  <input type="hidden" name="eno_rekeningHashedit" class="form-control" />
+                  <input type="hidden" name="_method" value="PUT" />
                 </div>
-              </div>            
+              </div>
             </div>
           </div>
           <div class="modal-footer justify-content-between">
@@ -476,11 +492,11 @@
           </div>
         </div>
         <!-- /.modal-content -->
-      @csrf
+        @csrf
       </form>
     </div>
     <!-- /.modal-dialog -->
-  </div>   {{-- BATAS MODAL EDIT DEPOSITO --}}
+  </div> {{-- BATAS MODAL EDIT DEPOSITO --}}
 
   {{-- MODAL UNTUK MENAMPILKAN TAMBAH DATA DEPOSITO --}}
   <div class="modal fade bs-modal-deposito" id="modal-add-deposito">
@@ -509,25 +525,30 @@
                   </div>
                 </div>
                 <div class="col-lg-3 col-sm-6">
-                    <label for="inputnasabahid">Cabang</label>
-                    @foreach($kodecabang as $value)
-                    <input type="text" name="cab" readonly class="form-control" value="{{$value->kode_cab}}">{{$value->nama_cab}}
-                    @endforeach
-                  </div>
+                  <label for="inputnasabahid">Cabang</label>
+                  @foreach($kodecabang as $value)
+                  <input type="text" name="cab" readonly class="form-control"
+                    value="{{$value->kode_cab}}">{{$value->nama_cab}}
+                  @endforeach
+                </div>
               </div>
-              
+
             </div>
             <div class="form-group">
               <div class="row">
                 <div class="col-lg-3 col-sm-6">
-                    <label for="inputjenisdeposito">Jenis Deposito</label>
-                    <select class="form-control" name="jenis_deposito" id="listjenisdeposito" required>
-                      <option value="" selected></option>
-                      @foreach($kodejenisdeposito as $value)
-                      <option value="{{ $value->KODE_JENIS_DEPOSITO}}" data-ebunga="{{$value->SUKU_BUNGA_DEFAULT}}" data-epph="{{$value->PPH_DEFAULT}}" data-ejkw="{{$value->JKW_DEFAULT}}" data-eflagdep="{{$value->FLAG_DEPOSITO}}" data-etypesukubunga="{{$value->TYPE_SUKU_BUNGA}}" data-eprovisi="{{$value->PROSEN_PROVISI}}" data-eadm="{{$value->PROSEN_ADM}}">{{ $value->KODE_JENIS_DEPOSITO.'-'.$value->DESKRIPSI_JENIS_DEPOSITO}}</option>
-                      @endforeach
-                    </select>
-                  </div>
+                  <label for="inputjenisdeposito">Jenis Deposito</label>
+                  <select class="form-control" name="jenis_deposito" id="listjenisdeposito" required>
+                    <option value="" selected></option>
+                    @foreach($kodejenisdeposito as $value)
+                    <option value="{{ $value->KODE_JENIS_DEPOSITO}}" data-ebunga="{{$value->SUKU_BUNGA_DEFAULT}}"
+                      data-epph="{{$value->PPH_DEFAULT}}" data-ejkw="{{$value->JKW_DEFAULT}}"
+                      data-eflagdep="{{$value->FLAG_DEPOSITO}}" data-etypesukubunga="{{$value->TYPE_SUKU_BUNGA}}"
+                      data-eprovisi="{{$value->PROSEN_PROVISI}}" data-eadm="{{$value->PROSEN_ADM}}">{{
+                      $value->KODE_JENIS_DEPOSITO.'-'.$value->DESKRIPSI_JENIS_DEPOSITO}}</option>
+                    @endforeach
+                  </select>
+                </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="norek">No.Rekening</label>
                   <input id="norekadd" type="text" name="no_rekening" class="form-control" required>
@@ -589,9 +610,9 @@
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputnocif">PPH per Bulan (%)</label>
-                  <input type="text" name="persen_pph"  class="form-control" id="pph">
+                  <input type="text" name="persen_pph" class="form-control" id="pph">
                 </div>
-              </div>            
+              </div>
             </div>
             <div class="bottomlinesolid">
               <span class="judulOrange">Overbooking Bunga Deposito</span>
@@ -600,7 +621,9 @@
               <div class="row">
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputDate1">Tgl Registrasi</label>
-                  <input type="text" name="tgl_registrasi" id="tgl_registrasidepo" class="form-control" value="{{date('Y-m-d',strtotime(str_replace('/', '-', $tgllogin[0]->Value)))}}" placeholder="yyyy-mm-dd" required/>
+                  <input type="text" name="tgl_registrasi" id="tgl_registrasidepo" class="form-control"
+                    value="{{date('Y-m-d',strtotime(str_replace('/', '-', $tgllogin[0]->Value)))}}"
+                    placeholder="yyyy-mm-dd" required />
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="jkw">JW</label>
@@ -609,10 +632,11 @@
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputDate2">Tgl JT</label>
                   <div class="input-group date" id="inputDate2" data-target-input="nearest">
-                    <input type="text" id="addtgl_jt" name="tgl_jt" class="form-control datetimepicker-input" data-target="#inputDate2" readonly/>
-                      <div class="input-group-append" data-target="#inputDate2" data-toggle="datetimepicker">
-                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                      </div>
+                    <input type="text" id="addtgl_jt" name="tgl_jt" class="form-control datetimepicker-input"
+                      data-target="#inputDate2" readonly />
+                    <div class="input-group-append" data-target="#inputDate2" data-toggle="datetimepicker">
+                      <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -633,7 +657,8 @@
                 <div class="col-lg-3 col-sm-6">
                   <label for="kerekeningtab">Ke Rekening Tab</label>
                   <div class="input-group date" data-target-input="nearest">
-                    <input id="inputkerekeningtabadd" type="text" name="kerekeningtab" readonly class="form-control" required>
+                    <input id="inputkerekeningtabadd" type="text" name="kerekeningtab" readonly class="form-control"
+                      required>
 
                     <div class="input-group-append" data-toggle="modal" data-target="#ambildatarektab">
                       <div class="input-group-text"><i class="fa fa-user"></i></div>
@@ -643,15 +668,18 @@
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputDate3">Tgl Penampatan</label>
                   <div class="input-group date" id="inputDate3" data-target-input="nearest">
-                    <input type="text" name="tgl_penempatan" class="form-control datetimepicker-input" data-target="#inputDate3" value="{{date('Y-m-d',strtotime(str_replace('/', '-', $tgllogin[0]->Value)))}}" readonly/>
-                      <div class="input-group-append" data-target="#inputDate3" data-toggle="datetimepicker">
-                          {{-- <div class="input-group-text"><i class="fa fa-calendar"></i></div> --}}
-                      </div>
+                    <input type="text" name="tgl_penempatan" class="form-control datetimepicker-input"
+                      data-target="#inputDate3"
+                      value="{{date('Y-m-d',strtotime(str_replace('/', '-', $tgllogin[0]->Value)))}}" readonly />
+                    <div class="input-group-append" data-target="#inputDate3" data-toggle="datetimepicker">
+                      {{-- <div class="input-group-text"><i class="fa fa-calendar"></i></div> --}}
+                    </div>
                   </div>
                 </div>
                 <div class="col-lg-1 col-sm-6">
                   <label for="tgl_valuta">Tgl Valuta</label>
-                  <input type="text" name="tgl_valuta" class="form-control" id="tgl_valuta" value="{{date('d',strtotime(str_replace('/', '-', $tgllogin[0]->Value)))}}" required readonly>
+                  <input type="text" name="tgl_valuta" class="form-control" id="tgl_valuta"
+                    value="{{date('d',strtotime(str_replace('/', '-', $tgllogin[0]->Value)))}}" required readonly>
                 </div>
               </div>
               <div class="row">
@@ -675,29 +703,32 @@
             <div class="form-group">
               <div class="row">
                 <div class="col-lg-2 col-sm-6">
-                <label for="inputjk">Kode Group 1</label>
+                  <label for="inputjk">Kode Group 1</label>
                   <select class="form-control" name="kode_group1">
                     <option id="idkodegroup1" selected></option>
                     @foreach($kodegroup1deposito as $value)
-                    <option value="{{$value->KODE_GROUP1}}">{{$value->KODE_GROUP1.'-'.$value->DESKRIPSI_GROUP1}}</option>
+                    <option value="{{$value->KODE_GROUP1}}">{{$value->KODE_GROUP1.'-'.$value->DESKRIPSI_GROUP1}}
+                    </option>
                     @endforeach
                   </select>
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputjk">Kode Group 2</label>
-                    <select class="form-control" name="kode_group2">
-                      <option id="idkodegroup2" selected></option>
-                      @foreach($kodegroup2deposito as $value)
-                      <option value="{{$value->KODE_GROUP2}}">{{$value->KODE_GROUP2.'-'.$value->DESKRIPSI_GROUP2}}</option>
-                      @endforeach
-                    </select>
+                  <select class="form-control" name="kode_group2">
+                    <option id="idkodegroup2" selected></option>
+                    @foreach($kodegroup2deposito as $value)
+                    <option value="{{$value->KODE_GROUP2}}">{{$value->KODE_GROUP2.'-'.$value->DESKRIPSI_GROUP2}}
+                    </option>
+                    @endforeach
+                  </select>
                 </div>
                 <div class="col-lg-2 col-sm-6">
                   <label for="inputjk">Kode Group 3</label>
                   <select class="form-control" name="kode_group3">
                     <option id="idkodegroup3" selected></option>
                     @foreach($kodegroup3deposito as $value)
-                    <option value="{{$value->KODE_GROUP3}}">{{$value->KODE_GROUP3.'-'.$value->DESKRIPSI_GROUP3}}</option>
+                    <option value="{{$value->KODE_GROUP3}}">{{$value->KODE_GROUP3.'-'.$value->DESKRIPSI_GROUP3}}
+                    </option>
                     @endforeach
                   </select>
                 </div>
@@ -716,21 +747,21 @@
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputjk">Sandi pihak terkait</label>
-                    <select class="form-control" name="kode_bi_hubungan" required>
-                      <option id="idbihubungan" selected></option>
-                      @foreach($kodeketerkaitanlapbul as $value)
-                      @if($value->SANDI=='20')
-                      <option value="{{$value->SANDI}}" selected>{{$value->SANDI.'-'.$value->DESKRIPSI_SANDI}}</option>
-                      @else
-                      <option value="{{$value->SANDI}}">{{$value->SANDI.'-'.$value->DESKRIPSI_SANDI}}</option>
-                      @endif
-                      @endforeach
-                    </select>
+                  <select class="form-control" name="kode_bi_hubungan" required>
+                    <option id="idbihubungan" selected></option>
+                    @foreach($kodeketerkaitanlapbul as $value)
+                    @if($value->SANDI=='20')
+                    <option value="{{$value->SANDI}}" selected>{{$value->SANDI.'-'.$value->DESKRIPSI_SANDI}}</option>
+                    @else
+                    <option value="{{$value->SANDI}}">{{$value->SANDI.'-'.$value->DESKRIPSI_SANDI}}</option>
+                    @endif
+                    @endforeach
+                  </select>
                 </div>
-              </div>   
+              </div>
               <div class="row">
                 <div class="col-lg-3 col-sm-12">
-                <label for="tipe_deposito">Tipe Deposito</label>
+                  <label for="tipe_deposito">Tipe Deposito</label>
                   <select class="form-control" id="tipe_deposito" name="tipe_deposito">
                     <option value="1" selected>Deposito</option>
                     <option value="2">AB-PASIVA</option>
@@ -739,23 +770,25 @@
                 </div>
                 <div class="col-lg-3 col-sm-12">
                   <label for="metoda">Metoda</label>
-                    <select class="form-control" name="metoda" required>
-                      <option id="metoda" selected></option>
-                      @foreach($kodemetoda as $value)
-                      @if($value->KODE_METODA='2')
-                      <option value="{{$value->KODE_METODA}}" selected>{{$value->KODE_METODA.'-'.$value->DESKRIPSI_METODA}}</option>
-                      @else
-                      <option value="{{$value->KODE_METODA}}">{{$value->KODE_METODA.'-'.$value->DESKRIPSI_METODA}}</option>
+                  <select class="form-control" name="metoda" required>
+                    <option id="metoda" selected></option>
+                    @foreach($kodemetoda as $value)
+                    @if($value->KODE_METODA='2')
+                    <option value="{{$value->KODE_METODA}}" selected>
+                      {{$value->KODE_METODA.'-'.$value->DESKRIPSI_METODA}}</option>
+                    @else
+                    <option value="{{$value->KODE_METODA}}">{{$value->KODE_METODA.'-'.$value->DESKRIPSI_METODA}}
+                    </option>
 
-                      @endif
-                      @endforeach
-                    </select>
+                    @endif
+                    @endforeach
+                  </select>
                 </div>
                 <div class="col-lg-6 col-sm-12">
                   <label for="keterangan">Keterangan</label>
                   <input type="text" name="keterangan" class="form-control" id="keterangan">
                 </div>
-              </div>          
+              </div>
             </div>
             <div class="bottomlinesolid">
               <span class="judulOrange">Antar Bank Aktiva</span>
@@ -765,13 +798,15 @@
               <div class="row">
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputnpwp">Provisi</label>
-                  <input type="text" name="provisi" class="form-control" value="{{ number_format(0,2) }}" id="provisi" readonly>
+                  <input type="text" name="provisi" class="form-control" value="{{ number_format(0,2) }}" id="provisi"
+                    readonly>
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputidentitas">Administrasi</label>
-                  <input type="text" name="administrasi" class="form-control" value="{{ number_format(0,2) }}" id="adm" readonly>
+                  <input type="text" name="administrasi" class="form-control" value="{{ number_format(0,2) }}" id="adm"
+                    readonly>
                 </div>
-              </div>            
+              </div>
             </div>
           </div>
           <div class="modal-footer justify-content-between">
@@ -780,14 +815,15 @@
           </div>
         </div>
         <!-- /.modal-content -->
-      @csrf
-    </form>
+        @csrf
+      </form>
     </div>
     <!-- /.modal-dialog -->
-  </div>   {{-- BATASA MODAL UNTUK MENAMPILKAN TAMBAH DATA --}}
+  </div> {{-- BATASA MODAL UNTUK MENAMPILKAN TAMBAH DATA --}}
 
   {{-- MODAL TAMPIL TABEL NASABAH --}}
-  <div class="modal fade bs-modal-nas" id="ambildatanasabah" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal fade bs-modal-nas" id="ambildatanasabah" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-md" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -800,15 +836,15 @@
           <table id="nasabahdata" class="display" width="100%">
             <thead>
               <tr>
-                  <th>Nasabah Id</th>
-                  <th>Nama Nasabah</th>
-                  <th>Alamat Nasabah</th>
-                  <th>Action</th>
+                <th>Nasabah Id</th>
+                <th>Nama Nasabah</th>
+                <th>Alamat Nasabah</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
-                @foreach($nasabah as $value)
-                <tr>
+              @foreach($nasabah as $value)
+              <tr>
                 <td>{{ $value->nasabah_id }}</td>
                 <td>{{ $value->nama_nasabah }}</td>
                 <td>{{ $value->alamat }}</td>
@@ -818,12 +854,12 @@
                   </a>
                   <div class="dropdown-menu" data-dismiss="modal">
                     <a id="tes1" href="#" class="dropdown-item">
-                    pilih
+                      pilih
                     </a>
                   </div>
                 </td>
-                </tr>
-                @endforeach
+              </tr>
+              @endforeach
             </tbody>
           </table>
         </div>
@@ -832,7 +868,8 @@
   </div>
 
   {{-- MODAL TAMPIL TABEL NO REKENING --}}
-  <div class="modal fade bs-modal-tab" id="ambildatarektab" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal fade bs-modal-tab" id="ambildatarektab" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -845,19 +882,19 @@
           <table id="rektabungandata" class="display" width="100%">
             <thead>
               <tr>
-                  <th>No Rekening Tabungan</th>
-                  <th>Nama Nasabah</th>
-                  <th>Alamat Nasabah</th>
-                  <th>Jenis Tabungan</th>
-                  <th>Saldo Akhir</th>
+                <th>No Rekening Tabungan</th>
+                <th>Nama Nasabah</th>
+                <th>Alamat Nasabah</th>
+                <th>Jenis Tabungan</th>
+                <th>Saldo Akhir</th>
 
-                  <th>Action</th>
+                <th>Action</th>
 
               </tr>
             </thead>
             <tbody>
-                @foreach($tabungan as $value)
-                <tr>
+              @foreach($tabungan as $value)
+              <tr>
                 <td>{{ $value->NO_REKENING }}</td>
                 <td>{{ $value->nama_nasabah }}</td>
                 <td>{{ $value->alamat }}</td>
@@ -870,20 +907,20 @@
                   </a>
                   <div class="dropdown-menu">
                     <a id="tes2" href="#" class="dropdown-item">
-                    pilih
-                  </a>
+                      pilih
+                    </a>
                   </div>
 
                 </td>
-                </tr>
-                @endforeach
+              </tr>
+              @endforeach
             </tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
-  
+
 </div>
 <!-- /.content -->
 @endsection

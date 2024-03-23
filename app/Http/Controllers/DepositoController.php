@@ -394,6 +394,19 @@ class DepositoController extends Controller
                     'SALDO_PENARIKAN' => $sldtarik,
                     'SALDO_AKHIR' => $saldoakhir
                 ]);
+            } elseif ($request->my_kode_trans == '0') {
+                // UPDATE DEPOSITO
+                DB::select("UPDATE deposito SET SALDO_SETORAN=0,SALDO_PENARIKAN=0,SALDO_AKHIR=0,STATUS_AKTIF='1' where NO_REKENING='$request->no_rekening'");
+                // UPDATE TABUNGNA 
+                $sldawal = DB::select("SELECT saldo_awal from tabung where no_rekening='$request->no_rekening_tab'")[0]->saldo_awal;
+                $sldsetor = DB::select("SELECT sum(saldo_trans) as saldo_trans FROM tabtrans where NO_REKENING = '$request->no_rekening_tab' AND MY_KODE_TRANS LIKE '1%'")[0]->saldo_trans;
+                $sldtarik = DB::select("SELECT sum(saldo_trans) as saldo_trans FROM tabtrans where NO_REKENING = '$request->no_rekening_tab' AND MY_KODE_TRANS LIKE '2%'")[0]->saldo_trans;
+                $saldoakhir = $sldawal + $sldsetor - $sldtarik;
+                Tabungan::where('NO_REKENING', $request->no_rekening_tab)->update([
+                    'SALDO_SETORAN' => $sldsetor,
+                    'SALDO_PENARIKAN' => $sldtarik,
+                    'SALDO_AKHIR' => $saldoakhir
+                ]);
             }
         }
         // LEWAT REK TABUNGAN DI PROSES LEWAT MENU OVERBOOK BUNGA

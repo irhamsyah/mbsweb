@@ -538,7 +538,7 @@
               <div class="row">
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputjenisdeposito">Jenis Deposito</label>
-                  <select class="form-control" name="jenis_deposito" id="listjenisdeposito" required>
+                  <select class="form-control" name="jenis_deposito" id="listjenisdeposito" onclick="myTime()" required>
                     <option value="" selected></option>
                     @foreach($kodejenisdeposito as $value)
                     <option value="{{ $value->KODE_JENIS_DEPOSITO}}" data-ebunga="{{$value->SUKU_BUNGA_DEFAULT}}"
@@ -627,7 +627,7 @@
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="jkw">JW</label>
-                  <input type="text" name="jkw" onchange="myTime();" class="form-control" id="addjkw" required>
+                  <input type="text" name="jkw" class="form-control" id="addjkw" readonly required>
                 </div>
                 <div class="col-lg-3 col-sm-6">
                   <label for="inputDate2">Tgl JT</label>

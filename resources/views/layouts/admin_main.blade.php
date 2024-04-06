@@ -288,6 +288,13 @@
                             <p class="pl-4">Penutupan Tabungan</p>
                           </a>
                         </li>
+                        <li class="nav-item">
+                          <a href="/bo_tl_tt_overbooktab"
+                            class="nav-link <?php if($page == 'overbooktab'){echo 'active';}?>">
+                            <p class="pl-4">Pindah Buku Tabungan</p>
+                          </a>
+                        </li>
+
                       </ul>
                     </li>
                     <li class="nav-item has-treeview  <?php if($menu=='tl' AND $submenu=='td'){echo 'menu-open';}?>">
@@ -332,6 +339,26 @@
                           <a href="/bo_tl_tk_setoranangsuran"
                             class="nav-link <?php if($page=='setoranangsuran'){echo 'active';}?>">
                             <p class="pl-4">Setoran Angsuran</p>
+                          </a>
+                        </li>
+                      </ul>
+                    </li>
+                    <li class="nav-item has-treeview <?php if($menu=='tl' AND $submenu=='tk'){echo 'menu-open';}?>">
+                      <a href="#" class="nav-link <?php if($menu=='tl' AND $submenu=='tk'){echo 'active';}?>">
+                        <i class="right fas fa-angle-left"></i>
+                        <p class="pl-2">TRANSAKSI KAS UMUM</p>
+                      </a>
+                      <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                          <a href="/bo_tl_ku_transaksikasumum"
+                            class="nav-link <?php if($page=='transaksikasumum'){echo 'active';}?>">
+                            <p class="pl-4">Transaksi Kas Umum</p>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="/bo_tl_ku_hapustransaksikas"
+                            class="nav-link <?php if($page=='hapustransaksikas'){echo 'active';}?>">
+                            <p class="pl-4">Hapus Transaksi Kas</p>
                           </a>
                         </li>
                       </ul>
@@ -920,6 +947,11 @@
                         <p class="pl-3">Validasi Data Transaksi</p>
                       </a>
                     </li>
+                    <li class="nav-item">
+                      <a href="{{route('showformcatattransaksi')}}" class="nav-link">
+                        <p class="pl-3">Pencatatan Transaksi</p>
+                      </a>
+                    </li>
 
                   </ul>
                 </li>
@@ -1367,11 +1399,18 @@ $(document).ready(function(){
      var col5=currentRow.find("td:eq(4)").text(); // get current row 5th TD
      var col6=currentRow.find("td:eq(5)").text(); // get current row 6th TD
     //  var data=col1+"\n"+col2+"\n"+col3;
+    // ISIAN BAGIAN TABUNGAN UNTUK PENUTUPAN DEPOSITO
      $('#putnorekeningtab').val(col1);
      $('#putnamanasabahtab').val(col2);
      $('#putsaldoakhirtab').val(col5);
+     
+    //  ISIAN UNTUK FORM PENUTUPAN TABUNGAN
+    $('#putsaldoakhirtabcls').val(col4);
+    $('#putalamat').val(col3);
+    $('#putbyadmin').val(col5);
+    $('#putjmltransaksi').val(col4-col5);
 
-     $('#ambildatatabunganteller').modal('hide');
+    $('#ambildatatabunganteller').modal('hide');
   });
   //page deposito *****************************************************
   //get rekening tabungan nasabah
@@ -1406,6 +1445,9 @@ $(document).ready(function(){
     $("#bunga").val(sukubungadeposito);
     $("#pph").val(pph);
     $("#jkw").val(jkw);
+
+    $("#addjkw").val(jkw);
+    
     $("#tipe_deposito").val(flagdep);
     $("#provisi").val(prosenprovisi);
     $("#adm").val(prosenadm);
@@ -2296,7 +2338,9 @@ $("#datatabungantrans").on('click','#klik',function(){
 
 // DATATABLE
     $(document).ready(function () {
-        $('#idperkiraan').DataTable({ordering:false});
+      $('#idperkiraan').DataTable({ordering:false});
+      $('#idperkiraanhistjur').DataTable({ordering:false});
+        
     });
     // PROSES GANTI PERKIRAAN SAAT KLIK/PILIH PERKIRAAN TERUPDATE KE FORM VALIDASI
       $(document).ready(function(){
@@ -2304,9 +2348,9 @@ $("#datatabungantrans").on('click','#klik',function(){
       $("#idperkiraan").on('click','#klik',function(){
           // get the current row
           var currentRow=$(this).closest("tr"); 
-          var col1=currentRow.find("td:eq(0)").text(); // no_rek/get current row 1st TD value
-          var col2=currentRow.find("td:eq(1)").text(); // nama/get current row 2nd TD
-          var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
+          var col1=currentRow.find("td:eq(0)").text(); // kode_perk/get current row 1st TD value
+          var col2=currentRow.find("td:eq(1)").text(); // nama_perk/get current row 2nd TD
+          var col3=currentRow.find("td:eq(2)").text(); // TYpe current row 3rd TD
 
           //  var data=col1+"\n"+col2+"\n"+col3;
             if(col3=='D'){
@@ -2315,6 +2359,7 @@ $("#datatabungantrans").on('click','#klik',function(){
               document.getElementById("idkodeperk2").value=col1;
               document.getElementById("idnamaperk2").value=col2;
               document.getElementById("idtypex").value=col3;
+              document.getElementById("idtype").value=col3;
             }else{
               alert("HARUS TYPE CABANG BUKAN INDUK");
             }
@@ -2349,7 +2394,7 @@ $("#datatabungantrans").on('click','#klik',function(){
               }
           });
       //Pada FORM PENCATATAN JURNAL TRANSAKSI PADA MODAL PERUBHAHAN KODE_PERK
-      // untuk from cari bukubesar
+      // untuk form cari bukubesar
       $("#idperkiraancatat").on('click','#kliky',function(){
             // get the current row
             var currentRow=$(this).closest("tr"); 
@@ -2364,6 +2409,32 @@ $("#datatabungantrans").on('click','#klik',function(){
               document.getElementById("idType").value=col5;
 
           });
+      // UNTUK MUNCUL PERKIRAAN PADA FORM UPDATE HISTORY HURNAL
+      $("#idperkiraanhistjur").on('click','#kliky',function(){
+            // get the current row
+            var currentRow=$(this).closest("tr"); 
+            var col1=currentRow.find("td:eq(0)").text(); // no_rek/get current 
+            var col2=currentRow.find("td:eq(1)").text(); // nama/get current row 2nd TD
+            var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
+            var col4=currentRow.find("td:eq(3)").text(); // get current row 3rd TD
+            var col5=currentRow.find("td:eq(4)").text(); // get current row 3rd TD
+            var col6=currentRow.find("td:eq(5)").text(); // get current saldo_awal
+            var col7=currentRow.find("td:eq(6)").text(); // get current dk
+            //  FORM PENCATATAN JURNAL TRANSAKSI
+
+            if(col5=='D') {
+              document.getElementById("idKodePerkcatat").value=col1;
+              document.getElementById("idNamaPerkcatat").value=col2;
+              document.getElementById("idSaldoawal").value=col6;
+              document.getElementById("idDk").value=col7;
+              document.getElementById("idType").value=col5;
+
+            }else{
+              alert('TIDAK DIPERKENANKAN MENGGUNAKAN KODE INDUK');
+            }
+
+          });
+
           // Fungsi menampilkan Data Perkiraan di Tabel Modal jika di KLIK akan terinput ke Textbox form Pencatatan Perkiraan
     $("#perkiraandata").on('click','#tes1',function(){
      // get the current row
@@ -2575,6 +2646,24 @@ $(e.currentTarget).find('input[name="deskripsi_jenis_deposito"]').val(Deskripsi_
           document.getElementById('123').style.visibility="visible";
         }
       }
+      // HITUNG JML PENGAMBILAN PADA FORM PENUTUPAN TABUNGAN
+      function jmlpengambilan(){
+
+        $saldo=document.getElementById('putsaldoakhirtabcls').value;
+        $byadmin=document.getElementById('putbyadmin').value;
+        $total = $saldo-$byadmin;
+        document.getElementById('putjmltransaksi').value=$total;
+      }
+      // KOSONGKAN FORM ENTRY DEPOSITO
+      $('#modal-add-deposito').on('hidden.bs.modal', function () {
+        $(this).find('form').trigger('reset');
+      })
+      // KOSNGKAN FORM ENTRY TABUNGAN 
+      $('#modal-add-tabungan').on('hidden.bs.modal', function () {
+        $(this).find('form').trigger('reset');
+      })
+
+      
   </script>
   <script>
     // Fungsi Membuat FORMAT RUPIAH pada INPUTAN BOX

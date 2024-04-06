@@ -176,9 +176,16 @@
                     <label for="inputkodetranstab">Kode Transaksi Tabungan</label>
                     <select class="form-control" name="kode_trans_tab" id="putkodetranstab">
                       @php($i=0)
-                      @while ($i<count($kodetranstab) ) <option
-                        value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}">
-                        {{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
+                      @while ($i<count($kodetranstab) ) @if($kodetranstab[$i]->KODE_TRANS==34)
+                        <option
+                          value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}"
+                          selected>
+                          {{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
+                        @else
+                        <option
+                          value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}">
+                          {{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
+                        @endif
                         @php($i++)
                         @endwhile
                     </select>

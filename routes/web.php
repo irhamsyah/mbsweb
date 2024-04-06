@@ -255,7 +255,8 @@ Route::get('bo_dp_rp_cetakjatuhtempo', 'DepositoController@bo_dp_rp_cetakjatuhte
 // Export To Exccel Deposito Jatuh TEMPO
 Route::post('exportjatuhtempo', 'DepositoController@exportjatuhtempo');
 
-
+// TRANSAKSI JAS UMUM
+Route::get('bo_tl_ku_transaksikasumum', 'TellerKasController@bo_tl_ku_transaksikasumum');
 
 
 //BO KREDIT Data Entry KREDIT
@@ -415,15 +416,29 @@ Route::post(
         'uses' => 'TabunganController@exporttoexceltabblokir'
     ]
 );
-// TELLER
-Route::get('bo_tl_tt_setoranpenarikantabungan','TellertabunganController@bo_tl_tt_setoranpenarikantabungan')->name('setoranpenarikantabungan');
-Route::post('bo_tl_tt_simpantrstabungan','TellertabunganController@bo_tl_tt_simpantrstabungan');
-Route::get('bo_tl_tk_realisasikredit','TellerKreditController@bo_tl_tk_realisasikredit')->name('realisasikredit');
-Route::get('bo_tl_tk_setoranangsuran','TellerKreditController@bo_tl_tk_setoranangsuran')->name('setoranangsuran');
-Route::post('bo_tl_tk_realisasikredit/setrealisasi','TellerKreditController@setrealisasi')->name('setrealisasi');
-Route::get('bo_tl_tk_setoranangsuran/getAngsuran','TellerKreditController@getAngsuran')->name('getAngsuran');
-Route::get('bo_tl_tk_setoranangsuran/getCicilan','TellerKreditController@getCicilan')->name('getCicilan');
-Route::post('bo_tl_tk_setoranangsuran/saveAngsuran','TellerKreditController@saveAngsuran')->name('saveAngsuran');
+// TELLER 
+// TABUNGAN
+Route::get('bo_tl_tt_setoranpenarikantabungan', 'TellertabunganController@bo_tl_tt_setoranpenarikantabungan')->name('setoranpenarikantabungan');
+Route::post('bo_tl_tt_simpantrstabungan', 'TellertabunganController@bo_tl_tt_simpantrstabungan');
+// CETAK validasi
+Route::get('bo_tl_tt_cetakbukutab', 'TellertabunganController@bo_tl_tt_cetakbukutab')->name('cetakbukutab');
+//Show Form Tutup tabungan
+Route::get('bo_tl_tt_penutupantabungan', 'TellertabunganController@bo_tl_tt_penutupantabungan')->name('penutupantabungan');
+// Simpan Transaksi Penutupan Tabungan
+Route::post('bo_tl_tt_penutupantabungan', 'TellertabunganController@bo_tl_tt_penutupantabungan_add')->name('postpenutupantabungan');
+// CETAK KUITANSI PENUTUPAN TABUNGAN
+Route::get('bo_tl_rp_cetakkuitansiclstab', 'TellertabunganController@bo_tl_rp_cetakkuitansiclstab')->name('cetakkuitansiclstab');
+// Cetak Validasi penutupan tabungan
+Route::get('bo_tl_rp_cetakvalidasiclstab', 'TellertabunganController@bo_tl_rp_cetakvalidasiclstab')->name('cetakvalidasiclstab');
+// ---------batas transaksi tabungan--------------------------------
+
+Route::get('bo_tl_tk_realisasikredit', 'TellerKreditController@bo_tl_tk_realisasikredit')->name('realisasikredit');
+Route::get('bo_tl_tk_setoranangsuran', 'TellerKreditController@bo_tl_tk_setoranangsuran')->name('setoranangsuran');
+Route::post('bo_tl_tk_realisasikredit/setrealisasi', 'TellerKreditController@setrealisasi')->name('setrealisasi');
+Route::get('bo_tl_tk_setoranangsuran/getAngsuran', 'TellerKreditController@getAngsuran')->name('getAngsuran');
+Route::get('bo_tl_tk_setoranangsuran/getCicilan', 'TellerKreditController@getCicilan')->name('getCicilan');
+Route::post('bo_tl_tk_setoranangsuran/saveAngsuran', 'TellerKreditController@saveAngsuran')->name('saveAngsuran');
+
 // AKUNTANSI
 Route::get('bo_ak_tt_postingdatatransaksi', 'AkuntansiController@bo_ak_tt_postingdatatransaksi')->name('showformpostingdatatransaksi');
 // cari dan posting ke trans_master_buffer dan trans_detail_buffer
@@ -440,19 +455,22 @@ Route::delete('bo_ak_tt_deltransdetailbuff', 'AkuntansiController@bo_ak_tt_deltr
 Route::post('bo_ak_tt_simpanjurnal', 'AkuntansiController@bo_ak_tt_simpanjurnal');
 // Pencatatan Transaksi Jurnal Memorial/Manual
 Route::get('bo_ak_tt_showfrmctttransaksi', 'AkuntansiController@bo_ak_tt_showfrmctttransaksi')->name('showformcatattransaksi');
-Route::post('bo_tb_de_savetempjurnalmemorial', 'AkuntansiController@bo_tb_de_savetempjurnalmemorial');
+Route::post('bo_ak_tt_savetempjurnalmemorial', 'AkuntansiController@bo_ak_tt_savetempjurnalmemorial');
 Route::delete('bo_ak_tt_delcatatjurnaldetail', 'AkuntansiController@bo_ak_tt_delcatatjurnaldetail');
 Route::post('bo_ak_tt_simpancatatjurnal', 'AkuntansiController@bo_ak_tt_simpancatatjurnal');
 // Update kode_perk, debet.kredit pada pencatatan transaksi dari Modal
 Route::post('bo_ak_tt_updatecatatjurnal', 'AkuntansiController@bo_ak_tt_updatecatatjurnal')->name('saveperubahankodeperkpencttjur');
 // SHOW FORM HISTORY CATAT JURNAL/MEMORIAL
 Route::get('bo_ak_tt_historycatatjurnal', 'AkuntansiController@bo_ak_tt_historycatatjurnal')->name('showformhistoryjurnal');
+// GET DATA JURNAL setelah KLIK TOMBOL HSITORY
+Route::get('/bo_ak_tr_akuntansi/getJurnals', 'AkuntansiController@getJurnals')->name('Getjurnals');
+
 Route::post('bo_ak_tt_carihistorycatatjurnal', 'AkuntansiController@bo_ak_tt_carihistorycatatjurnal');
 // Munculkan detail jurnal pada history pencatatan jurnal
-Route::get('bo_ak_tt_detailhistorycatatjurnal/{id}', 'AkuntansiController@bo_ak_tt_detailhistorycatatjurnal')->name('historycatatjurnal');
+Route::get('bo_ak_tt_detailhistorycatatjurnal', 'AkuntansiController@bo_ak_tt_detailhistorycatatjurnal')->name('historycatatjurnal');
 // SIMPAN DATA PERUBAHAN HISTORY PENCATATAN JURNAL
 Route::post('bo_ak_tt_updatehistorycatatjurnal', 'AkuntansiController@bo_ak_tt_updatehistorycatatjurnal')->name('updatehistorycttjurnal');
-Route::delete('bo_ak_tt_deletehistorycatatjurnal', 'AkuntansiController@bo_ak_tt_deletehistorycatatjurnal');
+Route::delete('bo_ak_tt_deletehistorycatatjurnal', 'AkuntansiController@bo_ak_tt_deletehistorycatatjurnal')->name('deletetrshistory');
 // DATA ENTRY DAFTAR PERKIRAAN
 Route::get('bo_ak_de_showformdataperkiraan', 'AkuntansiController@bo_ak_de_showformdataperkiraan')->name('showformperkiraan');
 // ADD Perkiraan
@@ -495,8 +513,8 @@ Route::get('bo_ak_lp_showfrmbukubesarhelper', 'AkuntansiController@bo_ak_lp_show
 Route::post('bo_ak_caribukubesarhelper', 'AkuntansiController@bo_ak_caribukubesarhelper');
 // Export buku besar ke EXCEL
 Route::get('export_buku_besar_helper', 'AkuntansiController@export_buku_besar_helper')->name('exportbukubesarhelper');
-
-
+// SHOW FORM PENCATATAN TRANSAKSI AKUNTANSI
+Route::get('bo_ak_tr_showformpencatrans', 'AkuntansiController@bo_ak_tr_showformpencatrans')->name('showformpencatrans');
 // Show form pencarian Trial Balance/Trial Balance Komparatif
 Route::get('bo_ak_lp_showfrmtrialbalance', 'AkuntansiController@bo_ak_lp_showfrmtrialbalance')->name('showfrmtrialbalance');
 // cari trial balance/neraca /Trial Balance Komparatif
@@ -551,9 +569,6 @@ Route::post('bo_ak_carilabakonsol', 'AkuntansiController@bo_ak_carilabakonsol');
 // Export Labarugi konsolidasi
 Route::get('bo_ak_lp_labarugikonsol1', 'AkuntansiController@bo_ak_lp_labarugikonsol1')->name('exportlabarugikonsol1');
 
-
-
-
 //TELLER TRANS DEPOSITO
 //SETORAN DEPOSITO
 Route::get('/bo_tl_td_setorandeposito', 'TellerDepositoController@bo_tl_td_setorandeposito')->name('showsetorandeposito');
@@ -574,11 +589,6 @@ Route::get('bo_tl_rp_cetakvalidasi', 'TellerDepositoController@cetakvalidasi')->
 Route::get('bo_tl_rp_cetakkuitansicls', 'TellerDepositoController@bo_tl_rp_cetakkuitansicls')->name('cetakkuitansicls');
 // Cetak Validasi Close Deposito
 Route::get('bo_tl_rp_cetakvalidasiclsdep', 'TellerDepositoController@bo_tl_rp_cetakvalidasiclsdep')->name('cetakvalidasiclsdep');
-
-
-
-
-
 
 //PENUTUPAN DEPOSITO
 //--show form TUTUP DEPOSITO 

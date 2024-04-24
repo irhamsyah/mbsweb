@@ -87,7 +87,7 @@
 
                           @csrf
                           @if($values->POSTED==1)
-                          <button type="submit" onclick="return confirm('Jadi Hapus Data Transaksi Yang Sudah Di POSTING ?')"class="btn btn-sm btn-danger" style="float: right;">
+                          <button type="submit" onclick="return confirm('Jadi Hapus Data Transaksi Yang Sudah Di POSTING ?')" class="btn btn-sm btn-danger" style="float: right;">
                           @else
                           <button type="submit" onclick="return confirm('Jadi Hapus Data Transaksi yang Belum di POSTING')"class="btn btn-sm btn-danger" style="float: right;">
 

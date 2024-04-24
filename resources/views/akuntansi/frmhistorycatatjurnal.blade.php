@@ -22,13 +22,14 @@
           <div class="card-header">
             <div class="col-lg-3 col-sm-3" style="float:right;">
             </div>
-            <h3 class="card-title">Data Yang Sudah Tercatat</h3>
+            <h3 class="card-title">Jurnal Yang Sudah Tercatat</h3>
           </div>
           <!-- /.card-header -->
           <div class="card-body">
             {{-- MUNCULKAN DATA DETAIL JURNAL DARI HISTORY PENCATATAN JURNAL --}}
             {{-- @if(isset($cari))
             @if(count($cari) > 0) --}}
+            {{-- @php(dd($master_id)) --}}
             @if(isset($master_id))
             <form method="POST" action="/bo_ak_tt_updatehistorycatatjurnal">
               @csrf
@@ -102,6 +103,9 @@
                   <div class="col-4" style="margin-left:450px">
                     <button type="submit" class="btn-lg btn-success"><i class="fa fa-check"
                         style="color:white">Create</i></button>
+                        <a href="{{route('showformhistoryjurnal')}}" class="btn-lg btn-danger">
+                          <i class="fa fa-house">Back</i>
+                        </a>
                   </div>
                 </div>
               </div>
@@ -138,7 +142,7 @@
                         data-trans_id="{{$values->trans_id}}" data-master_id="{{$values->master_id}}"
                         data-uraian="{{$values->URAIAN}}" data-kode_perk="{{$values->kode_perk}}"
                         data-nama_perk="{{ $values->perkiraan->nama_perk }}" data-debet="{{$values->debet}}"
-                        data-kredit="{{$values->kredit}}" data-type="{{ $values->perkiraan->type }}">
+                        data-kredit="{{$values->kredit}}" data-type="{{ $values->perkiraan->type }}" data-tgl_trans="{{$tgl_trans}}" data-kode_jurnal={{$kode_jurnal}} data-no_bukti="{{$no_bukti}}">
                         Update
                       </a>
                       <form method="POST" action="{{route('deletetrshistory')}}" class="form-control"
@@ -207,7 +211,7 @@
                                     '<input type="hidden" name="kode_jurnal" value="'+row['kode_jurnal']+'" class="form-control">' +                                    
                                     '<input type="hidden" name="no_bukti" value="'+row['no_bukti']+'" class="form-control">' +                                    
                                     '<button type="submit" tabindex="-1" class="dropdown-item">' +
-                                    ' Detail Kredit' +
+                                    ' Detail' +
                                     '</button>' +
                                   '</form>' +
                                 '</div>';
@@ -303,6 +307,8 @@
             <div class="row">
               <input hidden type="text" name="trans_id">
               <input hidden type="text" name="master_id">
+              <input hidden type="text" name="kode_jurnal">
+              <input hidden type="text" name="no_bukti">
               <input type="text" name="saldo_awal" id="idSaldoawal" hidden>
               <input type="text" name="dk" id="idDk" hidden>
               <input type="text" name="inputtgljurnal" hidden value="{{$tgl_trans}}" />

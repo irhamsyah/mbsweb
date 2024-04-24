@@ -89,12 +89,20 @@
                   </div>
                   <div class="col-lg-2 col-sm-8">
                     <label for="inputnocif">Debet</label>
+                    @if(isset($debet))
+                    <input type="number" id="inputNamaNasabahadd" name="debet" class="form-control" value={{$debet}} required>
+                    @else
                     <input type="number" id="inputNamaNasabahadd" name="debet" class="form-control" value=0 required>
+                    @endif
                   </div>
                   <input type="text" hidden name="masterid" value="{{$masterid}}">
                   <div class="col-lg-2 col-sm-8">
                     <label for="inputnocif">Kredit</label>
+                    @if(isset($kredit))
+                    <input type="number" id="inputalamatadd" name="kredit" class="form-control" value={{$kredit}} required>
+                    @else
                     <input type="number" id="inputalamatadd" name="kredit" class="form-control" value=0 required>
+                    @endif
                   </div>
                   <div class="col-lg-2 col-sm-8">
                     <label for="inputnocif">Keterangan</label>
@@ -207,8 +215,7 @@
               <div class="col-4" style="margin-left:450px">
                 <a href="{{route('showformhistoryjurnal')}}" class="btn-lg btn-success"
                   rel="noopener noreferrer">History</a>
-                <button type="submit" class="btn-lg btn-danger"><i class="fa fa-check" style="color:white">Simpan
-                    Jurnal</i>
+                <button type="submit" class="btn-lg btn-danger"><i class="fa fa-check" style="color:white">Simpan Jurnal</i>
                 </button>
               </div>
             </div>

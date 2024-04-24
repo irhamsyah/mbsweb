@@ -62,6 +62,7 @@ class DepositoController extends Controller
     public function bo_dp_de_deposito()
     {
         $logos = Logo::all();
+        $tglharini = DB::select("SELECT * FROM mysysid WHERE KeyName = 'TANGGALHARIINI'")[0]->Value;
         $nasabah = Nasabah::select('nasabah_id', 'nama_nasabah', 'alamat')->get();
         $tabungan = DB::select('select tabung.NO_REKENING,tabung.NASABAH_ID,tabung.JENIS_TABUNGAN,tabung.SALDO_AKHIR,nasabah.nama_nasabah,nasabah.alamat FROM tabung LEFT JOIN nasabah ON tabung.NASABAH_ID=nasabah.nasabah_id');
         $depositos = DB::select('select deposito.*,nasabah.nama_nasabah,nasabah.alamat FROM deposito LEFT JOIN nasabah ON deposito.NASABAH_ID = nasabah.nasabah_id LIMIT 25');
@@ -76,7 +77,7 @@ class DepositoController extends Controller
         $kodemetoda = Kodemetoda::all();
         $tgllogin = Mysysid::where('KeyName', '=', 'TANGGALHARIINI')->get();
 
-        return view('admin.deposito', ['users' => $users, 'nasabah' => $nasabah, 'tabungan' => $tabungan, 'logos' => $logos, 'depositos' => $depositos, 'kodegroup1deposito' => $kodegroup1deposito, 'kodegroup2deposito' => $kodegroup2deposito, 'kodegroup3deposito' => $kodegroup3deposito, 'kodejenisdeposito' => $kodejenisdeposito, 'golonganpihaklawan' => $golonganpihaklawan, 'kodeketerkaitanlapbul' => $kodeketerkaitanlapbul, 'kodemetoda' => $kodemetoda, 'kodecabang' => $kodecabang, 'tgllogin' => $tgllogin, 'tgl_login' => $tgllogin, 'msgstatus' => '', 'msgview' => '']);
+        return view('admin.deposito', ['users' => $users, 'nasabah' => $nasabah, 'tabungan' => $tabungan, 'logos' => $logos, 'depositos' => $depositos, 'kodegroup1deposito' => $kodegroup1deposito, 'kodegroup2deposito' => $kodegroup2deposito, 'kodegroup3deposito' => $kodegroup3deposito, 'kodejenisdeposito' => $kodejenisdeposito, 'golonganpihaklawan' => $golonganpihaklawan, 'kodeketerkaitanlapbul' => $kodeketerkaitanlapbul, 'kodemetoda' => $kodemetoda, 'kodecabang' => $kodecabang, 'tgllogin' => $tgllogin, 'tgl_login' => $tgllogin, 'tglharini'=>$tglharini,'msgstatus' => '', 'msgview' => '']);
     }
 
     public function bo_dp_de_deposito_cari(Request $request)
@@ -110,10 +111,9 @@ class DepositoController extends Controller
 
     public function bo_dp_de_deposito_add(Request $request)
     {
-        $logos = Logo::all();
 
         $this->validate($request, [
-            'no_rekening' => 'required',
+            'NO_REKENING' => 'required|unique:deposito',
         ]);
         if ($request->no_rekening != '' && $request->jenis_deposito != '' && $request->jml_deposito != '' && $request->tgl_registrasi != '' && $request->inputstatus != '') {
             if ($request->aro == "on") {
@@ -207,6 +207,7 @@ class DepositoController extends Controller
         $tabungan = DB::select('select tabung.NO_REKENING,tabung.NASABAH_ID,tabung.JENIS_TABUNGAN,tabung.SALDO_AKHIR,nasabah.nama_nasabah,nasabah.alamat FROM tabung LEFT JOIN nasabah ON tabung.NASABAH_ID=nasabah.nasabah_id');
         $depositos = DB::select('select deposito.*,nasabah.nama_nasabah,nasabah.alamat FROM deposito LEFT JOIN nasabah ON deposito.NASABAH_ID = nasabah.nasabah_id WHERE deposito.NO_REKENING="' . $request->no_rekening . '"');
         $users = User::all();
+        $logos = Logo::all();
         $kodecabang = Kodecabang::where('DATA_CAB', '=', 'mydata')->get();
         $kodegroup1deposito = KodeGroup1Deposito::all();
         $kodegroup2deposito = KodeGroup2Deposito::all();

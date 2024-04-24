@@ -6,29 +6,28 @@
     alert(msg);
   }
 </script>
-
 @section('content')
 @if($msgstatus!=''){
-  @if($msgstatus=='1'){
-    @php $statusmsg='success'; $titlemsg='Successfully'; $msgview='Proses Berhasil' @endphp;
-  }
-  @else{
-    @php $statusmsg='error'; $titlemsg='Error!'; $msgview='Proses Gagal!' @endphp;
-  }
-  @endif
-    
-  <script>
-    Swal.fire(
+@if($msgstatus=='1'){
+@php $statusmsg='success'; $titlemsg='Successfully'; $msgview='Proses Berhasil' @endphp;
+}
+@else{
+@php $statusmsg='error'; $titlemsg='Error!'; $msgview='Proses Gagal!' @endphp;
+}
+@endif
+
+<script>
+  Swal.fire(
       '{{ $titlemsg }}',
       '{{ $msgview }}',
       '{{ $statusmsg }}'
     )
-  </script>
+</script>
 }
 @endif
 
-<meta name="csrf-token" content="{{ csrf_token() }}" >
-
+<meta name="csrf-token" content="{{ csrf_token() }}">
+{{-- @php(dd($kode_transkredit)) --}}
 <!-- Main content -->
 <div class="content-wrapper" style="margin-top:10px; max-height:800px !important;">
   <div class="container-fluid">
@@ -36,606 +35,668 @@
       <div class="col-12">
         <div class="card-header">
           <h3 class="card-title">Angsuran Kredit</h3>
-        </div>         
+        </div>
         <div class="card card-warning card-outline">
-              
+
           <!-- form start -->
-          <form autocomplete="off" method="POST" action="/bo_tl_tk_realisasikredit/saveAngsuran" role="search">
+          <form autocomplete="off" method="POST" action="/bo_tl_tk_setoranangsuran/saveAngsuran" role="search">
             @csrf
-            <div class="card-body"> 
-                <div class="form-group" >
-                      <div class="row">
-                          <div class="col-lg-1 col-sm-6">
-                                <label for="nasabahid">No Rekening</label>
-                          </div>
-                          <div class="col-lg-2 col-sm-6">
-                            <!-- <label for="nasabahid">No Rekening</label> -->
-                            <div class="input-group mb-2 autocomplete" >
-                              <input id="no_rekening_kredit" type="text" name="no_rekening_kredit" class="form-control">
-                              <div class="input-group-prepend">
-                                <div class="input-group-text"><span class="input-group-addon">
-                                  <i class="fa fa-search"></i>
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>   
-                          <div class="col-lg-4">
-                            <br>
-                          </div>                  
-                          <div class="col-lg-3 col-sm-12"> 
-                            <div class="bottomlinesolid">
-                              <span class="judulOrange">Channeling Overbooking ke Tabungan </span>
-                            </div>
-                          </div> 
-                          <div class="col-lg-2">
-                            <div class="form-check">
-                              <input class="form-check-input" type="radio" name="gl_check" checked="true">
-                              <label class="form-check-label" style="margin-right:30px;">GL</label>
-                              <input class="form-check-input" type="radio" name="tabungan_check">
-                              <label class="form-check-label" style="margin-right:30px;">Tabungan</label>
-                            </div>
-                          </div>
-                      </div>  
-                      <div class="row" hidden>  
-                          <div class="col-lg-2 col-sm-6">
-                            <label for="inputopendate">ID Nasabah</label>
-                            <input readonly id="id_nasabah" type="text" name="id_nasabah" class="form-control">
-                          </div>
-                      </div>
-                      <div class="row">
-                          <div class="col-lg-1 col-sm-8"></div>
-                          <div class="col-lg-3 col-sm-6">
-                              <label for="inputnasabahid" hidden>Nama</label>
-                              <input type="text" id="nama_nasabah" name="nama_nasabah" readonly class="form-control" >
-                          </div>  
-                          <div class="col-lg-1 col-sm-8"></div>
-                          <div class="col-lg-2 col-sm-8">
-                            <label for="inputnocif">Jml Kredit</label>
-                            <input type="text" name="jml_pinjaman" value="0" class="form-control" id="jml_pinjaman">
-                          </div>  
-                          <div class="col-lg-2 col-sm-8">
-                            <input class="form-check-input" style="margin-left:0px;" type="checkbox" name="channeling_check" <?php // if($kredit->STATUS_AKTIF=="1"){echo 'checked';}?>>
-                            <label class="form-check-label" style="margin-left:20px;">Channeling</label> 
-                          </div>                    
-                      </div>
-                      <br>
-                      <div class="from-group ">
-                        <div class="row">
-                          <div class="form-check col-lg-2 col-sm-6">
-                            <input class="form-check-input" style="margin-left:-13px;" type="checkbox" name="re_scheduling_check" <?php // if($kredit->STATUS_AKTIF=="1"){echo 'checked';}?>>
-                            <label class="form-check-label" style="margin-left:30px;">Re-Scheduling</label>
-                            <br>
-                            <input class="form-check-input" style="margin-left:-13px;" type="checkbox" name="writeoff_check" <?php // if($kredit->STATUS_AKTIF=="1"){echo 'checked';}?>>
-                            <label class="form-check-label" style="margin-left:30px;">Write Off</label>
-                          </div>
-                          <div class="col-lg-3 col-sm-6">
-                              <label for="inputnasabahid" hidden>Nama</label>
-                              <input type="text" id="nama_nasabah2" name="nama_nasabah2" readonly class="form-control" >
-                          </div>  
-                          <div class="col-lg-2 col-sm-8">
-                            <input type="text" id="flag_jadwal" name="flag_jadwal" readonly class="form-control" >
-                          </div>
-                          <div class="col-lg-3 col-sm-12"> 
-                            <label for="nasabahid">Kode Trans. Tabungan Setoran Pokok</label>
-                            <select class="form-control" name="kode_transtab_setoran_pokok" id="kode_transtab_setoran_pokok">
-                              @php($i=0)
-                              @while ($i<count($kodetranstab) )
-                              <option value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}" <?php if($kodetranstab[$i]->KODE_TRANS=='21'){echo 'selected';}?>>{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
-                                  @php($i++)
-                              @endwhile
-                            </select>
-                          </div>                           
-                        </div>                        
-                      </div>
-                      <div class="form-group row"> 
-                        <div class="col-lg-2">
-                          <br>
+            <div class="card-body">
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-lg-1 col-sm-6">
+                    <label for="nasabahid">No Rekening</label>
+                  </div>
+                  <div class="col-lg-2 col-sm-6">
+                    <div class="input-group mb-1 autocomplete">
+                      <input id="no_rekening_kredit" type="text" name="no_rekening_kredit" class="form-control" data-toggle="modal" data-target="#ambildatakredit" readonly>
+                      <div class="input-group-prepend">
+                        <div class="input-group-append" data-toggle="modal" data-target="#ambildatakredit">
+                          <div class="input-group-text"><i class="fa fa-user"></i></div>
                         </div>
-                        <div class="col-lg-3 col-sm-12"> 
-                          <div class="bottomlinesolid">
-                            <span class="judulOrange">Out Standing - Baki Debet</span>
-                          </div>
-                        </div> 
                       </div>
-                      <div class="row">
-                          <div class="col-lg-2 col-sm-6">
-                            <label for="inputopendate" hidden>.</label>
-                            <select class="form-control" name="kode_transaksi" id="kode_transaksi" readonly>
-                              <option value="kredit">{{'Kredit'}}</option>
-                            </select>
-                          </div> 
-                          <div class="col-lg-2 col-sm-6">
-                              <label for="inputnasabahid" >Pokok</label>
-                              <input type="text" id="baki_debet_pokok" value="0" name="baki_debet_pokok" readonly class="form-control" >
-                          </div> 
-                          <div class="col-lg-1 col-sm-6"></div>
-                          <div class="col-lg-2 col-sm-6">
-                              <label for="inputnasabahid" >Bunga</label>
-                              <input type="text" id="baki_debet_bunga" value="0" name="baki_debet_bunga" readonly class="form-control" >
-                          </div>  
-                          <div class="col-lg-5"> 
-                            <div class="row">
-                              <div class="col-lg-6 col-sm-6">
-                                <label for="nasabahid">No. Rekening Tabungan</label>
-                                <div class="input-group mb-2 autocomplete">
-                                  <input id="rekening_transtab_setoran_pokok" type="text" name="rekening_transtab_setoran_pokok" class="form-control">
-                                    <div class="input-group-text"><i class="fa fa-search"></i></div>
-                                </div>
-                              </div>  
-                              <div class="col-lg-6 col-sm-6">
-                                <label for="inputDate1">.</label>
-                                <div class="row">
-                                  <div class="col-lg-12 input-group  " id="inputDate1" data-target-input="nearest">
-                                      <input type="text" name="nama_transtab_setoran_pokok" id="nama_transtab_setoran_pokok" class="form-control datetimepicker-input" required>
-                                  </div>
-                                </div>
-                              </div>  
-                            </div>  
-                          </div>                                           
-                      </div>    
-                      <div class="form-group row"> 
-                        <div class="col-lg-2">
-                          <br>
-                        </div>
-                        <div class="col-lg-3 col-sm-12"> 
-                          <div class="bottomlinesolid">
-                            <span class="judulOrange" name="label_total_tagihan">Total Tagihan s.d Tanggal :</span>
-                          </div>
-                        </div> 
-                      </div>
-                      <div class="row">
-                          <div class="col-lg-2 col-sm-12">
-                            <label for="inputDate1">Tgl Realisasi</label>
-                            <div class="input-group" id="inputDate1" data-target-input="nearest">
-                                <input type="text" name="tgl_realisasi" id="tgl_realisasi" value='{{ $tanggaltransaksi }}' class="form-control datetimepicker-input" required>
-                            </div>
-                            <label for="inputDate1">Tgl Akhir Bulan</label>
-                            <div class="input-group" id="inputDate1" data-target-input="nearest">
-                                <input type="text" name="tgl_akhir_bulan" id="tgl_akhir_bulan" value='{{ $tglakhirbulan }}' class="form-control datetimepicker-input" required>
-                            </div>
-                          </div> 
-                          <div class="col-lg-2 col-sm-6">
-                              <label for="inputnasabahid" >.</label>
-                              <input type="text" id="pokok_total" value="0" name="pokok_total" readonly class="form-control" >
-                          </div> 
-                          <div class="col-lg-1 col-sm-6"></div>
-                          <div class="col-lg-2 col-sm-6">
-                              <label for="inputnasabahid" >.</label>
-                              <input type="text" id="bunga_total" value="0" name="bunga_total" readonly class="form-control" >
-                          </div>                                                       
-                      </div>    
-                      <div class="form-group row"> 
-                        <div class="col-lg-2">
-                          <br>
-                        </div>
-                        <div class="col-lg-3 col-sm-12"> 
-                          <div class="bottomlinesolid">
-                            <span class="judulOrange">Tunggakan s.d Tanggal :</span>
-                          </div>
-                        </div> 
-                      </div>
-                      <div class="row">
-                          <div class="col-lg-2 col-sm-6">
-                            <label for="inputDate1">Periode Angs.</label>
-                            <div class="input-group  " id="inputDate1" data-target-input="nearest">
-                                <input type="text" name="periode_angs" id="periode_angs" class="form-control datetimepicker-input" required>
-                            </div>
-                            <label for="inputDate1">Jml. Angs.</label>
-                            <div class="input-group  " id="inputDate1" data-target-input="nearest">
-                                <input type="text" name="jml_angs" id="jml_angs" class="form-control datetimepicker-input" required>
-                            </div>
-                          </div> 
-                          <div class="col-lg-2 col-sm-6">
-                              <label for="inputnasabahid" >Pokok</label>
-                              <input type="text" id="pokok_tunggakan" value="0" name="pokok_tunggakan" readonly class="form-control" >
-                          </div> 
-                          <div class="col-lg-1 col-sm-6"></div>
-                          <div class="col-lg-2 col-sm-6">
-                              <label for="inputnasabahid" >Bunga</label>
-                              <input type="text" id="bunga_tunggakan" value="0" name="bunga_tunggakan" readonly class="form-control" >
-                          </div>   
-                          <div class="col-lg-3 col-sm-12"> 
-                            <label for="nasabahid">Kode Trans. Tabungan Setoran Bunga</label>
-                            <select class="form-control" name="kode_transtab_setoran_bunga" id="kode_transtab_setoran_bunga">
-                              @php($i=0)
-                              @while ($i<count($kodetranstab) )
-                              <option value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}">{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
-                                  @php($i++)
-                              @endwhile
-                            </select>
-                          </div>                                                                              
-                      </div>  
-                      <div class="form-group row"> 
-                        <div class="col-lg-2">
-                          <br>
-                        </div>
-                        <div class="col-lg-3 col-sm-12"> 
-                          <div class="bottomlinesolid">
-                            <span class="judulOrange">Saldo Akhir</span>
-                          </div>
-                        </div> 
-                      </div>
-                      <div class="row">
-                          <div class="col-lg-2 col-sm-6">
-                            <label for="inputDate1">Bunga Hari Mengendap</label>
-                            <div class="row">
-                              <div class="col-lg-6 input-group  " id="inputDate1" data-target-input="nearest">
-                                  <input type="text" name="bunga_hari_mengendap1" value="0" id="bunga_hari_mengendap1" class="form-control datetimepicker-input" required>
-                              </div>
-                              <div class="col-lg-6 input-group  " id="inputDate1" data-target-input="nearest">
-                                  <input type="text" name="bunga_hari_mengendap2" value="0" id="bunga_hari_mengendap2" class="form-control datetimepicker-input" required>
-                              </div>
-                            </div>
-                          </div> 
-                          <div class="col-lg-2 col-sm-6">
-                              <label for="inputnasabahid" >Pokok</label>
-                              <input type="text" id="pokok_saldo_akhir" value="0" name="pokok_saldo_akhir" readonly class="form-control" >
-                          </div> 
-                          <div class="col-lg-1 col-sm-6"></div>
-                          <div class="col-lg-2 col-sm-6">
-                              <label for="inputnasabahid" >Bunga</label>
-                              <input type="text" id="bunga_saldo_akhir" value="0" name="bunga_saldo_akhir" readonly class="form-control" >
-                          </div> 
-                          <div class="col-lg-5">
-                            <div class="row">
-                              <div class="col-lg-6 col-sm-6">
-                                <label for="nasabahid">No. Rekening Tabungan</label>
-                                <div class="input-group mb-2 autocomplete">
-                                  <input id="rekening_transtab_setoran_bunga" type="text" name="rekening_transtab_setoran_bunga" class="form-control">
-                                    <div class="input-group-text"><i class="fa fa-search"></i></div>
-                                </div>
-                              </div> 
-                              <div class="col-lg-6 col-sm-6">
-                                <label for="inputDate1">.</label>
-                                <div class="row">
-                                  <div class="col-lg-12 input-group  " id="inputDate1" data-target-input="nearest">
-                                      <input type="text" name="nama_transtab_setoran_bunga" id="nama_transtab_setoran_bunga" class="form-control datetimepicker-input" required>
-                                  </div>
-                                </div>
-                              </div> 
-                            </div> 
-                          </div>                                                      
-                      </div>
-                    
-                </div>   
-                <div class="form-group row">
-                  <div class="col-lg-7 col-sm-12"> 
-                    <div class="bottomlinesolid">
-                      <span class="judulOrange">Status Pembayaran </span>
-                    </div>
-                  </div> 
-                  <div class="col-lg-5 col-sm-12"> 
-                    <div class="bottomlinesolid">
-                      <span class="judulOrange">Overbooking Bonus ke Tabungan </span>
                     </div>
                   </div>
-                </div> 
+                  <div class="col-lg-4">
+                    <br>
+                  </div>
+                  <div class="col-lg-3 col-sm-12">
+                    <div class="bottomlinesolid">
+                      <span class="judulOrange">Channeling Overbooking ke Tabungan </span>
+                    </div>
+                  </div>
+                  <div class="col-lg-2">
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="gl_check" checked="true">
+                      <label class="form-check-label" style="margin-right:30px;">GL</label>
+                      <input class="form-check-input" type="radio" name="tabungan_check">
+                      <label class="form-check-label" style="margin-right:30px;">Tabungan</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row" hidden>
+                  <div class="col-lg-2 col-sm-6">
+                    <label for="inputopendate">ID Nasabah</label>
+                    <input readonly id="id_nasabah" type="text" name="id_nasabah" class="form-control">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-1 col-sm-8"></div>
+                  <div class="col-lg-3 col-sm-6">
+                    <label for="inputnasabahid" hidden>Nama</label>
+                    <input type="text" id="nama_nasabah" name="nama_nasabah" readonly class="form-control">
+                  </div>
+                  <div class="col-lg-1 col-sm-8"></div>
+                  <div class="col-lg-2 col-sm-8">
+                    <label for="inputnocif">Jml Kredit</label>
+                    <input type="text" name="jml_pinjaman" value="0" class="form-control" id="jml_pinjaman">
+                  </div>
+                  <div class="col-lg-2 col-sm-8">
+                    <input class="form-check-input" style="margin-left:0px;" type="checkbox" name="channeling_check"
+                      <?php // if($kredit->STATUS_AKTIF=="1"){echo 'checked';}?>>
+                    <label class="form-check-label" style="margin-left:20px;">Channeling</label>
+                  </div>
+                </div>
+                <br>
+                <div class="from-group ">
+                  <div class="row">
+                    <div class="form-check col-lg-2 col-sm-6">
+                      <input class="form-check-input" style="margin-left:-13px;" type="checkbox"
+                        name="re_scheduling_check" <?php // if($kredit->STATUS_AKTIF=="1"){echo 'checked';}?>>
+                      <label class="form-check-label" style="margin-left:30px;">Re-Scheduling</label>
+                      <br>
+                      <input class="form-check-input" style="margin-left:-13px;" type="checkbox" name="writeoff_check"
+                        <?php // if($kredit->STATUS_AKTIF=="1"){echo 'checked';}?>>
+                      <label class="form-check-label" style="margin-left:30px;">Write Off</label>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                      <label for="inputnasabahid" hidden>Nama</label>
+                      <input type="text" id="norek2" name="nama_nasabah2" readonly class="form-control">
+                    </div>
+                    <div class="col-lg-2 col-sm-8">
+                      <input type="text" id="flag_jadwal" name="flag_jadwal" readonly class="form-control">
+                    </div>
+                    <div class="col-lg-3 col-sm-12">
+                      <label for="nasabahid">Kode Trans. Tabungan Setoran Pokok</label>
+                      <select class="form-control" name="kode_transtab_setoran_pokok" id="kode_transtab_setoran_pokok">
+                        @php($i=0)
+                        @while ($i<count($kodetranstab) ) <option
+                          value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}"
+                          <?php if($kodetranstab[$i]->KODE_TRANS=='21'){echo
+                          'selected';}?>>{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}
+                          </option>
+                          @php($i++)
+                          @endwhile
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-lg-2">
+                    <br>
+                  </div>
+                  <div class="col-lg-3 col-sm-12">
+                    <div class="bottomlinesolid">
+                      <span class="judulOrange">Out Standing - Baki Debet</span>
+                    </div>
+                  </div>
+                </div>
                 <div class="row">
                   <div class="col-lg-2 col-sm-6">
-                    <label for="inputDate1">Kolektibilitas</label>
-                    <div class="row">
-                      <div class="col-lg-6 input-group  " id="inputDate1" data-target-input="nearest">
-                          <input type="text" name="kolektibilitas" id="kolektibilitas" class="form-control datetimepicker-input" required>
-                      </div>
-                    </div>
-                  </div> 
-                  <div class="col-lg-2 col-sm-6"></div>
-                  <div class="col-lg-3 col-sm-6">
-                    <label for="inputDate1">Sisa Bunga Akrual</label>
-                    <div class="row">
-                      <div class="col-lg-6 input-group  " id="inputDate1" data-target-input="nearest">
-                          <input type="text" name="sisa_bunga_akrual" value="0" id="sisa_bunga_akrual" class="form-control datetimepicker-input" required>
-                      </div>
-                    </div>
-                  </div> 
-                  <div class="col-lg-3 col-sm-12"> 
-                    <label for="nasabahid">Kode Trans. Tabungan</label>
-                    <select class="form-control" name="kode_transtab_overbooking_bonus" id="kode_transtab_overbooking_bonus">
-                      @php($i=0)
-                      @while ($i<count($kodetranstab) )
-                      <option value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}">{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
-                          @php($i++)
-                      @endwhile
+                    <label for="inputopendate" hidden>.</label>
+                    <select class="form-control" name="kode_transaksi" id="kode_transaksi" readonly>
+                      <option value="kredit">{{'Kredit'}}</option>
                     </select>
                   </div>
                   <div class="col-lg-2 col-sm-6">
-                    <label for="inputDate1">Bonus</label>
-                    <div class="row">
-                      <div class="col-lg-12 input-group  " id="inputDate1" data-target-input="nearest">
-                          <input type="text" name="overbooking_bonus" value="0" id="overbooking_bonus" class="form-control datetimepicker-input" required>
-                      </div>
-                    </div>
-                  </div> 
-                </div>
-                <div class="row">
-                  <div class="col-lg-3 col-sm-6">
-                    <label for="inputDate1">Bunga akrual</label>
-                    <div class="row">
-                      <div class="col-lg-6 input-group  " id="inputDate1" data-target-input="nearest">
-                          <input type="text" name="bunga_akrual" value="0" id="bunga_akrual" class="form-control datetimepicker-input" required>
-                      </div>
-                    </div>
-                  </div> 
-                  <div class="col-lg-4"></div>
+                    <label for="inputnasabahid">Pokok</label>
+                    <input type="text" id="baki_debet_pokok" value="0" name="baki_debet_pokok" readonly
+                      class="form-control">
+                  </div>
+                  <div class="col-lg-1 col-sm-6"></div>
+                  <div class="col-lg-2 col-sm-6">
+                    <label for="inputnasabahid">Bunga</label>
+                    <input type="text" id="baki_debet_bunga" value="0" name="baki_debet_bunga" readonly
+                      class="form-control">
+                  </div>
                   <div class="col-lg-5">
                     <div class="row">
                       <div class="col-lg-6 col-sm-6">
                         <label for="nasabahid">No. Rekening Tabungan</label>
                         <div class="input-group mb-2 autocomplete">
-                          <input id="rekening_transtab_overbooking_bonus" type="text" name="rekening_transtab_overbooking_bonus" class="form-control">
-                            <div class="input-group-text"><i class="fa fa-search"></i></div>
+                          <input id="rekening_transtab_setoran_pokok" type="text" name="rekening_transtab_setoran_pokok"
+                            class="form-control">
+                          <div class="input-group-text"><i class="fa fa-search"></i></div>
                         </div>
-                      </div> 
+                      </div>
                       <div class="col-lg-6 col-sm-6">
                         <label for="inputDate1">.</label>
                         <div class="row">
-                          <div class="col-lg-12 input-group  " id="inputDate1" data-target-input="nearest">
-                              <input type="text" name="nama_transtab_overbooking_bonus" id="nama_transtab_overbooking_bonus" class="form-control datetimepicker-input" required>
+                          <div class="col-lg-12 input-group " id="inputDate1" data-target-input="nearest">
+                            <input type="text" name="nama_transtab_setoran_pokok" id="nama_transtab_setoran_pokok" class="form-control datetimepicker-input" value="-">
                           </div>
                         </div>
-                      </div> 
-                    </div> 
-                  </div>  
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-lg-2">
+                    <br>
+                  </div>
+                  <div class="col-lg-3 col-sm-12">
+                    <div class="bottomlinesolid">
+                      <span class="judulOrange" name="label_total_tagihan">Total Tagihan s.d Tanggal :</span>
+                    </div>
+                  </div>
                 </div>
                 <div class="row">
-                  <div class="col-lg-4 col-sm-6">
-                    <label for="inputDate1">Base Denda</label>
-                    <div class="row">
-                      <div class="col-lg-8 input-group  " id="inputDate1" data-target-input="nearest">
-                          <input type="text" name="base_denda" id="base_denda" class="form-control datetimepicker-input" required>
-                      </div>
-                      <div class="col-lg-3 input-group  " id="inputDate1" data-target-input="nearest">
-                          <input type="text" name="base_denda_persen" value="0" id="base_denda_persen" class="form-control datetimepicker-input" required>
-                      </div>
+                  <div class="col-lg-2 col-sm-12">
+                    <label for="inputDate1">Tgl Realisasi</label>
+                    <div class="input-group" id="inputDate1" data-target-input="nearest">
+                      <input type="text" name="tgl_realisasi" id="tgl_realisasi" value='{{ $tanggaltransaksi }}'
+                        class="form-control datetimepicker-input" required readonly>
                     </div>
-                  </div> 
-                  <div class="col-lg-3 col-sm-6"></div>
-                  <div class="col-lg-3 col-sm-6">
-                    <label for="inputDate1">Denda Bonus</label>
+                    <label for="inputDate1">Tgl Akhir Bulan</label>
+                    <div class="input-group" id="inputDate1" data-target-input="nearest">
+                      <input type="text" name="tgl_akhir_bulan" id="tgl_akhir_bulan" value='{{ $tglakhirbulan }}'
+                        class="form-control datetimepicker-input" required readonly>
+                    </div>
+                  </div>
+                  <div class="col-lg-2 col-sm-6">
+                    <label for="inputnasabahid">.</label>
+                    <input type="text" id="pokok_total" value="0" name="pokok_total" readonly class="form-control">
+                  </div>
+                  <div class="col-lg-1 col-sm-6"></div>
+                  <div class="col-lg-2 col-sm-6">
+                    <label for="inputnasabahid">.</label>
+                    <input type="text" id="bunga_total" value="0" name="bunga_total" readonly class="form-control">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-lg-2">
+                    <br>
+                  </div>
+                  <div class="col-lg-3 col-sm-12">
+                    <div class="bottomlinesolid">
+                      <span class="judulOrange">Tunggakan s.d Tanggal :</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-2 col-sm-6">
+                    <label for="inputDate1">Periode Angs.</label>
+                    <div class="input-group" id="inputDate1" data-target-input="nearest">
+                      <input type="text" name="periode_angs" id="periode_angs" class="form-control datetimepicker-input"
+                        required readonly value="B">
+                    </div>
+                    <label for="inputDate1">Jml. Angs.</label>
+                    <div class="input-group  " id="inputDate1" data-target-input="nearest">
+                      <input type="text" name="jml_angs" id="jml_angs" class="form-control datetimepicker-input"
+                        required readonly>
+                    </div>
+                  </div>
+                  <div class="col-lg-2 col-sm-6">
+                    <label for="inputnasabahid">Pokok</label>
+                    <input type="text" id="pokok_tunggakan" value="0" name="pokok_tunggakan" readonly
+                      class="form-control">
+                  </div>
+                  <div class="col-lg-1 col-sm-6"></div>
+                  <div class="col-lg-2 col-sm-6">
+                    <label for="inputnasabahid">Bunga</label>
+                    <input type="text" id="bunga_tunggakan" value="0" name="bunga_tunggakan" readonly
+                      class="form-control">
+                  </div>
+                  <div class="col-lg-3 col-sm-12">
+                    <label for="nasabahid">Kode Trans. Tabungan Setoran Bunga</label>
+                    <select class="form-control" name="kode_transtab_setoran_bunga" id="kode_transtab_setoran_bunga">
+                      @php($i=0)
+                      @while ($i<count($kodetranstab) ) <option
+                        value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}">
+                        {{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
+                        @php($i++)
+                        @endwhile
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-lg-2">
+                    <br>
+                  </div>
+                  <div class="col-lg-3 col-sm-12">
+                    <div class="bottomlinesolid">
+                      <span class="judulOrange">Saldo Akhir</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-2 col-sm-6">
+                    <label for="inputDate1">Bunga Hari Mengendap</label>
                     <div class="row">
                       <div class="col-lg-6 input-group  " id="inputDate1" data-target-input="nearest">
-                          <input type="text" name="denda_bonus" value="0" id="denda_bonus" class="form-control datetimepicker-input" required>
+                        <input type="text" name="bunga_hari_mengendap1" value="0" id="bunga_hari_mengendap1"
+                          class="form-control datetimepicker-input" required>
+                      </div>
+                      <div class="col-lg-6 input-group  " id="inputDate1" data-target-input="nearest">
+                        <input type="text" name="bunga_hari_mengendap2" value="0" id="bunga_hari_mengendap2"
+                          class="form-control datetimepicker-input" required>
                       </div>
                     </div>
-                  </div>                 
-                </div>
-                <div class="form-group row">
-                  <div class="col-lg-1 col-sm-6">
-                      <label for="inputnasabahid" >.</label>
-                      <input type="text" id="tob" name="tob" readonly class="form-control" value="O" >
-                  </div>   
-                  <div class="col-lg-3 col-sm-12"> 
-                    <label for="nasabahid">Kode Trans.</label>
-                    <select class="form-control" name="kode_transkredit" id="kode_transkredit">
-                     @php($i=0)
-                      @while ($i<count($kodetranskredit) )
-                      <option value="{{$kodetranskredit[$i]->KODE_TRANS}}" <?php if($kodetranskredit[$i]->KODE_TRANS=='003'){echo 'selected';}?>>{{$kodetranskredit[$i]->KODE_TRANS}}-{{$kodetranskredit[$i]->DESKRIPSI_TRANS}}</option>
-                          @php($i++)
-                      @endwhile
-                    </select>
-                  </div>
-                  <div class="col-lg-3 col-sm-12"> 
-                    <label for="nasabahid">Kode Trans. Tabungan Wajib</label>
-                    <select class="form-control" name="kode_transtab_wajib" id="kode_transtab_wajib">
-                      @php($i=0)
-                      @while ($i<count($kodetranstab) )
-                      <option value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}">{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
-                          @php($i++)
-                      @endwhile
-                    </select>
-                  </div> 
-                </div>
-                <div class="form-group row">
-                  <div class="col-lg-1 col-sm-6">
-                      <label for="inputnasabahid" >Cicilan ke</label>
-                      <input type="text" id="cicilan_ke" value="0" name="cicilan_ke" onchange="setCicilan()" class="form-control" >
-                  </div> 
-                  <div class="col-lg-2 col-sm-6">
-                      <label for="inputnasabahid" >Tgl Tagihan</label>
-                      <input type="text" id="tgl_tagihan" name="tgl_tagihan" class="form-control" >
-                  </div> 
-                  <div class="col-lg-2 col-sm-6">
-                      <label for="inputnasabahid" >Tgl Trans</label>
-                      <input type="text" id="tgl_trans" name="tgl_trans" value='{{ $tanggaltransaksi }}' class="form-control" >
-                  </div> 
-                  <div class="col-lg-2 col-sm-12"> 
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="check_pelunasan" <?php // if($kredit->STATUS_AKTIF=="1"){echo 'checked';}?>>
-                        <label class="form-check-label" style="margin-right:30px;">Pelunasan</label>
-                    </div>      
-                  </div> 
-                  <div class="col-lg-5 col-sm-12"> 
-                    <div class="bottomlinesolid">
-                      <span class="judulOrange">Overbooking dari Tabungan </span>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <div class="col-lg-3">
-                    <div class="row">
-                      <div class="col-lg-6 col-sm-6">
-                          <label for="inputnasabahid" >Pokok</label>
-                          <input type="text" id="pokok_pembayaran" value="0" name="pokok_pembayaran" class="form-control" >
-                      </div> 
-                      <div class="col-lg-6 col-sm-6">
-                          <label for="inputnasabahid" >Bunga</label>
-                          <input type="text" id="bunga_pembayaran" value="0" name="bunga_pembayaran" class="form-control" >
-                      </div> 
-                    </div>
                   </div>
                   <div class="col-lg-2 col-sm-6">
-                      <label for="inputnasabahid" >Denda</label>
-                      <input type="text" id="denda_pembayaran" value="0" name="denda_pembayaran" class="form-control" >
-                  </div> 
+                    <label for="inputnasabahid">Pokok</label>
+                    <input type="text" id="pokok_saldo_akhir" value="0" name="pokok_saldo_akhir" readonly
+                      class="form-control">
+                  </div>
+                  <div class="col-lg-1 col-sm-6"></div>
                   <div class="col-lg-2 col-sm-6">
-                      <label for="inputnasabahid" >Tab. Wajib</label>
-                      <input type="text" id="tab_wajib" name="tab_wajib" value="0" class="form-control" >
+                    <label for="inputnasabahid">Bunga</label>
+                    <input type="text" id="bunga_saldo_akhir" value="0" name="bunga_saldo_akhir" readonly
+                      class="form-control">
                   </div>
-                  <div class="col-lg-3 col-sm-12"> 
-                    <label for="nasabahid">Kode Trans. Tabungan</label>
-                    <select class="form-control" name="kode_transtab_overbooking" id="kode_transtab_overbooking">
-                      @php($i=0)
-                      @while ($i<count($kodetranstab) )
-                      <option value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}" <?php if($kodetranstab[$i]->KODE_TRANS=='08'){echo 'selected';}?>>{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
-                          @php($i++)
-                      @endwhile
-                    </select>
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <div class="col-lg-3">
-                    <div class="row">
-                      <div class="col-lg-6 col-sm-6">
-                          <label for="inputnasabahid" >Disc.</label>
-                          <input type="text" id="disc_pokok" value="0" name="disc_pokok" class="form-control" >
-                      </div> 
-                      <div class="col-lg-6 col-sm-6">
-                          <label for="inputnasabahid" >Disc.</label>
-                          <input type="text" id="disc_bunga" value="0" name="disc_bunga" class="form-control" >
-                      </div> 
-                    </div>
-                  </div>
-                    <div class="col-lg-2 col-sm-6">
-                        <label for="inputnasabahid" >Disc.</label>
-                        <input type="text" id="disc_denda" value="0" name="disc_denda" class="form-control" >
-                    </div> 
-                    <div class="col-lg-2 col-sm-6">
-                        <label for="inputnasabahid" >Adm.</label>
-                        <input type="text" id="biaya_admin" value="0" name="biaya_admin" class="form-control" >
-                    </div>
-                    <div class="col-lg-5"> 
-                      <div class="row">
-                        <div class="col-lg-6 col-sm-6">
-                          <label for="nasabahid">No. Rekening Tabungan</label>
-                          <div class="input-group mb-2 autocomplete">
-                            <input id="rekening_overbook" type="text" name="rekening_overbook" class="form-control">
-                              <div class="input-group-text"><i class="fa fa-search"></i></div>
-                          </div>
-                        </div>  
-                        <div class="col-lg-6 col-sm-6">
-                          <label for="inputDate1">.</label>
-                          <div class="row">
-                            <div class="col-lg-12 input-group  " id="inputDate1" data-target-input="nearest">
-                                <input type="text" name="nama_overbook" id="nama_overbook" class="form-control datetimepicker-input" required>
-                            </div>
-                          </div>
-                        </div>  
-                      </div>  
-                    </div>
-                </div>
-                <div class="form-group row">
-                  <div class="col-lg-3">
-                    <div class="row">
-                      <div class="col-lg-6 col-sm-6">
-                          <label for="inputnasabahid" >Sisa Provisi</label>
-                          <input type="text" id="sisa_provisi" value="0" name="sisa_provisi" class="form-control" >
-                      </div> 
-                      <div class="col-lg-6 col-sm-6">
-                          
-                      </div> 
-                    </div>
-                  </div>
-                    <div class="col-lg-2 col-sm-6">
-                        
-                    </div> 
-                    <div class="col-lg-2 col-sm-6">
-                        <label for="inputnasabahid" >Administrasi Lain</label>
-                        <input type="text" id="admin_lain" value="0" name="admin_lain" class="form-control" >
-                    </div>
-                    <div class="col-lg-2 col-sm-6">
-                      <label for="inputDate1">.</label>
-                      <div class="row">
-                        <div class="col-lg-12 input-group  " id="inputDate1" data-target-input="nearest">
-                            <input type="text" name="nama_overbook" id="nama_overbook" class="form-control datetimepicker-input" required>
-                        </div>
-                      </div>
-                    </div> 
-                </div>
-                <div class="form-group row">
-                  <div class="col-lg-3">
-                    <div class="row">
-                      <div class="col-lg-6 col-sm-6">
-                          <label for="inputnasabahid" >Sisa ByAdmin</label>
-                          <input type="text" id="sisa_byadmin" value="0" name="sisa_byadmin" class="form-control" >
-                      </div> 
-                      <div class="col-lg-6 col-sm-6">
-                          
-                      </div> 
-                    </div>
-                  </div>
-                    <div class="col-lg-2 col-sm-6">
-                        
-                    </div> 
-                    <div class="col-lg-2 col-sm-6">
-                        <label for="inputnasabahid" >Jumlah Setoran</label>
-                        <input type="text" id="jumlah_setoran" value="0" name="jumlah_setoran" class="form-control" >
-                    </div>
-                </div>
-                <div class="form-group row">
-                  <div class="col-lg-3">
-                    <div class="row">
-                      <div class="col-lg-6 col-sm-6">
-                          <label for="inputnasabahid" >Sisa ByTrans</label>
-                          <input type="text" id="sisa_bytrans" value="0" name="sisa_bytrans" class="form-control" >
-                      </div> 
-                      <div class="col-lg-6 col-sm-6">
-                          
-                      </div> 
-                    </div>
-                  </div>
-                    <div class="col-lg-2 col-sm-6">
-                        
-                    </div> 
-                    <div class="col-lg-2 col-sm-6">
-                        <label for="inputnasabahid" >Jumlah Uang</label>
-                        <input type="text" id="jumlah_uang" value="0" name="jumlah_uang" class="form-control" onchange="hitungKembalian()">
-                    </div>
-                </div>
-                <div class="form-group row">
-                  <div class="col-lg-3">
-                    <div class="row">
-                      <div class="col-lg-6 col-sm-6">
-                          <label for="inputnasabahid" >Kwitansi</label>
-                          <input type="text" id="kwitansi" name="kwitansi" class="form-control" >
-                      </div> 
-                      <div class="col-lg-6 col-sm-6">
-                          
-                      </div> 
-                    </div>
-                  </div>
-                    <div class="col-lg-2 col-sm-6">
-                        
-                    </div> 
-                    <div class="col-lg-2 col-sm-6">
-                        <label for="inputnasabahid" >Kembali</label>
-                        <input type="text" id="kembali" value="0" name="kembali" class="form-control" >
-                    </div>
-                </div>
-                <div class="form-group row">
                   <div class="col-lg-5">
                     <div class="row">
-                      <div class="col-lg-12 col-sm-6">
-                          <label for="inputnasabahid" >Keterangan</label>
-                          <input type="text" id="keterangan" name="keterangan" class="form-control" >
+                      <div class="col-lg-6 col-sm-6">
+                        <label for="nasabahid">No. Rekening Tabungan</label>
+                        <div class="input-group mb-2 autocomplete">
+                          <input id="rekening_transtab_setoran_bunga" type="text" name="rekening_transtab_setoran_bunga"
+                            class="form-control">
+                          <div class="input-group-text"><i class="fa fa-search"></i></div>
+                        </div>
                       </div>
-                    </div>                    
-                </div>                                   
-            </div>
-            <!-- /.card-body -->
-            <div class="form-group row"> 
-              <div class="col-lg-12 col-sm-12"> 
-                <div class="bottomlinesolid">
+                      <div class="col-lg-6 col-sm-6">
+                        <label for="inputDate1">.</label>
+                        <div class="row">
+                          <div class="col-lg-12 input-group" id="inputDate1" data-target-input="nearest">
+                            <input type="text" name="nama_transtab_setoran_bunga" id="nama_transtab_setoran_bunga"
+                              class="form-control datetimepicker-input">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-7 col-sm-12">
+                  <div class="bottomlinesolid">
+                    <span class="judulOrange">Status Pembayaran </span>
+                  </div>
+                </div>
+                <div class="col-lg-5 col-sm-12">
+                  <div class="bottomlinesolid">
+                    <span class="judulOrange">Overbooking Bonus ke Tabungan </span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="modal-footer justify-content-between">
-              <button name="btn_cetak" type="button" class="btn btn-primary" disabled>Cetak Kwitansi</button>
-              <div class="justify-right">
-                <button name="btn_save" type="button" class="btn btn-primary" onclick="save_angsuran();">Simpan</button>
-                <button name="btn_reset" type="button" class="btn btn-primary" onclick="window.location.reload();">Reset</button>
+              <div class="row">
+                <div class="col-lg-2 col-sm-6">
+                  <label for="inputDate1">Kolektibilitas</label>
+                  <div class="row">
+                    <div class="col-lg-6 input-group  " id="inputDate1" data-target-input="nearest">
+                      <input type="text" name="kolektibilitas" id="kolektibilitas"
+                        class="form-control datetimepicker-input" required readonly>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-2 col-sm-6"></div>
+                <div class="col-lg-3 col-sm-6">
+                  <label for="inputDate1">Sisa Bunga Akrual</label>
+                  <div class="row">
+                    <div class="col-lg-6 input-group  " id="inputDate1" data-target-input="nearest">
+                      <input type="text" name="sisa_bunga_akrual" value="0" id="sisa_bunga_akrual"
+                        class="form-control datetimepicker-input" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                  <label for="nasabahid">Kode Trans. Tabungan</label>
+                  <select class="form-control" name="kode_transtab_overbooking_bonus"
+                    id="kode_transtab_overbooking_bonus">
+                    @php($i=0)
+                    @while ($i<count($kodetranstab) ) <option
+                      value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}">
+                      {{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
+                      @php($i++)
+                      @endwhile
+                  </select>
+                </div>
+                <div class="col-lg-2 col-sm-6">
+                  <label for="inputDate1">Bonus</label>
+                  <div class="row">
+                    <div class="col-lg-12 input-group  " id="inputDate1" data-target-input="nearest">
+                      <input type="text" name="overbooking_bonus" value="0" id="overbooking_bonus"
+                        class="form-control datetimepicker-input" required>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
+              <div class="row">
+                <div class="col-lg-3 col-sm-6">
+                  <label for="inputDate1">Bunga akrual</label>
+                  <div class="row">
+                    <div class="col-lg-6 input-group  " id="inputDate1" data-target-input="nearest">
+                      <input type="text" name="bunga_akrual" value="0" id="bunga_akrual"
+                        class="form-control datetimepicker-input" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-4"></div>
+                <div class="col-lg-5">
+                  <div class="row">
+                    <div class="col-lg-6 col-sm-6">
+                      <label for="nasabahid">No. Rekening Tabungan</label>
+                      <div class="input-group mb-2 autocomplete">
+                        <input id="rekening_transtab_overbooking_bonus" type="text"
+                          name="rekening_transtab_overbooking_bonus" class="form-control">
+                        <div class="input-group-text"><i class="fa fa-search"></i></div>
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-sm-6">
+                      <label for="inputDate1"></label>
+                      <div class="row">
+                        <div class="col-lg-12 input-group  " id="inputDate1" data-target-input="nearest">
+                          <input type="text" name="nama_transtab_overbooking_bonus" id="nama_transtab_overbooking_bonus"
+                            class="form-control datetimepicker-input" >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-sm-6">
+                  <label for="inputDate1">Base Denda</label>
+                  <div class="row">
+                    <div class="col-lg-8 input-group  " id="inputDate1" data-target-input="nearest">
+                      <input type="text" name="base_denda" id="base_denda" class="form-control datetimepicker-input">
+                    </div>
+                    <div class="col-lg-3 input-group  " id="inputDate1" data-target-input="nearest">
+                      <input type="text" name="base_denda_persen" value="0" id="base_denda_persen"
+                        class="form-control datetimepicker-input" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-3 col-sm-6"></div>
+                <div class="col-lg-3 col-sm-6">
+                  <label for="inputDate1">Denda Bonus</label>
+                  <div class="row">
+                    <div class="col-lg-6 input-group  " id="inputDate1" data-target-input="nearest">
+                      <input type="text" name="denda_bonus" value="0" id="denda_bonus"
+                        class="form-control datetimepicker-input" required>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-1 col-sm-6">
+                  <label for="inputnasabahid">.</label>
+                  @if(isset($kode_transkredit))
+                  <input type="text" id="tob" name="tob" readonly class="form-control" value="{{substr($kode_transkredit,4,1)}}">
+                  @else
+                  <input type="text" id="tob" name="tob" readonly class="form-control" value="O">
+                  @endif
+                </div>
+
+                <div class="col-lg-3 col-sm-12">
+                  <label for="nasabahid">Kode Trans.</label>
+                  <select class="form-control" name="kode_transkredit" id="kode_transkredit" onchange="tobselect();">
+                    @php($i=0)
+                    @while ($i<count($kodetranskredit) ) 
+                      <option
+                      value="{{$kodetranskredit[$i]->KODE_TRANS}}-{{$kodetranskredit[$i]->TOB}}" <?php
+                      if (isset($kode_transkredit)) {
+                        if($kodetranskredit[$i]->KODE_TRANS==substr($kode_transkredit,0,3)){echo
+                      'selected';}
+                      }elseif($kodetranskredit[$i]->KODE_TRANS=='003'){echo
+                      'selected';}
+                      ?>>{{$kodetranskredit[$i]->KODE_TRANS}}-{{$kodetranskredit[$i]->DESKRIPSI_TRANS}}
+                      </option>
+                      @php($i++)
+                    @endwhile
+                  </select>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                  <label for="nasabahid">Kode Trans. Tabungan Wajib</label>
+                  <select class="form-control" name="kode_transtab_wajib" id="kode_transtab_wajib">
+                    @php($i=0)
+                    @while ($i<count($kodetranstab) ) <option
+                      value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}">
+                      {{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
+                      @php($i++)
+                      @endwhile
+                  </select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-1 col-sm-6">
+                  <label for="inputnasabahid">Cicilan ke</label>
+                  <input type="text" id="cicilan_ke" value="0" name="cicilan_ke" onclick="setCicilan();" onchange="setCicilan();"
+                    class="form-control">
+                </div>
+                <div class="col-lg-2 col-sm-6">
+                  <label for="inputnasabahid">Tgl Tagihan</label>
+                  <input type="text" id="tgl_tagihan" name="tgl_tagihan" class="form-control" required>
+                </div>
+                <div class="col-lg-2 col-sm-6">
+                  <label for="inputnasabahid">Tgl Trans</label>
+                  <input type="text" id="tgl_trans" name="tgl_trans" value='{{ $tanggaltransaksi }}'
+                    class="form-control">
+                </div>
+                <div class="col-lg-2 col-sm-12">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="check_pelunasan" <?php //
+                      if($kredits[0]->STATUS_AKTIF=="1"){echo 'checked';}?>>
+                    <label class="form-check-label" style="margin-right:30px;">Pelunasan</label>
+                  </div>
+                </div>
+                <div class="col-lg-5 col-sm-12">
+                  <div class="bottomlinesolid">
+                    <span class="judulOrange">Overbooking dari Tabungan </span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-3">
+                  <div class="row">
+                    <div class="col-lg-6 col-sm-6">
+                      <label for="inputnasabahid">Pokok</label>
+                      <input type="text" id="pokok_pembayaran" value="0" name="pokok_pembayaran" class="form-control" onchange="jumlahsetoran();">
+                    </div>
+                    <div class="col-lg-6 col-sm-6">
+                      <label for="inputnasabahid">Bunga</label>
+                      <input type="text" id="bunga_pembayaran" value="0" name="bunga_pembayaran" class="form-control" onchange="jumlahsetoran();">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-2 col-sm-6">
+                  <label for="inputnasabahid">Denda</label>
+                  <input type="text" id="denda_pembayaran" value="0" name="denda_pembayaran" class="form-control" onchange="jumlahsetoran();">
+                </div>
+                <div class="col-lg-2 col-sm-6">
+                  <label for="inputnasabahid">Tab. Wajib</label>
+                  <input type="text" id="tab_wajib" name="tab_wajib" value="0" class="form-control">
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                  <label for="nasabahid">Kode Trans. Tabungan</label>
+                  <select class="form-control" name="kode_transtab_overbooking" id="kode_transtab_overbooking">
+                    @php($i=0)
+                    @while ($i<count($kodetranstab) ) <option
+                      value="{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->TOB}}-{{$kodetranstab[$i]->TYPE_TRANS}}"
+                      <?php if($kodetranstab[$i]->KODE_TRANS=='08'){echo
+                      'selected';}?>>{{$kodetranstab[$i]->KODE_TRANS}}-{{$kodetranstab[$i]->DESKRIPSI_TRANS}}</option>
+                      @php($i++)
+                      @endwhile
+                  </select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-3">
+                  <div class="row">
+                    <div class="col-lg-6 col-sm-6">
+                      <label for="inputnasabahid">Disc.</label>
+                      <input type="text" id="disc_pokok" value="0" name="disc_pokok" class="form-control">
+                    </div>
+                    <div class="col-lg-6 col-sm-6">
+                      <label for="inputnasabahid">Disc.</label>
+                      <input type="text" id="disc_bunga" value="0" name="disc_bunga" class="form-control">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-2 col-sm-6">
+                  <label for="inputnasabahid">Disc.</label>
+                  <input type="text" id="disc_denda" value="0" name="disc_denda" class="form-control">
+                </div>
+                <div class="col-lg-2 col-sm-6">
+                  <label for="inputnasabahid">Adm.</label>
+                  <input type="text" id="biaya_admin" value="0" name="biaya_admin" class="form-control">
+                </div>
+                <div class="col-lg-5">
+                  <div class="row">
+                    <div class="col-lg-6 col-sm-6">
+                      <label for="nasabahid">No. Rekening Tabungan</label>
+                      <div class="input-group mb-2 autocomplete">
+                        <input id="rekening_overbook" type="text" name="rekening_overbook" class="form-control" data-toggle="modal" data-target="#ambildatatabunganteller" onclick="checktob()">
+                        <div class="input-group-append" data-toggle="modal" data-target="#ambildatatabunganteller" onclick="checktob()">
+                          <div class="input-group-text"><i class="fa fa-user"></i></div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="col-lg-6 col-sm-6">
+                      <label for="inputDate1">Nama Nasabah</label>
+                      <div class="row">
+                        <div class="col-lg-12 input-group  " id="inputDate1" data-target-input="nearest">
+                          <input type="text" name="nama_overbook" id="nama_overbook"
+                            class="form-control datetimepicker-input"  readonly>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-3">
+                  <div class="row">
+                    <div class="col-lg-6 col-sm-6">
+                      <label for="inputnasabahid">Sisa Provisi</label>
+                      <input type="text" id="sisa_provisi" value="0" name="sisa_provisi" class="form-control">
+                    </div>
+                    <div class="col-lg-6 col-sm-6">
+
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-2 col-sm-6">
+
+                </div>
+                <div class="col-lg-2 col-sm-6">
+                  <label for="inputnasabahid">Administrasi Lain</label>
+                  <input type="text" id="admin_lain" value="0" name="admin_lain" class="form-control">
+                </div>
+                <div class="col-lg-2 col-sm-6">
+                  <label for="inputDate1">Saldo Akhir</label>
+                  <div class="row">
+                    <div class="col-lg-12 input-group  " id="inputDate1" data-target-input="nearest">
+                      <input type="text" name="saldo_akhir_tab" id="idsldak"
+                        class="form-control datetimepicker-input" value="0" readonly>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-3">
+                  <div class="row">
+                    <div class="col-lg-6 col-sm-6">
+                      <label for="inputnasabahid">Sisa ByAdmin</label>
+                      <input type="text" id="sisa_byadmin" value="0" name="sisa_byadmin" class="form-control">
+                    </div>
+                    <div class="col-lg-6 col-sm-6">
+
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-2 col-sm-6">
+
+                </div>
+                <div class="col-lg-2 col-sm-6">
+                  <label for="inputnasabahid">Jumlah Setoran</label>
+                  <input type="text" id="jumlah_setoran" value="0" name="jumlah_setoran" class="form-control">
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-3">
+                  <div class="row">
+                    <div class="col-lg-6 col-sm-6">
+                      <label for="inputnasabahid">Sisa ByTrans</label>
+                      <input type="text" id="sisa_bytrans" value="0" name="sisa_bytrans" class="form-control">
+                    </div>
+                    <div class="col-lg-6 col-sm-6">
+
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-2 col-sm-6">
+
+                </div>
+                <div class="col-lg-2 col-sm-6">
+                  <label for="inputnasabahid">Jumlah Uang</label>
+                  <input type="text" id="jumlah_uang" value="0" name="jumlah_uang" class="form-control"
+                    onchange="hitungKembalian()">
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-3">
+                  <div class="row">
+                    <div class="col-lg-6 col-sm-6">
+                      <label for="inputnasabahid">Kwitansi</label>
+                      <input type="text" id="kwitansi" name="kwitansi" class="form-control" onclick="autofill()">
+                    </div>
+                    <div class="col-lg-6 col-sm-6">
+
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-2 col-sm-6">
+
+                </div>
+                <div class="col-lg-2 col-sm-6">
+                  <label for="inputnasabahid">Kembali</label>
+                  <input type="text" id="kembali" value="0" name="kembali" class="form-control">
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-lg-5">
+                  <div class="row">
+                    <div class="col-lg-12 col-sm-6">
+                      <label for="inputnasabahid">Keterangan</label>
+                      <input type="text" id="keterangan" name="keterangan" class="form-control">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- /.card-body -->
+              <div class="form-group row">
+                <div class="col-lg-12 col-sm-12">
+                  <div class="bottomlinesolid">
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer justify-content-between">
+                @if(isset($kuitansi))
+                <a href="{{route('cetaknotaangs',['kuitansi'=>$kuitansi,
+                  'no_rekening'=>$no_rekening,
+                  'tgl_trans'=>$tgl_trans])}}" name="btn_cetak" class="btn btn-primary">Cetak Kwitansi</a>
+                @else
+                <button name="btn_cetak" class="btn btn-primary" disabled>Cetak Kwitansi</button>
+                @endif
+                <div class="justify-right">
+                  <button name="btn_save" type="submit" class="btn btn-primary" {{-- onclick="save_angsuran();" --}}
+                   >Simpan</button>
+                  <button name="btn_reset" type="button" class="btn btn-primary"
+                    onclick="window.location.reload();">Reset</button>
+                </div>
+              </div>
           </form>
         </div>
         <!-- /.card -->
@@ -647,14 +708,152 @@
       <!-- /.col -->
     </div>
     <!-- /.row -->
-  </div>                
+  </div>
 </div>
 <!-- /.content -->
-@endsection
+<script>
+  function autofill() 
+  {
+    document.getElementById('keterangan').value = "Pembayaran angs "+document.getElementById('no_rekening_kredit').value;
+  }
 
+</script>
+@endsection
+{{-- MODAL TAMPIL TABEL KREDIT --}}
+<div class="modal fade bs-modal-nas" id="ambildatakredit" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ambildatakredit">Data Nasabah</h5>
+        {{-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> --}}
+      </div>
+      <div class="modal-body">
+        <table id="angskreditdata" class="display" width="100%">
+          <thead>
+            <tr>
+              <th>No_rekening</th>
+              <th>Nasabah Id</th>
+              <th>Nama Nasabah</th>
+              <th>Plafond</th>
+              <th>Jml_Bunga</th>
+              <th>JKW</th>
+              <th>SukuBunga</th>
+              <th style="display: none">tgl_realisasi</th>
+              <th style="display: none">tgl_jt</th>
+              <th style="display: none">jenis_pinj</th>
+              <th style="display: none">type_pinj</th>
+              <th style="display: none">provisi</th>
+              <th style="display: none">admin</th>
+              <th style="display: none">saldo_akhir</th>
+              <th style="display: none">saldo_bunga</th>
+              <th style="display: none">kolektibilitas</th>
+              <th style="display: none">tagihan_pokok</th>
+              <th style="display: none">tagihan_bunga</th>
+              <th style="display: none">tagihan_denda</th>
+              <th style="display: none">denda_perangs</th>
+              <th style="display: none">angs_ke</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach($kredits as $value)
+            <tr>
+              <td>{{ $value->NO_REKENING }}</td>
+              <td>{{ $value->NASABAH_ID }}</td>
+              <td>{{ $value->nama_nasabah }}</td>
+              <td>{{ $value->JML_PINJAMAN }}</td>
+              <td>{{ $value->JML_BUNGA_PINJAMAN }}</td>
+              <td>{{ $value->JML_ANGSURAN }}</td>
+              <td>{{ $value->SUKU_BUNGA_PER_ANGSURAN }}</td>
+              <td style="display:none">{{ $value->TGL_REALISASI }}</td>
+              <td style="display: none">{{ $value->TGL_JATUH_TEMPO }}</td>
+              <td style="display:none">{{ $value->JENIS_PINJAMAN }}</td>
+              <td style="display: none">{{ $value->TYPE_PINJAMAN }}</td>
+              <td style="display: none">{{ $value->PROVISI }}</td>
+              <td style="display: none">{{ $value->ADM }}</td>
+              <td style="display: none">{{ $value->SALDO_AKHIR }}</td>
+              <td style="display: none">{{ $value->SALDO_BUNGA }}</td>
+              <td style="display: none">{{ $value->KOLEKTIBILITAS }}</td>
+              <td style="display: none">{{ $value->TAGIHAN_POKOK }}</td>
+              <td style="display: none">{{ $value->TAGIHAN_BUNGA }}</td>
+              <td style="display: none">{{ $value->TAGIHAN_DENDA }}</td>
+              <td style="display: none">{{ $value->DENDA_PER_ANGSURAN }}</td>
+              <td style="display: none">{{ $value->ANGSKE }}</td>
+              <td>
+                <a class="dropdown-toggle btn btn-block bg-gradient-primary btn-sm" data-toggle="dropdown" href="#">
+                  Action <span class="caret"></span>
+                </a>
+                <div class="dropdown-menu" data-dismiss="modal">
+                  <a id="tes1" href="#" class="dropdown-item">
+                    pilih
+                  </a>
+                </div>
+              </td>
+            </tr>
+            @endforeach
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+  {{-- MODAL TAMPIL TABEL TABUNGAN --}}
+  <div class="modal fade bs-modal-tab" id="ambildatatabunganteller" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ambildatatabunganteller">Data Tabungan</h5>
+        </div>
+        <div class="modal-body">
+          <table id="datatabunganteller" class="display tablemodal" width="100%">
+            <thead>
+              <tr>
+                <th>No_Rekening</th>
+                <th>Nama Nasabah</th>
+                <th style="display:none">Alamat Nasabah</th>
+                <th style="display:none">Jenis Tabungan</th>
+                <th>Saldo Akhir</th>
+                <th style="display:none">saldo blokir</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach($tabungans as $value)
+              <tr>
+                <td>{{ $value->NO_REKENING }}</td>
+                <td>{{ $value->nama_nasabah }}</td>
+                <td style="display:none">{{ $value->alamat}}</td>
+                <td style="display:none">{{ $value->JENIS_TABUNGAN}}</td>
+                <td>{{ $value->saldo_akhir }}</td>
+                <td style="display:none">{{ $value->SALDO_BLOKIR }}</td>
+                <td>
+                  <a class="dropdown-toggle btn btn-block bg-gradient-primary btn-sm" data-toggle="dropdown" href="#">
+                    Action <span class="caret"></span>
+                  </a>
+                  <div class="dropdown-menu">
+                    <a id="kliktabungan" href="#" class="dropdown-item">
+                      pilih
+                    </a>
+                  </div>
+
+                </td>
+              </tr>
+              @endforeach
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <script>
-function autocomplete(inp, arr, nama, alamat, 
+
+  function autocomplete(inp, arr, nama, alamat, 
 s) {
   /*the autocomplete function takes two arguments,
   the text field element and an array of possible autocompleted values:*/
@@ -791,6 +990,7 @@ function setTOB(){
   }
   // alert(document.getElementsByName("kode_transaksi3")[0].value);
 }
+
 function save_angsuran(){
   $.ajaxSetup({
       beforeSend: function(xhr,type){
@@ -807,59 +1007,7 @@ function save_angsuran(){
     }
   });
 }
-function setCicilan(){
-  // alert(kredit_index);
-  data_cicilan = [];
-  total_tagihan_pokok = 0;
-  total_tagihan_bunga = 0;
-  $.get("bo_tl_tk_setoranangsuran/getCicilan?norek="+document.getElementsByName("no_rekening_kredit")[0].value, function(data){
-    data_cicilan = data;
-  });
-  $.get("bo_tl_tk_setoranangsuran/getAngsuran?norek="+document.getElementsByName("no_rekening_kredit")[0].value, function(data){
-    for(i=0;i<data.length;i++){
-      parts = data[i]["TGL_TRANS"].split('-');
-      tgl_trans = parts[2] + "/" + parts[1]  + "/" +  parts[0];
-      // alert(tgl_trans);
-      if(document.getElementsByName("cicilan_ke")[0].value==data[i]["ANGSURAN_KE"]){
-        document.getElementsByName("tgl_tagihan")[0].value = tgl_trans;
-        document.getElementsByName("label_total_tagihan")[0].innerHTML = "Total Tagihan s.d Tanggal : " + tgl_trans;
-        var date = new Date(data[i]["TGL_TRANS"]), y = date.getFullYear(), m = date.getMonth();
-        var lastDay = new Date(y, m + 1, 0);
-        let yyyy = lastDay.getFullYear();
-        let mm = lastDay.getMonth() + 1; // Months start at 0!
-        let dd = lastDay.getDate();
 
-        if (dd < 10) dd = '0' + dd;
-        if (mm < 10) mm = '0' + mm;
-        document.getElementsByName("tgl_akhir_bulan")[0].value = dd + '/' + mm + '/' + yyyy;
-        // alert(dd + '/' + mm + '/' + yyyy);
-      }
-      if(i<document.getElementsByName("cicilan_ke")[0].value){
-        if(data_cicilan[i]){
-          total_tagihan_pokok = total_tagihan_pokok + Number(data[i]["POKOK_TRANS"]) - Number(data_cicilan[i]["POKOK_TRANS"]);
-          total_tagihan_bunga = total_tagihan_bunga + Number(data[i]["BUNGA_TRANS"]) - Number(data_cicilan[i]["BUNGA_TRANS"]);        
-      
-        }else{
-          total_tagihan_pokok = total_tagihan_pokok + Number(data[i]["POKOK_TRANS"]);
-          total_tagihan_bunga = total_tagihan_bunga + Number(data[i]["BUNGA_TRANS"]);              
-        }
-      }
-      
-    }
-    
-    document.getElementsByName("pokok_total")[0].value = total_tagihan_pokok;
-    document.getElementsByName("bunga_total")[0].value = total_tagihan_bunga;
-    document.getElementsByName("pokok_pembayaran")[0].value = total_tagihan_pokok;
-    document.getElementsByName("bunga_pembayaran")[0].value = total_tagihan_bunga;
-    document.getElementsByName("jumlah_setoran")[0].value = total_tagihan_pokok + total_tagihan_bunga;
-    document.getElementsByName("pokok_saldo_akhir")[0].value = Number(document.getElementsByName("baki_debet_pokok")[0].value) - total_tagihan_pokok;
-    document.getElementsByName("bunga_saldo_akhir")[0].value = Number(document.getElementsByName("baki_debet_bunga")[0].value) - total_tagihan_bunga;
-    
-  });
-}
-function hitungKembalian(){
-  document.getElementsByName("kembali")[0].value = document.getElementsByName("jumlah_setoran")[0].value - document.getElementsByName("jumlah_uang")[0].value;
-}
 var kredit_index = 0;
 function setKredit(index){
   kredit_index = index;
@@ -1029,33 +1177,33 @@ function autocomplete2(inp,inpnama, arr, nama, alamat, tabungans) {
 </script>
 
 <style>
-.autocomplete-items {
-  position: absolute;
-  border: 1px solid #d4d4d4;
-  border-bottom: none;
-  border-top: none;
-  z-index: 99;
-  /*position the autocomplete items to be the same width as the container:*/
-  top: 100%;
-  left: 0;
-  right: 0;
-}
+  .autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    /*position the autocomplete items to be the same width as the container:*/
+    top: 100%;
+    left: 0;
+    right: 0;
+  }
 
-.autocomplete-items div {
-  padding: 10px;
-  cursor: pointer;
-  background-color: #fff; 
-  border-bottom: 1px solid #d4d4d4; 
-}
+  .autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+    border-bottom: 1px solid #d4d4d4;
+  }
 
-/*when hovering an item:*/
-.autocomplete-items div:hover {
-  background-color: #e9e9e9; 
-}
+  /*when hovering an item:*/
+  .autocomplete-items div:hover {
+    background-color: #e9e9e9;
+  }
 
-/*when navigating through the items using the arrow keys:*/
-.autocomplete-active {
-  background-color: DodgerBlue !important; 
-  color: #ffffff; 
-}
+  /*when navigating through the items using the arrow keys:*/
+  .autocomplete-active {
+    background-color: DodgerBlue !important;
+    color: #ffffff;
+  }
 </style>

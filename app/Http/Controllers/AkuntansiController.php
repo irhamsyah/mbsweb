@@ -692,7 +692,7 @@ class AkuntansiController extends Controller
     {
         $users = User::all();
         $logos = Logo::all();
-        $brwsetransmasterbuff = Trans_master_buffer::with(['transdetailbuffer', 'perkiraan'])->get();
+        $brwsetransmasterbuff = Trans_master_buffer::with(['transdetailbuffer', 'perkiraan'])->orderBy('trans_id','asc')->get();
         return view('akuntansi.frmvalidasitransaksi', ['users' => $users, 'logos' => $logos, 'brwsetransmasterbuff' => $brwsetransmasterbuff, 'msgstatus' => '']);
     }
     public function bo_ak_tt_caridatatransaksi(Request $request)
@@ -744,6 +744,17 @@ class AkuntansiController extends Controller
         $simpan->kredit = $request->kredit;
         $simpan->save();
         return redirect()->route('caritrans', ['trans_id' => $request->master_id2]);
+    }
+    // HAPUS DATA YG AKAN DIVALIDASI 
+    public function hapusvalidasi(Request $request)
+    {
+        $this->validate($request, [
+            'trans_id' => 'required',
+        ]);
+
+        Trans_master_buffer::where('trans_id', $request->trans_id)->delete();
+        Trans_detail_buffer::where('master_id', $request->trans_id)->delete();
+        return redirect()->route('showformvalidasidatatransaksi')->with('alert', 'Data Selesai Dihapsu');
     }
     // Hapus data detail_trans_buffer
     public function bo_ak_tt_deltransdetailbuff(Request $request)
@@ -838,7 +849,7 @@ class AkuntansiController extends Controller
         $hasil = Trans_detail_buffer::with('perkiraan')->where('master_id', $simpan->master_id)->orderBy('trans_id')->get();
         $tgllogin = Mysysid::where('KeyName', '=', 'TANGGALHARIINI')->get();
         $tgllogin = date('Y-m-d', strtotime(str_replace('/', '-', $tgllogin[0]->Value)));
-        return view('akuntansi.frmcatatjurnaltransaksi', ['logos' => $logos, 'users' => $users, 'perkiraan' => $perkiraan, 'kodejurnal' => $kodejurnal, 'hasil' => $hasil, 'masterid' => $masterid, 'tgl_trans' => $tgl_trans, 'kode_jurnal' => $kode_jurnal, 'no_bukti' => $no_bukti, 'keterangan' => $keterangan, 'total' => $total, 'tgllogin' => $tgllogin, 'msgstatus' => '']);
+        return view('akuntansi.frmcatatjurnaltransaksi', ['logos' => $logos, 'users' => $users, 'perkiraan' => $perkiraan, 'kodejurnal' => $kodejurnal, 'hasil' => $hasil, 'masterid' => $masterid, 'tgl_trans' => $tgl_trans, 'kode_jurnal' => $kode_jurnal, 'no_bukti' => $no_bukti, 'keterangan' => $keterangan, 'total' => $total, 'tgllogin' => $tgllogin,'debet'=>$request->kredit,'kredit'=>$request->debet, 'msgstatus' => '']);
     }
     public function bo_ak_tt_delcatatjurnaldetail(Request $request)
     {
@@ -927,7 +938,7 @@ class AkuntansiController extends Controller
         $kodejurnal = KodeJurnal::all();
         $perkiraan = Perkiraan::orderBy('kode_perk', 'ASC')->get();
         $hasil = Trans_detail_buffer::with('perkiraan')->where('master_id', $master_id)->orderBy('trans_id')->get();
-        return view('akuntansi.frmcatatjurnaltransaksi', ['logos' => $logos, 'users' => $users, 'perkiraan' => $perkiraan, 'kodejurnal' => $kodejurnal, 'hasil' => $hasil, 'masterid' => $master_id, 'tgl_trans' => $tgl_trans, 'kode_jurnal' => $kode_jurnal, 'no_bukti' => $no_bukti, 'keterangan' => $keterangan, 'total' => $total, 'msgstatus' => '']);
+        return view('akuntansi.frmcatatjurnaltransaksi', ['logos' => $logos, 'users' => $users, 'perkiraan' => $perkiraan, 'kodejurnal' => $kodejurnal, 'hasil' => $hasil, 'masterid' => $master_id, 'tgl_trans' => $tgl_trans,'tgllogin'=>$tgl_trans, 'kode_jurnal' => $kode_jurnal, 'no_bukti' => $no_bukti, 'keterangan' => $keterangan, 'total' => $total, 'msgstatus' => '']);
     }
     // Show hsitory Pencatatan Jurnal 
     public function bo_ak_tt_historycatatjurnal()
@@ -971,8 +982,13 @@ class AkuntansiController extends Controller
             ->orWhere('src', 'like', '%' . $searchValue . '%')
             ->count();
 
-        // Fetch records
+        // Fetch records (Ambil Data)
         $records = Trans_master::select('trans_id', 'tgl_trans', 'kode_jurnal', 'no_bukti', 'src')
+            ->where('trans_id', '=', $searchValue)
+            ->orWhere('tgl_trans', '=', $searchValue)
+            ->orWhere('kode_jurnal', 'like', '%' . $searchValue . '%')
+            ->orWhere('no_bukti', 'like', '%' . $searchValue . '%')
+            ->orWhere('src', 'like', '%' . $searchValue . '%')
             ->orderBy('trans_id', 'DESC')
             ->skip($start)
             ->take($rowperpage)
@@ -1044,6 +1060,7 @@ class AkuntansiController extends Controller
     // SImpan perubahan history pencatatan jurnal
     public function bo_ak_tt_updatehistorycatatjurnal(Request $request)
     {
+        // dd($request);
         $this->validate($request, [
             'kode_perk' => 'required',
         ]);
@@ -1077,7 +1094,7 @@ class AkuntansiController extends Controller
         DB::select("update trans_detail set saldo_akhir=$saldo_akhir where kode_perk=$request->kode_perk AND trans_id=$transId");
 
         // ----------------------------------------
-        return redirect()->route('historycatatjurnal', ['id' => $request->master_id])->with('alert', 'Update Berhasil');
+        return redirect()->route('historycatatjurnal', ['trans_id' => $request->master_id,'tgl_trans'=>$request->inputtgljurnal,'kode_jurnal'=>$request->kode_jurnal,'no_bukti'=>$request->no_bukti])->with('alert', 'Update Jurnal Berhasil');
     }
     // HAOUS RECORD HISTORY JURNAL TRANS_DETAIL
     public function bo_ak_tt_deletehistorycatatjurnal(Request $request)

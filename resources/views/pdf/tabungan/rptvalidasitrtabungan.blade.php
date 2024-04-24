@@ -47,8 +47,8 @@
         </a>
         {{-- @php(dd($lembaga[0]->Value)) --}}
         <a href="{{route('cetakbukutab',['no_rekening'=>$no_rekening,'tgl_trans'=>$tgl_trans])}}">Cetak Buku</a>
-        <div class="container" style="margin-left: 150px;font-size:11pt">
-            <div class="row" style="padding: 0px;margin-bottom: -8px;">
+        <div class="container" style="margin-left: 150px;font-size:13pt">
+            <div class="row" style="padding: 1px;margin-bottom: -8px;">
                 @php(date_default_timezone_set('Asia/Jakarta'))
                 {{date('d/m/Y H:i:s')}}
                 {{Auth::user()->username}}

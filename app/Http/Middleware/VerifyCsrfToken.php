@@ -32,6 +32,8 @@ class VerifyCsrfToken extends Middleware
         'bo_tl_td_setorandeposito',
         'bo_dp_de_deposito',
         'bo_ak_tt_simpancatatjurnal',
+        'bo_tl_ku_transaksikasumum',
+        'bo_tl_tk_setoranangsuran/saveAngsuran',
         'logout'
     ];
 }

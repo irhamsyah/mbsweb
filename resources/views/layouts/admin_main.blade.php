@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <html>
 
 <head>
@@ -86,10 +88,12 @@
   </style>
 
   {{-- Data Table --}}
-  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-  <script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
-
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
+  {{-- <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script> --}}
+  <script src="{{ asset('plugins/datatables/jquery-3.5.1.js') }}"></script>
+  {{-- <script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script> --}}
+  <link rel="stylesheet" href="{{asset('plugins/datatables-bs4/css/jquery.dataTables.min.css')}}">
+  {{-- <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css"> --}}
 
   <!-- SweetAlert2 -->
   <script src="{{ asset('plugins/sweetalert2/sweetalert2.min.js') }}"></script>
@@ -109,8 +113,9 @@
           <a href="#" class="nav-link"></a>
         </li>
       </ul>
-
-
+      @if(isset($tglharini))
+        <h6>{{$tglharini}}</h6>
+      @endif
       <!-- Right navbar links -->
       <ul class="navbar-nav ml-auto">
         <!-- Messages Dropdown Menu -->
@@ -343,6 +348,7 @@
                         </li>
                       </ul>
                     </li>
+                    {{-- MENU TRANSAKSI --}}
                     <li class="nav-item has-treeview <?php if($menu=='tl' AND $submenu=='tk'){echo 'menu-open';}?>">
                       <a href="#" class="nav-link <?php if($menu=='tl' AND $submenu=='tk'){echo 'active';}?>">
                         <i class="right fas fa-angle-left"></i>
@@ -353,6 +359,27 @@
                           <a href="/bo_tl_ku_transaksikasumum"
                             class="nav-link <?php if($page=='transaksikasumum'){echo 'active';}?>">
                             <p class="pl-4">Transaksi Kas Umum</p>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="/bo_tl_ku_hapustransaksikas"
+                            class="nav-link <?php if($page=='hapustransaksikas'){echo 'active';}?>">
+                            <p class="pl-4">Hapus Transaksi Kas</p>
+                          </a>
+                        </li>
+                      </ul>
+                    </li>
+                    {{-- MENU LAPORAN KAS --}}
+                    <li class="nav-item has-treeview <?php if($menu=='tl' AND $submenu=='tk'){echo 'menu-open';}?>">
+                      <a href="#" class="nav-link <?php if($menu=='tl' AND $submenu=='tk'){echo 'active';}?>">
+                        <i class="right fas fa-angle-left"></i>
+                        <p class="pl-2">LAPORAN KAS UMUM</p>
+                      </a>
+                      <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                          <a href="/bo_tl_lp_transaksikasrinci"
+                            class="nav-link <?php if($page=='transaksikasrinci'){echo 'active';}?>">
+                            <p class="pl-4">Posisi Kas Rinci</p>
                           </a>
                         </li>
                         <li class="nav-item">
@@ -1288,9 +1315,10 @@ $(document).ready(function(){
      document.getElementById("inputNamaNasabahadd").value=col2;
      document.getElementById("inputalamatadd").value=col3;
     //  alert(data);
-     document.getElementById("editidnasabah").value=col1;
+    document.getElementById("editidnasabah").value=col1;
      document.getElementById("editnamanasabah").value=col2;
      document.getElementById("editalamatnasabah").value=col3;
+    // FORM MASTER KREDIT
 
   });
 
@@ -1392,11 +1420,11 @@ $(document).ready(function(){
      // get the current row
      var currentRow=$(this).closest("tr"); 
      
-     var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
-     var col2=currentRow.find("td:eq(1)").text(); // get current row 2nd TD
+     var col1=currentRow.find("td:eq(0)").text(); // get NO_REKENING
+     var col2=currentRow.find("td:eq(1)").text(); // get NAMA NASABAH
      var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
      var col4=currentRow.find("td:eq(3)").text(); // get current row 4th TD
-     var col5=currentRow.find("td:eq(4)").text(); // get current row 5th TD
+     var col5=currentRow.find("td:eq(4)").text(); // get SALDO_AKHIR TABUMGAN
      var col6=currentRow.find("td:eq(5)").text(); // get current row 6th TD
     //  var data=col1+"\n"+col2+"\n"+col3;
     // ISIAN BAGIAN TABUNGAN UNTUK PENUTUPAN DEPOSITO
@@ -1404,6 +1432,16 @@ $(document).ready(function(){
      $('#putnamanasabahtab').val(col2);
      $('#putsaldoakhirtab').val(col5);
      
+    //  Untuk FORM ANGSURAN KREDIT
+    $('#rekening_overbook').val(col1);
+      $('#nama_overbook').val(col2);
+      $('#idsldak').val(col5);
+
+      var setoran = document.getElementById("jumlah_setoran").value;
+      if(Number(setoran) > Number(col5)){
+          alert('SALDO TIDAK MENCUKUPI,SILAHKAN SETOR');
+      }
+    
     //  ISIAN UNTUK FORM PENUTUPAN TABUNGAN
     $('#putsaldoakhirtabcls').val(col4);
     $('#putalamat').val(col3);
@@ -1496,12 +1534,151 @@ $(document).ready(function(){
 
   //***********end page deposito************************************/
 });
+// UNTUK FORM KREDIT 
+$(document).ready(function(){
+  $("#kreditdata").on('click','#tes1',function(){
+     // get the current row
+     var currentRow=$(this).closest("tr"); 
+     
+     var col1=currentRow.find("td:eq(0)").text(); // get current row No_rekening
+     var col2=currentRow.find("td:eq(1)").text(); // get current row Nasabah Id
+     var col3=currentRow.find("td:eq(2)").text(); // get current row Nama Nasabah
+     var col4=currentRow.find("td:eq(3)").text(); // get current row Plafond
+     var col5=currentRow.find("td:eq(4)").text(); // get current row Jml_Bunga
+     var col6=currentRow.find("td:eq(5)").text(); // get current row JKW
+     var col7=currentRow.find("td:eq(6)").text(); // get current row SukuBunga
+     var col8=currentRow.find("td:eq(7)").text(); // get current row tgl_realisasi
+     var col9=currentRow.find("td:eq(8)").text(); // get current row tgl_jt
+     var col10=currentRow.find("td:eq(9)").text(); // get current row jenis pinjaman
+     var col11=currentRow.find("td:eq(10)").text(); // get current row type pinjaman
+     var col12=currentRow.find("td:eq(11)").text(); // get current row provisi
+     var col13=currentRow.find("td:eq(12)").text(); // get current row admin
+    //  parts = col8.split('-');
+     var tgllogin = document.getElementById('tglloginmysysid').value;
+    //  alert(tglharini);
+    parts = tgllogin.split('/');
+    tgllogin = parts[0] + "-" + parts[1]  + "-" +  parts[2];
+    var tgltrans = new Date(tgllogin);
+    var tglreal = new Date(col8);
+      if(tgltrans.getTime()<tglreal.getTime())
+      {
+         return alert('Realisasi Belum Bisa Dilakukan, Tanggal MBS < Tgl Realisasi !');
+      }
+
+    //  if(document.getElementById('tglloginmysysid').val.)
+    //  var data=col1+"\n"+col2+"\n"+col3;
+     document.getElementById("no_rekening_kredit").value=col1;
+     document.getElementById("id_nasabah").value=col2;
+     document.getElementById("nama_nasabah").value=col3;
+     document.getElementById("jml_pinjaman").value=Intl.NumberFormat().format(col4);
+     document.getElementById("jumlah_bunga").value=Intl.NumberFormat().format(col5);
+     document.getElementById("jangka_waktu").value=col6;
+     document.getElementById("jumlah_angsuran").value=Intl.NumberFormat().format(col6);
+     document.getElementById("persen_bunga").value=col7;
+     document.getElementById("tgl_realisasi").value=col8;
+     document.getElementById("jatuh_tempo").value=col9;
+     document.getElementById("idprovisi").value=Intl.NumberFormat().format(col12);
+     document.getElementById("idadministrasi").value=Intl.NumberFormat().format(col13);
+     document.getElementById("idtotalditerima").value=Intl.NumberFormat().format(col4-col12-col13);
+     
+    // Cara Menampilkan Selected option dari DATABASE pada DROPDOWN LIST
+    $('#inputjeniskredit').val(col10);
+    $('#inputtipepinjaman').val(col11);
+
+
+  });
+
+  //SCRIPT bayar ANGSURAN 
+  $("#angskreditdata").on('click','#tes1',function(){
+     // get the current row
+     var currentRow=$(this).closest("tr"); 
+     
+     var col1=currentRow.find("td:eq(0)").text(); // get current row No_rekening
+     var col2=currentRow.find("td:eq(1)").text(); // get current row Nasabah Id
+     var col3=currentRow.find("td:eq(2)").text(); // get current row Nama Nasabah
+     var col4=currentRow.find("td:eq(3)").text(); // get current row Plafond
+     var col5=currentRow.find("td:eq(4)").text(); // get current row Jml_Bunga
+     var col6=currentRow.find("td:eq(5)").text(); // get current row JKW
+     var col7=currentRow.find("td:eq(6)").text(); // get current row SukuBunga
+     var col8=currentRow.find("td:eq(7)").text(); // get current row tgl_realisasi
+     var col9=currentRow.find("td:eq(8)").text(); // get current row tgl_jt
+     var col10=currentRow.find("td:eq(9)").text(); // get current row jenis pinjaman
+     var col11=currentRow.find("td:eq(10)").text(); // get current row type pinjaman
+     var col12=currentRow.find("td:eq(11)").text(); // get current row provisi
+     var col13=currentRow.find("td:eq(12)").text(); // get current row admin
+     var col14=currentRow.find("td:eq(13)").text(); // get current row SALDO_AKHIR
+     var col15=currentRow.find("td:eq(14)").text(); // get current row SALDO_BUNGA
+     var col16=currentRow.find("td:eq(15)").text(); // get current row Kolektibilitas
+     var col17=currentRow.find("td:eq(16)").text(); // get current row TAGIHAN_POKOK
+     var col18=currentRow.find("td:eq(17)").text(); // get current row TAGIHAN_BUNGA
+     var col19=currentRow.find("td:eq(18)").text(); // get current row TAGIHAN_DENDA
+     var col20=currentRow.find("td:eq(19)").text(); // get current row DENDA_PER_ANGSURAN
+     var col21=currentRow.find("td:eq(20)").text(); // get current row ANGS_KE
+    //  var data=col1+"\n"+col2+"\n"+col3;
+    document.getElementById("no_rekening_kredit").value=col1;
+    document.getElementById("norek2").value=col1;
+    document.getElementById("flag_jadwal").value='TERKUNCI';
+     document.getElementById("nama_nasabah").value=col3;
+     document.getElementById("jml_pinjaman").value=Intl.NumberFormat().format(col4);
+     document.getElementById("baki_debet_pokok").value=Intl.NumberFormat().format(col14);
+     document.getElementById("baki_debet_bunga").value=Intl.NumberFormat().format(col15);
+     document.getElementById("tgl_realisasi").value=col8;
+     document.getElementById("jml_angs").value=Intl.NumberFormat().format(col6);
+     document.getElementById("kolektibilitas").value=col16;
+     document.getElementById("pokok_total").value=Intl.NumberFormat().format(col17);
+     document.getElementById("bunga_total").value=Intl.NumberFormat().format(col18);
+     document.getElementById("pokok_saldo_akhir").value=Intl.NumberFormat().format(col14-col17);
+     document.getElementById("bunga_saldo_akhir").value=Intl.NumberFormat().format(col15-col18);
+     document.getElementById("pokok_pembayaran").value=Intl.NumberFormat().format(col17);
+     document.getElementById("bunga_pembayaran").value=Intl.NumberFormat().format(col18);
+     document.getElementById("denda_pembayaran").value=Intl.NumberFormat().format(col19);
+     document.getElementById("base_denda_persen").value=col20;  
+     document.getElementById("cicilan_ke").value=col21;  
+  document.getElementById("jumlah_setoran").value=Intl.NumberFormat().format(Number(col17)+Number(col18)+Number(col19));
+    //  CARI DATA TRANS
+    $.get("bo_tl_tk_setoranangsuran/getTanggal?norek="+col1, function(data){
+      if(data.length>0)
+      {
+        alert('SUDAH MELAKUKAN TRANSAKSI HARI INI');
+      }
+  });
+    $.get("bo_tl_tk_setoranangsuran/getCicilan?norek="+col1, function(data){
+    data_cicilan = data;
+
+  });
+  $.get("bo_tl_tk_setoranangsuran/getAngsuran?norek="+col1, function(data){
+    for(i=0;i<data.length;i++){
+      parts = data[i]["TGL_TRANS"].split('-');
+      tgl_trans = parts[2] + "/" + parts[1]  + "/" +  parts[0];
+      // alert(tgl_trans);
+      if(document.getElementsByName("cicilan_ke")[0].value==data[i]["ANGSURAN_KE"]){
+        document.getElementsByName("tgl_tagihan")[0].value = tgl_trans;
+        document.getElementsByName("label_total_tagihan")[0].innerHTML = "Total Tagihan s.d Tanggal : " + tgl_trans;
+        var date = new Date(data[i]["TGL_TRANS"]), y = date.getFullYear(), m = date.getMonth();
+        var lastDay = new Date(y, m + 1, 0);
+        let yyyy = lastDay.getFullYear();
+        let mm = lastDay.getMonth() + 1; // Months start at 0!
+        let dd = lastDay.getDate();
+
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+        document.getElementsByName("tgl_akhir_bulan")[0].value = dd + '/' + mm + '/' + yyyy;
+        // alert(dd + '/' + mm + '/' + yyyy);
+      }
+    }
+
+  });
+  });
+
+});
+
 // Menampilkan data nasabah di input text nasabah_id dengan DATATABEL
 $(document).ready(function () {
     $('#nasabahdata').DataTable();
     $('#rektabungandata').DataTable();
     $('#datadepositoteller').DataTable();
-
+    $('#kreditdata').DataTable();
+    $('#angskreditdata').DataTable();
 });
 $(document).ready(function () {
     $('#clsdepositoteller').DataTable();
@@ -2137,7 +2314,7 @@ $(document).ready(function () {
 
       // BAGIAN MENAMPILKAN DI FORM MODAL----------------------
       $(e.currentTarget).find('input[name="no_rekening"]').val(No_rekening);
-      // Cara Menampilkan Selected option dari DATABASE pada DROPDOWN LIST
+      // Cara Menampilkan Nilai Selected option dari DATABASE pada DROPDOWN LIST
       $('#idSelect').text(Jenis_tabungan);
       $('#idSelect').val(Hidden_jenis_tabungan);
       // -------------------------------------------
@@ -2307,13 +2484,20 @@ $("#datatabungantrans").on('click','#klik',function(){
      document.getElementById("putjenistab").value=col4;
      document.getElementById("putsaldoakhir").value=col5;
      document.getElementById("putsaldoblokir").value=col6;
-
-    //  alert(data);
-      });
+    // alert(col1);
+     $.get("bo_tl_tb_setoran/getTransaksi?norek="+col1, function(data){
+      if(data.length > 0){
+         alert("SUDAH MELAKUKAN TRANSAKSI HARI INI");
+      }
+    
+    });
+  });
     $(e.currentTarget).find('input[name="nama_nasabah"]').val(Nama_nasabah);
     $(e.currentTarget).find('input[name="saldo_blokir"]').val(Saldo_blokir);
     $(e.currentTarget).find('input[name="tgl_blokir"]').val(Tgl_blokir);
-
+    
+    //CARI TRANSAKSI TABUNGAN DGN NO_REK ini
+ 
     });
     // UPDATE KODE PERKIRAAN PADA FORM VALIDASI TRANSAKSI
     $('#modal-update-kodeperk').on('show.bs.modal', function(e) {
@@ -2325,6 +2509,8 @@ $("#datatabungantrans").on('click','#klik',function(){
       var Type = $(e.relatedTarget).data('type');
       var Debet = $(e.relatedTarget).data('debet');
       var Kredit = $(e.relatedTarget).data('kredit');
+      var Kode_jurnal = $(e.relatedTarget).data('kode_jurnal');
+      var No_bukti = $(e.relatedTarget).data('no_bukti');
 
       $(e.currentTarget).find('input[name="trans_id"]').val(Trans_id);
       $(e.currentTarget).find('input[name="master_id"]').val(Master_id);
@@ -2334,6 +2520,8 @@ $("#datatabungantrans").on('click','#klik',function(){
       $(e.currentTarget).find('input[name="type"]').val(Type);
       $(e.currentTarget).find('input[name="debet"]').val(Debet);
       $(e.currentTarget).find('input[name="kredit"]').val(Kredit);
+      $(e.currentTarget).find('input[name="kode_jurnal"]').val(Kode_jurnal);
+      $(e.currentTarget).find('input[name="no_bukti"]').val(No_bukti);
     });
 
 // DATATABLE
@@ -2486,7 +2674,7 @@ $("#datatabungantrans").on('click','#klik',function(){
 
     });
 
-    // SCRIPT UNTUK MENAMBAHKAN BULAN PADA JKW DEPOSITO 
+    // SCRIPT UNTUK MENAMPILKAN TGLJT DEPOSITO 
     function myTime(){
           let tgl = document.getElementById("etgl_registrasidepo").value;
           let dt = new Date(tgl);
@@ -2506,6 +2694,28 @@ $("#datatabungantrans").on('click','#klik',function(){
           dt = year+"-"+months+"-"+day;
           document.getElementById("addtgl_jt").value = dt;
       }
+
+      // MUNCULKAN TGL JT PADA FORM ISIN KREDIT
+      function myTime(){
+          let tgl = document.getElementById("etgl_registrasidepo").value;
+          let dt = new Date(tgl);
+          let months ="";
+          let no_of_months = document.getElementById("addjkw").value;
+          dt.setMonth(dt.getMonth() + Number(no_of_months));
+          let day =dt.getDate();
+          let month =(dt.getMonth()+1);
+          if(month.toString().length==1)
+          {
+            months = "0"+month.toString();
+          }else if(month.toString().length==2){
+            months = month.toString();
+          }
+          
+          let year =dt.getFullYear();
+          dt = year+"-"+months+"-"+day;
+          document.getElementById("addtgl_jt").value = dt;
+      }
+
 
     // UPDATE BUNGA DAN PAJAK DEPOSITO
     $('#modal-update-bungpajakdep').on('show.bs.modal', function(e) {
@@ -2663,31 +2873,138 @@ $(e.currentTarget).find('input[name="deskripsi_jenis_deposito"]').val(Deskripsi_
         $(this).find('form').trigger('reset');
       })
 
+    // CARA MENAMBAHKAN ELEMENT INPUT TEXT DENGAN JQUERY
+    let xline = 1;let saldotrans=0;
+    $(document).ready(function(){
+
+      $("#btn2").click(function(){
+        var xuraian = document.getElementById('iduraian').value; 
+        var xjumlah = document.getElementById('inputjmltransaksi').value; 
+        var xkodeperk = document.getElementById('idKodePerkadd').value; 
+        $("#iddetailkas").append("<div class='row'>"+
+          "<div class='col-lg-2 col-sm-6'><input type='text' name='uraian"+xline+"' class='form-control' value='"+xuraian+"'></div>"+
+          "<div class='col-lg-2 col-sm-6'><input type='text' name='jumlah"+xline+"' class='form-control' value='"+xjumlah+"'></div>"+
+          "<div class='col-lg-2 col-sm-6'><input type='text' name='kode_perk"+xline+"' class='form-control' value='"+xkodeperk+"'></div>"+
+          "</div>");
+          saldotrans = saldotrans + Number(xjumlah.replace(/[^0-9]/g, ''));
+          // Menjumlah Transaksi
+          document.getElementById('idJmltrans').value=saldotrans;
+          // Mencatat Jumlah Element TextBox
+          document.getElementById('idCntElmnt').value=xline;
+          document.getElementById('iduraian').value=null; 
+          document.getElementById('inputjmltransaksi').value=null; 
+
+        xline++;
+      });
+      // MENONAKTIFKAN ATAU AKTIFKAN ELEMENT SAAT CHECK SELECT BOX
+      var countChecked = function() {
+      var n = $( "#idenabledtmbhtrs:checked" ).length;
+      if(n>0){
+        $( "#btn2" ).show();
+      }else{
+        $( "#btn2" ).hide();
+      }
+      };
+      countChecked();
+ 
+      $( "#idenabledtmbhtrs" ).on( "click", countChecked );
+
+    });
+    // MENAMPILKAN T / O pada form angsuran
+    function tobselect()
+      {
+        var conceptName = $('#kode_transkredit').find(":selected").val();
+        document.getElementById('tob').value =conceptName.substr(4,1);
+      }
+      // HITUNG TOTAL SETORAN ANGSURAN KREDIT
+      function jumlahsetoran()
+      {
+          var pokok = document.getElementById("pokok_pembayaran").value;
+          var bunga = document.getElementById("bunga_pembayaran").value;
+          var denda = document.getElementById("denda_pembayaran").value;
+          var total = Number(pokok)+Number(bunga)+Number(denda);
+          document.getElementById("jumlah_setoran").value=total;
+      }
+      //HITUNG KEMBALIAN UANG
+      function hitungKembalian(){
+        document.getElementsByName("kembali")[0].value =document.getElementsByName("jumlah_uang")[0].value -  document.getElementsByName("jumlah_setoran")[0].value ;
+}
+
+// script AJAX form angsuran mulai 
+function setCicilan(){
+  // alert('tere');
+  data_cicilan = [];
+  total_tagihan_pokok = 0;
+  total_tagihan_bunga = 0;
+  total_tagihan_denda = 0;
+  $.get("bo_tl_tk_setoranangsuran/getCicilan?norek="+document.getElementsByName("no_rekening_kredit")[0].value, function(data){
+    data_cicilan = data;
+  });
+  $.get("bo_tl_tk_setoranangsuran/getAngsuran?norek="+document.getElementsByName("no_rekening_kredit")[0].value, function(data){
+    for(i=0;i<data.length;i++){
+      parts = data[i]["TGL_TRANS"].split('-');
+      tgl_trans = parts[2] + "/" + parts[1]  + "/" +  parts[0];
+      // alert(tgl_trans);
+      if(document.getElementsByName("cicilan_ke")[0].value==data[i]["ANGSURAN_KE"]){
+        document.getElementsByName("tgl_tagihan")[0].value = tgl_trans;
+        document.getElementsByName("label_total_tagihan")[0].innerHTML = "Total Tagihan s.d Tanggal : " + tgl_trans;
+        var date = new Date(data[i]["TGL_TRANS"]), y = date.getFullYear(), m = date.getMonth();
+        var lastDay = new Date(y, m + 1, 0);
+        let yyyy = lastDay.getFullYear();
+        let mm = lastDay.getMonth() + 1; // Months start at 0!
+        let dd = lastDay.getDate();
+
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+        document.getElementsByName("tgl_akhir_bulan")[0].value = dd + '/' + mm + '/' + yyyy;
+        // alert(dd + '/' + mm + '/' + yyyy);
+      }
+      if(i<document.getElementsByName("cicilan_ke")[0].value){
+        if(data_cicilan[i]){
+          total_tagihan_pokok = total_tagihan_pokok + Number(data[i]["POKOK_TRANS"]) - Number(data_cicilan[i]["POKOK_TRANS"]);
+          total_tagihan_bunga = total_tagihan_bunga + Number(data[i]["BUNGA_TRANS"]) - Number(data_cicilan[i]["BUNGA_TRANS"]);        
+          total_tagihan_denda = total_tagihan_denda + Number(data[i]["DENDA_TRANS"]) - Number(data_cicilan[i]["DENDA_TRANS"]);        
       
-  </script>
+        }else{
+          total_tagihan_pokok = total_tagihan_pokok + Number(data[i]["POKOK_TRANS"]);
+          total_tagihan_bunga = total_tagihan_bunga + Number(data[i]["BUNGA_TRANS"]);              
+          total_tagihan_denda = total_tagihan_denda + Number(data[i]["DENDA_TRANS"]);              
+        }
+      }
+      
+    }
+    
+    document.getElementsByName("pokok_total")[0].value = total_tagihan_pokok;
+    document.getElementsByName("bunga_total")[0].value = total_tagihan_bunga;
+    document.getElementsByName("pokok_pembayaran")[0].value = total_tagihan_pokok;
+    document.getElementsByName("bunga_pembayaran")[0].value = total_tagihan_bunga;
+    document.getElementsByName("jumlah_setoran")[0].value = total_tagihan_pokok + total_tagihan_bunga+total_tagihan_denda;
+    document.getElementsByName("pokok_saldo_akhir")[0].value = Number(document.getElementsByName("baki_debet_pokok")[0].value) - total_tagihan_pokok;
+    document.getElementsByName("bunga_saldo_akhir")[0].value = Number(document.getElementsByName("baki_debet_bunga")[0].value) - total_tagihan_bunga;
+    
+  });
+}
+// batas script form angsuran kredit
+    function checktob() {
+      var ctob = document.getElementById('kode_transkredit').value;
+      if(ctob.substr(4,1)=='T')
+      {
+        alert('KODE TRANSAKSI HARUS TUNAI');
+        document.getElementById('kode_transkredit').value='003-O';
+        document.getElementById('tob').value='O';
+      }
+    }
+
+</script>
   <script>
     // Fungsi Membuat FORMAT RUPIAH pada INPUTAN BOX
-  var rupiah = document.getElementById("inputjmlsaldoblokir");
-  var rupiahplf = document.getElementById("plafondidlabel");
-  var rupiahouts = document.getElementById("outstandingidlabel");
+  var rupiah = document.getElementById("inputjmltransaksi");
 
   rupiah.addEventListener("keyup", function(e) {
     // tambahkan 'Rp.' pada saat form di ketik
     // gunakan fungsi formatRupiah() untuk mengubah angka yang di ketik menjadi format angka
     rupiah.value = formatRupiah(this.value, "Rp. ");
   });
-  rupiahplf.addEventListener("keyup", function(e) {
-    // tambahkan 'Rp.' pada saat form di ketik
-    // gunakan fungsi formatRupiah() untuk mengubah angka yang di ketik menjadi format angka
-    rupiahplf.value = formatRupiah(this.value, "Rp. ");
-  });
-  rupiahouts.addEventListener("keyup", function(e) {
-    // tambahkan 'Rp.' pada saat form di ketik
-    // gunakan fungsi formatRupiah() untuk mengubah angka yang di ketik menjadi format angka
-    rupiahouts.value = formatRupiah(this.value, "Rp. ");
-  });
-
-  
 
 /* Fungsi formatRupiah */
 function formatRupiah(angka, prefix) {

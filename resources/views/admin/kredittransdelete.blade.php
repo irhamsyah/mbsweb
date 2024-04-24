@@ -56,7 +56,7 @@
                   <label for="tanggaltransaksi"  class="labeljudulright">Tanggal</label>
                 </div>
                 <div class="col-lg-2 col-sm-12">
-                  <input type="text" class="form-control" value='{{ $tanggaltransaksi }}' name="tanggaltransaksi" placeholder="Tanggal Transaksi">
+                  <input readonly type="text" class="form-control" value='{{ $tanggaltransaksi }}' name="tanggaltransaksi" placeholder="Tanggal Transaksi">
                 </div>
                 <!-- <div class="col-3">
                   <button type="submit" class="btn btn-warning"><i class="fa fa-search" style="color:white"></i></button>

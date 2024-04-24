@@ -39,6 +39,9 @@ Auth::routes([
 Route::get('/home', 'HomeController@admin_index')->name('home')->middleware('verified');
 Route::get('/verify', 'Auth\RegisterController@verifyUser')->name('verify.user');
 
+// Route LOGOUT AS GET
+Route::get('/logout', 'Auth\LoginController@logout');
+
 /* Verifiy Customer User*/
 Route::get('/verifyuser', 'RegistercustomerController@verifyUser')->name('verify.cust');
 
@@ -255,8 +258,24 @@ Route::get('bo_dp_rp_cetakjatuhtempo', 'DepositoController@bo_dp_rp_cetakjatuhte
 // Export To Exccel Deposito Jatuh TEMPO
 Route::post('exportjatuhtempo', 'DepositoController@exportjatuhtempo');
 
-// TRANSAKSI JAS UMUM
-Route::get('bo_tl_ku_transaksikasumum', 'TellerKasController@bo_tl_ku_transaksikasumum');
+// TRANSAKSI KAS UMUM
+Route::get('bo_tl_ku_transaksikasumum', 'TellerKasController@bo_tl_ku_transaksikasumum')->name('transaksikasumum');
+// SIMPAN TRANSAKSI KAS UMUM
+Route::post('bo_tl_ku_transaksikasumum', 'TellerKasController@bo_tl_ku_transaksikasumum_add');
+// Cetaka Validasi KAS UMUM
+Route::get('bo_tl_lp_validasikasumum','TellerKasController@validasikasumum')->name('validasikasumum');
+// Hpaus Transaksi Kas Umum
+Route::get('bo_tl_ku_hapustransaksikas', 'TellerKasController@bo_tl_ku_hapustransaksikas')->name('hapustransaksikas');
+// Hapus Transaksi Kas 
+Route::delete('bo_tl_ku_hapustransaksikas', 'TellerKasController@bo_tl_ku_hapustransaksikas_del');
+// LAPORAN TRANSAKSI KAS RINCI
+Route::get('bo_tl_lp_transaksikasrinci', 'TellerKasController@bo_tl_lp_transaksikasrinci')->name('showformrptkasrinci');
+// CARI POSISI KAS RINCI
+Route::post('bo_tl_lp_caritransaksikas', 'TellerKasController@bo_tl_lp_caritransaksikas');
+// Cetak to PDF Laporan kas umum 
+Route::get('bo_tl_lp_pdftransaksikasrinci', 'TellerKasController@bo_tl_lp_pdftransaksikasrinci')->name('pdfkasrinci');
+// EXPORT KAS RINCI
+Route::get('bo_tl_ex_exportkasrinci', 'TellerKasController@bo_tl_ex_exportkasrinci')->name('exportkasrinci');
 
 
 //BO KREDIT Data Entry KREDIT
@@ -420,6 +439,8 @@ Route::post(
 // TABUNGAN
 Route::get('bo_tl_tt_setoranpenarikantabungan', 'TellertabunganController@bo_tl_tt_setoranpenarikantabungan')->name('setoranpenarikantabungan');
 Route::post('bo_tl_tt_simpantrstabungan', 'TellertabunganController@bo_tl_tt_simpantrstabungan');
+// CEK APAKAH SUDAH PERNAH TRANSAKSI HARI INI
+Route::get('bo_tl_tb_setoran/getTransaksi','TellertabunganController@getTransaksi')->name('getTransaksi');
 // CETAK validasi
 Route::get('bo_tl_tt_cetakbukutab', 'TellertabunganController@bo_tl_tt_cetakbukutab')->name('cetakbukutab');
 //Show Form Tutup tabungan
@@ -432,12 +453,22 @@ Route::get('bo_tl_rp_cetakkuitansiclstab', 'TellertabunganController@bo_tl_rp_ce
 Route::get('bo_tl_rp_cetakvalidasiclstab', 'TellertabunganController@bo_tl_rp_cetakvalidasiclstab')->name('cetakvalidasiclstab');
 // ---------batas transaksi tabungan--------------------------------
 
+// KREEDIT
 Route::get('bo_tl_tk_realisasikredit', 'TellerKreditController@bo_tl_tk_realisasikredit')->name('realisasikredit');
 Route::get('bo_tl_tk_setoranangsuran', 'TellerKreditController@bo_tl_tk_setoranangsuran')->name('setoranangsuran');
 Route::post('bo_tl_tk_realisasikredit/setrealisasi', 'TellerKreditController@setrealisasi')->name('setrealisasi');
+// CETAK VALIDASI REALISASI
+Route::get('bo_tl_rp_printvalidasirealisasi','TellerKreditController@printvalidasirealisasi')->name('printvalidasirealisasi');
 Route::get('bo_tl_tk_setoranangsuran/getAngsuran', 'TellerKreditController@getAngsuran')->name('getAngsuran');
+// MENGETAHUI SUDAH TRANSAKSI ?
+Route::get('bo_tl_tk_setoranangsuran/getTanggal', 'TellerKreditController@getTanggal')->name('getTanggal');
+
 Route::get('bo_tl_tk_setoranangsuran/getCicilan', 'TellerKreditController@getCicilan')->name('getCicilan');
 Route::post('bo_tl_tk_setoranangsuran/saveAngsuran', 'TellerKreditController@saveAngsuran')->name('saveAngsuran');
+// CETAK VALIDASI ANGSURAN
+Route::get('bo_tl_rp_cetakvalidasiangs','TellerKreditController@validasiangs')->name('validasiangs');
+// CETAK NOTA ANGS
+Route::get('bo_tl_rp_cetaknotaangs','TellerKreditController@cetaknotaangs')->name('cetaknotaangs');
 
 // AKUNTANSI
 Route::get('bo_ak_tt_postingdatatransaksi', 'AkuntansiController@bo_ak_tt_postingdatatransaksi')->name('showformpostingdatatransaksi');
@@ -450,6 +481,8 @@ Route::get('bo_ak_tt_caridatatransaksi', 'AkuntansiController@bo_ak_tt_caridatat
 Route::post('bo_ak_tt_simpanupdvalidasi', 'AkuntansiController@bo_ak_tt_simpanupdvalidasi')->name('simpanperubahankodeperk');
 // simpan penambahan record trans_detail_buffer
 Route::post('bo_ak_tt_addrecvalidasi', 'AkuntansiController@bo_ak_tt_addrecvalidasi')->name('addcodetransdetailbuff');
+// HPAUS DATA YANG AKAN DIVALIDASI (MASTER BUFFER)
+Route::delete('hapusvalidasi','AkuntansiController@hapusvalidasi');
 Route::delete('bo_ak_tt_deltransdetailbuff', 'AkuntansiController@bo_ak_tt_deltransdetailbuff')->name('hapustransdetailbuff');
 // Simpan jurnal
 Route::post('bo_ak_tt_simpanjurnal', 'AkuntansiController@bo_ak_tt_simpanjurnal');
@@ -597,3 +630,16 @@ Route::get('/bo_tl_td_penutupandeposito', 'TellerDepositoController@bo_tl_td_pen
 Route::post('/bo_tl_td_penutupandeposito', 'TellerDepositoController@bo_tl_td_penutupandeposito_add');
 // Cetak Tanda Terima Buka Deposito
 Route::get('bo_tl_td_cetakbukadep', 'TellerDepositoController@bo_tl_td_cetakbukadep')->name('cetakbukadep');
+
+
+
+// bagian test
+Route::get('test1', function () {
+    return view('test1');
+});
+Route::post('ngarang', 'TellerKasController@test');
+Route::get('testpromised', function () {
+    return view('testpromise');
+});
+// TES save AJAX 
+Route::resource('ajaxproducts','ProductAjaxController');

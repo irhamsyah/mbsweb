@@ -512,7 +512,7 @@ class NasabahController extends Controller
 
   public function bo_cs_de_profil_kredit(Request $request)
   {
-    dd($request);
+    // dd($request);
     $logos = Logo::all();
     $users = User::all();
     if ($request->jenisprofil == 'kredit') {

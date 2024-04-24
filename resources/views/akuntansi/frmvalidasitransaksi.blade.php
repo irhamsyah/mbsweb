@@ -76,6 +76,12 @@
                       >
                           Validasi
                       </a>
+                      <form method="post" action="/hapusvalidasi" class="form-control" style="border-style: none;margin:0px">
+                        @csrf
+                        <input type="hidden" name="trans_id" value="{{$values->trans_id}}">
+                        <input type="hidden" name="_method" value="delete">
+                            <button onclick="return confirm('Apakah anda akan menghapus data ini ?')" type="submit" style="border-style: none">Delete</button>
+                      </form>
                     </div>
                   </td>                
                 </tr>

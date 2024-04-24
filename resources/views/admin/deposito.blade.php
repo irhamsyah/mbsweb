@@ -244,11 +244,9 @@
                   <label for="editidnasabah">Nasabah / Anggota ID</label>
                   <div class="input-group date" data-target-input="nearest">
                     <input id="editidnasabah" type="text" name="enasabah_id" readonly class="form-control" required>
-
                     <div class="input-group-append" data-toggle="modal" data-target="#ambildatanasabah">
                       <div class="input-group-text"><i class="fa fa-user"></i></div>
                     </div>
-
                   </div>
                 </div>
                 <div class="col-lg-3 col-sm-12">
@@ -811,7 +809,7 @@
           </div>
           <div class="modal-footer justify-content-between">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save</button>
+            <button onclick="return confirm('JADI SIMPAN DATA DEPOSITO ?')" type="submit" class="btn btn-primary">Save</button>
           </div>
         </div>
         <!-- /.modal-content -->

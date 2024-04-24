@@ -27,12 +27,13 @@
     <div class="row">
       <div class="col-12">
         <div class="card card-warning card-outline">
-          
+
         </div>
         <div class="card">
           <div class="card-header">
             <div class="col-lg-3 col-sm-3" style="float:right;">
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-add-kredit" style="float: right;">
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-add-kredit"
+                style="float: right;">
                 <i class="fa fa-plus"></i>
               </button>
             </div>
@@ -55,7 +56,7 @@
 
             <!-- Script -->
             <script type="text/javascript">
-            $(document).ready(function(){
+              $(document).ready(function(){
 
               // DataTable
               $('#kreditTable').DataTable({
@@ -91,7 +92,7 @@
 
             });
             </script>
-            
+
           </div>
           <!-- /.card-body -->
         </div>
@@ -104,7 +105,8 @@
 
   <div class="modal fade" id="modal-add-kredit">
     <div class="modal-dialog modal-xl">
-      <form autocomplete="off" action="/bo_kr_de_kredit/add" method="post" enctype="multipart/form-data" id="formaddkredit">
+      <form autocomplete="off" action="/bo_kr_de_kredit/add" method="post" enctype="multipart/form-data"
+        id="formaddkredit">
         @csrf
         <div class="modal-content">
           <div class="modal-header">
@@ -118,34 +120,83 @@
             <div class="card">
               <div class="card-header d-flex p-0">
                 <ul class="nav nav-pills p-2">
-                  <li class="nav-item"><a class="nav-link active" href="#form_master_kredit" data-toggle="tab">Form 1 [Master]</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#form_jadwal_kredit" data-toggle="tab">Form 2 [Jadwal]</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#form_lapbul" data-toggle="tab">Form 3 [Lapbul/SLIK]</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#form_agunan" data-toggle="tab">Form 4 [Agunan]</a></li>
+                  <li class="nav-item"><a class="nav-link active" href="#form_master_kredit" data-toggle="tab">Form 1
+                      [Master]</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#form_jadwal_kredit" data-toggle="tab">Form 2
+                      [Jadwal]</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#form_lapbul" data-toggle="tab">Form 3
+                      [Lapbul/SLIK]</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#form_agunan" data-toggle="tab">Form 4 [Agunan]</a>
+                  </li>
                 </ul>
               </div><!-- /.card-header -->
               <div class="card-body">
                 <div class="tab-content">
-                    @include('admin.kredit.master')
-                    @include('admin.kredit.jadwal')
-                    @include('admin.kredit.lapbul')
-                    @include('admin.kredit.agunan')
-                  </div>
-               </div>
-          <div class="modal-footer justify-content-between">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save</button>
-          </div>
-        </div>
+                  @include('admin.kredit.master')
+                  @include('admin.kredit.jadwal')
+                  @include('admin.kredit.lapbul')
+                  @include('admin.kredit.agunan')
+                </div>
+              </div>
+              <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+              </div>
+            </div>
       </form>
     </div>
   </div>
 
 </div>
 <!-- /.content -->
-
+{{-- MODAL TAMPIL TABEL NASABAH --}}
+<div class="modal fade bs-modal-nas" id="ambildatanasabah" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ambildatanasabah">Data Nasabah</h5>
+        {{-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> --}}
+      </div>
+      <div class="modal-body">
+        <table id="nasabahdata" class="display" width="100%">
+          <thead>
+            <tr>
+              <th>Nasabah Id</th>
+              <th>Nama Nasabah</th>
+              <th>Alamat Nasabah</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach($nasabahs as $value)
+            <tr>
+              <td>{{ $value['nasabah_id'] }}</td>
+              <td>{{ $value['nama_nasabah'] }}</td>
+              <td>{{ $value['alamat'] }}</td>
+              <td>
+                <a class="dropdown-toggle btn btn-block bg-gradient-primary btn-sm" data-toggle="dropdown" href="#">
+                  Action <span class="caret"></span>
+                </a>
+                <div class="dropdown-menu">
+                  <a id="tes1" href="#" class="dropdown-item">
+                    pilih
+                  </a>
+                </div>
+              </td>
+            </tr>
+            @endforeach
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{{-- BATAS MODAL NASABAH --}}
 <script>
-function autocomplete(inp, inpnama, inpalamat, arr, nama, alamat, nasabahs) {
+  function autocomplete(inp, inpnama, inpalamat, arr, nama, alamat, nasabahs) {
   /*the autocomplete function takes two arguments,
   the text field element and an array of possible autocompleted values:*/
   var currentFocus;
@@ -389,35 +440,35 @@ autocomplete(document.getElementsByName("inputnasabahid")[0], document.getElemen
 </script>
 
 <style>
-.autocomplete-items {
-  position: absolute;
-  border: 1px solid #d4d4d4;
-  border-bottom: none;
-  border-top: none;
-  z-index: 99;
-  /*position the autocomplete items to be the same width as the container:*/
-  top: 100%;
-  left: 0;
-  right: 0;
-}
+  .autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    /*position the autocomplete items to be the same width as the container:*/
+    top: 100%;
+    left: 0;
+    right: 0;
+  }
 
-.autocomplete-items div {
-  padding: 10px;
-  cursor: pointer;
-  background-color: #fff; 
-  border-bottom: 1px solid #d4d4d4; 
-}
+  .autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+    border-bottom: 1px solid #d4d4d4;
+  }
 
-/*when hovering an item:*/
-.autocomplete-items div:hover {
-  background-color: #e9e9e9; 
-}
+  /*when hovering an item:*/
+  .autocomplete-items div:hover {
+    background-color: #e9e9e9;
+  }
 
-/*when navigating through the items using the arrow keys:*/
-.autocomplete-active {
-  background-color: DodgerBlue !important; 
-  color: #ffffff; 
-}
+  /*when navigating through the items using the arrow keys:*/
+  .autocomplete-active {
+    background-color: DodgerBlue !important;
+    color: #ffffff;
+  }
 </style>
 
 @endsection

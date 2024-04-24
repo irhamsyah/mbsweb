@@ -36,8 +36,8 @@ use App\KodePeriodePembayaran;
 use App\JenisAgunan;
 use App\Mysysid;
 use App\Agunan;
-
-
+use App\Tabtran;
+use App\Tellertran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -55,6 +55,7 @@ class KreditController extends Controller
   {
     $logos = Logo::all();
     $users = User::all();
+    $tglharini = DB::select("SELECT * FROM mysysid WHERE KeyName = 'TANGGALHARIINI'")[0]->Value;
     $kodegroup1kredit = KodeGroup1Kredit::all()->sort();
     $kodegroup2kredit = KodeGroup2Kredit::all()->sort();
     $kodegroup3kredit = KodeGroup3Kredit::all()->sort();
@@ -88,8 +89,12 @@ class KreditController extends Controller
       })
       ->get()->toArray();
     $kodejeniskredit = Kodejeniskredit::all();
+    $tgllogin = Mysysid::where('KeyName', '=', 'TANGGALHARIINI')->get()[0]->Value;
+    // $tgllogin = date('Y-m-d', strtotime(str_replace('/', '-', $tgllogin[0]->Value)));
 
     return view('admin/kredit', [
+      'tglharini'=>$tglharini,
+      'tgllogin' => $tgllogin,
       'logos' => $logos, '
       users' => $users, 'nasabahs' => $nasabahs,
       'tabungans' => $tabungans,
@@ -368,7 +373,7 @@ class KreditController extends Controller
           ->orWhere('STATUS_AKTIF', '=', 1);
       })->count();
 
-    // Fetch records
+    // Fetch records (Mengambil record)
     $records = Kredit::select('nasabah.*', 'NO_REKENING', 'JENIS_PINJAMAN', 'POKOK_SALDO_REALISASI', 'POKOK_SALDO_AKHIR', 'DESKRIPSI_JENIS_KREDIT', 'kredit.NASABAH_ID')
       ->leftJoin('kodejeniskredit', function ($join) {
         $join->on('kredit.JENIS_PINJAMAN', '=', 'kodejeniskredit.KODE_JENIS_KREDIT');
@@ -391,7 +396,7 @@ class KreditController extends Controller
       ->take($rowperpage)
       ->orderBy($columnName, $columnSortOrder)
       ->get();
-
+      
     $data_arr = array();
     foreach ($records as $record) {
       $namanasabah = $record->nama_nasabah;
@@ -439,7 +444,63 @@ class KreditController extends Controller
 
   public function bo_kr_de_kredittransdelete(Request $request)
   {
-    Kretrans::where('KRETRANS_ID', $request->input("kretransid"))->delete();
+    $cek = Kretrans::where('KRETRANS_ID', $request->input("kretransid"))->get();
+    $no_rekening = $cek[0]->NO_REKENING;
+
+    // Cek Apakah Punya Transaksi Pembayaran
+    if($cek[0]->MY_KODE_TRANS=='100')
+    {
+      $rs = Kretrans::where('NO_REKENING','=',$no_rekening)
+                      ->where('MY_KODE_TRANS','=','300')
+                      ->get();
+      if(count($rs)>0){
+        return redirect()->route('Getkredittrans')->with('alert','Tidak Dipekenankan Hapus Realisasi Jika Sudah Mengangsur');
+      }
+      Kretrans::where('KRETRANS_ID', $request->input("kretransid"))->delete();
+      Kredit::where('NO_REKENING','=',$no_rekening)->update(
+        [
+          'POKOK_SALDO_REALISASI'=>'0',
+          'POKOK_SALDO_AKHIR'=>'0',
+          'BUNGA_SALDO_REALISASI'=>'0',
+          'BUNGA_SALDO_AKHIR'=>'0',
+          'STATUS_AKTIF'=>'1'
+        ]
+      );
+    }elseif($cek[0]->MY_KODE_TRANS=='300'){
+      $pokok_trans =$cek[0]->POKOK_TRANS;
+      $bunga_trans =$cek[0]->BUNGA_TRANS;
+      $pokok_trans =$cek[0]->DENDA_TRANS;
+      Kretrans::where('KRETRANS_ID', $request->input("kretransid"))->delete();
+      $rs =Kredit::where('NO_REKENING','=',$no_rekening)->get();
+      // Pokok
+      $pokoksaldorealisasi=$rs[0]->POKOK_SALDO_REALISASI;
+      $pokoksaldosetoran=$rs[0]->POKOK_SALDO_SETORAN;
+      $pokoksaldotagihan=$rs[0]->POKOK_SALDO_TAGIHAN;
+      // Bunga
+      $bungasaldorealisasi=$rs[0]->BUNGA_SALDO_REALISASI;
+      $bungasaldosetoran=$rs[0]->BUNGA_SALDO_SETORAN;
+      $bungasaldotagihan=$rs[0]->BUNGA_SALDO_TAGIHAN;
+
+      Kredit::where('NO_REKENING','=',$no_rekening)->update(
+        [
+          'POKOK_SALDO_SETORAN'=>($pokoksaldosetoran+$pokok_trans),
+          'POKOK_TUNGGAKAN_AKHIR'=>($pokoksaldotagihan-($pokoksaldosetoran+$pokok_trans)),
+          'POKOK_SALDO_AKHIR'=>($pokoksaldorealisasi-($pokoksaldosetoran+$pokok_trans)),
+          'BUNGA_SALDO_SETORAN'=>($bungasaldosetoran+$bunga_trans),
+          'BUNGA_TUNGGAKAN_AKHIR'=>($bungasaldotagihan-($bungasaldosetoran+$bunga_trans)),
+          'BUNGA_SALDO_AKHIR'=>($bungasaldorealisasi-($bungasaldosetoran+$bunga_trans)),
+        ]
+      );
+    }
+    
+    // Tabtran::where('LINK_ID', $request->input("kretransid"))->delete();
+    // // UPDATE TABUNGAN
+    // $nilai = DB::select("SELECT SUM(IF(MY_KODE_TRANS like '1%',SALDO_TRANS,0)) as saldosetor,SUM(IF(MY_KODE_TRANS like '2%',SALDO_TRANS,0)) as saldotarik from tabtrans WHERE NO_REKENING='$request->no_rekening'");
+    // $setor = (float)$nilai[0]->saldosetor;
+    // $tarik = (float)$nilai[0]->saldotarik;
+    // DB::select("Update tabung set saldo_setoran=$setor,saldo_penarikan=$tarik,saldo_akhir=($setor-$tarik) where no_rekening='$request->no_rekening'");
+
+    // Tellertran::where('modul_trans_id', $request->input("kretransid"))->delete();
     return redirect()->back()->with('msgstatus', '1');
   }
 

@@ -87,7 +87,7 @@
                 <div class="row">
                   <div class="col-lg-2 col-sm-8">
                     <label for="inputnocif">Kuitansi</label>
-                    <input type="text" name="kuitansi" class="form-control" id="bunga" required>
+                    <input type="text" name="kuitansi" class="form-control" id="idkuitansi" required>
                   </div>
                   <div class="col-lg-2 col-sm-8">
                     <label for="inputnocif">Kode Transaksi</label>
@@ -104,13 +104,12 @@
                   <div class="col-md-5 col-sm-12">
                     <label for="inputDate1">Jumlah</label>
                     <div class="input-group dateYMD" id="inputDate1" data-target-input="nearest">
-                      <input type="text" name="pembayaran" id="inputjmlsaldoblokir"
-                        class="form-control datetimepicker-input" required>
+                      <input type="text" name="pembayaran" id="idjumlah" class="form-control datetimepicker-input" required>
                     </div>
                   </div>
                   <div class="col-lg-2 col-sm-8">
                     <label for="inputnocif">Keterangan</label>
-                    <input type="text" name="keterangan" class="form-control" id="bunga" required>
+                    <input type="text" name="keterangan" class="form-control" id="idket" required>
                   </div>
 
                 </div>
@@ -185,8 +184,42 @@
       </div>
     </div>
   </div>
-
-
 </div>
 <!-- /.content -->
+<script>
+  var rupiahput = document.getElementById("idjumlah");
+  var keteranganid = document.getElementById("idkuitansi");
+
+  rupiahput.addEventListener("keyup", function(e) {
+  // tambahkan 'Rp.' pada saat form di ketik
+  // gunakan fungsi formatRupiah() untuk mengubah angka yang di ketik menjadi format angka
+    rupiahput.value = formatRupiahX(this.value, "Rp. ");
+  });
+
+  keteranganid.addEventListener("keyup", function(e) {
+  // tambahkan 'Rp.' pada saat form di ketik
+  // gunakan fungsi formatRupiah() untuk mengubah angka yang di ketik menjadi format angka
+  document.getElementById("idket").value = "Setoran "+document.getElementById("putnorekening").value;
+  });
+
+/* Fungsi formatRupiah */
+function formatRupiahX(angka, prefix) {
+var number_string = angka.replace(/[^,\d]/g, "").toString(),
+split = number_string.split(","),
+sisa = split[0].length % 3,
+rupiahh = split[0].substr(0, sisa),
+ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+// tambahkan titik jika yang di input sudah menjadi angka ribuan
+if (ribuan) {
+separator = sisa ? "." : "";
+rupiahh += separator + ribuan.join(".");
+}
+
+rupiahh = split[1] != undefined ? rupiahh + "," + split[1] : rupiahh;
+return prefix == undefined ? rupiahh : rupiahh ? "Rp. " + rupiahh : "";
+}
+
+</script>
 @endsection
+
